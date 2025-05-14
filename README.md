@@ -79,8 +79,6 @@ Steps:
 
 ## Project Info
 
-## Project Info
-
 - **Team Lead:** Quang Huy
 - **University:** FPT University
 - **Courses:** SWP391 - Software Development Project  
