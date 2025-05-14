@@ -12,9 +12,13 @@ This web platform is suitable for:
 
 ## Technology used
 
-1. **Back-end:** Java Servlet & JSP  
-2. **Front-end:** HTML, CSS, JavaScript  
-3. **Database:** SQL Server
+<p align="left">
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" alt="Java" width="40" height="40"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="HTML5" width="40" height="40"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt="CSS3" width="40" height="40"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JavaScript" width="40" height="40"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/microsoftsqlserver/microsoftsqlserver-plain.svg" alt="SQL Server" width="40" height="40"/>
+</p>
 
 ---
 
@@ -79,11 +83,13 @@ Steps:
 
 ## Project Info
 
-- **Team Lead:** Quang Huy
-- **University:** FPT University
-- **Courses:** SWP391 - Software Development Project  
-               SWR302 - Web Application Development  
-               SWT301 - Software Testing
+- **Team Lead:** Quang Huy  
+- **University:** FPT University  
+- **Courses:**
+  - SWP391 – Software Development Project  
+  - SWR302 – Software Requirements  
+  - SWT301 – Software Testing
+
 
 ---
 
