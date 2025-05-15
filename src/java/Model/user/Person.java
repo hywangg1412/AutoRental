@@ -2,15 +2,16 @@ package Model.user;
 
 import java.util.Date;
 
-public class Person {
-    private String username;
-    private String password;
-    private String email; 
-    private String phoneNumber;
-    private String firstName;
-    private String lastName;
-    private Date dob;
-    private boolean gender; 
+public abstract class Person {
+    protected String username;
+    protected String password;
+    protected String email; 
+    protected String phoneNumber;
+    protected String firstName;
+    protected String lastName;
+    protected Date dob;
+    protected boolean gender; 
+    protected String role;
 
     public Person() {
     }
@@ -24,6 +25,7 @@ public class Person {
         this.lastName = lastName;
         this.dob = dob;
         this.gender = gender;
+        this.role = role;
     }
 
     public String getUsername() {
@@ -90,9 +92,17 @@ public class Person {
         this.gender = gender;
     }
 
-    @Override
-    public String toString() {
-        return "Person{" + "username=" + username + ", password=" + password + ", email=" + email + ", phoneNumber=" + phoneNumber + ", firstName=" + firstName + ", lastName=" + lastName + ", dob=" + dob + ", gender=" + gender + '}';
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
     
+    @Override
+    public String toString() {
+        return "Person{" + "username=" + username + ", password=" + password + ", email=" + email + ", phoneNumber=" + phoneNumber + ", firstName=" + firstName + ", lastName=" + lastName + ", dob=" + dob + ", gender=" + gender + ", role=" + role + '}';
+    }
+
 }

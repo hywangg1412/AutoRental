@@ -1,6 +1,5 @@
 package Model.booking;
 
-import Model.Location;
 import java.util.Date;
 
 public class Booking {
@@ -9,19 +8,26 @@ public class Booking {
     private int carId;
     private Date startDate;
     private Date endDate;
-    private Location location;
+    private String pickuplocation;
+    private String returnLocation;
     private double totalAmount;
     private String status;
 
-    
-    public Location getLocation() {
-        return location;
+    public Booking() {
     }
 
-    public void setLocation(Location location) {
-        this.location = location;
+    public Booking(int bookingId, int userId, int carId, Date startDate, Date endDate, String pickuplocation, String returnLocation, double totalAmount, String status) {
+        this.bookingId = bookingId;
+        this.userId = userId;
+        this.carId = carId;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.pickuplocation = pickuplocation;
+        this.returnLocation = returnLocation;
+        this.totalAmount = totalAmount;
+        this.status = status;
     }
-    
+
     public int getBookingId() {
         return bookingId;
     }
@@ -62,6 +68,22 @@ public class Booking {
         this.endDate = endDate;
     }
 
+    public String getPickuplocation() {
+        return pickuplocation;
+    }
+
+    public void setPickuplocation(String pickuplocation) {
+        this.pickuplocation = pickuplocation;
+    }
+
+    public String getReturnLocation() {
+        return returnLocation;
+    }
+
+    public void setReturnLocation(String returnLocation) {
+        this.returnLocation = returnLocation;
+    }
+        
     public double getTotalAmount() {
         return totalAmount;
     }
@@ -80,7 +102,9 @@ public class Booking {
 
     @Override
     public String toString() {
-        return "Booking{" + "bookingId=" + bookingId + ", userId=" + userId + ", carId=" + carId + ", startDate=" + startDate + ", endDate=" + endDate + ", location=" + location + ", totalAmount=" + totalAmount + ", status=" + status + '}';
+        return "Booking{" + "bookingId=" + bookingId + ", userId=" + userId + ", carId=" + carId +
+                ", startDate=" + startDate + ", endDate=" + endDate + ", pickuplocation=" + pickuplocation + 
+                ", returnLocation=" + returnLocation + ", totalAmount=" + totalAmount + ", status=" + status + '}';
     }
 
 }
