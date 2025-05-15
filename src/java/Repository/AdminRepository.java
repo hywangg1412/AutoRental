@@ -1,6 +1,7 @@
 
 package Repository;
 
+import Model.user.Admin;
 import Repository.Interfaces.IAdminRepository;
 import java.sql.SQLException;
 import java.util.List;
@@ -9,17 +10,17 @@ import java.util.List;
 public class AdminRepository implements IAdminRepository{
 
     @Override
-    public void add(Object entity) throws SQLException {
+    public void add(Admin entity) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Object findById(int Id) throws SQLException {
+    public Admin findById(int Id) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void update(Object entity) throws SQLException {
+    public void update(Admin entity) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -29,7 +30,7 @@ public class AdminRepository implements IAdminRepository{
     }
 
     @Override
-    public List<Object> findAll() throws SQLException {
+    public List<Admin> findAll() throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     

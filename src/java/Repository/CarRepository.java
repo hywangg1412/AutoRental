@@ -1,4 +1,3 @@
-
 package Repository;
 
 import Model.car.Car;
@@ -33,6 +32,4 @@ public class CarRepository implements ICarRepository{
     public List<Car> findAll() throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-
-    
 }
