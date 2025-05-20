@@ -1,7 +1,7 @@
 
 package Repository;
 
-import Model.booking.Booking;
+import Model.Booking;
 import Repository.Interfaces.IBookingRepository;
 import java.sql.SQLException;
 import java.util.List;

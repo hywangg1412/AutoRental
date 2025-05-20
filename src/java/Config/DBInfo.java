@@ -1,4 +1,4 @@
-package ConnectDB;
+package Config;
 
 public interface DBInfo {
     String DRIVER_NAME = "com.microsoft.sqlserver.jdbc.SQLServerDriver";

@@ -4,7 +4,7 @@ import Exception.EmptyDataException;
 import Exception.EventException;
 import Exception.InvalidDataException;
 import Exception.NotFoundException;
-import Model.feedback.Review;
+import Model.Review;
 import Service.Interfaces.IReviewService;
 import java.util.function.Predicate;
 

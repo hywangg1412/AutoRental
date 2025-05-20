@@ -1,6 +1,6 @@
-package Model.feedback;
+package Model;
 
-import Model.car.Car;
+import Model.Car;
 import java.time.LocalDateTime;
 import java.util.Date;
 

@@ -1,7 +1,7 @@
 
 package Repository;
 
-import Model.booking.Discount;
+import Model.Discount;
 import Repository.Interfaces.IDiscountRepository;
 import java.sql.SQLException;
 import java.util.List;

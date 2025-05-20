@@ -1,6 +1,6 @@
 package Repository;
 
-import Model.car.Car;
+import Model.Car;
 import Repository.Interfaces.ICarRepository;
 import java.sql.SQLException;
 import java.util.List;

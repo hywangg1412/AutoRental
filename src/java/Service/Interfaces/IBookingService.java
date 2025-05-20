@@ -1,5 +1,5 @@
 package Service.Interfaces;
-import Model.booking.Booking;
+import Model.Booking;
 
 public interface IBookingService extends Service<Booking> {
     

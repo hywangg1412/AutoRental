@@ -1,6 +1,6 @@
 package Repository;
 
-import Model.user.User;
+import Model.User;
 import Repository.Interfaces.IUserRepository;
 import java.sql.SQLException;
 import java.util.List;

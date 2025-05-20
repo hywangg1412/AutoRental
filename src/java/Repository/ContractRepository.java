@@ -1,6 +1,6 @@
 package Repository;
 
-import Model.booking.Contract;
+import Model.Contract;
 import Repository.Interfaces.IContractRepository;
 import java.sql.SQLException;
 import java.util.List;

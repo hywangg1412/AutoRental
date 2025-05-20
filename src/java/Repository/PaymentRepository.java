@@ -1,6 +1,6 @@
 package Repository;
 
-import Model.booking.Payment;
+import Model.Payment;
 import Repository.Interfaces.IPaymentRepository;
 import java.sql.SQLException;
 import java.util.List;
