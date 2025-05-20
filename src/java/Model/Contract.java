@@ -1,5 +1,5 @@
 
-package Model.booking;
+package Model;
 
 import java.util.Date;
 

@@ -1,9 +1,10 @@
-package ConnectDB;
+package Repository;
 
-import static ConnectDB.DBInfo.DRIVER_NAME;
-import static ConnectDB.DBInfo.PASS;
-import static ConnectDB.DBInfo.URL;
-import static ConnectDB.DBInfo.USER;
+import Config.DBInfo;
+import static Config.DBInfo.DRIVER_NAME;
+import static Config.DBInfo.PASS;
+import static Config.DBInfo.URL;
+import static Config.DBInfo.USER;
 import java.sql.*;
 
 public class DBContext implements DBInfo {

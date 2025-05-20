@@ -1,6 +1,6 @@
 package Service.Interfaces;
 
-import Model.car.Car;
+import Model.Car;
 
 public interface ICarService extends Service<Car>{
     

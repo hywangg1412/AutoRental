@@ -4,7 +4,7 @@ import Exception.EmptyDataException;
 import Exception.EventException;
 import Exception.InvalidDataException;
 import Exception.NotFoundException;
-import Model.booking.Contract;
+import Model.Contract;
 import Service.Interfaces.IContractService;
 import java.util.function.Predicate;
 

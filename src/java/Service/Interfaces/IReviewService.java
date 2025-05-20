@@ -1,6 +1,6 @@
 
 package Service.Interfaces;
-import Model.feedback.Review;
+import Model.Review;
 
 public interface IReviewService extends Service<Review>{
     

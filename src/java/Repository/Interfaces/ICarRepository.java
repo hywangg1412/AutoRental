@@ -1,6 +1,6 @@
 package Repository.Interfaces;
 
-import Model.car.Car;
+import Model.Car;
 
 public interface ICarRepository extends Repository<Car, Integer> {
 }

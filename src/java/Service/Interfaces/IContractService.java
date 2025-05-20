@@ -1,6 +1,6 @@
 package Service.Interfaces;
 
-import Model.booking.Contract;
+import Model.Contract;
 
 public interface IContractService extends Service<Contract>{
     

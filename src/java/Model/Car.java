@@ -1,4 +1,4 @@
-package Model.car;
+package Model;
 
 public class Car {
     private int carId;
