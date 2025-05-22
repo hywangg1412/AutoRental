@@ -3,7 +3,7 @@
         <div class="row mb-5">
           <div class="col-md">
             <div class="ftco-footer-widget mb-4">
-              <h2 class="ftco-heading-2"><a href="pages/index.jsp" class="logo">Car<span>Book</span></a></h2>
+              <h2 class="ftco-heading-2"><a href="../index.jsp" class="logo">Car<span>Book</span></a></h2>
               <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
               <ul class="ftco-footer-social list-unstyled float-md-left float-lft mt-5">
                 <li class="ftco-animate"><a href="#"><span class="icon-twitter"></span></a></li>
@@ -16,7 +16,7 @@
             <div class="ftco-footer-widget mb-4 ml-md-5">
               <h2 class="ftco-heading-2">Information</h2>
               <ul class="list-unstyled">
-                <li><a href="pages/about.jsp" class="py-2 d-block">About</a></li>
+                <li><a href="../pages/about.jsp" class="py-2 d-block">About</a></li>
                 <li><a href="../pages/services.jsp" class="py-2 d-block">Services</a></li>
                 <li><a href="../pages/terms.jsp" class="py-2 d-block">Term and Conditions</a></li>
                 <li><a href="../pages/privacy.jsp" class="py-2 d-block">Privacy Policy</a></li>
@@ -28,9 +28,9 @@
              <div class="ftco-footer-widget mb-4">
               <h2 class="ftco-heading-2">Customer Support</h2>
               <ul class="list-unstyled">
-                <li><a href="pages/contact.jsp" class="py-2 d-block">Contact Us</a></li>
-                <li><a href="pages/pricing.jsp" class="py-2 d-block">Pricing</a></li>
-                <li><a href="pages/car.jsp" class="py-2 d-block">Car</a></li>
+                <li><a href="../pages/contact.jsp" class="py-2 d-block">Contact Us</a></li>
+                <li><a href="../pages/pricing.jsp" class="py-2 d-block">Pricing</a></li>
+                <li><a href="../pages/car.jsp" class="py-2 d-block">Car</a></li>
                 <li><a href="../pages/blog.jsp" class="py-2 d-block">Blog</a></li>
               </ul>
             </div>
