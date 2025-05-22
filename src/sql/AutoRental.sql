@@ -4,42 +4,27 @@ USE AutoRental
 GO
 
 CREATE TABLE [Users] (
-    UserId INT IDENTITY(1,1),
-    Username NVARCHAR(256) NOT NULL, 
-	UserDOB DATE NULL,
-    PhoneNumber NVARCHAR(11) NOT NULL,
-    UserAddress NVARCHAR(MAX) NULL,
-	UserAvatar NVARCHAR(MAX) NULL,
-    Email NVARCHAR(256) UNIQUE,
-    Password NVARCHAR(255) NOT NULL,
-    FirstName NVARCHAR(100) NOT NULL,
-    LastName NVARCHAR(100) NOT NULL,
-    Gender BIT NULL,
-    Role NVARCHAR(50) NOT NULL, --DEFAULT 'User',
-    CreatedDate DATETIME2 NOT NULL,
-    Status VARCHAR(20) NOT NULL, 
-	DriverLicenseNumber NVARCHAR(12) NOT NULL,
-    DriverLicenseImage NVARCHAR(MAX) NOT NULL,
-    VerificationStatus VARCHAR(20) NOT NULL,
-	CONSTRAINT PK_User PRIMARY KEY (UserId)
-);
-
---CREATE TABLE [DriverLicenses] (
-    --LicenseId INT IDENTITY(1,1),
-    --UserId INT NOT NULL,
-	--LicenseName NVARCHAR(MAX) NOT NULL,
-    --LicenseNumber NVARCHAR(12) NOT NULL,
-    --LicenseImagePath NVARCHAR(MAX) NULL,
-    --IssueDate DATE NULL,
-    --ExpiryDate DATE NULL,
-    --VerificationStatus VARCHAR(20) NOT NULL,
-
-	--CONSTRAINT PK_DriverLicense PRIMARY KEY (LicenseId),
-    --CONSTRAINT FK_DriverLicense_User FOREIGN KEY (UserId) REFERENCES Users(UserId)
---);
+        UserId UNIQUEIDENTIFIER NOT NULL,
+        Username NVARCHAR(100) NOT NULL,
+        PasswordHash NVARCHAR(255) NOT NULL,
+        Email NVARCHAR(100) NOT NULL,
+        PhoneNumber NVARCHAR(15) NOT NULL,
+        FirstName NVARCHAR(100) NOT NULL,
+        LastName NVARCHAR(100) NOT NULL,
+        DOB DATE NOT NULL, --CHECK (DOB <= DATEADD(YEAR, -18, GETDATE())),
+        Gender NVARCHAR(10) NULL, --CHECK (Gender IN ('Male', 'Female', 'Other')),
+        Role NVARCHAR(50) NOT NULL, --DEFAULT 'User' CHECK (Role IN ('User', 'Admin', 'Staff')),
+        --FullName AS (TRIM(FirstName + ' ' + LastName)) PERSISTED,
+        UserAddress NVARCHAR(255) NULL,
+        DriverLicenseNumber NVARCHAR(50) NULL,
+        DriverLicenseImage NVARCHAR(MAX) NULL,
+        CreatedDate DATETIME2 NOT NULL, --DEFAULT GETDATE(),
+        Status VARCHAR(20) NOT NULL, --CHECK (Status IN ('Active', 'Inactive', 'Banned')) DEFAULT 'Active',
+        CONSTRAINT PK_Users PRIMARY KEY (UserId)
+    );
 
 CREATE TABLE Car (
-    CarId INT IDENTITY(1,1),
+    CarId UNIQUEIDENTIFIER NOT NULL,
     Brand VARCHAR(50) NOT NULL,
     CarModel VARCHAR(50) NOT NULL,
     YearManufactured INT NULL, --CHECK (YearManufactured >= 1900 AND YearManufactured <= 2025),
@@ -55,22 +40,20 @@ CREATE TABLE Car (
     PricePerMonth DECIMAL(10,2) NOT NULL, --CHECK (PricePerMonth >= 0),
     Status VARCHAR(20) NOT NULL, --CHECK (Status IN ('Available', 'Rented', 'Unavailable')) DEFAULT 'Available',
     Description NVARCHAR(MAX) NULL,
-
-	CONSTRAINT PK_Car PRIMARY KEY (CarId),
+    CONSTRAINT PK_Car PRIMARY KEY (CarId)
 );
 
 CREATE TABLE Booking (
-    BookingId INT IDENTITY(1,1),
-    UserId INT NOT NULL,
-    CarId INT NOT NULL,
+    BookingId UNIQUEIDENTIFIER NOT NULL,
+    UserId UNIQUEIDENTIFIER NOT NULL,
+    CarId UNIQUEIDENTIFIER NOT NULL,
     RentStartDate DATE NOT NULL,
     RentEndDate DATE NOT NULL,
     PickupLocation VARCHAR(100) NOT NULL,
     ReturnLocation VARCHAR(100) NOT NULL,
     TotalAmount DECIMAL(10, 2) NOT NULL,
     Status VARCHAR(20) NOT NULL,
-    DiscountId INT NULL,
-
+    DiscountId UNIQUEIDENTIFIER NULL,
     CONSTRAINT PK_Booking PRIMARY KEY (BookingId),
     CONSTRAINT FK_Booking_User FOREIGN KEY (UserId) REFERENCES [Users](UserId) ON DELETE CASCADE,
     CONSTRAINT FK_Booking_Car FOREIGN KEY (CarId) REFERENCES Car(CarId) ON DELETE SET NULL,
@@ -81,16 +64,15 @@ CREATE TABLE Booking (
 );
 
 CREATE TABLE Contract (
-    ContractId INT IDENTITY(1,1),
-    UserId INT NOT NULL,
-    CarId INT NULL,
-    BookingId INT NOT NULL,
+    ContractId UNIQUEIDENTIFIER NOT NULL,
+    UserId UNIQUEIDENTIFIER NOT NULL,
+    CarId UNIQUEIDENTIFIER NULL,
+    BookingId UNIQUEIDENTIFIER NOT NULL,
     ContractContent NVARCHAR(MAX) NOT NULL,
     StartDate DATE NOT NULL,
     EndDate DATE NOT NULL,
     TotalEstimatedPrice DECIMAL(10, 2) NOT NULL,
     CompanyRepresentative NVARCHAR(100) NOT NULL,
-
     CONSTRAINT PK_Contract PRIMARY KEY (ContractId),
     CONSTRAINT FK_Contract_User FOREIGN KEY (UserId) REFERENCES [Users](UserId) ON DELETE CASCADE,
     CONSTRAINT FK_Contract_Car FOREIGN KEY (CarId) REFERENCES Car(CarId) ON DELETE SET NULL,
@@ -100,13 +82,12 @@ CREATE TABLE Contract (
 );
 
 CREATE TABLE Payment (
-    PaymentId INT IDENTITY(1,1),
-    ContractId INT NOT NULL,
+    PaymentId UNIQUEIDENTIFIER NOT NULL,
+    ContractId UNIQUEIDENTIFIER NOT NULL,
     PaymentDate DATETIME2 NOT NULL, --DEFAULT GETDATE(),
     TotalAmount DECIMAL(10, 2) NOT NULL,
     PaymentStatus VARCHAR(20) NOT NULL, --DEFAULT 'Pending',
     PaymentMethod VARCHAR(50) NOT NULL,
-
     CONSTRAINT PK_Payment PRIMARY KEY (PaymentId),
     CONSTRAINT FK_Payment_Contract FOREIGN KEY (ContractId) REFERENCES Contract(ContractId) ON DELETE CASCADE,
     --CONSTRAINT CHK_Payment_Amount CHECK (TotalAmount >= 0),
@@ -115,15 +96,14 @@ CREATE TABLE Payment (
 );
 
 CREATE TABLE Discount (
-    DiscountId INT IDENTITY(1,1),
+    DiscountId UNIQUEIDENTIFIER NOT NULL,
     StartDate DATE NOT NULL,
     EndDate DATE NOT NULL,
     PricePerHour DECIMAL(10, 2) NOT NULL,
     PricePerDay DECIMAL(10, 2) NOT NULL,
     PricePerMonth DECIMAL(10, 2) NOT NULL,
-    IsActive BIT NOT NULL --DEFAULT 1,
-
-    CONSTRAINT PK_Discount PRIMARY KEY (DiscountId),
+    IsActive BIT NOT NULL, --DEFAULT 1,
+    CONSTRAINT PK_Discount PRIMARY KEY (DiscountId)
     --CONSTRAINT CHK_Discount_Hour CHECK (PricePerHour >= 0),
     --CONSTRAINT CHK_Discount_Day CHECK (PricePerDay >= 0),
     --CONSTRAINT CHK_Discount_Month CHECK (PricePerMonth >= 0),
@@ -132,16 +112,15 @@ CREATE TABLE Discount (
 );
 
 CREATE TABLE Reviews (
-    ReviewId INT IDENTITY(1,1),
-    UserId INT NOT NULL,
-    CarId INT NOT NULL,
+    ReviewId UNIQUEIDENTIFIER NOT NULL,
+    UserId UNIQUEIDENTIFIER NOT NULL,
+    CarId UNIQUEIDENTIFIER NOT NULL,
     Rating INT NOT NULL,
     Content NVARCHAR(4000) NULL,
     ReviewDate DATETIME2 NOT NULL, --DEFAULT GETDATE(),
-
-    CONSTRAINT PK_Review PRIMARY KEY (ReviewId),
-    CONSTRAINT FK_Review_User FOREIGN KEY (UserId) REFERENCES [Users](UserId) ON DELETE CASCADE,
-    CONSTRAINT FK_Review_Car FOREIGN KEY (CarId) REFERENCES Car(CarId) ON DELETE SET NULL,
+    CONSTRAINT PK_Reviews PRIMARY KEY (ReviewId),
+    CONSTRAINT FK_Reviews_User FOREIGN KEY (UserId) REFERENCES [Users](UserId) ON DELETE CASCADE,
+    CONSTRAINT FK_Reviews_Car FOREIGN KEY (CarId) REFERENCES Car(CarId) ON DELETE SET NULL,
     --CONSTRAINT CHK_Review_Rating CHECK (Rating >= 1 AND Rating <= 5)
 );
 
