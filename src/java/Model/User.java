@@ -2,39 +2,39 @@ package Model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class User {
-    private int userId;
+    private UUID userId;
     private String username;
-    private String password;
+    private String passwordHash;
     private String email;
     private String phoneNumber;
     private String firstName;
     private String lastName;
     private LocalDate dob;
-    private boolean gender;
+    private String gender;
+    private String role;
+    private String userAddress;
     private String driverLicenseNumber;
     private String driverLicenseImage;
-    private String userAddress;
-    private String role;
     private LocalDateTime createdDate;
     private String status;
 
     public User() {
-        this.createdDate = LocalDateTime.now();
+        // this.userId = UUID.randomUUID();
+        // this.createdDate = LocalDateTime.now();
+        // this.role = "User";
+        // this.status = "Active";
     }
 
-    public User(int userId, String driverLicenseNumber, String driverLicenseImage, String userAddress,
-            String username, String password, String email, String phoneNumber,
-            String firstName, String lastName, LocalDate dob, boolean gender,
-            String role, LocalDateTime createdDate, String status) {
+    public User(UUID userId, String username, String passwordHash, String email, String phoneNumber,
+            String firstName, String lastName, LocalDate dob, String gender, String role,
+            String userAddress, String driverLicenseNumber, String driverLicenseImage,
+            LocalDateTime createdDate, String status) {
         this.userId = userId;
-        this.driverLicenseNumber = driverLicenseNumber;
-        this.driverLicenseImage = driverLicenseImage;
-        this.userAddress = userAddress;
-
         this.username = username;
-        this.password = password;
+        this.passwordHash = passwordHash;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.firstName = firstName;
@@ -42,6 +42,9 @@ public class User {
         this.dob = dob;
         this.gender = gender;
         this.role = role;
+        this.userAddress = userAddress;
+        this.driverLicenseNumber = driverLicenseNumber;
+        this.driverLicenseImage = driverLicenseImage;
         this.createdDate = createdDate;
         this.status = status;
     }
@@ -50,36 +53,12 @@ public class User {
         return firstName + " " + lastName;
     }
 
-    public int getUserId() {
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
-    }
-
-    public String getDriverLicenseNumber() {
-        return driverLicenseNumber;
-    }
-
-    public void setDriverLicenseNumber(String driverLicenseNumber) {
-        this.driverLicenseNumber = driverLicenseNumber;
-    }
-
-    public String getDriverLicenseImage() {
-        return driverLicenseImage;
-    }
-
-    public void setDriverLicenseImage(String driverLicenseImage) {
-        this.driverLicenseImage = driverLicenseImage;
-    }
-
-    public String getUserAddress() {
-        return userAddress;
-    }
-
-    public void setUserAddress(String userAddress) {
-        this.userAddress = userAddress;
     }
 
     public String getUsername() {
@@ -90,12 +69,12 @@ public class User {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
+    public String getPasswordHash() {
+        return passwordHash;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
     public String getEmail() {
@@ -138,11 +117,11 @@ public class User {
         this.dob = dob;
     }
 
-    public boolean isGender() {
+    public String getGender() {
         return gender;
     }
 
-    public void setGender(boolean gender) {
+    public void setGender(String gender) {
         this.gender = gender;
     }
 
@@ -152,6 +131,30 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getUserAddress() {
+        return userAddress;
+    }
+
+    public void setUserAddress(String userAddress) {
+        this.userAddress = userAddress;
+    }
+
+    public String getDriverLicenseNumber() {
+        return driverLicenseNumber;
+    }
+
+    public void setDriverLicenseNumber(String driverLicenseNumber) {
+        this.driverLicenseNumber = driverLicenseNumber;
+    }
+
+    public String getDriverLicenseImage() {
+        return driverLicenseImage;
+    }
+
+    public void setDriverLicenseImage(String driverLicenseImage) {
+        this.driverLicenseImage = driverLicenseImage;
     }
 
     public LocalDateTime getCreatedDate() {
@@ -172,20 +175,19 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{"
-                + "userId=" + userId
-                + ", driverLicenseNumber='" + driverLicenseNumber + '\''
-                + ", driverLicenseImage='" + driverLicenseImage + '\''
-                + ", userAddress='" + userAddress + '\''
-                + ", username='" + username + '\''
-                + ", email='" + email + '\''
-                + ", phoneNumber='" + phoneNumber + '\''
-                + ", fullName='" + getFullName() + '\''
-                + ", dob=" + dob
-                + ", gender=" + gender
-                + ", role='" + role + '\''
-                + ", createdDate=" + createdDate
-                + ", status='" + status + '\''
-                + '}';
+        return "User{" +
+                "userId=" + userId +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", fullName='" + getFullName() + '\'' +
+                ", dob=" + dob +
+                ", gender='" + gender + '\'' +
+                ", role='" + role + '\'' +
+                ", userAddress='" + userAddress + '\'' +
+                ", driverLicenseNumber='" + driverLicenseNumber + '\'' +
+                ", createdDate=" + createdDate +
+                ", status='" + status + '\'' +
+                '}';
     }
 }
