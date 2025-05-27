@@ -8,10 +8,10 @@ CREATE TABLE [Users] (
         Username NVARCHAR(100) NOT NULL,
         PasswordHash NVARCHAR(255) NOT NULL,
         Email NVARCHAR(100) NOT NULL,
-        PhoneNumber NVARCHAR(15) NOT NULL,
-        FirstName NVARCHAR(100) NOT NULL,
-        LastName NVARCHAR(100) NOT NULL,
-        DOB DATE NOT NULL, --CHECK (DOB <= DATEADD(YEAR, -18, GETDATE())),
+        PhoneNumber NVARCHAR(15) NULL,
+        FirstName NVARCHAR(100) NULL,
+        LastName NVARCHAR(100) NULL,
+        DOB DATE NULL, --CHECK (DOB <= DATEADD(YEAR, -18, GETDATE())),
         Gender NVARCHAR(10) NULL, --CHECK (Gender IN ('Male', 'Female', 'Other')),
         Role NVARCHAR(50) NOT NULL, --DEFAULT 'User' CHECK (Role IN ('User', 'Admin', 'Staff')),
         --FullName AS (TRIM(FirstName + ' ' + LastName)) PERSISTED,
@@ -19,7 +19,7 @@ CREATE TABLE [Users] (
         DriverLicenseNumber NVARCHAR(50) NULL,
         DriverLicenseImage NVARCHAR(MAX) NULL,
         CreatedDate DATETIME2 NOT NULL, --DEFAULT GETDATE(),
-        Status VARCHAR(20) NOT NULL, --CHECK (Status IN ('Active', 'Inactive', 'Banned')) DEFAULT 'Active',
+        Status VARCHAR(20) NULL, --CHECK (Status IN ('Active', 'Inactive', 'Banned')) DEFAULT 'Active',
         CONSTRAINT PK_Users PRIMARY KEY (UserId)
     );
 
