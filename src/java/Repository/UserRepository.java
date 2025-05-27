@@ -17,7 +17,7 @@ public class UserRepository implements IUserRepository {
 
     @Override
     public void add(User entity) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String sql = "INSERT INTO Users WHERE (UserId, Username, PasswordHash, Email, Phonenumber, FirstName, LastName, DOB, Gender) ";
     }
 
     @Override
