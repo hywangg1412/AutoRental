@@ -1,7 +1,7 @@
 
 package Repository.Interfaces;
 
-import Model.Contract;
+import Model.Entity.Contract;
 
 public interface IContractRepository extends Repository<Contract, Integer>{
     

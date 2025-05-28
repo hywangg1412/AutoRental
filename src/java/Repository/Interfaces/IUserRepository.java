@@ -1,7 +1,7 @@
 
 package Repository.Interfaces;
 
-import Model.User;
+import Model.Entity.User;
 
 
 public interface IUserRepository extends Repository<User, Integer>{

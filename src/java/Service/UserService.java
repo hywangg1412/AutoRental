@@ -4,7 +4,7 @@ import Exception.EmptyDataException;
 import Exception.EventException;
 import Exception.InvalidDataException;
 import Exception.NotFoundException;
-import Model.User;
+import Model.Entity.User;
 import Service.Interfaces.IUserService;
 import java.util.function.Predicate;
 

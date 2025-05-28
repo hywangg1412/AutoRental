@@ -1,7 +1,7 @@
 
 package Repository;
 
-import Model.Discount;
+import Model.Entity.Discount;
 import Repository.Interfaces.IDiscountRepository;
 import java.sql.SQLException;
 import java.util.List;

@@ -1,5 +1,5 @@
 
-package Model;
+package Model.Entity;
 
 import java.util.Date;
 
