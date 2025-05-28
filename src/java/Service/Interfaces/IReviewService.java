@@ -1,6 +1,6 @@
 
 package Service.Interfaces;
-import Model.Review;
+import Model.Entity.Review;
 
 public interface IReviewService extends Service<Review>{
     

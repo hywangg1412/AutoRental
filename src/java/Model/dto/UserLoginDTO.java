@@ -1,4 +1,4 @@
-package Model.dto;
+package Model.Dto;
 
 public class UserLoginDTO {
     private String username;

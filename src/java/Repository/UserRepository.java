@@ -1,7 +1,7 @@
 package Repository;
 
 import Config.DBContext;
-import Model.User;
+import Model.Entity.User;
 import Repository.Interfaces.IUserRepository;
 import java.util.List;
 import java.sql.*;
