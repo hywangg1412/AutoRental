@@ -122,7 +122,7 @@ body {
     transform: scale(1.025);
 }
 
-.form-group .input-icon-eye {
+.input-icon-eye {
     position: absolute;
     right: 18px;
     top: 50%;
@@ -132,6 +132,12 @@ body {
     cursor: pointer;
     display: flex;
     align-items: center;
+    pointer-events: auto;
+    height: 100%;
+}
+
+.input-icon-eye i svg {
+    display: none !important;
 }
 
 .form-options {
@@ -298,4 +304,24 @@ body {
 .social-login-row .facebook:hover {
     background: #1877f3;
     color: #fff;
+}
+
+#password {
+    padding-right: 44px;
+}
+
+.google-login-error {
+    color: #dc3545;
+    font-size: 14px;
+    margin-top: 8px;
+    display: none;
+}
+
+.social-btn.google:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.social-btn.google .fa-spinner {
+    margin-right: 8px;
 }
