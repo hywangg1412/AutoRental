@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Login to your account</title>
-        <link rel="stylesheet" href="../../css/Authen/css/SignIn.css"/>
+        <link rel="stylesheet" href="../../Authen/css/SignIn.css"/>
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
     </head>
@@ -29,8 +29,9 @@
                                 <label for="password" style="margin-bottom:0;">Password</label>
                                 <a href="ForgotPassword.jsp">Forgot ?</a>
                             </div>
-                            <input type="password" id="password" name="password" required placeholder="Enter your password">
-                            <span class="input-icon-eye"><i class="far fa-eye"></i></span>
+                            <div style="position: relative;">
+                                <input type="password" id="password" name="password" required placeholder="Enter your password">
+                            </div>
                         </div>
                         <button class="submit-btn" type="submit" id="loginBtn">
                             <span id="loginBtnText">Login now</span>
@@ -41,7 +42,7 @@
                         </div>
 
                         <div class="social-login-row">
-                            <button type="button" class="social-btn google">
+                            <button type="button" class="social-btn google" onclick="loginWithGoogle()">
                                 <i class="fab fa-google"></i> Login with Google
                             </button>
                             <button type="button" class="social-btn facebook">
@@ -54,4 +55,6 @@
             </div>
         </div>
     </body>
+    <script src="../../Authen/js/SignIn.js"></script>
+    <script src="../../Authen/js/config.js"></script>
 </html>
