@@ -9,7 +9,6 @@
 
 # Compiled files
 *.class
-*.jar
 *.war
 
 # Logs
