@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Forgot Password</title>
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../css/Authen/css/ForgotPassword.css">
+    <link rel="stylesheet" href="../../Authen/css/ForgotPassword.css">
 </head>
 <body>
     <div class="forgot-container">

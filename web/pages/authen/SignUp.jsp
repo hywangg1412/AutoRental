@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>Create an account</title>
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../css/Authen/css/SignUp.css">
+    <link rel="stylesheet" href="../../Authen/css/SignUp.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
 </head>
@@ -32,7 +32,6 @@
                         <input type="password" id="password" name="password" required>
                         <button type="button" class="toggle-password" onclick="togglePassword('password', this)"
                             aria-label="Show/Hide Password">
-                            <i class="far fa-eye"></i>
                         </button>
                     </div>
                 </div>
@@ -42,7 +41,6 @@
                         <input type="password" id="repassword" name="repassword" required>
                         <button type="button" class="toggle-password" onclick="togglePassword('repassword', this)"
                             aria-label="Show/Hide Password">
-                            <i class="far fa-eye"></i>
                         </button>
                     </div>
                 </div>
@@ -53,7 +51,7 @@
             </div>
 
             <div class="social-login-col">
-                <button type="button" class="social-btn google">
+                <button type="button" class="social-btn google" onclick="loginWithGoogle()">
                     <i class="fab fa-google"></i> Continue with Google
                 </button>
                 <button type="button" class="social-btn facebook">
@@ -66,21 +64,7 @@
             </div>
         </div>
     </div>
-    <script>
-        function togglePassword(id, btn) {
-            const input = document.getElementById(id);
-            const icon = btn.querySelector('i');
-            if (input.type === "password") {
-                input.type = "text";
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                input.type = "password";
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
-        }
-    </script>
+    <script src="../../Authen/js/SignUp.js"></script>
 </body>
 
 </html>

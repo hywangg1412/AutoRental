@@ -4,7 +4,7 @@ import Exception.EmptyDataException;
 import Exception.EventException;
 import Exception.InvalidDataException;
 import Exception.NotFoundException;
-import Model.Contract;
+import Model.Entity.Contract;
 import Service.Interfaces.IContractService;
 import java.util.function.Predicate;
 
