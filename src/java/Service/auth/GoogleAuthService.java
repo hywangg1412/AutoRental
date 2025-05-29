@@ -2,44 +2,65 @@ package Service.auth;
 
 import Constant.OAuthConstants;
 import Model.Entity.OAuth.GoogleUser;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import Model.Entity.User;
+import com.google.api.client.auth.oauth2.TokenResponse;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.services.oauth2.Oauth2;
+import com.google.api.services.oauth2.model.Userinfo;
+
 import java.io.IOException;
-import org.apache.http.client.fluent.Form;
-import org.apache.http.client.fluent.Request;
-import org.apache.http.client.ClientProtocolException;
+import java.util.Arrays;
 
-public class GoogleOAuthService extends OAuthConstants{
 
-    public String getToken(String code) throws ClientProtocolException, IOException {
-        String response = Request.Post(OAuthConstants.GOOGLE_LINK_GET_TOKEN)
-                .bodyForm(
-                        Form.form()
-                                .add("client_id", OAuthConstants.GOOGLE_CLIENT_ID)
-                                .add("client_secret", OAuthConstants.GOOGLE_CLIENT_SECRET)
-                                .add("redirect_uri", OAuthConstants.GOOGLE_REDIRECT_URI)
-                                .add("code", code)
-                                .add("grant_type", OAuthConstants.GOOGLE_GRANT_TYPE)
-                                .build()
-                )
-                .execute().returnContent().asString();
+public class GoogleAuthService extends OAuthConstants{
 
-        JsonObject jobj = new Gson().fromJson(response, JsonObject.class);
-        String accessToken = jobj.get("access_token").toString().replaceAll("\"", "");
-        return accessToken;
+    private GoogleAuthorizationCodeFlow flow;
+    
+    public GoogleAuthService(){
+        try {
+            flow = new GoogleAuthorizationCodeFlow.Builder(
+            new NetHttpTransport(),
+            GsonFactory.getDefaultInstance(),
+                    GOOGLE_CLIENT_ID,
+                    GOOGLE_CLIENT_SECRET, 
+                    Arrays.asList(OAuthConstants.GOOGLE_EMAIL_SCOPE, OAuthConstants.GOOGLE_PROFILE_SCOPE))
+                    .setAccessType("offline")
+                    .build();
+        } catch (Exception e){
+            throw new RuntimeException("Failed to initialize Google Auth Service - " + e.toString());
+        }
     }
     
-    public GoogleUser getUserInfo(final String accessToken) throws ClientProtocolException, IOException {
-
-        String link = OAuthConstants.GOOGLE_LINK_GET_USER_INFO + accessToken;
-
-        String response = Request.Get(link).execute().returnContent().asString();
-
-        GoogleUser googlePojo = new Gson().fromJson(response, GoogleUser.class);
-
-        return googlePojo;
-
+    public String getAuthorizationUrl() {
+        return flow.newAuthorizationUrl()
+            .setRedirectUri(GOOGLE_REDIRECT_URI)
+            .build();
     }
-
-
+    
+    public GoogleUser getUserInfo(String code) throws IOException {
+        TokenResponse tokenResponse = flow.newTokenRequest(code)
+            .setRedirectUri(OAuthConstants.GOOGLE_REDIRECT_URI)
+            .execute();
+            
+        GoogleCredential credential = new GoogleCredential()
+            .setAccessToken(tokenResponse.getAccessToken());
+            
+        Oauth2 oauth2 = new Oauth2.Builder(
+            new NetHttpTransport(),
+            GsonFactory.getDefaultInstance(),
+            credential)
+            .build();
+            
+        Userinfo userInfo = oauth2.userinfo().get().execute();
+        
+        return new GoogleUser(
+            userInfo.getId(),
+            userInfo.getEmail(),
+            userInfo.getName(),
+            userInfo.getPicture()
+        );
+    }
 }
