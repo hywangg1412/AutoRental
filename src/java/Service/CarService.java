@@ -4,7 +4,7 @@ import Exception.EmptyDataException;
 import Exception.EventException;
 import Exception.InvalidDataException;
 import Exception.NotFoundException;
-import Model.Car;
+import Model.Entity.Car;
 import Service.Interfaces.ICarService;
 import java.util.function.Predicate;
 

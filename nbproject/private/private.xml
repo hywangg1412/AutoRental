@@ -3,28 +3,20 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/Review.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/Booking.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/web/pages/about.jsp</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/web/pages/index.jsp</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/web/pages/authen/SignIn.jsp</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Auth/GoogleLoginServlet.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/web/WEB-INF/web.xml</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/web/pages/car-single.jsp</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/web/pages/car.jsp</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/web/pages/contact.jsp</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/web/pages/main.jsp</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/web/pages/pricing.jsp</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/web/pages/includes/footer.jsp</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/Interfaces/IBookingRepository.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/BookingRepository.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/Interfaces/Repository.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/UserRepository.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Config/DBInfo.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Config/DBContext.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/Interfaces/IUserRepository.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/web/css/SignIn.css</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/User.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/dto/UserRegisterDTO.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/sql/AutoRental.sql</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Service/auth/GoogleAuthService.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Constant/OAuthConstants.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/web/pages/authen/SignUp.jsp</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/Entity/OAuth/GoogleUser.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/Entity/User.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/web/Authen/js/config.js</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/web/Authen/js/SignIn.js</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/web/Authen/js/SignUp.js</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/Dto/UserDTO.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/Dto/UserLoginDTO.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/Dto/UserRegisterDTO.java</file>
         </group>
     </open-files>
 </project-private>

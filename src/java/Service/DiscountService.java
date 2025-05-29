@@ -4,7 +4,7 @@ import Exception.EmptyDataException;
 import Exception.EventException;
 import Exception.InvalidDataException;
 import Exception.NotFoundException;
-import Model.Discount;
+import Model.Entity.Discount;
 import Service.Interfaces.IDiscountService;
 import java.util.function.Predicate;
 

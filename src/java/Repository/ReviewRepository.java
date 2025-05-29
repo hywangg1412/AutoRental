@@ -1,6 +1,6 @@
 package Repository;
 
-import Model.Review;
+import Model.Entity.Review;
 import Repository.Interfaces.IReviewRepository;
 import java.sql.SQLException;
 import java.util.List;
