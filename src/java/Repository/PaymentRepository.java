@@ -1,6 +1,6 @@
 package Repository;
 
-import Model.Payment;
+import Model.Entity.Payment;
 import Repository.Interfaces.IPaymentRepository;
 import java.sql.SQLException;
 import java.util.List;

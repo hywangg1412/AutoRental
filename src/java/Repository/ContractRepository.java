@@ -1,6 +1,6 @@
 package Repository;
 
-import Model.Contract;
+import Model.Entity.Contract;
 import Repository.Interfaces.IContractRepository;
 import java.sql.SQLException;
 import java.util.List;

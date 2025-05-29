@@ -1,6 +1,6 @@
 package Service.Interfaces;
 
-import Model.User;
+import Model.Entity.User;
 
 public interface IUserService extends Service<User>{
     
