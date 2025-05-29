@@ -1,6 +1,6 @@
 package Repository.Interfaces;
 
-import Model.Discount;
+import Model.Entity.Discount;
 
 public interface IDiscountRepository extends Repository<Discount, Integer>{
     

@@ -1,7 +1,7 @@
 
 package Service.Interfaces;
 
-import Model.Payment;
+import Model.Entity.Payment;
 
 public interface IPaymentService extends Service<Payment> {
     
