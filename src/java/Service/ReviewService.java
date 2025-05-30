@@ -6,6 +6,7 @@ import Exception.InvalidDataException;
 import Exception.NotFoundException;
 import Model.Entity.Review;
 import Service.Interfaces.IReviewService;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 public class ReviewService implements IReviewService{
@@ -21,7 +22,7 @@ public class ReviewService implements IReviewService{
     }
 
     @Override
-    public void delete(int id) throws EventException, NotFoundException {
+    public void delete(UUID id) throws EventException, NotFoundException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -36,8 +37,8 @@ public class ReviewService implements IReviewService{
     }
 
     @Override
-    public Review findById(int id) throws NotFoundException {
+    public Review findById(UUID id) throws NotFoundException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
 }
