@@ -349,3 +349,13 @@ body {
     box-shadow: 0 2px 12px 0 rgba(64, 158, 255, 0.15);
     transform: scale(1.025);
 }
+.social-login-error {
+    color: #db4437;
+    background: #fff0f0;
+    border: 1px solid #db4437;
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin-bottom: 12px;
+    text-align: center;
+    font-weight: 600;
+}
