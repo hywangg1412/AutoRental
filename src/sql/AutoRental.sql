@@ -4,24 +4,34 @@ USE AutoRental
 GO
 
 CREATE TABLE [Users] (
-        UserId UNIQUEIDENTIFIER NOT NULL,
-        Username NVARCHAR(100) NOT NULL,
-        PasswordHash NVARCHAR(255) NOT NULL,
-        Email NVARCHAR(100) NOT NULL,
-        PhoneNumber NVARCHAR(15) NULL,
-        FirstName NVARCHAR(100) NULL,
-        LastName NVARCHAR(100) NULL,
-        DOB DATE NULL, --CHECK (DOB <= DATEADD(YEAR, -18, GETDATE())),
-        Gender NVARCHAR(10) NULL, --CHECK (Gender IN ('Male', 'Female', 'Other')),
-        Role NVARCHAR(50) NOT NULL, --DEFAULT 'User' CHECK (Role IN ('User', 'Admin', 'Staff')),
-        --FullName AS (TRIM(FirstName + ' ' + LastName)) PERSISTED,
-        UserAddress NVARCHAR(255) NULL,
-        DriverLicenseNumber NVARCHAR(50) NULL,
-        DriverLicenseImage NVARCHAR(MAX) NULL,
-        CreatedDate DATETIME2 NOT NULL, --DEFAULT GETDATE(),
-        Status VARCHAR(20) NULL, --CHECK (Status IN ('Active', 'Inactive', 'Banned')) DEFAULT 'Active',
-        CONSTRAINT PK_Users PRIMARY KEY (UserId)
+        [UserId] UNIQUEIDENTIFIER NOT NULL,
+        [Username] NVARCHAR(100) NOT NULL, --UNIQUE
+        [UserDOB] DATE NULL, --CHECK ([UserDOB] <= DATEADD(YEAR, -18, GETDATE())),
+        [PhoneNumber] NVARCHAR(11) NULL,
+        [UserAddress] NVARCHAR(MAX) NULL,
+        [UserDescription] NVARCHAR(1000) NULL,
+        [AvatarUrl] NVARCHAR(255) NULL,
+        [Gender] NVARCHAR(10) NULL, --CHECK ([Gender] IN ('Male', 'Female', 'Other')),
+        [FirstName] NVARCHAR(256) NULL,
+        [LastName] NVARCHAR(256) NULL,
+        [IsBanned] BIT NOT NULL, --DEFAULT 0,
+        [CreatedDate] DATETIME2 NULL, --DEFAULT GETDATE(),
+        [NormalizedUserName] NVARCHAR(256) NULL,
+        [Email] NVARCHAR(100) NOT NULL, --UNIQUE
+        [NormalizedEmail] NVARCHAR(256) NULL,
+        [EmailVerifed] BIT NOT NULL, --DEFAULT 0,
+        [PasswordHash] NVARCHAR(255) NOT NULL,
+        [SecurityStamp] NVARCHAR(MAX) NULL,
+        [ConcurrencyStamp] NVARCHAR(MAX) NULL,
+        [TwoFactorEnabled] BIT NOT NULL, --DEFAULT 0,
+        [LockoutEnd] DATETIME2 NULL,
+        [LockoutEnabled] BIT NOT NULL, --DEFAULT 1,
+        [AccessFailedCount] INT NOT NULL, --DEFAULT 0,
+        -- Role NVARCHAR(50) NOT NULL, --DEFAULT 'User' CHECK (Role IN ('User', 'Admin', 'Staff')),
+        [Status] VARCHAR(20) NOT NULL, --CHECK ([Status] IN ('Active', 'Inactive', 'Banned')) DEFAULT 'Active',
+        CONSTRAINT [PK_Users] PRIMARY KEY ([UserId])
     );
+    GO
 
 CREATE TABLE Car (
     CarId UNIQUEIDENTIFIER NOT NULL,
