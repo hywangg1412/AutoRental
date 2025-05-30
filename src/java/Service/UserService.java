@@ -5,24 +5,38 @@ import Exception.EventException;
 import Exception.InvalidDataException;
 import Exception.NotFoundException;
 import Model.Entity.User;
+import Repository.UserRepository;
 import Service.Interfaces.IUserService;
+import java.sql.SQLException;
+import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class UserService implements IUserService{
+public class UserService implements IUserService {
+
+    private UserRepository userRepsitory;
+
+    public UserService() {
+        userRepsitory = new UserRepository();
+    }
 
     @Override
     public void display() throws EmptyDataException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            userRepsitory.findAll();
+        } catch (SQLException ex) {
+            System.out.println("Error while display all user - " + ex.getMessage());
+        }
     }
 
     @Override
     public void add(User entry) throws EventException, InvalidDataException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void delete(int id) throws EventException, NotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            userRepsitory.add(entry);
+        } catch (SQLException ex) {
+            System.out.println("Error while adding user - " + ex.getMessage());
+        }
     }
 
     @Override
@@ -36,8 +50,27 @@ public class UserService implements IUserService{
     }
 
     @Override
-    public User findById(int id) throws NotFoundException {
+    public void delete(UUID id) throws EventException, NotFoundException {
+        try {
+            userRepsitory.delete(id);
+        } catch (Exception ex) {
+            System.out.println("Error while adding user - " + ex.getMessage());
+        }
+    }
+
+    @Override
+    public User findById(UUID id) throws NotFoundException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
+    @Override
+    public User findByEmail(String email) {
+        return userRepsitory.findByEmail(email);
+    }
+
+    @Override
+    public boolean isEmailExist(String email) {
+        return findByEmail(email) != null;
+    }
+
 }

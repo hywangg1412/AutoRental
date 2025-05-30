@@ -38,10 +38,42 @@ public class GoogleAuthService extends OAuthConstants {
                 .setRedirectUri(GOOGLE_REDIRECT_URI)
                 .build();
     }
+    
+    public String getAuthorizationRegisterUrl() {
+        return flow.newAuthorizationUrl()
+                .setRedirectUri(GOOGLE_REDIRECT_URI_REGISTER)
+                .build();
+    }
 
     public GoogleUser getUserInfo(String code) throws IOException {
         TokenResponse tokenResponse = flow.newTokenRequest(code)
                 .setRedirectUri(OAuthConstants.GOOGLE_REDIRECT_URI)
+                .execute();
+
+        GoogleCredential credential = new GoogleCredential()
+                .setAccessToken(tokenResponse.getAccessToken());
+
+        Oauth2 oauth2 = new Oauth2.Builder(
+                new NetHttpTransport(),
+                GsonFactory.getDefaultInstance(),
+                credential)
+                .build();
+
+        Userinfo userInfo = oauth2.userinfo().get().execute();
+
+        return new GoogleUser(
+                userInfo.getId(),
+                userInfo.getEmail(),
+                userInfo.getFamilyName(),
+                userInfo.getGivenName(),
+                userInfo.getPicture(),
+                userInfo.getVerifiedEmail()
+        );
+    }
+    
+    public GoogleUser getUserInfoRegister(String code) throws IOException {
+        TokenResponse tokenResponse = flow.newTokenRequest(code)
+                .setRedirectUri(OAuthConstants.GOOGLE_REDIRECT_URI_REGISTER)
                 .execute();
 
         GoogleCredential credential = new GoogleCredential()
