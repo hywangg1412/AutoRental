@@ -1,50 +1,108 @@
-function togglePassword(id, btn) {
-    const eyeIcon = document.querySelector('.input-icon-eye i');
-    const passwordInput = document.getElementById('password');
-    const eyeSpan = document.querySelector('.input-icon-eye');
+function continueWithGoogle() {
+    try {
+        console.log('=== GOOGLE LOGIN DEBUG ===');
+        console.log('Starting Google login process...');
+        
+        console.log('GOOGLE_CONFIG:', GOOGLE_CONFIG);
+        console.log('GOOGLE_REGISTER_CONFIG:', GOOGLE_REGISTER_CONFIG);
+        
+        showLoading('google');
 
-    if (eyeSpan) {
-        eyeSpan.style.display = 'none';
-    }
+        const state = generateState();
+        console.log('Generated state:', state);
+        
+        try {
+            sessionStorage.setItem('oauth_state', state);
+            console.log('SessionStorage set successfully');
+        } catch (storageError) {
+            console.error('SessionStorage error:', storageError);
+        }
 
-    if (passwordInput) {
-        passwordInput.addEventListener('input', function () {
-            if (this.value.length > 0) {
-                eyeSpan.style.display = 'inline-flex';
-            } else {
-                eyeSpan.style.display = 'none';
-                eyeIcon.classList.remove('fa-eye-slash');
-                eyeIcon.classList.add('fa-eye');
-            }
-        });
-    }
+        const params = {
+            scope: GOOGLE_CONFIG.scope,
+            redirect_uri: GOOGLE_REGISTER_CONFIG.redirectUri,
+            response_type: GOOGLE_CONFIG.responseType,
+            client_id: GOOGLE_CONFIG.clientId,
+            approval_prompt: GOOGLE_CONFIG.approvalPrompt,
+            state: state
+        };
+        console.log('OAuth params:', params);
 
-    if (eyeIcon && passwordInput && eyeSpan) {
-        eyeSpan.addEventListener('click', function () {
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                eyeIcon.classList.remove('fa-eye');
-                eyeIcon.classList.add('fa-eye-slash');
-            } else {
-                passwordInput.type = 'password';
-                eyeIcon.classList.remove('fa-eye-slash');
-                eyeIcon.classList.add('fa-eye');
-            }
-        });
+        const url = GOOGLE_CONFIG.authEndpoint + '?' + new URLSearchParams(params).toString();
+        console.log('Final URL:', url);
+        console.log('Attempting redirect...');
+        
+        window.location.href = url;
+        
+    } catch (error) {
+        console.error('=== ERROR IN GOOGLE LOGIN ===');
+        console.error('Error details:', error);
+        console.error('Error stack:', error.stack);
+        hideLoading('google');
+        showError('Google register failed. Please try again.');
     }
 }
 
-function loginWithGoogle() {
-    const googleAuthUrl = 'https://accounts.google.com/o/oauth2/auth';
-    const params = {
-        scope: 'email profile openid',
-        redirect_uri: 'http://localhost:8080/LoginEmail/login',
-        response_type: 'code',
-        client_id: '885594330359qiap8iobv2612lng4j4dertmkgd21164.apps.googleusercontent.com',
-        approval_prompt: 'force'
-    };
+// Thêm hàm kiểm tra khi trang load
+window.addEventListener('DOMContentLoaded', function() {
+    console.log('=== PAGE LOADED - CONFIG CHECK ===');
+    console.log('GOOGLE_CONFIG exists:', typeof GOOGLE_CONFIG !== 'undefined');
+    console.log('GOOGLE_REGISTER_CONFIG exists:', typeof GOOGLE_REGISTER_CONFIG !== 'undefined');
+    
+    if (typeof GOOGLE_CONFIG !== 'undefined') {
+        console.log('Google Client ID:', GOOGLE_CONFIG.clientId);
+        console.log('Google Auth Endpoint:', GOOGLE_CONFIG.authEndpoint);
+    }
+    
+    // Kiểm tra button
+    const googleBtn = document.querySelector('.social-btn.google');
+    console.log('Google button found:', !!googleBtn);
+    
+    if (googleBtn) {
+        console.log('Google button onclick:', googleBtn.getAttribute('onclick'));
+    }
+});
 
-    const url = googleAuthUrl + '?' + new URLSearchParams(params).toString();
+// Giữ nguyên các hàm khác
+function generateState() {
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+}
 
-    window.location.href = url;
+function showLoading(buttonType) {
+    const button = document.querySelector(`.social-btn.${buttonType}`);
+    if (button) {
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+    }
+}
+
+function hideLoading(buttonType) {
+    const button = document.querySelector(`.social-btn.${buttonType}`);
+    if (button) {
+        button.disabled = false;
+        if (buttonType === 'google') {
+            button.innerHTML = '<i class="fab fa-google"></i> Continue with Google';
+        } else if (buttonType === 'facebook') {
+            button.innerHTML = '<i class="fab fa-facebook-f"></i> Continue with Facebook';
+        }
+    }
+}
+
+function showError(message) {
+    let errorDiv = document.querySelector('.social-login-error');
+    if (!errorDiv) {
+        errorDiv = document.createElement('div');
+        errorDiv.className = 'social-login-error';
+        const socialButtons = document.querySelector('.social-login-col');
+        socialButtons.parentNode.insertBefore(errorDiv, socialButtons.nextSibling);
+    }
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
+}
+
+function hideError() {
+    const errorDiv = document.querySelector('.social-login-error');
+    if (errorDiv) {
+        errorDiv.style.display = 'none';
+    }
 }
