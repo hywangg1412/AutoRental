@@ -36,26 +36,29 @@ function generateState() {
     return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 }
 
-
-function showLoading() {
-    const googleBtn = document.querySelector('.social-btn.google');
-    if (googleBtn) {
-        googleBtn.disabled = true;
-        googleBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+function showLoading(buttonType) {
+    const button = document.querySelector(`.social-btn.${buttonType}`);
+    if (button) {
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
     }
 }
 
-function hideLoading() {
-    const googleBtn = document.querySelector('.social-btn.google');
-    if (googleBtn) {
-        googleBtn.disabled = false;
-        googleBtn.innerHTML = '<i class="fab fa-google"></i> Login with Google';
+function hideLoading(buttonType) {
+    const button = document.querySelector(`.social-btn.${buttonType}`);
+    if (button) {
+        button.disabled = false;
+        if (buttonType === 'google') {
+            button.innerHTML = '<i class="fab fa-google"></i> Login with Google';
+        } else if (buttonType === 'facebook') {
+            button.innerHTML = '<i class="fab fa-facebook-f"></i> Login with Facebook';
+        }
     }
 }
 
 function loginWithGoogle() {
     try {
-        showLoading();
+        showLoading('google');
         
         const state = generateState();
         sessionStorage.setItem('oauth_state', state);
@@ -73,24 +76,49 @@ function loginWithGoogle() {
         window.location.href = url;
     } catch (error) {
         console.error('Error during Google login:', error);
-        hideLoading();
+        hideLoading('google');
+        showError('Google login failed. Please try again.');
+    }
+}
+
+function loginWithFacebook() {
+    try {
+        showLoading('facebook');
+        
+        const state = generateState();
+        sessionStorage.setItem('oauth_state', state);
+        
+        const params = {
+            client_id: FACEBOOK_CONFIG.clientId,
+            redirect_uri: FACEBOOK_CONFIG.redirectUri,
+            scope: FACEBOOK_CONFIG.scope,
+            response_type: 'code',
+            state: state
+        };
+
+        const url = FACEBOOK_CONFIG.authEndpoint + '?' + new URLSearchParams(params).toString();
+        window.location.href = url;
+    } catch (error) {
+        console.error('Error during Facebook login:', error);
+        hideLoading('facebook');
+        showError('Facebook login failed. Please try again.');
     }
 }
 
 function showError(message) {
-    let errorDiv = document.querySelector('.google-login-error');
+    let errorDiv = document.querySelector('.social-login-error');
     if (!errorDiv) {
         errorDiv = document.createElement('div');
-        errorDiv.className = 'google-login-error';
-        const googleBtn = document.querySelector('.social-btn.google');
-        googleBtn.parentNode.insertBefore(errorDiv, googleBtn.nextSibling);
+        errorDiv.className = 'social-login-error';
+        const socialButtons = document.querySelector('.social-login-row');
+        socialButtons.parentNode.insertBefore(errorDiv, socialButtons.nextSibling);
     }
     errorDiv.textContent = message;
     errorDiv.style.display = 'block';
 }
 
 function hideError() {
-    const errorDiv = document.querySelector('.google-login-error');
+    const errorDiv = document.querySelector('.social-login-error');
     if (errorDiv) {
         errorDiv.style.display = 'none';
     }
