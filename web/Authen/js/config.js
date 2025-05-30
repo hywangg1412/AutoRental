@@ -5,7 +5,7 @@ const GOOGLE_CONFIG = {
     scope: 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
     responseType: 'code',
     approvalPrompt: 'force',
-    authEndpoint: 'https://accounts.google.com/o/oauth2/auth',
+    authEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',
     tokenEndpoint: 'https://oauth2.googleapis.com/token',
     userInfoEndpoint: 'https://www.googleapis.com/oauth2/v1/userinfo'
 };
@@ -18,4 +18,12 @@ const FACEBOOK_CONFIG = {
     responseType: 'code',
     state: 'some_random_string',
     authEndpoint: 'https://www.facebook.com/v23.0/dialog/oauth'
+};
+
+const GOOGLE_REGISTER_CONFIG = {
+    redirectUri: 'http://localhost:8080/autorental/googleRegister'
+};
+
+const FACEBOOK_REGISTER_CONFIG = {
+    redirectUri: 'http://localhost:8080/autorental/facebookRegister'
 };
