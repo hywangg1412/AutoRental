@@ -45,7 +45,7 @@
                             <button type="button" class="social-btn google" onclick="loginWithGoogle()">
                                 <i class="fab fa-google"></i> Login with Google
                             </button>
-                            <button type="button" class="social-btn facebook">
+                            <button type="button" class="social-btn facebook" onclick="loginWithFacebook()">
                                 <i class="fab fa-facebook-f"></i> Login with Facebook
                             </button>
                         </div>
@@ -55,6 +55,6 @@
             </div>
         </div>
     </body>
-    <script src="../../Authen/js/SignIn.js"></script>
     <script src="../../Authen/js/config.js"></script>
+    <script src="../../Authen/js/SignIn.js"></script>
 </html>

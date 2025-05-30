@@ -4,9 +4,17 @@
         <servlet-name>GoogleLoginServlet</servlet-name>
         <servlet-class>Controller.Auth.GoogleLoginServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>FacebookLoginServlet</servlet-name>
+        <servlet-class>Controller.Auth.FacebookLoginServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>GoogleLoginServlet</servlet-name>
         <url-pattern>/googleLogin</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FacebookLoginServlet</servlet-name>
+        <url-pattern>/facebookLogin</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>pages/authen/SignIn.jsp</welcome-file>
