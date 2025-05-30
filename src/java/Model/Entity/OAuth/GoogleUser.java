@@ -2,56 +2,24 @@ package Model.Entity.OAuth;
 
 public class GoogleUser {
 
-    private String googleId;
-    
-    private String email;
-    
-//    private boolean emailVerified;
-    
-    // Tên đầy đủ của user
-    private String fullName;
-    
-    // Tên đầu tiên
-//    private String givenName;
-//    
-//    // Tên cuối
-//    private String familyName;
-    
-    // Link ảnh đại diện
-    private String avatarUrl;
-    
-    // Link profile Google
-//    private String profileLink;
-//    
-//    // Locale của user (ví dụ: vi, en-US)
-//    private String locale;
-//    
-//    // Thời gian token hết hạn
-//    private Long tokenExpiresIn;
-//    
-//    // Loại token
-//    private String tokenType;
-//    
-//    // Access token
-//    private String accessToken;
-//    
-//    // Refresh token (nếu có)
-//    private String refreshToken;
-//    
-//    // Scope của token
-//    private String tokenScope;
-//    
-//    // Thời gian token được tạo
-//    private Long tokenCreatedAt;
+    private String googleId;              
+    private String email;          
+    private String firstName;       
+    private String lastName;       
+    private String avatarUrl;         
+    private boolean emailVerified;  
 
     public GoogleUser() {
     }
 
-    public GoogleUser(String googleId, String email, String fullName, String avatarUrl) {
+    public GoogleUser(String googleId, String email, String firstName, String lastName,
+            String avatarUrl, boolean emailVerified) {
         this.googleId = googleId;
         this.email = email;
-        this.fullName = fullName;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.avatarUrl = avatarUrl;
+        this.emailVerified = emailVerified;
     }
 
     public String getGoogleId() {
@@ -70,12 +38,20 @@ public class GoogleUser {
         this.email = email;
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getAvatarUrl() {
@@ -85,5 +61,19 @@ public class GoogleUser {
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
     }
+
+    public boolean isEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setEmailVerified(boolean emailVerified) {
+        this.emailVerified = emailVerified;
+    }
+
+    @Override
+    public String toString() {
+        return "GoogleUser{" + "googleId=" + googleId + ", email=" + email + ", firstName=" + firstName + ", lastName=" + lastName + ", avatarUrl=" + avatarUrl + ", emailVerified=" + emailVerified + '}';
+    }
+
     
 }
