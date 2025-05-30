@@ -1,6 +1,7 @@
 /build/
 
 # Environment variables
+env.js
 .env
 .env.*
 
