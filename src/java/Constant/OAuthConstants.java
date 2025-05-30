@@ -20,6 +20,9 @@ public class OAuthConstants {
     public static final String GOOGLE_REDIRECT_URI = getenv("GOOGLE_REDIRECT_URI", "");
     public static final String GOOGLE_EMAIL_SCOPE = getenv("GOOGLE_EMAIL_SCOPE", "https://www.googleapis.com/auth/userinfo.email");
     public static final String GOOGLE_PROFILE_SCOPE = getenv("GOOGLE_PROFILE_SCOPE", "https://www.googleapis.com/auth/userinfo.profile");
+    
+    // REGISTER
+    public static final String GOOGLE_REDIRECT_URI_REGISTER = getenv("GOOGLE_REDIRECT_URI_REGISTER", "");
 
     // Facebook OAuth
     public static final String FACEBOOK_AUTH_URL = getenv("FACEBOOK_AUTH_URL", "https://www.facebook.com/v23.0/dialog/oauth");

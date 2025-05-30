@@ -7,45 +7,62 @@ import java.util.UUID;
 public class User {
     private UUID userId;
     private String username;
-    private String passwordHash;
-    private String email;
+    private LocalDate userDOB;
     private String phoneNumber;
+    private String userAddress;
+    private String userDescription;
+    private String avatarUrl;
+    private String gender;
     private String firstName;
     private String lastName;
-    private LocalDate dob;
-    private String gender;
-    private String role;
-    private String userAddress;
-    private String driverLicenseNumber;
-    private String driverLicenseImage;
+    private boolean isBanned;
     private LocalDateTime createdDate;
+    private String normalizedUserName;
+    private String email;
+    private String normalizedEmail;
+    private boolean emailVerifed;
+    private String passwordHash;
+    private String securityStamp;
+    private String concurrencyStamp;
+    private boolean twoFactorEnabled;
+    private LocalDateTime lockoutEnd;
+    private boolean lockoutEnabled;
+    private int accessFailedCount;
     private String status;
 
     public User() {
-        // this.userId = UUID.randomUUID();
-        // this.createdDate = LocalDateTime.now();
-        // this.role = "User";
-        // this.status = "Active";
     }
 
-    public User(UUID userId, String username, String passwordHash, String email, String phoneNumber,
-            String firstName, String lastName, LocalDate dob, String gender, String role,
-            String userAddress, String driverLicenseNumber, String driverLicenseImage,
-            LocalDateTime createdDate, String status) {
+    public User(UUID userId, String username, LocalDate userDOB, String phoneNumber,
+            String userAddress, String userDescription, String avatarUrl, String gender,
+            String firstName, String lastName, boolean isBanned, LocalDateTime createdDate,
+            String normalizedUserName, String email, String normalizedEmail, boolean emailVerifed,
+            String passwordHash, String securityStamp, String concurrencyStamp,
+            boolean twoFactorEnabled, LocalDateTime lockoutEnd, boolean lockoutEnabled,
+            int accessFailedCount, String status) {
         this.userId = userId;
         this.username = username;
-        this.passwordHash = passwordHash;
-        this.email = email;
+        this.userDOB = userDOB;
         this.phoneNumber = phoneNumber;
+        this.userAddress = userAddress;
+        this.userDescription = userDescription;
+        this.avatarUrl = avatarUrl;
+        this.gender = gender;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.dob = dob;
-        this.gender = gender;
-        this.role = role;
-        this.userAddress = userAddress;
-        this.driverLicenseNumber = driverLicenseNumber;
-        this.driverLicenseImage = driverLicenseImage;
+        this.isBanned = isBanned;
         this.createdDate = createdDate;
+        this.normalizedUserName = normalizedUserName;
+        this.email = email;
+        this.normalizedEmail = normalizedEmail;
+        this.emailVerifed = emailVerifed;
+        this.passwordHash = passwordHash;
+        this.securityStamp = securityStamp;
+        this.concurrencyStamp = concurrencyStamp;
+        this.twoFactorEnabled = twoFactorEnabled;
+        this.lockoutEnd = lockoutEnd;
+        this.lockoutEnabled = lockoutEnabled;
+        this.accessFailedCount = accessFailedCount;
         this.status = status;
     }
 
@@ -53,6 +70,7 @@ public class User {
         return firstName + " " + lastName;
     }
 
+    // Getters and Setters
     public UUID getUserId() {
         return userId;
     }
@@ -69,20 +87,12 @@ public class User {
         this.username = username;
     }
 
-    public String getPasswordHash() {
-        return passwordHash;
+    public LocalDate getUserDOB() {
+        return userDOB;
     }
 
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUserDOB(LocalDate userDOB) {
+        this.userDOB = userDOB;
     }
 
     public String getPhoneNumber() {
@@ -91,6 +101,38 @@ public class User {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getUserAddress() {
+        return userAddress;
+    }
+
+    public void setUserAddress(String userAddress) {
+        this.userAddress = userAddress;
+    }
+
+    public String getUserDescription() {
+        return userDescription;
+    }
+
+    public void setUserDescription(String userDescription) {
+        this.userDescription = userDescription;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public String getFirstName() {
@@ -109,52 +151,12 @@ public class User {
         this.lastName = lastName;
     }
 
-    public LocalDate getDob() {
-        return dob;
+    public boolean isBanned() {
+        return isBanned;
     }
 
-    public void setDob(LocalDate dob) {
-        this.dob = dob;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public String getUserAddress() {
-        return userAddress;
-    }
-
-    public void setUserAddress(String userAddress) {
-        this.userAddress = userAddress;
-    }
-
-    public String getDriverLicenseNumber() {
-        return driverLicenseNumber;
-    }
-
-    public void setDriverLicenseNumber(String driverLicenseNumber) {
-        this.driverLicenseNumber = driverLicenseNumber;
-    }
-
-    public String getDriverLicenseImage() {
-        return driverLicenseImage;
-    }
-
-    public void setDriverLicenseImage(String driverLicenseImage) {
-        this.driverLicenseImage = driverLicenseImage;
+    public void setBanned(boolean banned) {
+        isBanned = banned;
     }
 
     public LocalDateTime getCreatedDate() {
@@ -163,6 +165,94 @@ public class User {
 
     public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public String getNormalizedUserName() {
+        return normalizedUserName;
+    }
+
+    public void setNormalizedUserName(String normalizedUserName) {
+        this.normalizedUserName = normalizedUserName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getNormalizedEmail() {
+        return normalizedEmail;
+    }
+
+    public void setNormalizedEmail(String normalizedEmail) {
+        this.normalizedEmail = normalizedEmail;
+    }
+
+    public boolean isEmailVerifed() {
+        return emailVerifed;
+    }
+
+    public void setEmailVerifed(boolean emailVerifed) {
+        this.emailVerifed = emailVerifed;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
+    public String getSecurityStamp() {
+        return securityStamp;
+    }
+
+    public void setSecurityStamp(String securityStamp) {
+        this.securityStamp = securityStamp;
+    }
+
+    public String getConcurrencyStamp() {
+        return concurrencyStamp;
+    }
+
+    public void setConcurrencyStamp(String concurrencyStamp) {
+        this.concurrencyStamp = concurrencyStamp;
+    }
+
+    public boolean isTwoFactorEnabled() {
+        return twoFactorEnabled;
+    }
+
+    public void setTwoFactorEnabled(boolean twoFactorEnabled) {
+        this.twoFactorEnabled = twoFactorEnabled;
+    }
+
+    public LocalDateTime getLockoutEnd() {
+        return lockoutEnd;
+    }
+
+    public void setLockoutEnd(LocalDateTime lockoutEnd) {
+        this.lockoutEnd = lockoutEnd;
+    }
+
+    public boolean isLockoutEnabled() {
+        return lockoutEnabled;
+    }
+
+    public void setLockoutEnabled(boolean lockoutEnabled) {
+        this.lockoutEnabled = lockoutEnabled;
+    }
+
+    public int getAccessFailedCount() {
+        return accessFailedCount;
+    }
+
+    public void setAccessFailedCount(int accessFailedCount) {
+        this.accessFailedCount = accessFailedCount;
     }
 
     public String getStatus() {
@@ -181,11 +271,9 @@ public class User {
                 ", email='" + email + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", fullName='" + getFullName() + '\'' +
-                ", dob=" + dob +
+                ", userDOB=" + userDOB +
                 ", gender='" + gender + '\'' +
-                ", role='" + role + '\'' +
                 ", userAddress='" + userAddress + '\'' +
-                ", driverLicenseNumber='" + driverLicenseNumber + '\'' +
                 ", createdDate=" + createdDate +
                 ", status='" + status + '\'' +
                 '}';
