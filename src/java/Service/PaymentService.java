@@ -6,6 +6,7 @@ import Exception.InvalidDataException;
 import Exception.NotFoundException;
 import Model.Entity.Payment;
 import Service.Interfaces.IPaymentService;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 public class PaymentService implements IPaymentService{
@@ -21,7 +22,7 @@ public class PaymentService implements IPaymentService{
     }
 
     @Override
-    public void delete(int id) throws EventException, NotFoundException {
+    public void delete(UUID id) throws EventException, NotFoundException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -36,8 +37,8 @@ public class PaymentService implements IPaymentService{
     }
 
     @Override
-    public Payment findById(int id) throws NotFoundException {
+    public Payment findById(UUID id) throws NotFoundException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
 }
