@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import Util.SessionUtil;
 
 //facebookLogin
 public class FacebookRegisterServlet extends HttpServlet {
@@ -46,7 +47,9 @@ public class FacebookRegisterServlet extends HttpServlet {
                 user = userMapper.mapFacebookUserToUser(facebookUser);
                 try {
                     userService.add(user);
-                    request.getSession().setAttribute("user", user);
+                    SessionUtil.removeSessionAttribute(request, "user");
+                    SessionUtil.setSessionAttribute(request, "user", user);
+                    SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30*24*60*60, true, false, "/");
                     response.sendRedirect(request.getContextPath() + "/pages/index.jsp");
                 } catch (Exception ex) {
                     System.out.println("Can't add user to the system");
