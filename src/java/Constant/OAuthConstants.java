@@ -6,7 +6,7 @@ public class OAuthConstants {
 
     public static final Dotenv dotenv = io.github.cdimascio.dotenv.Dotenv.configure()
             .directory("L:/Workspace/SWP/AutoRental")
-//            .directory(System.getProperty("user.dir"))
+            //            .directory(System.getProperty("user.dir"))
             .ignoreIfMalformed()
             .ignoreIfMissing()
             .load();
@@ -20,7 +20,7 @@ public class OAuthConstants {
     public static final String GOOGLE_REDIRECT_URI = getenv("GOOGLE_REDIRECT_URI", "");
     public static final String GOOGLE_EMAIL_SCOPE = getenv("GOOGLE_EMAIL_SCOPE", "https://www.googleapis.com/auth/userinfo.email");
     public static final String GOOGLE_PROFILE_SCOPE = getenv("GOOGLE_PROFILE_SCOPE", "https://www.googleapis.com/auth/userinfo.profile");
-    
+
     // REGISTER
     public static final String GOOGLE_REDIRECT_URI_REGISTER = getenv("GOOGLE_REDIRECT_URI_REGISTER", "");
 
@@ -35,6 +35,8 @@ public class OAuthConstants {
     public static final String FACEBOOK_GRANT_TYPE = getenv("FACEBOOK_GRANT_TYPE", "authorization_code");
     public static final String FACEBOOK_SCOPE = getenv("FACEBOOK_SCOPE", "email,public_profile");
     public static final String FACEBOOK_STATE = getenv("FACEBOOK_STATE", "some_random_string");
+
+    public static final String FACEBOOK_REDIRECT_URI_REGISTER = getenv("FACEBOOK_REDIRECT_URI_REGISTER", "");
 
     //Debug
     static {
