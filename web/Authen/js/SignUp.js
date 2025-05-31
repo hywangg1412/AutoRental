@@ -2,15 +2,15 @@ function continueWithGoogle() {
     try {
         console.log('=== GOOGLE LOGIN DEBUG ===');
         console.log('Starting Google login process...');
-        
+
         console.log('GOOGLE_CONFIG:', GOOGLE_CONFIG);
         console.log('GOOGLE_REGISTER_CONFIG:', GOOGLE_REGISTER_CONFIG);
-        
+
         showLoading('google');
 
         const state = generateState();
         console.log('Generated state:', state);
-        
+
         try {
             sessionStorage.setItem('oauth_state', state);
             console.log('SessionStorage set successfully');
@@ -31,9 +31,9 @@ function continueWithGoogle() {
         const url = GOOGLE_CONFIG.authEndpoint + '?' + new URLSearchParams(params).toString();
         console.log('Final URL:', url);
         console.log('Attempting redirect...');
-        
+
         window.location.href = url;
-        
+
     } catch (error) {
         console.error('=== ERROR IN GOOGLE LOGIN ===');
         console.error('Error details:', error);
@@ -43,21 +43,66 @@ function continueWithGoogle() {
     }
 }
 
+function continueWithFacebook() {
+    try {
+        console.log('=== FACEBOOK LOGIN DEBUG ===');
+        console.log('Starting Facebook login process...');
+
+        console.log('FACEBOOK_CONFIG:', FACEBOOK_CONFIG);
+        console.log('FACEBOOK_REGISTER_CONFIG:', FACEBOOK_REGISTER_CONFIG);
+
+        showLoading('facebook');
+
+        const state = generateState();
+        console.log('Generated state:', state);
+
+        try {
+            sessionStorage.setItem('oauth_state', state);
+            console.log('SessionStorage set successfully');
+        } catch (storageError) {
+            console.error('SessionStorage error:', storageError);
+        }
+
+        const params = {
+            scope: FACEBOOK_CONFIG.scope,
+            redirect_uri: FACEBOOK_REGISTER_CONFIG.redirectUri,
+            response_type: FACEBOOK_CONFIG.responseType,
+            client_id: FACEBOOK_CONFIG.clientId,
+            state: state
+        };
+
+        console.log('OAuth params:', params);
+
+        const url = FACEBOOK_CONFIG.authEndpoint + '?' + new URLSearchParams(params).toString();
+        console.log('Final URL:', url);
+        console.log('Attempting redirect...');
+
+        window.location.href = url;
+
+    } catch (error) {
+        console.error('=== ERROR IN FACEBOOK LOGIN ===');
+        console.error('Error details:', error);
+        console.error('Error stack:', error.stack);
+        hideLoading('facebook');
+        showError('Facebook register failed. Please try again.');
+    }
+}
+
 // Thêm hàm kiểm tra khi trang load
-window.addEventListener('DOMContentLoaded', function() {
+window.addEventListener('DOMContentLoaded', function () {
     console.log('=== PAGE LOADED - CONFIG CHECK ===');
     console.log('GOOGLE_CONFIG exists:', typeof GOOGLE_CONFIG !== 'undefined');
     console.log('GOOGLE_REGISTER_CONFIG exists:', typeof GOOGLE_REGISTER_CONFIG !== 'undefined');
-    
+
     if (typeof GOOGLE_CONFIG !== 'undefined') {
         console.log('Google Client ID:', GOOGLE_CONFIG.clientId);
         console.log('Google Auth Endpoint:', GOOGLE_CONFIG.authEndpoint);
     }
-    
+
     // Kiểm tra button
     const googleBtn = document.querySelector('.social-btn.google');
     console.log('Google button found:', !!googleBtn);
-    
+
     if (googleBtn) {
         console.log('Google button onclick:', googleBtn.getAttribute('onclick'));
     }
