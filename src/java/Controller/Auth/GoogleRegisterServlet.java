@@ -11,6 +11,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import Util.SessionUtil;
 
 // googleRegister
 public class GoogleRegisterServlet extends HttpServlet {
@@ -42,14 +43,16 @@ public class GoogleRegisterServlet extends HttpServlet {
 
                 if (user != null) {
                     request.setAttribute("errMsg", "Email with this account already exist");
-                    request.getRequestDispatcher(request.getContextPath() + "/pages/authen/SignUp.jsp").forward(request, response);
+                    request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
                     return;
                 }
 
                 user = userMapper.mapGoogleUserToUser(googleUser);
                 try {
                     userService.add(user);
-                    request.getSession().setAttribute("user", user);
+                    SessionUtil.removeSessionAttribute(request, "user");
+                    SessionUtil.setSessionAttribute(request, "user", user);
+                    SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30*24*60*60, true, false, "/");
                     response.sendRedirect(request.getContextPath() + "/pages/index.jsp");
                 } catch (Exception ex) {
                     System.out.println("Can't add user to the system");
