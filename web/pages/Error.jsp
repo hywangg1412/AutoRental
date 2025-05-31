@@ -23,6 +23,6 @@
         <%
             }
         %>
-        <a href="<%= request.getContextPath() %>/pages/authen/SignUp.jsp">Back to Sign Up</a>
+        <a href="${pageContext.request.contextPath}/pages/authen/SignUp.jsp">Back to Sign Up</a>
     </body>
 </html>

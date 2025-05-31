@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Login to your account</title>
-        <link rel="stylesheet" href="../../Authen/css/SignIn.css"/>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/Authen/css/SignIn.css"/>
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
     </head>
@@ -49,12 +49,12 @@
                                 <i class="fab fa-facebook-f"></i> Login with Facebook
                             </button>
                         </div>
-                        <p class="register-link">Don't Have An Account ? <a href="SignUp.jsp">Sign Up</a></p>
+                        <p class="register-link">Don't Have An Account ? <a href="${pageContext.request.contextPath}/pages/authen/SignUp.jsp">Sign Up</a></p>
                     </form>
                 </div>
             </div>
         </div>
     </body>
-    <script src="../../Authen/js/config.js"></script>
-    <script src="../../Authen/js/SignIn.js"></script>
+    <script src="${pageContext.request.contextPath}/Authen/js/config.js"></script>
+    <script src="${pageContext.request.contextPath}/Authen/js/SignIn.js"></script>
 </html>
