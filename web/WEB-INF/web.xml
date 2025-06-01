@@ -16,6 +16,14 @@
         <servlet-name>FacebookRegisterServlet</servlet-name>
         <servlet-class>Controller.Auth.FacebookRegisterServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>NormalRegisterServlet</servlet-name>
+        <servlet-class>Controller.Auth.NormalRegisterServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>NormalLoginServlet</servlet-name>
+        <servlet-class>Controller.Auth.NormalLoginServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>GoogleLoginServlet</servlet-name>
         <url-pattern>/googleLogin</url-pattern>
@@ -31,6 +39,14 @@
     <servlet-mapping>
         <servlet-name>FacebookRegisterServlet</servlet-name>
         <url-pattern>/facebookRegister</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>NormalRegisterServlet</servlet-name>
+        <url-pattern>/normalRegister</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>NormalLoginServlet</servlet-name>
+        <url-pattern>/normalLogin</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>pages/authen/SignIn.jsp</welcome-file>
