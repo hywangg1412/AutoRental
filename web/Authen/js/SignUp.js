@@ -151,3 +151,138 @@ function hideError() {
         errorDiv.style.display = 'none';
     }
 }
+
+// Function to validate email format
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+// Function to validate password strength
+function isStrongPassword(password) {
+    // At least 8 characters, 1 uppercase, 1 lowercase, 1 number, max 100 characters
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,100}$/;
+    return passwordRegex.test(password);
+}
+
+// Function to show error message
+function showError(elementId, message) {
+    const element = document.getElementById(elementId);
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.textContent = message;
+    
+    // Remove any existing error message
+    const existingError = element.parentElement.querySelector('.error-message');
+    if (existingError) {
+        existingError.remove();
+    }
+    
+    element.parentElement.appendChild(errorDiv);
+    element.classList.add('error');
+}
+
+// Function to clear error message
+function clearError(elementId) {
+    const element = document.getElementById(elementId);
+    const errorDiv = element.parentElement.querySelector('.error-message');
+    if (errorDiv) {
+        errorDiv.remove();
+    }
+    element.classList.remove('error');
+}
+
+// Add form validation
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('.signup-form');
+    
+    form.addEventListener('submit', function(event) {
+        let isValid = true;
+        
+        // Get form values
+        const username = document.getElementById('username').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const repassword = document.getElementById('repassword').value;
+        
+        // Validate username
+        if (username.length < 3) {
+            showError('username', 'Username must be at least 3 characters long');
+            isValid = false;
+        } else {
+            clearError('username');
+        }
+        
+        // Validate email
+        if (!isValidEmail(email)) {
+            showError('email', 'Please enter a valid email address');
+            isValid = false;
+        } else {
+            clearError('email');
+        }
+        
+        // Validate password
+        if (!isStrongPassword(password)) {
+            showError('password', 'Password must be between 8 and 100 characters long and contain uppercase, lowercase, and numbers');
+            isValid = false;
+        } else {
+            clearError('password');
+        }
+        
+        // Validate password match
+        if (password !== repassword) {
+            showError('repassword', 'Passwords do not match');
+            isValid = false;
+        } else {
+            clearError('repassword');
+        }
+        
+        // Prevent form submission if validation fails
+        if (!isValid) {
+            event.preventDefault();
+        }
+    });
+    
+    // Add real-time validation on input
+    const inputs = form.querySelectorAll('input');
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            const value = this.value.trim();
+            
+            switch(this.id) {
+                case 'username':
+                    if (value.length < 3) {
+                        showError('username', 'Username must be at least 3 characters long');
+                    } else {
+                        clearError('username');
+                    }
+                    break;
+                    
+                case 'email':
+                    if (!isValidEmail(value)) {
+                        showError('email', 'Please enter a valid email address');
+                    } else {
+                        clearError('email');
+                    }
+                    break;
+                    
+                case 'password':
+                    if (!isStrongPassword(value)) {
+                        showError('password', 'Password must be between 8 and 100 characters long and contain uppercase, lowercase, and numbers');
+                    } else {
+                        clearError('password');
+                    }
+                    break;
+                    
+                case 'repassword':
+                    const password = document.getElementById('password').value;
+                    if (value !== password) {
+                        showError('repassword', 'Passwords do not match');
+                    } else {
+                        clearError('repassword');
+                    }
+                    break;
+            }
+        });
+    });
+});
