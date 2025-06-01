@@ -22,7 +22,7 @@
                         <%= errMsg %>
                     </div>
                     <% } %>
-                        <form class="signup-form" action="" method="post">
+                        <form class="signup-form" action="/normalRegister" method="post">
                             <div class="form-group">
                                 <label for="username">Username</label>
                                 <input type="text" id="username" name="username" required>
