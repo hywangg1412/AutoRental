@@ -1,0 +1,30 @@
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('.reset-form');
+    if (!form) return;
+
+    function isStrongPassword(password) {
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,100}$/;
+        return passwordRegex.test(password);
+    }
+
+    form.addEventListener('submit', function(e) {
+        const newPassword = form.querySelector('input[name="newPassword"]');
+        const confirmPassword = form.querySelector('input[name="confirmPassword"]');
+
+        if (!newPassword.value.trim() || !confirmPassword.value.trim()) {
+            alert('Password fields cannot be empty.');
+            e.preventDefault();
+            return;
+        }
+        if (!isStrongPassword(newPassword.value)) {
+            alert('Password must be between 8 and 100 characters long and contain uppercase, lowercase, and numbers.');
+            e.preventDefault();
+            return;
+        }
+        if (newPassword.value !== confirmPassword.value) {
+            alert('Passwords do not match.');
+            e.preventDefault();
+            return;
+        }
+    });
+});
