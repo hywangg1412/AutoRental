@@ -33,6 +33,10 @@ public class OAuthConstants {
     public static final String FACEBOOK_SCOPE = getenv("FACEBOOK_SCOPE", "email,public_profile");
     public static final String FACEBOOK_STATE = getenv("FACEBOOK_STATE", "some_random_string");
 
+    // Email
+    public static final String SENDER_EMAIL = getenv("SENDER_EMAIL", "");
+    public static final String SENDER_EMAIL_PASSWORD = getenv("SENDER_EMAIL_PASSWORD", "");
+
     // Debug info
     static {
         System.out.println("Working dir: " + System.getProperty("user.dir"));
