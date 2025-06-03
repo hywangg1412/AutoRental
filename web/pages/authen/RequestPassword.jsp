@@ -1,27 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Forgot Password</title>
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/Authen/css/ForgotPassword.css">
-</head>
-<body>
-    <div class="forgot-container">
-        <div class="forgot-box">
-            <div class="forgot-title">Forgot Password</div>
-            <div class="forgot-desc">Please enter your password to reset the password</div>
-            <form class="forgot-form" action="" method="post">
-                <div class="form-group">
-                    <label for="email">Your Email</label>
-                    <input type="email" id="email" name="email" required placeholder="example@gmail.com">
+
+    <head>
+        <meta charset="UTF-8">
+        <title>Forgot Password</title>
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/Authen/css/RequestPassword.css">
+    </head>
+
+    <body>
+
+        <div class="forgot-container">
+            <div class="forgot-box">
+                <div class="forgot-title">Forgot Password</div>
+                <% if (request.getAttribute("error") != null) {%>
+                <div class="error-message">
+                    <%= request.getAttribute("error")%>
                 </div>
-                <button class="forgot-btn" type="submit">Reset Password</button>
-            </form>
-            <div class="login-row">
-                Already Have An Account ? <a href="SignIn.jsp">Log In</a>
+                <% } %>
+                <% if (request.getAttribute("message") != null) {%>
+                <div class="success-message">
+                    <%= request.getAttribute("message")%>
+                </div>
+                <% }%>
+                <div class="forgot-desc">Please enter your password to reset the password</div>
+                <form class="forgot-form" action="${pageContext.request.contextPath}/requestPassword"
+                      method="post">
+                    <div class="form-group">
+                        <label for="email">Your Email</label>
+                        <input type="email" id="email" name="email" required
+                               placeholder="example@gmail.com">
+                    </div>
+                    <button class="forgot-btn" type="submit">Reset Password</button>
+                </form>
+                <div class="login-row">
+                    Already Have An Account ? <a href="SignIn.jsp">Log In</a>
+                </div>
             </div>
         </div>
-    </div>
-</body>
+        <script src="${pageContext.request.contextPath}/Authen/js/RequestPassword.js"></script>
+    </body>
+
 </html>
