@@ -4,7 +4,10 @@ body {
     min-height: 100vh;
     font-family: 'Montserrat', Arial, sans-serif;
     background: #050A24;
-    background: linear-gradient(90deg, rgba(5, 10, 36, 1) 25%, rgba(14, 26, 81, 1) 100%);
+    background: -webkit-linear-gradient(90deg, rgba(5, 10, 36, 1) 0%, rgba(24, 39, 125, 1) 17%);
+    background: -moz-linear-gradient(90deg, rgba(5, 10, 36, 1) 0%, rgba(24, 39, 125, 1) 17%);
+    background: linear-gradient(90deg, rgba(5, 10, 36, 1) 0%, rgba(24, 39, 125, 1) 17%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#050A24", endColorstr="#18277D", GradientType=1);
 }
 .container {
     min-height: 100vh;
@@ -26,7 +29,7 @@ body {
 .signup-title {
     font-size: 2rem;
     font-weight: 700;
-    margin-bottom: 32px;
+    margin-bottom: 20px;
     color: #111827;
     text-align: left;
     width: 100%;
@@ -353,11 +356,28 @@ body {
     color: #db4437;
     background: #fff0f0;
     border: 1px solid #db4437;
-    border-radius: 8px;
-    padding: 10px 16px;
-    margin-bottom: 12px;
+    border-radius: 12px;
+    padding: 12px 20px;
+    margin: 0 0 16px 0;
     text-align: center;
     font-weight: 600;
+    font-size: 0.95rem;
+    font-family: 'Montserrat', Arial, sans-serif;
+    width: 100%;
+    box-sizing: border-box;
+    box-shadow: 0 2px 8px rgba(219, 68, 55, 0.1);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .error-message {
