@@ -42,6 +42,11 @@ public class GoogleRegisterServlet extends HttpServlet {
                 User user = userService.findByEmail(googleUser.getEmail());
 
                 if (user != null) {
+                    if (user.isBanned()) {
+                        request.setAttribute("error", "This account has been banned. Please contact support.");
+                        request.getRequestDispatcher("pages/authen/SignIn.jsp").forward(request, response);
+                        return;
+                    }
                     request.setAttribute("errMsg", "Email with this account already exist");
                     request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
                     return;
@@ -52,7 +57,7 @@ public class GoogleRegisterServlet extends HttpServlet {
                     userService.add(user);
                     SessionUtil.removeSessionAttribute(request, "user");
                     SessionUtil.setSessionAttribute(request, "user", user);
-                    SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30*24*60*60, true, false, "/");
+                    SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
                     response.sendRedirect(request.getContextPath() + "/pages/index.jsp");
                 } catch (Exception ex) {
                     System.out.println("Can't add user to the system");

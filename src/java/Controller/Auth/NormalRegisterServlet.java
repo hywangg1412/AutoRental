@@ -20,6 +20,13 @@ import java.sql.SQLException;
 // /normalRegister
 public class NormalRegisterServlet extends HttpServlet {
 
+    private UserService userService;
+
+    @Override
+    public void init() {
+        userService = new UserService();
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -37,38 +44,43 @@ public class NormalRegisterServlet extends HttpServlet {
         if (username == null || username.trim().isEmpty()
                 || email == null || email.trim().isEmpty()
                 || password == null || password.trim().isEmpty()) {
-            request.setAttribute("errMsg", "All fields are required!");
+            request.setAttribute("error", "All fields are required!");
             request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
             return;
         }
 
         if (username.trim().length() < 3) {
-            request.setAttribute("errMsg", "Username must be at least 3 characters long!");
+            request.setAttribute("error", "Username must be at least 3 characters long!");
             request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
             return;
         }
 
         if (!email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")) {
-            request.setAttribute("errMsg", "Invalid email format!");
+            request.setAttribute("error", "Invalid email format!");
             request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
             return;
         }
 
         if (!password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,100}$")) {
-            request.setAttribute("errMsg", "Password must be between 8 and 100 characters long and contain uppercase, lowercase, and numbers!");
+            request.setAttribute("error", "Password must be between 8 and 100 characters long and contain uppercase, lowercase, and numbers!");
             request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
             return;
         }
 
         if (!password.equals(repassword)) {
-            request.setAttribute("errMsg", "Passwords do not match!");
+            request.setAttribute("error", "Passwords do not match!");
             request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
             return;
         }
 
-        UserService userService = new UserService();
         if (userService.isEmailExist(email)) {
-            request.setAttribute("errMsg", "Email already exists!");
+            User user = userService.findByEmail(email);
+            if (user != null && user.isBanned()) {
+                request.setAttribute("error", "This account has been banned. Please contact support.");
+                request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
+                return;
+            }
+            request.setAttribute("error", "Email already exists!");
             request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
             return;
         }
@@ -94,7 +106,6 @@ public class NormalRegisterServlet extends HttpServlet {
             userService.add(user);
 
             SessionUtil.setSessionAttribute(request, "user", user);
-//            SessionUtil.setSessionAttribute(request, "isLoggedIn", true);
             SessionUtil.setSessionAttribute(request, "successMsg", "Registration successful! Please login to continue.");
             SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
 
