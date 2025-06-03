@@ -17,10 +17,16 @@
                 <div class="login-box">
                     <h2>Login to your account</h2>
                     <% String errMsg=(String) request.getAttribute("error"); %>
-                <% if (errMsg !=null) { %>
-                    <div class="social-login-error">
-                        <%= errMsg %>
-                    </div>
+                    <% if (errMsg !=null) { %>
+                        <div class="social-login-error">
+                            <%= errMsg %>
+                        </div>
+                    <% } %>
+                    <% String successMsg=(String) request.getAttribute("message"); %>
+                    <% if (successMsg !=null) { %>
+                        <div class="success-message">
+                            <%= successMsg %>
+                        </div>
                     <% } %>
                     <form action="${pageContext.request.contextPath}/normalLogin" method="post" class="login-form">
                         <div class="form-group">
@@ -30,7 +36,7 @@
                         <div class="form-group">
                             <div class="form-options">
                                 <label for="password" style="margin-bottom:0;">Password</label>
-                                <a href="${pageContext.request.contextPath}/pages/authen/ForgotPassword.jsp">Forgot ?</a>
+                                <a href="${pageContext.request.contextPath}/pages/authen/RequestPassword.jsp">Forgot ?</a>
                             </div>
                             <div style="position: relative;">
                                 <input type="password" id="password" name="password" required placeholder="Enter your password">
