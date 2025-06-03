@@ -9,8 +9,8 @@ import java.util.UUID;
 public class ContractRepository implements IContractRepository{
 
     @Override
-    public void add(Contract entity) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Contract add(Contract entity) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -19,13 +19,13 @@ public class ContractRepository implements IContractRepository{
     }
 
     @Override
-    public void update(Contract entity) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean update(Contract entity) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void delete(UUID Id) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean delete(UUID Id) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

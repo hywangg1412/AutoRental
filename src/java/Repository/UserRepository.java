@@ -30,7 +30,7 @@ public class UserRepository implements IUserRepository {
     }
 
     @Override
-    public void add(User entity) throws SQLException {
+    public User add(User entity) throws SQLException {
         String sql = "INSERT INTO Users (UserId, Username, UserDOB, PhoneNumber, UserAddress, "
                 + "UserDescription, AvatarUrl, Gender, FirstName, LastName, IsBanned, CreatedDate, "
                 + "NormalizedUserName, Email, NormalizedEmail, EmailVerifed, PasswordHash, "
@@ -38,7 +38,6 @@ public class UserRepository implements IUserRepository {
                 + "AccessFailedCount, Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
-
             st.setObject(1, entity.getUserId());
             st.setString(2, entity.getUsername());
             st.setDate(3, entity.getUserDOB() != null ? java.sql.Date.valueOf(entity.getUserDOB()) : null);
@@ -63,9 +62,12 @@ public class UserRepository implements IUserRepository {
             st.setBoolean(22, entity.isLockoutEnabled());
             st.setInt(23, entity.getAccessFailedCount());
             st.setString(24, entity.getStatus());
-
-            st.executeUpdate();
+            int affectedRows = st.executeUpdate();
+            if (affectedRows > 0) {
+                return findById(entity.getUserId());
+            }
         }
+        return null;
     }
 
     public User findById(UUID userId) throws SQLException {
@@ -84,7 +86,7 @@ public class UserRepository implements IUserRepository {
     }
 
     @Override
-    public void update(User entity) throws SQLException {
+    public boolean update(User entity) throws SQLException {
         String sql = "UPDATE Users SET Username = ?, UserDOB = ?, PhoneNumber = ?, UserAddress = ?, "
                 + "UserDescription = ?, AvatarUrl = ?, Gender = ?, FirstName = ?, LastName = ?, "
                 + "IsBanned = ?, CreatedDate = ?, NormalizedUserName = ?, Email = ?, "
@@ -93,7 +95,6 @@ public class UserRepository implements IUserRepository {
                 + "AccessFailedCount = ?, Status = ? WHERE UserId = ?";
 
         try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
-
             st.setString(1, entity.getUsername());
             st.setDate(2, entity.getUserDOB() != null ? java.sql.Date.valueOf(entity.getUserDOB()) : null);
             st.setString(3, entity.getPhoneNumber());
@@ -118,17 +119,18 @@ public class UserRepository implements IUserRepository {
             st.setInt(22, entity.getAccessFailedCount());
             st.setString(23, entity.getStatus());
             st.setObject(24, entity.getUserId());
-
-            st.executeUpdate();
+            int affectedRows = st.executeUpdate();
+            return affectedRows > 0;
         }
     }
 
-    public void delete(UUID userId) throws SQLException {
+    @Override
+    public boolean delete(UUID userId) throws SQLException {
         String sql = "DELETE FROM Users WHERE UserId = ?";
         try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
-
             st.setObject(1, userId);
-            st.executeUpdate();
+            int affectedRows = st.executeUpdate();
+            return affectedRows > 0;
         }
     }
 

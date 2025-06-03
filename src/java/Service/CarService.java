@@ -17,23 +17,18 @@ public class CarService implements ICarService{
     }
 
     @Override
-    public void add(Car entry) throws EventException, InvalidDataException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Car add(Car entry) throws EventException, InvalidDataException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void delete(UUID id) throws EventException, NotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean delete(UUID id) throws EventException, NotFoundException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void update(Car entry) throws EventException, NotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public Car search(Predicate<Car> p) throws NotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean update(Car entry) throws EventException, NotFoundException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

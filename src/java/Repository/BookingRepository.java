@@ -1,4 +1,3 @@
-
 package Repository;
 
 import Model.Entity.Booking;
@@ -10,8 +9,8 @@ import java.util.UUID;
 public class BookingRepository implements IBookingRepository{
 
     @Override
-    public void add(Booking entity) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Booking add(Booking entity) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -20,13 +19,13 @@ public class BookingRepository implements IBookingRepository{
     }
 
     @Override
-    public void update(Booking entity) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean update(Booking entity) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void delete(UUID Id) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean delete(UUID Id) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

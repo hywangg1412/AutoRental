@@ -10,13 +10,11 @@ import java.util.function.Predicate;
 public interface Service<T> {
     void display() throws EmptyDataException;
     
-    void add(T entry) throws EventException, InvalidDataException;
+    T add(T entry) throws EventException, InvalidDataException;
     
-    void delete(UUID id) throws EventException, NotFoundException;
+    boolean delete(UUID id) throws EventException, NotFoundException;
     
-    void update(T entry) throws EventException, NotFoundException;
-    
-    T search(Predicate<T> p) throws NotFoundException;
+    boolean update(T entry) throws EventException, NotFoundException;
     
     T findById(UUID id) throws NotFoundException;
 }

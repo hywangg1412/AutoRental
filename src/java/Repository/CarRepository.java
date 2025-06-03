@@ -10,8 +10,8 @@ import java.util.UUID;
 public class CarRepository implements ICarRepository{
 
     @Override
-    public void add(Car entity) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Car add(Car entity) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -20,13 +20,13 @@ public class CarRepository implements ICarRepository{
     }
 
     @Override
-    public void update(Car entity) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean update(Car entity) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void delete(UUID Id) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean delete(UUID Id) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

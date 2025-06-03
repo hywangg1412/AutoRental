@@ -31,34 +31,32 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void add(User entry) throws EventException, InvalidDataException {
+    public User add(User entry) throws EventException, InvalidDataException {
         try {
-            userRepsitory.add(entry);
+            return userRepsitory.add(entry);
         } catch (SQLException ex) {
             System.out.println("Error while adding user - " + ex.getMessage());
+            return null;
         }
     }
 
     @Override
-    public void update(User entry) throws EventException, NotFoundException {
+    public boolean update(User entry) throws EventException, NotFoundException {
         try {
-            userRepsitory.update(entry);
+            return userRepsitory.update(entry);
         } catch (Exception ex) {
             System.out.println("Error while updating user - " + ex.getMessage());
+            return false;
         }
     }
 
     @Override
-    public User search(Predicate<User> p) throws NotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void delete(UUID id) throws EventException, NotFoundException {
+    public boolean delete(UUID id) throws EventException, NotFoundException {
         try {
-            userRepsitory.delete(id);
+            return userRepsitory.delete(id);
         } catch (Exception ex) {
-            System.out.println("Error while adding user - " + ex.getMessage());
+            System.out.println("Error while deleting user - " + ex.getMessage());
+            return false;
         }
     }
 
@@ -78,12 +76,22 @@ public class UserService implements IUserService {
 
     @Override
     public User findByEmail(String email) {
-        return userRepsitory.findByEmail(email);
+        try {
+            return userRepsitory.findByEmail(email);
+        } catch (Exception ex) {
+            System.out.println("Error while finding user by email - " + ex.getMessage());
+            return null;
+        }
     }
 
     @Override
     public boolean isEmailExist(String email) {
-        return findByEmail(email) != null;
+        try {
+            return findByEmail(email) != null;
+        } catch (Exception ex) {
+            System.out.println("Error while checking if email exists - " + ex.getMessage());
+            return false;
+        }
     }
 
 }

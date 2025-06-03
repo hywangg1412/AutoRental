@@ -17,23 +17,18 @@ public class BookingService implements IBookingService{
     }
 
     @Override
-    public void add(Booking entry) throws EventException, InvalidDataException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Booking add(Booking entry) throws EventException, InvalidDataException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void delete(UUID id) throws EventException, NotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean delete(UUID id) throws EventException, NotFoundException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void update(Booking entry) throws EventException, NotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public Booking search(Predicate<Booking> p) throws NotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean update(Booking entry) throws EventException, NotFoundException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
