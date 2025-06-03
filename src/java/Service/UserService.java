@@ -41,7 +41,11 @@ public class UserService implements IUserService {
 
     @Override
     public void update(User entry) throws EventException, NotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            userRepsitory.update(entry);
+        } catch (Exception ex) {
+            System.out.println("Error while updating user - " + ex.getMessage());
+        }
     }
 
     @Override
