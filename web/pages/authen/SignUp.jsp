@@ -16,13 +16,14 @@
     <div class="container">
         <div class="signup-box">
             <div class="signup-title">Create an account</div>
-            <% String errMsg=(String) request.getAttribute("errMsg"); %>
-                <% if (errMsg !=null) { %>
+            <% String errMsg=(String) request.getAttribute("error"); %>
+                <% if (errMsg !=null) {%>
                     <div class="social-login-error">
-                        <%= errMsg %>
+                        <%= errMsg%>
                     </div>
-                    <% } %>
-                        <form class="signup-form" action="/normalRegister" method="post">
+                    <% }%>
+                        <form action="${pageContext.request.contextPath}/normalRegister" method="post"
+                            class="signup-form">
                             <div class="form-group">
                                 <label for="username">Username</label>
                                 <input type="text" id="username" name="username" required>
@@ -34,7 +35,7 @@
                             <div class="form-group">
                                 <label for="password">Password</label>
                                 <div class="input-row">
-                                    <input type="password" id="password" name="password" required>
+                                    <input type="password" id="password" name="password" tabindex="-1" required>
                                     <button type="button" class="toggle-password"
                                         onclick="togglePassword('password', this)" aria-label="Show/Hide Password">
                                     </button>
@@ -43,7 +44,7 @@
                             <div class="form-group">
                                 <label for="repassword">Re-Enter Password</label>
                                 <div class="input-row">
-                                    <input type="password" id="repassword" name="repassword" required>
+                                    <input type="password" id="repassword" name="repassword" tabindex="-1" required>
                                     <button type="button" class="toggle-password"
                                         onclick="togglePassword('repassword', this)" aria-label="Show/Hide Password">
                                     </button>
@@ -65,7 +66,7 @@
                         </div>
                         <div class="login-row">
                             Already Have An Account?
-                            <a href="SignIn.jsp">Log In</a>
+                            <a href="${pageContext.request.contextPath}/pages/authen/SignIn.jsp">Log In</a>
                         </div>
         </div>
     </div>
