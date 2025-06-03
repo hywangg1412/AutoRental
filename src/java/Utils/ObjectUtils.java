@@ -22,27 +22,4 @@ public class ObjectUtils {
         return result.verified;
     }
 
-    public boolean login(String email, String password) {
-        User user = userService.findByEmail(email);
-
-        if (user == null) {
-            return false;
-        }
-
-        boolean isPasswordMatch = ObjectUtils.verifyPassword(password, user.getPasswordHash());
-
-        if (isPasswordMatch) {
-            try {
-//            user.setLastLogin(LocalDateTime.now());
-                userService.update(user);
-            } catch (EventException ex) {
-                Logger.getLogger(ObjectUtils.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (NotFoundException ex) {
-                Logger.getLogger(ObjectUtils.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            return true;
-        }
-
-        return false;
-    }
 }
