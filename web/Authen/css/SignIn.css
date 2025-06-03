@@ -216,26 +216,31 @@ body {
     color: #0a51c6;
 }
 
-.error-message {
-    color: #db4437;
-    background: #fff0f0;
-    border: 1px solid #db4437;
+/* Success message style (đồng bộ với error-message) */
+.success-message {
+    color: #21764b;
+    background: #e6f9ed;
+    border: 1px solid #7be3a7;
     border-radius: 8px;
     padding: 10px 16px;
-    margin-bottom: 12px;
-    text-align: center;
     font-weight: 600;
+    animation: fadeIn 0.3s ease-in-out;
+    margin-bottom: 16px;
+    text-align: center;
+    font-size: 1rem;
 }
 
-.social-login-error {
+.social-login-error, .error-message {
     color: #db4437;
     background: #fff0f0;
     border: 1px solid #db4437;
     border-radius: 8px;
     padding: 10px 16px;
-    margin-bottom: 12px;
-    text-align: center;
     font-weight: 600;
+    animation: fadeIn 0.3s ease-in-out;
+    margin-bottom: 16px;
+    text-align: center;
+    font-size: 1rem;
 }
 
 @keyframes fadeIn {
@@ -328,8 +333,6 @@ body {
 #password {
     padding-right: 44px;
 }
-
-
 
 .social-btn.google:disabled {
     opacity: 0.7;
