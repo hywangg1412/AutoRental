@@ -31,45 +31,32 @@ public class GoogleRegisterServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String code = request.getParameter("code");
-
         if (code == null) {
-            String authUrl = googleAuthService.getAuthorizationRegisterUrl();
-            response.sendRedirect(authUrl);
-        } else {
-
-            try {
-                GoogleUser googleUser = googleAuthService.getUserInfoRegister(code);
-                User user = userService.findByEmail(googleUser.getEmail());
-
-                if (user != null) {
-                    if (user.isBanned()) {
-                        request.setAttribute("error", "This account has been banned. Please contact support.");
-                        request.getRequestDispatcher("pages/authen/SignIn.jsp").forward(request, response);
-                        return;
-                    }
-                    request.setAttribute("errMsg", "Email with this account already exist");
-                    request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
-                    return;
-                }
-
-                user = userMapper.mapGoogleUserToUser(googleUser);
-                try {
-                    userService.add(user);
-                    SessionUtil.removeSessionAttribute(request, "user");
-                    SessionUtil.setSessionAttribute(request, "user", user);
-                    SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
-                    response.sendRedirect(request.getContextPath() + "/pages/index.jsp");
-                } catch (Exception ex) {
-                    System.out.println("Can't add user to the system");
-                    request.setAttribute("errorMsg", "Can't add user to the system - " + ex.getMessage());
-                    request.getRequestDispatcher("pages/Error.jsp").forward(request, response);
-                }
-
-            } catch (Exception e) {
-                System.out.println("Google register failed");
-                request.setAttribute("errorMsg", "Google register failed - " + e.getMessage());
-                request.getRequestDispatcher("pages/Error.jsp").forward(request, response);
+            response.sendRedirect(googleAuthService.getAuthorizationRegisterUrl());
+            return;
+        }
+        try {
+            GoogleUser googleUser = googleAuthService.getUserInfoRegister(code);
+            User existingUser = userService.findByEmail(googleUser.getEmail());
+            if (existingUser != null) {
+                String errorMsg = existingUser.isBanned() ?
+                        "This account has been banned. Please contact support." :
+                        "An account with this Google account already exists.";
+                request.setAttribute("error", errorMsg);
+                request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
+                return;
             }
+            User newUser = userMapper.mapGoogleUserToUser(googleUser);
+            User addedUser = userService.add(newUser);
+            if (addedUser != null) {
+                response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp");
+            } else {
+                request.setAttribute("error", "Register failed. Please try again.");
+                request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
+            }
+        } catch (Exception e) {
+            request.setAttribute("error", "Google register failed - " + e.getMessage());
+            request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
         }
     }
 

@@ -41,6 +41,7 @@ public class NormalRegisterServlet extends HttpServlet {
         String password = request.getParameter("password");
         String repassword = request.getParameter("repassword");
 
+        // Validate input
         if (username == null || username.trim().isEmpty()
                 || email == null || email.trim().isEmpty()
                 || password == null || password.trim().isEmpty()) {
@@ -48,50 +49,44 @@ public class NormalRegisterServlet extends HttpServlet {
             request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
             return;
         }
-
         if (username.trim().length() < 3) {
             request.setAttribute("error", "Username must be at least 3 characters long!");
             request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
             return;
         }
-
         if (!email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")) {
             request.setAttribute("error", "Invalid email format!");
             request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
             return;
         }
-
         if (!password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,100}$")) {
             request.setAttribute("error", "Password must be between 8 and 100 characters long and contain uppercase, lowercase, and numbers!");
             request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
             return;
         }
-
         if (!password.equals(repassword)) {
             request.setAttribute("error", "Passwords do not match!");
             request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
             return;
         }
 
-        if (userService.isEmailExist(email)) {
-            User user = userService.findByEmail(email);
-            if (user != null && user.isBanned()) {
-                request.setAttribute("error", "This account has been banned. Please contact support.");
+        try {
+            User existingUser = userService.findByEmail(email);
+            if (existingUser != null) {
+                String errorMsg = existingUser.isBanned() ?
+                        "This account has been banned. Please contact support." :
+                        "Email already exists!";
+                request.setAttribute("error", errorMsg);
                 request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
                 return;
             }
-            request.setAttribute("error", "Email already exists!");
-            request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
-            return;
-        }
 
-        try {
             User user = new User();
             user.setUsername(username);
             user.setEmail(email);
             user.setPasswordHash(ObjectUtils.hashPassword(password));
             user.setCreatedDate(LocalDateTime.now());
-            user.setStatus("ACTIVE");
+            user.setStatus("Active");
             user.setUserId(UUID.randomUUID());
             user.setNormalizedUserName(username.toUpperCase());
             user.setNormalizedEmail(email.toUpperCase());
@@ -103,17 +98,15 @@ public class NormalRegisterServlet extends HttpServlet {
             user.setAccessFailedCount(0);
             user.setBanned(false);
 
-            userService.add(user);
-
-            SessionUtil.setSessionAttribute(request, "user", user);
-            SessionUtil.setSessionAttribute(request, "successMsg", "Registration successful! Please login to continue.");
-            SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
-
-            response.sendRedirect(request.getContextPath() + "/pages/index.jsp");
-
+            User addedUser = userService.add(user);
+            if (addedUser != null) {
+                request.setAttribute("successMsg", "Registration successful! Please login to continue.");
+                response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp");
+            } else {
+                request.setAttribute("error", "Register failed. Please try again.");
+                request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
+            }
         } catch (Exception e) {
-            e.printStackTrace();
-
             String errorMessage;
             if (e instanceof SQLException) {
                 errorMessage = "Database error occurred. Please try again later.";
@@ -122,8 +115,7 @@ public class NormalRegisterServlet extends HttpServlet {
             } else {
                 errorMessage = "An unexpected error occurred. Please try again later.";
             }
-
-            request.setAttribute("errMsg", errorMessage);
+            request.setAttribute("error", errorMessage);
             request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
         }
     }

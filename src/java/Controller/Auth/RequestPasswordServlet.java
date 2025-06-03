@@ -37,23 +37,24 @@ public class RequestPasswordServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String mail = request.getParameter("email");
-        if (mail == null || mail.trim().isEmpty()) {
-            request.setAttribute("error", "Please enter your email address.");
-            request.getRequestDispatcher("/pages/authen/RequestPassword.jsp").forward(request, response);
+        String email = request.getParameter("email");
+        if (email == null || email.trim().isEmpty()) {
+            forwardWithError(request, response, "Please enter your email address.");
             return;
         }
         String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
-        if (!mail.matches(emailRegex)) {
-            request.setAttribute("error", "Please enter a valid email address.");
-            request.getRequestDispatcher("/pages/authen/RequestPassword.jsp").forward(request, response);
+        if (!email.matches(emailRegex)) {
+            forwardWithError(request, response, "Please enter a valid email address.");
             return;
         }
         try {
-            User user = userService.findByEmail(mail);
+            User user = userService.findByEmail(email);
             if (user == null) {
-                request.setAttribute("error", "The email address you entered does not exist in our system.");
-                request.getRequestDispatcher("/pages/authen/RequestPassword.jsp").forward(request, response);
+                forwardWithError(request, response, "The email address you entered does not exist in our system.");
+                return;
+            }
+            if (user.isBanned()) {
+                forwardWithError(request, response, "This account has been banned. Please contact support.");
                 return;
             }
             String token = resetPasswordService.generateToken();
@@ -69,12 +70,16 @@ public class RequestPasswordServlet extends HttpServlet {
             } else {
                 request.setAttribute("error", "Failed to send reset email. Please try again later.");
             }
-            request.getRequestDispatcher("/pages/authen/RequestPassword.jsp").forward(request, response);
         } catch (Exception e) {
-            e.printStackTrace();
             request.setAttribute("error", "An error occurred while processing your request. Please try again later.");
-            request.getRequestDispatcher("/pages/authen/RequestPassword.jsp").forward(request, response);
         }
+        request.getRequestDispatcher("/pages/authen/RequestPassword.jsp").forward(request, response);
+    }
+
+    private void forwardWithError(HttpServletRequest request, HttpServletResponse response, String errorMsg)
+            throws ServletException, IOException {
+        request.setAttribute("error", errorMsg);
+        request.getRequestDispatcher("/pages/authen/RequestPassword.jsp").forward(request, response);
     }
 
 }
