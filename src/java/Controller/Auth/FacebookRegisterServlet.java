@@ -33,39 +33,31 @@ public class FacebookRegisterServlet extends HttpServlet {
             throws ServletException, IOException {
         String code = request.getParameter("code");
         if (code == null) {
-            String authUrl = facebookAuthService.getAuthorizationRegisterUrl();
-            response.sendRedirect(authUrl);
-        } else {
-            try {
-                FacebookUser facebookUser = facebookAuthService.getRegisterUserInfo(code);
-                User user = userService.findByEmail(facebookUser.getEmail());
-                if (user.isBanned()) {
-                    request.setAttribute("error", "This account has been banned. Please contact support.");
-                    request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
-                    return;
-                }
-
-                if (user != null) {
-                    request.setAttribute("errMsg", "An account with this facebook already exists.");
-                    request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
-                    return;
-                }
-                user = userMapper.mapFacebookUserToUser(facebookUser);
-                try {
-                    userService.add(user);
-                    SessionUtil.removeSessionAttribute(request, "user");
-                    SessionUtil.setSessionAttribute(request, "user", user);
-                    SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
-                    response.sendRedirect(request.getContextPath() + "/pages/index.jsp");
-                } catch (Exception ex) {
-                    System.out.println("Can't add user to the system");
-                    request.setAttribute("errorMsg", "Can't add user to the system - " + ex.getMessage());
-                    request.getRequestDispatcher("pages/Error.jsp").forward(request, response);
-                }
-            } catch (Exception e) {
-                request.setAttribute("errorMsg", "Facebook login failed - " + e.getMessage());
-                request.getRequestDispatcher("pages/Error.jsp").forward(request, response);
+            response.sendRedirect(facebookAuthService.getAuthorizationRegisterUrl());
+            return;
+        }
+        try {
+            FacebookUser facebookUser = facebookAuthService.getRegisterUserInfo(code);
+            User existingUser = userService.findByEmail(facebookUser.getEmail());
+            if (existingUser != null) {
+                String errorMsg = existingUser.isBanned() ?
+                        "This account has been banned. Please contact support." :
+                        "An account with this Facebook account already exists.";
+                request.setAttribute("error", errorMsg);
+                request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
+                return;
             }
+            User newUser = userMapper.mapFacebookUserToUser(facebookUser);
+            User addedUser = userService.add(newUser);
+            if (addedUser != null) {
+                response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp");
+            } else {
+                request.setAttribute("error", "Register failed. Please try again.");
+                request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
+            }
+        } catch (Exception e) {
+            request.setAttribute("error", "Facebook login failed - " + e.getMessage());
+            request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
         }
     }
 

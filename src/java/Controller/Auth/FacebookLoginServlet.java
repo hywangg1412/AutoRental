@@ -19,13 +19,13 @@ public class FacebookLoginServlet extends HttpServlet {
 
     private FacebookAuthService facebookAuthService;
     private UserMapper userMapper;
-    private UserService UserService;
+    private UserService userService;
 
     @Override
     public void init() {
         facebookAuthService = new FacebookAuthService();
         userMapper = new UserMapper();
-        UserService = new UserService();
+        userService = new UserService();
     }
 
     @Override
@@ -33,31 +33,39 @@ public class FacebookLoginServlet extends HttpServlet {
             throws ServletException, IOException {
         String code = request.getParameter("code");
         if (code == null) {
-            String authUrl = facebookAuthService.getAuthorizationUrl();
-            response.sendRedirect(authUrl);
-        } else {
-            try {
-                FacebookUser facebookUser = facebookAuthService.getUserInfo(code);
-                User user = UserService.findByEmail(facebookUser.getEmail());
-                if (user != null) {
-                    if (user.isBanned()) {
-                        request.setAttribute("error", "This account has been banned. Please contact support.");
-                        request.getRequestDispatcher("pages/authen/SignIn.jsp").forward(request, response);
-                        return;
-                    }
-                    SessionUtil.removeSessionAttribute(request, "user");
-                    SessionUtil.setSessionAttribute(request, "user", user);
-                    SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
-                    response.sendRedirect(request.getContextPath() + "/pages/index.jsp");
-                } else {
-                    request.setAttribute("errMsg", "No account associated with this Facebook. Please sign up first.");
-                    request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
-                }
-
-            } catch (Exception e) {
-                request.setAttribute("errorMsg", "Facebook login failed - " + e.getMessage());
-                request.getRequestDispatcher("pages/Error.jsp").forward(request, response);
+            response.sendRedirect(facebookAuthService.getAuthorizationUrl());
+            return;
+        }
+        try {
+            FacebookUser facebookUser = facebookAuthService.getUserInfo(code);
+            String email = facebookUser.getEmail();
+            if (email == null || email.trim().isEmpty()) {
+                request.setAttribute("error", "Cannot retrieve email from Facebook account.");
+                request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
+                return;
             }
+            User user = userService.findByEmail(email);
+            if (user != null) {
+                if (user.isBanned()) {
+                    request.setAttribute("error", "This account has been banned. Please contact support.");
+                    request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
+                    return;
+                }
+                if (user.getAccessFailedCount() > 0) {
+                    user.setAccessFailedCount(0);
+                    userService.update(user);
+                }
+                SessionUtil.removeSessionAttribute(request, "user");
+                SessionUtil.setSessionAttribute(request, "user", user);
+                SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
+                response.sendRedirect(request.getContextPath() + "/pages/index.jsp");
+            } else {
+                request.setAttribute("error", "No account associated with this Facebook. Please sign up first.");
+                request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
+            }
+        } catch (Exception e) {
+            request.setAttribute("error", "Facebook login failed - " + e.getMessage());
+            request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
         }
     }
 

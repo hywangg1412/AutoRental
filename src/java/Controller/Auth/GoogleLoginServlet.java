@@ -32,32 +32,40 @@ public class GoogleLoginServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String code = request.getParameter("code");
-
         if (code == null) {
-            String authUrl = googleAuthService.getAuthorizationUrl();
-            response.sendRedirect(authUrl);
-        } else {
-            try {
-                GoogleUser googleUser = googleAuthService.getUserInfo(code);
-                User user = userService.findByEmail(googleUser.getEmail());
-                if (user != null) {
-                    if (user.isBanned()) {
-                        request.setAttribute("error", "This account has been banned. Please contact support.");
-                        request.getRequestDispatcher("pages/authen/SignIn.jsp").forward(request, response);
-                        return;
-                    }
-                    SessionUtil.removeSessionAttribute(request, "user");
-                    SessionUtil.setSessionAttribute(request, "user", user);
-                    SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
-                    response.sendRedirect(request.getContextPath() + "/pages/index.jsp");
-                } else {
-                    request.setAttribute("errMsg", "No account associated with this Google account. Please sign up first.");
-                    request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
-                }
-            } catch (Exception e) {
-                request.setAttribute("errorMsg", "Google login failed - " + e.getMessage());
-                request.getRequestDispatcher("pages/Error.jsp").forward(request, response);
+            response.sendRedirect(googleAuthService.getAuthorizationUrl());
+            return;
+        }
+        try {
+            GoogleUser googleUser = googleAuthService.getUserInfo(code);
+            String email = googleUser.getEmail();
+            if (email == null || email.trim().isEmpty()) {
+                request.setAttribute("error", "Cannot retrieve email from Google account.");
+                request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
+                return;
             }
+            User user = userService.findByEmail(email);
+            if (user != null) {
+                if (user.isBanned()) {
+                    request.setAttribute("error", "This account has been banned. Please contact support.");
+                    request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
+                    return;
+                }
+                if (user.getAccessFailedCount() > 0) {
+                    user.setAccessFailedCount(0);
+                    userService.update(user);
+                }
+                SessionUtil.removeSessionAttribute(request, "user");
+                SessionUtil.setSessionAttribute(request, "user", user);
+                SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
+                response.sendRedirect(request.getContextPath() + "/pages/index.jsp");
+            } else {
+                request.setAttribute("error", "No account associated with this Google account. Please sign up first.");
+                request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
+            }
+        } catch (Exception e) {
+            request.setAttribute("error", "Google login failed - " + e.getMessage());
+            request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
         }
     }
 

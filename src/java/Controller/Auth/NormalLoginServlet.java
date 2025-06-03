@@ -41,19 +41,16 @@ public class NormalLoginServlet extends HttpServlet {
         }
         try {
             User user = userService.findByEmail(email);
-
             if (user == null) {
                 request.setAttribute("error", "Email not found!");
                 request.getRequestDispatcher("pages/authen/SignIn.jsp").forward(request, response);
                 return;
             }
-
             if (user.isBanned()) {
                 request.setAttribute("error", "This account has been banned. Please contact support.");
                 request.getRequestDispatcher("pages/authen/SignIn.jsp").forward(request, response);
                 return;
             }
-
             if (user.isLockoutEnabled() && user.getAccessFailedCount() >= 5) {
                 user.setBanned(true);
                 user.setAccessFailedCount(0);
@@ -62,10 +59,8 @@ public class NormalLoginServlet extends HttpServlet {
                 request.getRequestDispatcher("pages/authen/SignIn.jsp").forward(request, response);
                 return;
             }
-
             if (!ObjectUtils.verifyPassword(password, user.getPasswordHash())) {
                 user.setAccessFailedCount(user.getAccessFailedCount() + 1);
-
                 if (user.isLockoutEnabled() && user.getAccessFailedCount() >= 5) {
                     user.setBanned(true);
                     user.setAccessFailedCount(0);
@@ -78,18 +73,15 @@ public class NormalLoginServlet extends HttpServlet {
                 request.getRequestDispatcher("pages/authen/SignIn.jsp").forward(request, response);
                 return;
             }
-
-            user.setAccessFailedCount(0);
-//            user.setLastLogin(LocalDateTime.now());
-            userService.update(user);
-
+            if (user.getAccessFailedCount() > 0) {
+                user.setAccessFailedCount(0);
+                userService.update(user);
+            }
             SessionUtil.setSessionAttribute(request, "user", user);
             SessionUtil.setSessionAttribute(request, "isLoggedIn", true);
             SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
             response.sendRedirect(request.getContextPath() + "/pages/index.jsp");
-
         } catch (Exception e) {
-            e.printStackTrace();
             request.setAttribute("error", "An error occurred during login. Please try again later.");
             request.getRequestDispatcher("pages/authen/SignIn.jsp").forward(request, response);
         }
