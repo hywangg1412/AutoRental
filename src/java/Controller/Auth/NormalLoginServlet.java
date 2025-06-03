@@ -12,9 +12,15 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-
 // /normalLogin
 public class NormalLoginServlet extends HttpServlet {
+
+    private UserService userService;
+
+    @Override
+    public void init() {
+        userService = new UserService();
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -33,28 +39,11 @@ public class NormalLoginServlet extends HttpServlet {
             request.getRequestDispatcher("pages/authen/SignIn.jsp").forward(request, response);
             return;
         }
-
         try {
-            UserService userService = new UserService();
             User user = userService.findByEmail(email);
 
             if (user == null) {
                 request.setAttribute("error", "Email not found!");
-                request.getRequestDispatcher("pages/authen/SignIn.jsp").forward(request, response);
-                return;
-            }
-
-            if (!ObjectUtils.verifyPassword(password, user.getPasswordHash())) {
-                user.setAccessFailedCount(user.getAccessFailedCount() + 1);
-                userService.update(user);
-
-                request.setAttribute("error", "Invalid password!");
-                request.getRequestDispatcher("pages/authen/SignIn.jsp").forward(request, response);
-                return;
-            }
-
-            if (user.isLockoutEnabled() && user.getAccessFailedCount() >= 5) {
-                request.setAttribute("error", "Account is locked due to too many failed attempts. Please contact support.");
                 request.getRequestDispatcher("pages/authen/SignIn.jsp").forward(request, response);
                 return;
             }
@@ -65,9 +54,34 @@ public class NormalLoginServlet extends HttpServlet {
                 return;
             }
 
-//            user.setAccessFailedCount(0);
+            if (user.isLockoutEnabled() && user.getAccessFailedCount() >= 5) {
+                user.setBanned(true);
+                user.setAccessFailedCount(0);
+                userService.update(user);
+                request.setAttribute("error", "Account is locked due to too many failed attempts. Please contact support.");
+                request.getRequestDispatcher("pages/authen/SignIn.jsp").forward(request, response);
+                return;
+            }
+
+            if (!ObjectUtils.verifyPassword(password, user.getPasswordHash())) {
+                user.setAccessFailedCount(user.getAccessFailedCount() + 1);
+
+                if (user.isLockoutEnabled() && user.getAccessFailedCount() >= 5) {
+                    user.setBanned(true);
+                    user.setAccessFailedCount(0);
+                    userService.update(user);
+                    request.setAttribute("error", "Account is locked due to too many failed attempts. Please contact support.");
+                } else {
+                    userService.update(user);
+                    request.setAttribute("error", "Invalid password! " + (5 - user.getAccessFailedCount()) + " attempts remaining.");
+                }
+                request.getRequestDispatcher("pages/authen/SignIn.jsp").forward(request, response);
+                return;
+            }
+
+            user.setAccessFailedCount(0);
 //            user.setLastLogin(LocalDateTime.now());
-//            userService.update(user);
+            userService.update(user);
 
             SessionUtil.setSessionAttribute(request, "user", user);
             SessionUtil.setSessionAttribute(request, "isLoggedIn", true);

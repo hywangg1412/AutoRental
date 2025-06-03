@@ -39,6 +39,12 @@ public class FacebookRegisterServlet extends HttpServlet {
             try {
                 FacebookUser facebookUser = facebookAuthService.getRegisterUserInfo(code);
                 User user = userService.findByEmail(facebookUser.getEmail());
+                if (user.isBanned()) {
+                    request.setAttribute("error", "This account has been banned. Please contact support.");
+                    request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
+                    return;
+                }
+
                 if (user != null) {
                     request.setAttribute("errMsg", "An account with this facebook already exists.");
                     request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
@@ -49,7 +55,7 @@ public class FacebookRegisterServlet extends HttpServlet {
                     userService.add(user);
                     SessionUtil.removeSessionAttribute(request, "user");
                     SessionUtil.setSessionAttribute(request, "user", user);
-                    SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30*24*60*60, true, false, "/");
+                    SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
                     response.sendRedirect(request.getContextPath() + "/pages/index.jsp");
                 } catch (Exception ex) {
                     System.out.println("Can't add user to the system");

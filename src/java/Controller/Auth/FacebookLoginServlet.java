@@ -40,6 +40,11 @@ public class FacebookLoginServlet extends HttpServlet {
                 FacebookUser facebookUser = facebookAuthService.getUserInfo(code);
                 User user = UserService.findByEmail(facebookUser.getEmail());
                 if (user != null) {
+                    if (user.isBanned()) {
+                        request.setAttribute("error", "This account has been banned. Please contact support.");
+                        request.getRequestDispatcher("pages/authen/SignIn.jsp").forward(request, response);
+                        return;
+                    }
                     SessionUtil.removeSessionAttribute(request, "user");
                     SessionUtil.setSessionAttribute(request, "user", user);
                     SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
