@@ -17,23 +17,18 @@ public class ContractService implements IContractService {
     }
 
     @Override
-    public void add(Contract entry) throws EventException, InvalidDataException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Contract add(Contract entry) throws EventException, InvalidDataException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void delete(UUID id) throws EventException, NotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean delete(UUID id) throws EventException, NotFoundException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void update(Contract entry) throws EventException, NotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public Contract search(Predicate<Contract> p) throws NotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean update(Contract entry) throws EventException, NotFoundException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

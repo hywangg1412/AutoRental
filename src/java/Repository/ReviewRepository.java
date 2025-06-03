@@ -9,8 +9,8 @@ import java.util.UUID;
 public class ReviewRepository implements IReviewRepository{
 
     @Override
-    public void add(Review entity) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Review add(Review entity) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -19,13 +19,13 @@ public class ReviewRepository implements IReviewRepository{
     }
 
     @Override
-    public void update(Review entity) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean update(Review entity) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void delete(UUID Id) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean delete(UUID Id) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

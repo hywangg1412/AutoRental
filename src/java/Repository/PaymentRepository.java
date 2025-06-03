@@ -9,8 +9,8 @@ import java.util.UUID;
 public class PaymentRepository implements IPaymentRepository{
 
     @Override
-    public void add(Payment entity) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Payment add(Payment entity) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -19,13 +19,13 @@ public class PaymentRepository implements IPaymentRepository{
     }
 
     @Override
-    public void update(Payment entity) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean update(Payment entity) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void delete(UUID Id) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean delete(UUID Id) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

@@ -20,7 +20,7 @@ public class PasswordResetTokenRepository implements IPasswordResetToken {
     }
 
     @Override
-    public void add(PasswordResetToken entity) throws SQLException {
+    public PasswordResetToken add(PasswordResetToken entity) throws SQLException {
         String sql = "INSERT INTO PasswordResetTokens (Id, Token, ExpiryTime, IsUsed, UserId, CreatedAt) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
             st.setObject(1, entity.getId());
@@ -29,8 +29,12 @@ public class PasswordResetTokenRepository implements IPasswordResetToken {
             st.setBoolean(4, entity.isIsUsed());
             st.setObject(5, entity.getUserId());
             st.setObject(6, entity.getCreatedAt());
-            st.executeUpdate();
+            int affectedRows = st.executeUpdate();
+            if (affectedRows > 0) {
+                return findById(entity.getId());
+            }
         }
+        return null;
     }
 
     @Override
@@ -48,7 +52,7 @@ public class PasswordResetTokenRepository implements IPasswordResetToken {
     }
 
     @Override
-    public void update(PasswordResetToken entity) throws SQLException {
+    public boolean update(PasswordResetToken entity) throws SQLException {
         String sql = "UPDATE PasswordResetTokens SET Token=?, ExpiryTime=?, IsUsed=?, UserId=?, CreatedAt=? WHERE Id=?";
         try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
             st.setString(1, entity.getToken());
@@ -57,16 +61,18 @@ public class PasswordResetTokenRepository implements IPasswordResetToken {
             st.setObject(4, entity.getUserId());
             st.setObject(5, entity.getCreatedAt());
             st.setObject(6, entity.getId());
-            st.executeUpdate();
+            int affectedRows = st.executeUpdate();
+            return affectedRows > 0;
         }
     }
 
     @Override
-    public void delete(UUID Id) throws SQLException {
+    public boolean delete(UUID Id) throws SQLException {
         String sql = "DELETE FROM PasswordResetTokens WHERE Id = ?";
         try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
             st.setObject(1, Id);
-            st.executeUpdate();
+            int affectedRows = st.executeUpdate();
+            return affectedRows > 0;
         }
     }
 

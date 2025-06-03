@@ -17,23 +17,18 @@ public class DiscountService implements IDiscountService{
     }
 
     @Override
-    public void add(Discount entry) throws EventException, InvalidDataException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Discount add(Discount entry) throws EventException, InvalidDataException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void delete(UUID id) throws EventException, NotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean delete(UUID id) throws EventException, NotFoundException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void update(Discount entry) throws EventException, NotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public Discount search(Predicate<Discount> p) throws NotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean update(Discount entry) throws EventException, NotFoundException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
