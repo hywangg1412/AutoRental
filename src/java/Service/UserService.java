@@ -64,7 +64,16 @@ public class UserService implements IUserService {
 
     @Override
     public User findById(UUID id) throws NotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            User user = userRepsitory.findById(id);
+            if (user == null) {
+                throw new NotFoundException("User not found");
+            }
+            return user;
+        } catch (SQLException ex) {
+            Logger.getLogger(UserService.class.getName()).log(Level.SEVERE, null, ex);
+            throw new NotFoundException("Error finding user: " + ex.getMessage());
+        }
     }
 
     @Override
