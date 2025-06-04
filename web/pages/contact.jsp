@@ -47,48 +47,61 @@
 
         <section class="ftco-section contact-section">
             <div class="container">
-                <div class="row d-flex mb-5 contact-info">
-                    <div class="col-md-12 mb-4">
-                        <h2 class="h3">Contact Information</h2>
-                    </div>
-                    <div class="w-100"></div>
-                    <div class="col-md-3">
-                        <p><span>Address:</span> 198 West 21th Street, Suite 721 New York NY 10016</p>
-                    </div>
-                    <div class="col-md-3">
-                        <p><span>Phone:</span> <a href="tel://1234567920">+ 1235 2355 98</a></p>
-                    </div>
-                    <div class="col-md-3">
-                        <p><span>Email:</span> <a href="mailto:info@yoursite.com">info@yoursite.com</a></p>
-                    </div>
-                    <div class="col-md-3">
-                        <p><span>Website</span> <a href="#">yoursite.com</a></p>
+                <div class="row justify-content-center mb-5">
+                    <div class="col-md-7 text-center">
+                        <h2 class="mb-4">Contact Us</h2>
                     </div>
                 </div>
-                <div class="row block-9">
-                    <div class="col-md-6 order-md-last pr-md-5">
-                        <form action="#">
+                <div class="row">
+                    <!-- Contact Info -->
+                    <div class="col-md-5 mb-4">
+                        <div class="contact-info-box mb-3 d-flex align-items-center">
+                            <span class="icon flaticon-placeholder"></span>
+                            <div class="ml-3">
+                                <div class="text-muted small">Address:</div>
+                                <div class="font-weight-bold">198 West 21th Street, Suite 721<br>New York NY 10016</div>
+                            </div>
+                        </div>
+                        <div class="contact-info-box mb-3 d-flex align-items-center">
+                            <span class="icon flaticon-phone-call"></span>
+                            <div class="ml-3">
+                                <div class="text-muted small">Phone:</div>
+                                <div class="font-weight-bold">+ 1235 2355 98</div>
+                            </div>
+                        </div>
+                        <div class="contact-info-box mb-3 d-flex align-items-center">
+                            <span class="icon flaticon-envelope"></span>
+                            <div class="ml-3">
+                                <div class="text-muted small">Email:</div>
+                                <div class="font-weight-bold">info@yoursite.com</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Contact Form -->
+                    <div class="col-md-7">
+                        <form action="#" class="bg-light p-4 rounded shadow-sm">
                             <div class="form-group">
                                 <input type="text" class="form-control" placeholder="Your Name">
                             </div>
                             <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Your Email">
+                                <input type="email" class="form-control" placeholder="Your Email">
                             </div>
                             <div class="form-group">
                                 <input type="text" class="form-control" placeholder="Subject">
                             </div>
                             <div class="form-group">
-                                <textarea name="" id="" cols="30" rows="7" class="form-control" placeholder="Message"></textarea>
+                                <textarea class="form-control" rows="5" placeholder="Message"></textarea>
                             </div>
-                            <div class="form-group">
-                                <input type="submit" value="Send Message" class="btn btn-primary py-3 px-5">
+                            <div class="form-group text-right">
+                                <button type="submit" class="btn btn-primary px-4">Send Message</button>
                             </div>
                         </form>
-
                     </div>
-
-                    <div class="col-md-6">
-                        <div id="map"></div>
+                </div>
+                <!-- Google Map (nếu cần) -->
+                <div class="row mt-5">
+                    <div class="col-12">
+                        <div id="map" style="height: 350px;"></div>
                     </div>
                 </div>
             </div>
