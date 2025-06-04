@@ -25,6 +25,8 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/flaticon.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/icomoon.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/Includes/css/nav.css">
   </head>
   <body>
     
