@@ -52,7 +52,6 @@
                 </div>
             </div>
         </div>
-        //quan dep zai
         <section class="ftco-section ftco-no-pt bg-light">
             <div class="container">
                 <div class="row no-gutters">
