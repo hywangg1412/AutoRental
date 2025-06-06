@@ -50,11 +50,13 @@ public class RequestPasswordServlet extends HttpServlet {
         try {
             User user = userService.findByEmail(email);
             if (user == null) {
-                forwardWithError(request, response, "The email address you entered does not exist in our system.");
+                request.setAttribute("error", "Email not found!");
+                request.getRequestDispatcher("pages/authen/RequestPassword.jsp").forward(request, response);
                 return;
             }
             if (user.isBanned()) {
-                forwardWithError(request, response, "This account has been banned. Please contact support.");
+                request.setAttribute("error", "This account has been banned. Please contact support.");
+                request.getRequestDispatcher("pages/authen/RequestPassword.jsp").forward(request, response);
                 return;
             }
             String token = resetPasswordService.generateToken();

@@ -85,8 +85,7 @@ public class ResetPasswordServlet extends HttpServlet {
             userService.update(user);
 
             PasswordResetToken rToken = PRTService.findByToken(token);
-            rToken.setIsUsed(true);
-            PRTService.update(rToken);
+            PRTService.delete(rToken.getId());
 
             SessionUtil.removeSessionAttribute(request, "user");
             SessionUtil.removeSessionAttribute(request, "token");
