@@ -15,7 +15,7 @@ public class User {
     private String gender;
     private String firstName;
     private String lastName;
-    private boolean isBanned;
+    private String status;
     private LocalDateTime createdDate;
     private String normalizedUserName;
     private String email;
@@ -28,18 +28,17 @@ public class User {
     private LocalDateTime lockoutEnd;
     private boolean lockoutEnabled;
     private int accessFailedCount;
-    private String status;
 
     public User() {
     }
 
     public User(UUID userId, String username, LocalDate userDOB, String phoneNumber,
             String userAddress, String userDescription, String avatarUrl, String gender,
-            String firstName, String lastName, boolean isBanned, LocalDateTime createdDate,
+            String firstName, String lastName, String status, LocalDateTime createdDate,
             String normalizedUserName, String email, String normalizedEmail, boolean emailVerifed,
             String passwordHash, String securityStamp, String concurrencyStamp,
             boolean twoFactorEnabled, LocalDateTime lockoutEnd, boolean lockoutEnabled,
-            int accessFailedCount, String status) {
+            int accessFailedCount) {
         this.userId = userId;
         this.username = username;
         this.userDOB = userDOB;
@@ -50,7 +49,7 @@ public class User {
         this.gender = gender;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.isBanned = isBanned;
+        this.status = status;
         this.createdDate = createdDate;
         this.normalizedUserName = normalizedUserName;
         this.email = email;
@@ -63,7 +62,6 @@ public class User {
         this.lockoutEnd = lockoutEnd;
         this.lockoutEnabled = lockoutEnabled;
         this.accessFailedCount = accessFailedCount;
-        this.status = status;
     }
 
     public String getFullName() {
@@ -151,12 +149,20 @@ public class User {
         this.lastName = lastName;
     }
 
-    public boolean isBanned() {
-        return isBanned;
+    public String getStatus() {
+        return status;
     }
 
-    public void setBanned(boolean banned) {
-        isBanned = banned;
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public boolean isBanned() {
+        return "Banned".equalsIgnoreCase(status);
+    }
+
+    public boolean isActive() {
+        return "Active".equalsIgnoreCase(status);
     }
 
     public LocalDateTime getCreatedDate() {
@@ -253,14 +259,6 @@ public class User {
 
     public void setAccessFailedCount(int accessFailedCount) {
         this.accessFailedCount = accessFailedCount;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     @Override
