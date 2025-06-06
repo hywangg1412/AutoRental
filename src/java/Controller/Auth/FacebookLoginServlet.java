@@ -13,6 +13,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import Util.SessionUtil;
+import Model.Entity.OAuth.UserLogins;
+import Service.auth.UserLoginsService;
 
 // facebookLogin
 public class FacebookLoginServlet extends HttpServlet {
@@ -20,12 +22,14 @@ public class FacebookLoginServlet extends HttpServlet {
     private FacebookAuthService facebookAuthService;
     private UserMapper userMapper;
     private UserService userService;
+    private UserLoginsService userLoginsService;
 
     @Override
     public void init() {
         facebookAuthService = new FacebookAuthService();
         userMapper = new UserMapper();
         userService = new UserService();
+        userLoginsService = new UserLoginsService();
     }
 
     @Override
@@ -38,31 +42,31 @@ public class FacebookLoginServlet extends HttpServlet {
         }
         try {
             FacebookUser facebookUser = facebookAuthService.getUserInfo(code);
-            String email = facebookUser.getEmail();
-            if (email == null || email.trim().isEmpty()) {
-                request.setAttribute("error", "Cannot retrieve email from Facebook account.");
+            UserLogins userLogin = userLoginsService.findByProviderAndKey("facebook", facebookUser.getFacebookId());
+            if (userLogin == null) {
+                request.setAttribute("error", "This Facebook account has not been registered.");
                 request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
                 return;
             }
-            User user = userService.findByEmail(email);
-            if (user != null) {
-                if (user.isBanned()) {
-                    request.setAttribute("error", "This account has been banned. Please contact support.");
-                    request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
-                    return;
-                }
-                if (user.getAccessFailedCount() > 0) {
-                    user.setAccessFailedCount(0);
-                    userService.update(user);
-                }
-                SessionUtil.removeSessionAttribute(request, "user");
-                SessionUtil.setSessionAttribute(request, "user", user);
-                SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
-                response.sendRedirect(request.getContextPath() + "/pages/index.jsp");
-            } else {
-                request.setAttribute("error", "No account associated with this Facebook. Please sign up first.");
-                request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
+            User user = userService.findById(userLogin.getUserId());
+            if (user == null) {
+                request.setAttribute("error", "This account does not exist.");
+                request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
+                return;
             }
+            if (user.isBanned()) {
+                request.setAttribute("error", "This account has been banned. Please contact support.");
+                request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
+                return;
+            }
+            if (user.getAccessFailedCount() > 0) {
+                user.setAccessFailedCount(0);
+                userService.update(user);
+            }
+            SessionUtil.removeSessionAttribute(request, "user");
+            SessionUtil.setSessionAttribute(request, "user", user);
+            SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
+            response.sendRedirect(request.getContextPath() + "/pages/index.jsp");
         } catch (Exception e) {
             request.setAttribute("error", "Facebook login failed - " + e.getMessage());
             request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
