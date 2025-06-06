@@ -52,7 +52,7 @@ public class NormalLoginServlet extends HttpServlet {
                 return;
             }
             if (user.isLockoutEnabled() && user.getAccessFailedCount() >= 5) {
-                user.setBanned(true);
+                user.setStatus("Banned");
                 user.setAccessFailedCount(0);
                 userService.update(user);
                 request.setAttribute("error", "Account is locked due to too many failed attempts. Please contact support.");
@@ -62,7 +62,7 @@ public class NormalLoginServlet extends HttpServlet {
             if (!ObjectUtils.verifyPassword(password, user.getPasswordHash())) {
                 user.setAccessFailedCount(user.getAccessFailedCount() + 1);
                 if (user.isLockoutEnabled() && user.getAccessFailedCount() >= 5) {
-                    user.setBanned(true);
+                    user.setStatus("Banned");
                     user.setAccessFailedCount(0);
                     userService.update(user);
                     request.setAttribute("error", "Account is locked due to too many failed attempts. Please contact support.");
