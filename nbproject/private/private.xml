@@ -3,22 +3,6 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Utils/ObjectUtils.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Auth/GoogleLoginServlet.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Auth/FacebookLoginServlet.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Auth/FacebookRegisterServlet.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/Entity/OAuth/FacebookUser.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/Entity/User.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/Interfaces/IPasswordResetToken.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/Interfaces/IBookingRepository.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/PasswordResetTokenRepository.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/PaymentRepository.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/DiscountRepository.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Service/Interfaces/IPasswordResetTokenService.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Service/PasswordResetTokenService.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Auth/RequestPasswordServlet.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/web/pages/authen/ResetPassword.jsp</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/web/Authen/js/RequestPassword.js</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Config/DBContext.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Config/DBInfo.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/web/WEB-INF/web.xml</file>
@@ -51,6 +35,26 @@
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Constant/OAuthConstants.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Service/BookingService.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/build.xml</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/web/User/js/UserAboutSidebar.js</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/web/pages/user/UserAbout.jsp</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/web/User/js/userAbout.js</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Utils/ObjectUtils.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Auth/GoogleLoginServlet.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Auth/FacebookLoginServlet.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Auth/FacebookRegisterServlet.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/Entity/OAuth/FacebookUser.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/Entity/User.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/Interfaces/IPasswordResetToken.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/Interfaces/IBookingRepository.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/PasswordResetTokenRepository.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/PaymentRepository.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/DiscountRepository.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Service/Interfaces/IPasswordResetTokenService.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Service/PasswordResetTokenService.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Auth/RequestPasswordServlet.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/web/pages/authen/ResetPassword.jsp</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/web/Authen/js/RequestPassword.js</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/web/pages/index.jsp</file>
         </group>
     </open-files>
 </project-private>

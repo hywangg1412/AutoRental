@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import Util.SessionUtil;
+import Utils.SessionUtil;
 import Model.Entity.User;
 import Model.Entity.OAuth.UserLogins;
 import Service.auth.UserLoginsService;

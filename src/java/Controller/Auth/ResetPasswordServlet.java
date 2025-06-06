@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import Util.SessionUtil;
+import Utils.SessionUtil;
 import Utils.ObjectUtils;
 
 // /resetPassword
