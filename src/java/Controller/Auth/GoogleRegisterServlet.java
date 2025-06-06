@@ -3,8 +3,10 @@ package Controller.Auth;
 import Mapper.UserMapper;
 import Model.Entity.OAuth.GoogleUser;
 import Model.Entity.User;
+import Model.Entity.OAuth.UserLogins;
 import Service.UserService;
 import Service.auth.GoogleAuthService;
+import Service.auth.UserLoginsService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -19,12 +21,14 @@ public class GoogleRegisterServlet extends HttpServlet {
     private GoogleAuthService googleAuthService;
     private UserMapper userMapper;
     private UserService userService;
+    private UserLoginsService userLoginsService;
 
     @Override
     public void init() {
         googleAuthService = new GoogleAuthService();
         userMapper = new UserMapper();
         userService = new UserService();
+        userLoginsService = new UserLoginsService();
     }
 
     @Override
@@ -40,16 +44,28 @@ public class GoogleRegisterServlet extends HttpServlet {
             User existingUser = userService.findByEmail(googleUser.getEmail());
             if (existingUser != null) {
                 String errorMsg = existingUser.isBanned() ?
-                        "This account has been banned. Please contact support." :
-                        "An account with this Google account already exists.";
+                    "This email is associated with a banned account. Please contact support." :
+                    "Email already exists!";
                 request.setAttribute("error", errorMsg);
                 request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
                 return;
             }
+
             User newUser = userMapper.mapGoogleUserToUser(googleUser);
             User addedUser = userService.add(newUser);
             if (addedUser != null) {
-                response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp");
+                UserLogins userLogins = new UserLogins();
+                userLogins.setUserId(addedUser.getUserId());
+                userLogins.setLoginProvider("google");
+                userLogins.setProviderKey(googleUser.getGoogleId());
+                try {
+                    userLoginsService.add(userLogins);
+                    response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp");
+                } catch (Exception ex) {
+                    userService.delete(addedUser.getUserId());
+                    request.setAttribute("error", "Register failed (user login): " + ex.getMessage());
+                    request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
+                }
             } else {
                 request.setAttribute("error", "Register failed. Please try again.");
                 request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
