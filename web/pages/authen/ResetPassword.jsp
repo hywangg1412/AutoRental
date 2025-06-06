@@ -13,6 +13,17 @@
                 <h2 class="reset-title">Change password</h2>
                 <div class="reset-desc">Create a new password. Ensure it differs from previous ones for security</div>
                 <form class="reset-form" method="post">
+                    <% if (request.getAttribute("error") != null) { %>
+                        <div class="alert alert-danger" style="color: red; margin-bottom: 10px;">
+                            <%= request.getAttribute("error") %>
+                        </div>
+                    <% } %>
+                    <% if (request.getAttribute("message") != null) { %>
+                        <div class="alert alert-success" style="color: green; margin-bottom: 10px;">
+                            <%= request.getAttribute("message") %>
+                        </div>
+                    <% } %>
+                    <div class="form-error" style="color: red; margin-bottom: 10px;"></div>
                     <div class="form-group">
                         <input type="password" name="newPassword" placeholder="New Password" required>
                     </div>
