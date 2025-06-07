@@ -38,6 +38,11 @@
             <file>file:/L:/Workspace/SWP/AutoRental/web/User/js/UserAboutSidebar.js</file>
             <file>file:/L:/Workspace/SWP/AutoRental/web/pages/user/UserAbout.jsp</file>
             <file>file:/L:/Workspace/SWP/AutoRental/web/User/js/userAbout.js</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/Entity/OAuth/UserLogins.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/Interfaces/IUserLoginsRepository.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/auth/UserLoginsRepository.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Service/Interfaces/IUserLoginsService.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Service/auth/UserLoginsService.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Utils/ObjectUtils.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Auth/GoogleLoginServlet.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Auth/FacebookLoginServlet.java</file>
