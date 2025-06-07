@@ -13,8 +13,8 @@
         <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800&display=swap" rel="stylesheet">
 
         <!-- ===== Include Styles ===== -->
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/scripts/include/userNav.css">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/scripts/include/nav.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/userNav.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/nav.css">
         
         <!-- ===== Custom Styles ===== -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/user/about.css">
