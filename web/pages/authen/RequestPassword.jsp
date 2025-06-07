@@ -5,7 +5,9 @@
         <meta charset="UTF-8">
         <title>Forgot Password</title>
         <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/Authen/css/RequestPassword.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/authen/RequestPassword.css">
     </head>
 
     <body>
@@ -38,7 +40,11 @@
                 </div>
             </div>
         </div>
-        <script src="${pageContext.request.contextPath}/Authen/js/RequestPassword.js"></script>
+        <!-- ===== External JavaScript Libraries ===== -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        
+        <!-- ===== Authentication Scripts ===== -->
+        <script src="${pageContext.request.contextPath}/scripts/authen/RequestPassword.js"></script>
     </body>
 
 </html>
