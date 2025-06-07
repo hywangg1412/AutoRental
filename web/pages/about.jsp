@@ -27,7 +27,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
     
     <!-- ===== Include Styles ===== -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/scripts/include/nav.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/nav.css">
     
     <!-- ===== Custom Styles ===== -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/about.css">

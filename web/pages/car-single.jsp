@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/icomoon.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
 
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/Includes/css/nav.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/nav.css">
 
     <!-- ===== Include Styles ===== -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/scripts/include/nav.css">
