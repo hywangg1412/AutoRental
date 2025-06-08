@@ -8,13 +8,17 @@
 <!DOCTYPE html>
 <html>
     <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CarRental Pro - Staff Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css">
-</head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>CarRental Pro - Staff Dashboard</title>
+        
+        <!-- ===== External CSS Libraries ===== -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+        
+        <!-- ===== Custom Styles ===== -->
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/staff/styles.css">
+    </head>
 <body>
   <!-- Sidebar -->
   <div class="sidebar">
@@ -33,7 +37,7 @@
       <h6 class="px-3 mb-2 text-muted">Navigation</h6>
       <ul class="nav flex-column">
         <li class="nav-item">
-          <a class="nav-link active" href="staff-dashboard.html">
+          <a class="nav-link active" href="staff-dashboard.jsp">
             <i class="fas fa-home"></i> Dashboard
           </a>
         </li>
@@ -484,46 +488,13 @@
       </div>
     </section>
 
+    <!-- ===== External JavaScript Libraries ===== -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- ===== Common Excel Handler ===== -->
+    <script src="${pageContext.request.contextPath}/scripts/common/excel-handler.js"></script>
+    
+    <!-- ===== Custom JavaScript ===== -->
+    <script src="${pageContext.request.contextPath}/scripts/staff/staff-dashboard.js"></script>
 </body>
 </html>
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script>

@@ -2,7 +2,7 @@ package Controller.Auth;
 
 import Model.Entity.User;
 import Service.UserService;
-import Util.SessionUtil;
+import Utils.SessionUtil;
 import Utils.ObjectUtils;
 import java.io.IOException;
 import java.time.LocalDateTime;

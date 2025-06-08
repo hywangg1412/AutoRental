@@ -1,11 +1,20 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Change Password</title>
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/Authen/css/ResetPassword.css">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Reset Password - Auto Rental</title>
+
+        <!-- ===== Google Fonts ===== -->
         <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700&display=swap" rel="stylesheet">
+
+        <!-- ===== External CSS Libraries ===== -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+        
+        <!-- ===== Custom Styles ===== -->
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/authen/ResetPassword.css">
     </head>
     <body>
         <div class="reset-container">
@@ -34,6 +43,11 @@
                 </form>
             </div>
         </div>
+        <!-- ===== External JS Libraries ===== -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        
+        <!-- ===== Custom Scripts ===== -->
+        <script src="${pageContext.request.contextPath}/scripts/authen/config.js"></script>
+        <script src="${pageContext.request.contextPath}/scripts/authen/ResetPassword.js"></script>
     </body>
-    <script src="${pageContext.request.contextPath}/Authen/js/ResetPassword.js"></script>
 </html>
