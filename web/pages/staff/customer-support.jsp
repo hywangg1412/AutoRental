@@ -1,9 +1,3 @@
-<%-- 
-    Document   : customer-support.jsp
-    Created on : Jun 1, 2025, 11:01:19 AM
-    Author     : ACER
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>

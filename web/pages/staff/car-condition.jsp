@@ -1,9 +1,3 @@
-<%-- 
-    Document   : car-condition.jsp
-    Created on : Jun 1, 2025, 11:00:54 AM
-    Author     : ACER
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>

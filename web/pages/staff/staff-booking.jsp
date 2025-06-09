@@ -1,9 +1,3 @@
-<%-- 
-    Document   : staff-booking.jsp
-    Created on : Jun 1, 2025, 11:00:04 AM
-    Author     : ACER
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
