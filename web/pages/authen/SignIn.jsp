@@ -1,11 +1,19 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Login to your account</title>
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/Authen/css/SignIn.css"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Sign In - Auto Rental</title>
+
+        <!-- ===== Google Fonts ===== -->
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+
+        <!-- ===== External CSS Libraries ===== -->
+        <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+        
+        <!-- ===== Custom Styles ===== -->
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/authen/SignIn.css"/>
     </head>
 
     <body>
@@ -63,7 +71,11 @@
                 </div>
             </div>
         </div>
+        <!-- ===== External JS Libraries ===== -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        
+        <!-- ===== Custom Scripts ===== -->
+        <script src="${pageContext.request.contextPath}/scripts/authen/config.js"></script>
+        <script src="${pageContext.request.contextPath}/scripts/authen/SignIn.js"></script>
     </body>
-    <script src="${pageContext.request.contextPath}/Authen/js/config.js"></script>
-    <script src="${pageContext.request.contextPath}/Authen/js/SignIn.js"></script>
 </html>

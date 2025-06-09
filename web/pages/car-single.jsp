@@ -7,32 +7,38 @@
     
     <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/open-iconic-bootstrap.min.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/animate.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/open-iconic-bootstrap.min.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/animate.css">
     
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/owl.carousel.min.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/owl.theme.default.min.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/magnific-popup.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/magnific-popup.css">
 
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/aos.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/aos.css">
 
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/ionicons.min.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/ionicons.min.css">
 
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap-datepicker.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/jquery.timepicker.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/bootstrap-datepicker.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/jquery.timepicker.css">
 
     
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/flaticon.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/icomoon.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/flaticon.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/icomoon.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
 
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/Includes/css/nav.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/nav.css">
+
+    <!-- ===== Include Styles ===== -->
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/scripts/include/nav.css">
+    
+    <!-- ===== Custom Styles ===== -->
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/car-single.css">
   </head>
   <body>
     
     <jsp:include page="includes/nav.jsp" />
     
-    <div class="hero-wrap hero-wrap-2 js-fullheight" style="background-image: url('../images/bg_3.jpg');" data-stellar-background-ratio="0.5">
+    <div class="hero-wrap hero-wrap-2 js-fullheight" style="background-image: url('${pageContext.request.contextPath}/assets/images/bg_3.jpg');" data-stellar-background-ratio="0.5">
       <div class="overlay"></div>
       <div class="container">
         <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-start">
@@ -61,25 +67,25 @@
             <div class="carousel-car owl-carousel ftco-owl">
               <div class="item">
                 <div class="car-wrap rounded ftco-animate">
-                  <div class="img rounded d-flex align-items-end" style="background-image: url('../images/car-1.jpg');">
+                  <div class="img rounded d-flex align-items-end" style="background-image: url('${pageContext.request.contextPath}/assets/images/car-1.jpg');">
                   </div>
                 </div>
               </div>
               <div class="item">
                 <div class="car-wrap rounded ftco-animate">
-                  <div class="img rounded d-flex align-items-end" style="background-image: url('../images/car-2.jpg');">
+                  <div class="img rounded d-flex align-items-end" style="background-image: url('${pageContext.request.contextPath}/assets/images/car-2.jpg');">
                   </div>
                 </div>
               </div>
               <div class="item">
                 <div class="car-wrap rounded ftco-animate">
-                  <div class="img rounded d-flex align-items-end" style="background-image: url('../images/car-3.jpg');">
+                  <div class="img rounded d-flex align-items-end" style="background-image: url('${pageContext.request.contextPath}/assets/images/car-3.jpg');">
                   </div>
                 </div>
               </div>
               <div class="item">
                 <div class="car-wrap rounded ftco-animate">
-                  <div class="img rounded d-flex align-items-end" style="background-image: url('../images/car-4.jpg');">
+                  <div class="img rounded d-flex align-items-end" style="background-image: url('${pageContext.request.contextPath}/assets/images/car-4.jpg');">
                   </div>
                 </div>
               </div>
@@ -279,3 +285,21 @@
     </section>
 
 <jsp:include page="includes/footer.jsp" />
+
+<!-- ===== External JS Libraries ===== -->
+<script src="${pageContext.request.contextPath}/assets/js/jquery.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/jquery-migrate-3.0.1.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/popper.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/bootstrap.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/jquery.easing.1.3.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/jquery.waypoints.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/jquery.stellar.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/owl.carousel.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/jquery.magnific-popup.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/aos.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/jquery.animateNumber.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/bootstrap-datepicker.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/jquery.timepicker.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/scrollax.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/google-map.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/main.js"></script>

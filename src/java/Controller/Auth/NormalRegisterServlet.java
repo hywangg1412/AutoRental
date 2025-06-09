@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import Util.SessionUtil;
+import Utils.SessionUtil;
 import Utils.ObjectUtils;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -74,8 +74,8 @@ public class NormalRegisterServlet extends HttpServlet {
             User existingUser = userService.findByEmail(email);
             if (existingUser != null) {
                 String errorMsg = existingUser.isBanned() ?
-                        "This account has been banned. Please contact support." :
-                        "Email already exists!";
+                    "This email is associated with a banned account. Please contact support." :
+                    "Email already exists!";
                 request.setAttribute("error", errorMsg);
                 request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
                 return;
@@ -96,7 +96,6 @@ public class NormalRegisterServlet extends HttpServlet {
             user.setTwoFactorEnabled(false);
             user.setLockoutEnabled(true);
             user.setAccessFailedCount(0);
-            user.setBanned(false);
 
             User addedUser = userService.add(user);
             if (addedUser != null) {
