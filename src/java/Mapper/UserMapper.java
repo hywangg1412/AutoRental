@@ -25,7 +25,6 @@ public class UserMapper {
         user.setTwoFactorEnabled(false);
         user.setLockoutEnabled(true);
         user.setAccessFailedCount(0);
-        user.setBanned(false);
         user.setPasswordHash("");
         user.setSecurityStamp(UUID.randomUUID().toString());
         user.setConcurrencyStamp(UUID.randomUUID().toString());
@@ -62,7 +61,6 @@ public class UserMapper {
         user.setTwoFactorEnabled(false);
         user.setLockoutEnabled(true);
         user.setAccessFailedCount(0);
-        user.setBanned(false);
         user.setPasswordHash("");
         user.setSecurityStamp(UUID.randomUUID().toString());
         user.setConcurrencyStamp(UUID.randomUUID().toString());

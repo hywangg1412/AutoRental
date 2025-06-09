@@ -8,6 +8,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+<<<<<<< HEAD
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CarRental Pro - Staff Dashboard</title>
@@ -15,6 +16,19 @@
   <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
 </head>
+=======
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>CarRental Pro - Staff Dashboard</title>
+        
+        <!-- ===== External CSS Libraries ===== -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+        
+        <!-- ===== Custom Styles ===== -->
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/staff/styles.css">
+    </head>
+>>>>>>> f4d6326e28cff073d0de5fc21e82c3dcfc16868c
 <body>
   <!-- Sidebar -->
   <div class="sidebar">
@@ -33,7 +47,11 @@
       <h6 class="px-3 mb-2 text-muted">Navigation</h6>
       <ul class="nav flex-column">
         <li class="nav-item">
+<<<<<<< HEAD
           <a class="nav-link active" href="staff-dashboard.html">
+=======
+          <a class="nav-link active" href="staff-dashboard.jsp">
+>>>>>>> f4d6326e28cff073d0de5fc21e82c3dcfc16868c
             <i class="fas fa-home"></i> Dashboard
           </a>
         </li>
@@ -484,6 +502,7 @@
       </div>
     </section>
 
+<<<<<<< HEAD
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
@@ -527,3 +546,15 @@
         return gk_fileData[filename] || "";
         }
         </script>
+=======
+    <!-- ===== External JavaScript Libraries ===== -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- ===== Common Excel Handler ===== -->
+    <script src="${pageContext.request.contextPath}/scripts/common/excel-handler.js"></script>
+    
+    <!-- ===== Custom JavaScript ===== -->
+    <script src="${pageContext.request.contextPath}/scripts/staff/staff-dashboard.js"></script>
+</body>
+</html>
+>>>>>>> f4d6326e28cff073d0de5fc21e82c3dcfc16868c

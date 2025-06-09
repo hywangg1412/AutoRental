@@ -32,10 +32,10 @@ public class UserRepository implements IUserRepository {
     @Override
     public User add(User entity) throws SQLException {
         String sql = "INSERT INTO Users (UserId, Username, UserDOB, PhoneNumber, UserAddress, "
-                + "UserDescription, AvatarUrl, Gender, FirstName, LastName, IsBanned, CreatedDate, "
+                + "UserDescription, AvatarUrl, Gender, FirstName, LastName, Status, CreatedDate, "
                 + "NormalizedUserName, Email, NormalizedEmail, EmailVerifed, PasswordHash, "
                 + "SecurityStamp, ConcurrencyStamp, TwoFactorEnabled, LockoutEnd, LockoutEnabled, "
-                + "AccessFailedCount, Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + "AccessFailedCount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
             st.setObject(1, entity.getUserId());
@@ -48,7 +48,7 @@ public class UserRepository implements IUserRepository {
             st.setString(8, entity.getGender());
             st.setString(9, entity.getFirstName());
             st.setString(10, entity.getLastName());
-            st.setBoolean(11, entity.isBanned());
+            st.setString(11, entity.getStatus());
             st.setTimestamp(12, entity.getCreatedDate() != null ? Timestamp.valueOf(entity.getCreatedDate()) : null);
             st.setString(13, entity.getNormalizedUserName());
             st.setString(14, entity.getEmail());
@@ -61,7 +61,6 @@ public class UserRepository implements IUserRepository {
             st.setTimestamp(21, entity.getLockoutEnd() != null ? Timestamp.valueOf(entity.getLockoutEnd()) : null);
             st.setBoolean(22, entity.isLockoutEnabled());
             st.setInt(23, entity.getAccessFailedCount());
-            st.setString(24, entity.getStatus());
             int affectedRows = st.executeUpdate();
             if (affectedRows > 0) {
                 return findById(entity.getUserId());
@@ -89,10 +88,10 @@ public class UserRepository implements IUserRepository {
     public boolean update(User entity) throws SQLException {
         String sql = "UPDATE Users SET Username = ?, UserDOB = ?, PhoneNumber = ?, UserAddress = ?, "
                 + "UserDescription = ?, AvatarUrl = ?, Gender = ?, FirstName = ?, LastName = ?, "
-                + "IsBanned = ?, CreatedDate = ?, NormalizedUserName = ?, Email = ?, "
+                + "Status = ?, CreatedDate = ?, NormalizedUserName = ?, Email = ?, "
                 + "NormalizedEmail = ?, EmailVerifed = ?, PasswordHash = ?, SecurityStamp = ?, "
                 + "ConcurrencyStamp = ?, TwoFactorEnabled = ?, LockoutEnd = ?, LockoutEnabled = ?, "
-                + "AccessFailedCount = ?, Status = ? WHERE UserId = ?";
+                + "AccessFailedCount = ? WHERE UserId = ?";
 
         try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
             st.setString(1, entity.getUsername());
@@ -104,7 +103,7 @@ public class UserRepository implements IUserRepository {
             st.setString(7, entity.getGender());
             st.setString(8, entity.getFirstName());
             st.setString(9, entity.getLastName());
-            st.setBoolean(10, entity.isBanned());
+            st.setString(10, entity.getStatus());
             st.setTimestamp(11, entity.getCreatedDate() != null ? Timestamp.valueOf(entity.getCreatedDate()) : null);
             st.setString(12, entity.getNormalizedUserName());
             st.setString(13, entity.getEmail());
@@ -117,8 +116,7 @@ public class UserRepository implements IUserRepository {
             st.setTimestamp(20, entity.getLockoutEnd() != null ? Timestamp.valueOf(entity.getLockoutEnd()) : null);
             st.setBoolean(21, entity.isLockoutEnabled());
             st.setInt(22, entity.getAccessFailedCount());
-            st.setString(23, entity.getStatus());
-            st.setObject(24, entity.getUserId());
+            st.setObject(23, entity.getUserId());
             int affectedRows = st.executeUpdate();
             return affectedRows > 0;
         }
@@ -178,7 +176,7 @@ public class UserRepository implements IUserRepository {
         user.setGender(rs.getString("Gender"));
         user.setFirstName(rs.getString("FirstName"));
         user.setLastName(rs.getString("LastName"));
-        user.setBanned(rs.getBoolean("IsBanned"));
+        user.setStatus(rs.getString("Status"));
         user.setCreatedDate(rs.getTimestamp("CreatedDate") != null ? rs.getTimestamp("CreatedDate").toLocalDateTime() : null);
         user.setNormalizedUserName(rs.getString("NormalizedUserName"));
         user.setEmail(rs.getString("Email"));
@@ -191,7 +189,6 @@ public class UserRepository implements IUserRepository {
         user.setLockoutEnd(rs.getTimestamp("LockoutEnd") != null ? rs.getTimestamp("LockoutEnd").toLocalDateTime() : null);
         user.setLockoutEnabled(rs.getBoolean("LockoutEnabled"));
         user.setAccessFailedCount(rs.getInt("AccessFailedCount"));
-        user.setStatus(rs.getString("Status"));
         return user;
     }
 
