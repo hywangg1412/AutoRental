@@ -1,6 +1,7 @@
-package Repository.Interfaces;
+package Repository.Interfaces.Icar;
 
-import Model.Entity.Car;
+import Model.Entity.Car.Car;
+import Repository.Interfaces.Repository;
 
 public interface ICarRepository extends Repository<Car, Integer> {
 }
