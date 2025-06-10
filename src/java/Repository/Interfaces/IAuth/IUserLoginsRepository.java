@@ -1,6 +1,7 @@
-package Repository.Interfaces;
+package Repository.Interfaces.IAuth;
 
 import Model.Entity.OAuth.UserLogins;
+import Repository.Interfaces.Repository;
 import java.sql.*;
 
 public interface IUserLoginsRepository extends Repository<UserLogins, Integer>{
