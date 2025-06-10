@@ -32,6 +32,14 @@
         <servlet-name>ResetPasswordServlet</servlet-name>
         <servlet-class>Controller.Auth.ResetPasswordServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>BookingApprovalListServlet</servlet-name>
+        <servlet-class>Controller.Booking.BookingApprovalListServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>BookingApprovalServlet</servlet-name>
+        <servlet-class>Controller.Booking.BookingApprovalServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>GoogleLoginServlet</servlet-name>
         <url-pattern>/googleLogin</url-pattern>
@@ -63,6 +71,14 @@
     <servlet-mapping>
         <servlet-name>ResetPasswordServlet</servlet-name>
         <url-pattern>/resetPassword</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>BookingApprovalListServlet</servlet-name>
+        <url-pattern>/staff/booking-approval-list</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>BookingApprovalServlet</servlet-name>
+        <url-pattern>/staff/booking-approval</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>pages/authen/SignIn.jsp</welcome-file>
