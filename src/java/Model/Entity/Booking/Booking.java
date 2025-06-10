@@ -1,89 +1,91 @@
-package Model.Entity;
+package Model.Entity.Booking;
 
 import java.util.Date;
+import java.util.UUID;
+import java.time.LocalDateTime;
 
 public class Booking {
-    private int bookingId;
-    private int userId;
-    private int carId;
-    private Date startDate;
-    private Date endDate;
-    private String pickuplocation;
-    private String returnLocation;
+    private UUID bookingId;
+    private UUID userId;
+    private UUID carId;
+    private UUID handledBy;
+    private LocalDateTime pickupDateTime;
+    private LocalDateTime returnDateTime;
     private double totalAmount;
     private String status;
+    private UUID discountId;
+    private LocalDateTime createdDate;
+    private String cancelReason;
+    private String bookingCode;
+    private String expectedPaymentMethod;
 
     public Booking() {
     }
 
-    public Booking(int bookingId, int userId, int carId, Date startDate, Date endDate, String pickuplocation, String returnLocation, double totalAmount, String status) {
+    public Booking(UUID bookingId, UUID userId, UUID carId, UUID handledBy, LocalDateTime pickupDateTime, LocalDateTime returnDateTime, double totalAmount, String status, UUID discountId, LocalDateTime createdDate, String cancelReason, String bookingCode, String expectedPaymentMethod) {
         this.bookingId = bookingId;
         this.userId = userId;
         this.carId = carId;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.pickuplocation = pickuplocation;
-        this.returnLocation = returnLocation;
+        this.handledBy = handledBy;
+        this.pickupDateTime = pickupDateTime;
+        this.returnDateTime = returnDateTime;
         this.totalAmount = totalAmount;
         this.status = status;
+        this.discountId = discountId;
+        this.createdDate = createdDate;
+        this.cancelReason = cancelReason;
+        this.bookingCode = bookingCode;
+        this.expectedPaymentMethod = expectedPaymentMethod;
     }
 
-    public int getBookingId() {
+    public UUID getBookingId() {
         return bookingId;
     }
 
-    public void setBookingId(int bookingId) {
+    public void setBookingId(UUID bookingId) {
         this.bookingId = bookingId;
     }
 
-    public int getUserId() {
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 
-    public int getCarId() {
+    public UUID getCarId() {
         return carId;
     }
 
-    public void setCarId(int carId) {
+    public void setCarId(UUID carId) {
         this.carId = carId;
     }
 
-    public Date getStartDate() {
-        return startDate;
+    public UUID getHandledBy() {
+        return handledBy;
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
+    public void setHandledBy(UUID handledBy) {
+        this.handledBy = handledBy;
     }
 
-    public Date getEndDate() {
-        return endDate;
+    public LocalDateTime getPickupDateTime() {
+        return pickupDateTime;
     }
 
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
+    public void setPickupDateTime(LocalDateTime pickupDateTime) {
+        this.pickupDateTime = pickupDateTime;
     }
 
-    public String getPickuplocation() {
-        return pickuplocation;
+    public LocalDateTime getReturnDateTime() {
+        return returnDateTime;
     }
 
-    public void setPickuplocation(String pickuplocation) {
-        this.pickuplocation = pickuplocation;
+    public void setReturnDateTime(LocalDateTime returnDateTime) {
+        this.returnDateTime = returnDateTime;
     }
 
-    public String getReturnLocation() {
-        return returnLocation;
-    }
-
-    public void setReturnLocation(String returnLocation) {
-        this.returnLocation = returnLocation;
-    }
-        
     public double getTotalAmount() {
         return totalAmount;
     }
@@ -100,11 +102,64 @@ public class Booking {
         this.status = status;
     }
 
-    @Override
-    public String toString() {
-        return "Booking{" + "bookingId=" + bookingId + ", userId=" + userId + ", carId=" + carId +
-                ", startDate=" + startDate + ", endDate=" + endDate + ", pickuplocation=" + pickuplocation + 
-                ", returnLocation=" + returnLocation + ", totalAmount=" + totalAmount + ", status=" + status + '}';
+    public UUID getDiscountId() {
+        return discountId;
     }
 
+    public void setDiscountId(UUID discountId) {
+        this.discountId = discountId;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public String getCancelReason() {
+        return cancelReason;
+    }
+
+    public void setCancelReason(String cancelReason) {
+        this.cancelReason = cancelReason;
+    }
+
+    public String getBookingCode() {
+        return bookingCode;
+    }
+
+    public void setBookingCode(String bookingCode) {
+        this.bookingCode = bookingCode;
+    }
+
+    public String getExpectedPaymentMethod() {
+        return expectedPaymentMethod;
+    }
+
+    public void setExpectedPaymentMethod(String expectedPaymentMethod) {
+        this.expectedPaymentMethod = expectedPaymentMethod;
+    }
+
+    
+
+    @Override
+    public String toString() {
+        return "Booking{" +
+                "bookingId=" + bookingId +
+                ", userId=" + userId +
+                ", carId=" + carId +
+                ", handledBy=" + handledBy +
+                ", pickupDate=" + pickupDateTime +
+                ", returnDate=" + returnDateTime +
+                ", totalAmount=" + totalAmount +
+                ", status='" + status + '\'' +
+                ", discountId=" + discountId +
+                ", createdDate=" + createdDate +
+                ", cancelReason='" + cancelReason + '\'' +
+                ", bookingCode='" + bookingCode + '\'' +
+                ", expectedPaymentMethod='" + expectedPaymentMethod + '\'' +
+                '}';
+    }
 }
