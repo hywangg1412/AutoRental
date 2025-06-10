@@ -1,9 +1,3 @@
-<%-- 
-    Document   : car-condition.jsp
-    Created on : Jun 1, 2025, 11:00:54 AM
-    Author     : ACER
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -80,13 +74,13 @@
             <!-- Header -->
             <div class="content-header">
                 <div class="header-left">
-                    <h1 class="page-title">Báo Cáo Tình Trạng Xe</h1>
-                    <p class="page-subtitle">Kiểm tra và báo cáo tình trạng xe sau khi khách hàng trả xe</p>
+                    <h1 class="page-title">Car Condition Report</h1>
+                    <p class="page-subtitle">Inspect and report vehicle conditions after customer returns</p>
                 </div>
                 <div class="header-right">
                     <button class="btn btn-outline-secondary btn-sm me-2">
                         <i class="fas fa-bell"></i>
-                        Thông Báo
+                        Notifications
                     </button>
                     <div class="user-profile">
                         <div class="user-avatar">JS</div>
@@ -107,10 +101,10 @@
                 <div class="row g-3">
                     <div class="col-md-3">
                         <select class="form-select">
-                            <option>Tất Cả Trạng Thái</option>
-                            <option>Chờ Kiểm Tra</option>
-                            <option>Hoàn Thành</option>
-                            <option>Có Vấn Đề</option>
+                            <option>All Status</option>
+                            <option>Pending Inspection</option>
+                            <option>Completed</option>
+                            <option>Issues Found</option>
                         </select>
                     </div>
                     <div class="col-md-6">
@@ -118,12 +112,12 @@
                             <span class="input-group-text">
                                 <i class="fas fa-search"></i>
                             </span>
-                            <input type="text" class="form-control" placeholder="Tìm kiếm theo ID thuê, xe hoặc biển số">
+                            <input type="text" class="form-control" placeholder="Search by rental ID, vehicle or license plate">
                         </div>
                     </div>
                     <div class="col-md-3">
                         <button class="btn btn-primary w-100">
-                            <i class="fas fa-filter me-2"></i>Lọc Kết Quả
+                            <i class="fas fa-filter me-2"></i>Filter Results
                         </button>
                     </div>
                 </div>
@@ -132,22 +126,22 @@
             <!-- Recently Completed Inspections -->
             <div class="content-section">
                 <div class="section-header">
-                    <h2 class="section-title">Các Kiểm Tra Gần Đây</h2>
-                    <p class="section-subtitle">5 kiểm tra xe gần nhất đã hoàn thành</p>
+                    <h2 class="section-title">Recent Inspections</h2>
+                    <p class="section-subtitle">5 most recent completed vehicle inspections</p>
                 </div>
 
                 <div class="table-container">
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>ID Thuê</th>
-                                <th>Xe</th>
-                                <th>Biển Số</th>
-                                <th>Ngày Kiểm Tra</th>
-                                <th>Tình Trạng</th>
-                                <th>Nhân Viên</th>
-                                <th>Ghi Chú</th>
-                                <th>Hành Động</th>
+                                <th>Rental ID</th>
+                                <th>Vehicle</th>
+                                <th>License Plate</th>
+                                <th>Inspection Date</th>
+                                <th>Condition</th>
+                                <th>Inspector</th>
+                                <th>Notes</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -155,16 +149,16 @@
                                 <td class="rental-id">RNT-0995</td>
                                 <td class="vehicle-name">Toyota Corolla</td>
                                 <td class="license-plate">MNO-678</td>
-                                <td class="inspection-date">15/11/2025</td>
+                                <td class="inspection-date">11/15/2025</td>
                                 <td>
-                                    <span class="condition-badge normal">Bình Thường</span>
+                                    <span class="condition-badge normal">Normal</span>
                                 </td>
                                 <td class="inspector-name">John Staff</td>
-                                <td class="inspection-notes">Xe được trả trong tình trạng tuyệt vời</td>
+                                <td class="inspection-notes">Vehicle returned in excellent condition</td>
                                 <td>
                                     <button class="btn btn-outline-secondary btn-sm action-btn">
                                         <i class="fas fa-eye"></i>
-                                        Xem
+                                        View
                                     </button>
                                 </td>
                             </tr>
@@ -172,16 +166,16 @@
                                 <td class="rental-id">RNT-0994</td>
                                 <td class="vehicle-name">Hyundai Sonata</td>
                                 <td class="license-plate">PQR-901</td>
-                                <td class="inspection-date">15/11/2025</td>
+                                <td class="inspection-date">11/15/2025</td>
                                 <td>
-                                    <span class="condition-badge needs-cleaning">Cần Vệ Sinh</span>
+                                    <span class="condition-badge needs-cleaning">Needs Cleaning</span>
                                 </td>
                                 <td class="inspector-name">John Staff</td>
-                                <td class="inspection-notes">Nội thất cần vệ sinh, có vết bẩn thức ăn trên ghế</td>
+                                <td class="inspection-notes">Interior needs cleaning, food stains on seats</td>
                                 <td>
                                     <button class="btn btn-outline-secondary btn-sm action-btn">
                                         <i class="fas fa-eye"></i>
-                                        Xem
+                                        View
                                     </button>
                                 </td>
                             </tr>
@@ -189,16 +183,16 @@
                                 <td class="rental-id">RNT-0993</td>
                                 <td class="vehicle-name">Chevrolet Malibu</td>
                                 <td class="license-plate">STU-234</td>
-                                <td class="inspection-date">14/11/2025</td>
+                                <td class="inspection-date">11/14/2025</td>
                                 <td>
-                                    <span class="condition-badge minor-scratches">Trầy Xước Nhẹ</span>
+                                    <span class="condition-badge minor-scratches">Minor Scratches</span>
                                 </td>
                                 <td class="inspector-name">Sarah Admin</td>
-                                <td class="inspection-notes">Vết trầy nhỏ ở cản sau, còn lại tốt</td>
+                                <td class="inspection-notes">Small scratch on rear bumper, otherwise good</td>
                                 <td>
                                     <button class="btn btn-outline-secondary btn-sm action-btn">
                                         <i class="fas fa-eye"></i>
-                                        Xem
+                                        View
                                     </button>
                                 </td>
                             </tr>
@@ -206,16 +200,16 @@
                                 <td class="rental-id">RNT-0992</td>
                                 <td class="vehicle-name">Kia Sportage</td>
                                 <td class="license-plate">VWX-567</td>
-                                <td class="inspection-date">14/11/2025</td>
+                                <td class="inspection-date">11/14/2025</td>
                                 <td>
-                                    <span class="condition-badge normal">Bình Thường</span>
+                                    <span class="condition-badge normal">Normal</span>
                                 </td>
                                 <td class="inspector-name">Sarah Admin</td>
-                                <td class="inspection-notes">Không có vấn đề gì</td>
+                                <td class="inspection-notes">No issues found</td>
                                 <td>
                                     <button class="btn btn-outline-secondary btn-sm action-btn">
                                         <i class="fas fa-eye"></i>
-                                        Xem
+                                        View
                                     </button>
                                 </td>
                             </tr>
@@ -223,16 +217,16 @@
                                 <td class="rental-id">RNT-0991</td>
                                 <td class="vehicle-name">Mazda CX-5</td>
                                 <td class="license-plate">YZA-890</td>
-                                <td class="inspection-date">13/11/2025</td>
+                                <td class="inspection-date">11/13/2025</td>
                                 <td>
-                                    <span class="condition-badge major-damage">Hư Hỏng Nặng</span>
+                                    <span class="condition-badge major-damage">Major Damage</span>
                                 </td>
                                 <td class="inspector-name">Mike Inspector</td>
-                                <td class="inspection-notes">Vết lõm lớn ở cửa bên tài xế, cần sửa chữa</td>
+                                <td class="inspection-notes">Large dent on driver's door, needs repair</td>
                                 <td>
                                     <button class="btn btn-outline-secondary btn-sm action-btn">
                                         <i class="fas fa-eye"></i>
-                                        Xem
+                                        View
                                     </button>
                                 </td>
                             </tr>
@@ -244,72 +238,53 @@
             <!-- Pending Inspections Section -->
             <div class="content-section">
                 <div class="section-header">
-                    <h2 class="section-title">Xe Chờ Kiểm Tra</h2>
-                    <p class="section-subtitle">Các xe đang chờ kiểm tra sau khi trả</p>
+                    <h2 class="section-title">Pending Inspections</h2>
+                    <p class="section-subtitle">Vehicles awaiting inspection after return</p>
                 </div>
 
                 <div class="table-container">
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>ID Thuê</th>
-                                <th>Xe</th>
-                                <th>Khách Hàng</th>
-                                <th>Ngày Trả</th>
-                                <th>Tình Trạng Trước</th>
-                                <th>Trạng Thái</th>
-                                <th>Hành Động</th>
+                                <th>Rental ID</th>
+                                <th>Vehicle</th>
+                                <th>License Plate</th>
+                                <th>Return Date</th>
+                                <th>Customer</th>
+                                <th>Status</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td class="rental-id">RNT-1001</td>
-                                <td class="vehicle-name">Toyota Camry 2023</td>
-                                <td class="customer-name">Nguyễn Văn An</td>
-                                <td class="return-date">20/11/2025</td>
+                                <td class="rental-id">RNT-0996</td>
+                                <td class="vehicle-name">Ford Focus</td>
+                                <td class="license-plate">BCD-123</td>
+                                <td class="return-date">11/16/2025</td>
+                                <td class="customer-name">Robert Johnson</td>
                                 <td>
-                                    <span class="condition-badge normal">Tốt</span>
+                                    <span class="status-badge pending">Pending</span>
                                 </td>
                                 <td>
-                                    <span class="status-badge pending">Chờ Kiểm Tra</span>
-                                </td>
-                                <td>
-                                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#inspectionModal">
-                                        <i class="fas fa-search me-1"></i>Kiểm Tra Xe
+                                    <button class="btn btn-primary btn-sm action-btn">
+                                        <i class="fas fa-clipboard-check"></i>
+                                        Inspect
                                     </button>
                                 </td>
                             </tr>
                             <tr>
-                                <td class="rental-id">RNT-1002</td>
-                                <td class="vehicle-name">Honda Civic 2022</td>
-                                <td class="customer-name">Trần Thị Bình</td>
-                                <td class="return-date">19/11/2025</td>
+                                <td class="rental-id">RNT-0997</td>
+                                <td class="vehicle-name">Honda Civic</td>
+                                <td class="license-plate">EFG-456</td>
+                                <td class="return-date">11/16/2025</td>
+                                <td class="customer-name">Emily Davis</td>
                                 <td>
-                                    <span class="condition-badge needs-cleaning">Bình Thường</span>
+                                    <span class="status-badge pending">Pending</span>
                                 </td>
                                 <td>
-                                    <span class="status-badge pending">Chờ Kiểm Tra</span>
-                                </td>
-                                <td>
-                                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#inspectionModal">
-                                        <i class="fas fa-search me-1"></i>Kiểm Tra Xe
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="rental-id">RNT-1003</td>
-                                <td class="vehicle-name">BMW X5 2021</td>
-                                <td class="customer-name">Lê Minh Cường</td>
-                                <td class="return-date">18/11/2025</td>
-                                <td>
-                                    <span class="condition-badge normal">Tốt</span>
-                                </td>
-                                <td>
-                                    <span class="status-badge pending">Chờ Kiểm Tra</span>
-                                </td>
-                                <td>
-                                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#inspectionModal">
-                                        <i class="fas fa-search me-1"></i>Kiểm Tra Xe
+                                    <button class="btn btn-primary btn-sm action-btn">
+                                        <i class="fas fa-clipboard-check"></i>
+                                        Inspect
                                     </button>
                                 </td>
                             </tr>
@@ -321,177 +296,86 @@
     </div>
 
     <!-- Inspection Modal -->
-    <div class="modal fade" id="inspectionModal" tabindex="-1" aria-labelledby="inspectionModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
+    <div class="modal fade" id="inspectionModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="inspectionModalLabel">
-                        <i class="fas fa-clipboard-check me-2"></i>
-                        Biểu Mẫu Kiểm Tra Xe
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">Vehicle Inspection</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Vehicle Information -->
-                    <div class="inspection-section">
-                        <h6 class="section-title">
-                            <i class="fas fa-info-circle me-2"></i>Thông Tin Xe
-                        </h6>
-                        <div class="vehicle-info-grid">
-                            <div class="info-item">
-                                <label>ID Thuê:</label>
-                                <span>RNT-1001</span>
-                            </div>
-                            <div class="info-item">
-                                <label>Xe:</label>
-                                <span>Toyota Camry 2023</span>
-                            </div>
-                            <div class="info-item">
-                                <label>Biển Số:</label>
-                                <span>ABC-123</span>
-                            </div>
-                            <div class="info-item">
-                                <label>Khách Hàng:</label>
-                                <span>Nguyễn Văn An</span>
-                            </div>
-                            <div class="info-item">
-                                <label>Ngày Trả:</label>
-                                <span>20/11/2025</span>
-                            </div>
-                            <div class="info-item">
-                                <label>Quãng Đường:</label>
-                                <span>15,240 km</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Overall Condition -->
-                    <div class="inspection-section">
-                        <h6 class="section-title">
-                            <i class="fas fa-clipboard-list me-2"></i>Tình Trạng Chung
-                        </h6>
-                        <div class="row">
+                    <form id="inspectionForm">
+                        <div class="row g-4">
                             <div class="col-md-6">
-                                <label class="form-label">Tình Trạng Tổng Quát *</label>
-                                <select class="form-select" required>
-                                    <option value="">Chọn tình trạng</option>
-                                    <option value="clean">Sạch</option>
-                                    <option value="dirty">Bẩn</option>
-                                    <option value="smelly">Có mùi</option>
-                                    <option value="minor-scratch">Trầy xước nhẹ</option>
-                                    <option value="dent">Vết lõm</option>
-                                    <option value="fuel-shortage">Thiếu xăng</option>
-                                    <option value="broken-light">Hư đèn</option>
-                                </select>
+                                <h6 class="mb-3">Vehicle Information</h6>
+                                <div class="mb-3">
+                                    <label class="form-label">Vehicle</label>
+                                    <input type="text" class="form-control" value="Ford Focus" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">License Plate</label>
+                                    <input type="text" class="form-control" value="BCD-123" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Rental ID</label>
+                                    <input type="text" class="form-control" value="RNT-0996" readonly>
+                                </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Mức Nhiên Liệu</label>
-                                <select class="form-select">
-                                    <option value="">Chọn mức nhiên liệu</option>
-                                    <option value="full">Đầy</option>
-                                    <option value="3/4">3/4</option>
-                                    <option value="1/2">1/2</option>
-                                    <option value="1/4">1/4</option>
-                                    <option value="empty">Trống</option>
-                                </select>
+                                <h6 class="mb-3">Inspection Details</h6>
+                                <div class="mb-3">
+                                    <label class="form-label">Overall Condition</label>
+                                    <select class="form-select" required>
+                                        <option value="">Select condition...</option>
+                                        <option value="normal">Normal</option>
+                                        <option value="needs-cleaning">Needs Cleaning</option>
+                                        <option value="minor-scratches">Minor Scratches</option>
+                                        <option value="major-damage">Major Damage</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Inspection Notes</label>
+                                    <textarea class="form-control" rows="3" placeholder="Enter detailed inspection notes..." required></textarea>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <h6 class="mb-3">Damage Assessment</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="exteriorDamage">
+                                            <label class="form-check-label" for="exteriorDamage">Exterior Damage</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="interiorDamage">
+                                            <label class="form-check-label" for="interiorDamage">Interior Damage</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="mechanicalIssues">
+                                            <label class="form-check-label" for="mechanicalIssues">Mechanical Issues</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="needsCleaning">
+                                            <label class="form-check-label" for="needsCleaning">Needs Cleaning</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <h6 class="mb-3">Upload Photos</h6>
+                                <div class="mb-3">
+                                    <input type="file" class="form-control" multiple accept="image/*">
+                                    <small class="text-muted">Upload photos of any damage or issues found</small>
+                                </div>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Interior Condition -->
-                    <div class="inspection-section">
-                        <h6 class="section-title">
-                            <i class="fas fa-couch me-2"></i>Tình Trạng Nội Thất
-                        </h6>
-                        <div class="checkbox-grid">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="torn-seat">
-                                <label class="form-check-label" for="torn-seat">Ghế rách</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="dusty">
-                                <label class="form-check-label" for="dusty">Bụi bẩn</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="missing-accessories">
-                                <label class="form-check-label" for="missing-accessories">Thiếu phụ kiện</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="cracked-mirror">
-                                <label class="form-check-label" for="cracked-mirror">Nứt gương</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="broken-ac">
-                                <label class="form-check-label" for="broken-ac">Hỏng điều hòa</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="cigarette-smell">
-                                <label class="form-check-label" for="cigarette-smell">Mùi thuốc lá</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Photo Upload -->
-                    <div class="inspection-section">
-                        <h6 class="section-title">
-                            <i class="fas fa-camera me-2"></i>Hình Ảnh Chứng Minh
-                        </h6>
-                        <div class="upload-area">
-                            <input type="file" class="form-control" accept=".jpg,.jpeg,.png" multiple>
-                            <div class="upload-placeholder">
-                                <i class="fas fa-cloud-upload-alt"></i>
-                                <p>Tải lên ảnh hư hỏng (JPG, PNG)</p>
-                                <small>Tối đa 10 tệp, mỗi tệp 5MB</small>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Additional Notes -->
-                    <div class="inspection-section">
-                        <h6 class="section-title">
-                            <i class="fas fa-sticky-note me-2"></i>Ghi Chú Thêm
-                        </h6>
-                        <textarea class="form-control" rows="4" placeholder="Nhập ghi chú hoặc quan sát thêm..."></textarea>
-                    </div>
-
-                    <!-- Issue Classification -->
-                    <div class="inspection-section">
-                        <h6 class="section-title">
-                            <i class="fas fa-exclamation-triangle me-2"></i>Phân Loại Vấn Đề
-                        </h6>
-                        <div class="classification-options">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="issueLevel" id="minor" value="minor">
-                                <label class="form-check-label classification-minor" for="minor">
-                                    <i class="fas fa-info-circle"></i>
-                                    <span>Nhẹ</span>
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="issueLevel" id="serious" value="serious">
-                                <label class="form-check-label classification-serious" for="serious">
-                                    <i class="fas fa-exclamation-triangle"></i>
-                                    <span>Nghiêm trọng</span>
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="issueLevel" id="urgent" value="urgent">
-                                <label class="form-check-label classification-urgent" for="urgent">
-                                    <i class="fas fa-tools"></i>
-                                    <span>Cần bảo trì gấp</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
+                    </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="button" class="btn btn-success">
-                        <i class="fas fa-paper-plane me-1"></i>Gửi Báo Cáo
-                    </button>
-                    <button type="button" class="btn btn-primary">
-                        <i class="fas fa-sync me-1"></i>Cập Nhật Trạng Thái
-                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" form="inspectionForm" class="btn btn-primary">Submit Inspection</button>
                 </div>
             </div>
         </div>
@@ -499,9 +383,6 @@
 
     <!-- ===== External JavaScript Libraries ===== -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- ===== Common Excel Handler ===== -->
-    <script src="${pageContext.request.contextPath}/scripts/common/excel-handler.js"></script>
     
     <!-- ===== Custom JavaScript ===== -->
     <script src="${pageContext.request.contextPath}/scripts/staff/car-condition.js"></script>

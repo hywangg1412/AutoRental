@@ -7,15 +7,24 @@ public class TestDBConnection {
         DBContext dbContext = new DBContext();
         try (Connection conn = dbContext.getConnection();
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT TOP 5 UserId, Username, Email, Status FROM Users")) {
+             ResultSet rs = stmt.executeQuery("SELECT TOP 5 ba.ApprovalId, ba.BookingId, ba.StaffId, ba.ApprovalStatus, ba.ApprovalDate, ba.Note, ba.RejectionReason, " +
+                                            "b.BookingCode, u.Email as CustomerEmail " +
+                                            "FROM BookingApproval ba " +
+                                            "JOIN Booking b ON ba.BookingId = b.BookingId " +
+                                            "JOIN Users u ON b.UserId = u.UserId")) {
 
-            System.out.println("SAMPLE DATA:");
+            System.out.println("SAMPLE BOOKING APPROVAL DATA:");
             while (rs.next()) {
                 System.out.println(
-                    "UserId: " + rs.getString("UserId") +
-                    ", Username: " + rs.getString("Username") +
-                    ", Email: " + rs.getString("Email") +
-                    ", Status: " + rs.getString("Status")
+                    "ApprovalId: " + rs.getString("ApprovalId") +
+                    ", BookingId: " + rs.getString("BookingId") +
+                    ", StaffId: " + rs.getString("StaffId") +
+                    ", Status: " + rs.getString("ApprovalStatus") +
+                    ", ApprovalDate: " + rs.getTimestamp("ApprovalDate") +
+                    ", Note: " + rs.getString("Note") +
+                    ", RejectionReason: " + rs.getString("RejectionReason") +
+                    ", BookingCode: " + rs.getString("BookingCode") +
+                    ", CustomerEmail: " + rs.getString("CustomerEmail")
                 );
             }
         } catch (SQLException e) {

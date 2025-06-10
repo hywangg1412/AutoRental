@@ -1,6 +1,6 @@
 package Model.Entity;
 
-import Model.Entity.Car;
+import Model.Entity.Car.Car;
 import java.time.LocalDateTime;
 import java.util.Date;
 

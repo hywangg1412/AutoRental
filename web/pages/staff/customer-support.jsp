@@ -1,16 +1,10 @@
-<%-- 
-    Document   : customer-support.jsp
-    Created on : Jun 1, 2025, 11:01:19 AM
-    Author     : ACER
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Hỗ Trợ & Phản Hồi Khách Hàng - CarRental Pro</title>
+        <title>Customer Support & Feedback - CarRental Pro</title>
         
         <!-- ===== External CSS Libraries ===== -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -36,7 +30,7 @@
             <div class="sidebar-content">
                 <h6 class="nav-heading">Navigation</h6>
                 <nav class="sidebar-nav">
-                    <a href="staff-dashboard.js" class="nav-item">
+                    <a href="staff-dashboard.jsp" class="nav-item">
                         <i class="fas fa-home"></i>
                         <span>Dashboard</span>
                     </a>
@@ -80,13 +74,13 @@
             <!-- Header -->
             <div class="content-header">
                 <div class="header-left">
-                    <h1 class="page-title">Hỗ Trợ & Phản Hồi Khách Hàng</h1>
-                    <p class="page-subtitle">Quản lý đánh giá và hỗ trợ khách hàng</p>
+                    <h1 class="page-title">Customer Support & Feedback</h1>
+                    <p class="page-subtitle">Manage customer reviews and support requests</p>
                 </div>
                 <div class="header-right">
                     <button class="btn btn-outline-secondary btn-sm me-2">
                         <i class="fas fa-bell"></i>
-                        Thông Báo
+                        Notifications
                     </button>
                     <div class="user-profile">
                         <div class="user-avatar">JS</div>
@@ -105,28 +99,28 @@
             <!-- Customer Ratings Section -->
             <div class="content-section">
                 <div class="section-header">
-                    <h2 class="section-title">Đánh Giá Khách Hàng</h2>
-                    <p class="section-subtitle">Xem và phản hồi các đánh giá từ khách hàng</p>
+                    <h2 class="section-title">Customer Reviews</h2>
+                    <p class="section-subtitle">View and respond to customer feedback</p>
                 </div>
 
                 <div class="table-container">
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>STT</th>
-                                <th>Tên Khách Hàng</th>
-                                <th>Xe Đã Thuê</th>
-                                <th>Số Sao</th>
-                                <th>Nội Dung Đánh Giá</th>
-                                <th>Ngày Đánh Giá</th>
-                                <th>Trạng Thái Phản Hồi</th>
-                                <th>Hành Động</th>
+                                <th>#</th>
+                                <th>Customer Name</th>
+                                <th>Rented Vehicle</th>
+                                <th>Rating</th>
+                                <th>Review Content</th>
+                                <th>Review Date</th>
+                                <th>Response Status</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>1</td>
-                                <td class="customer-name">Nguyễn Văn An</td>
+                                <td class="customer-name">John Smith</td>
                                 <td class="vehicle-name">Toyota Camry 2023</td>
                                 <td class="rating">
                                     <i class="fas fa-star text-warning"></i>
@@ -135,20 +129,20 @@
                                     <i class="fas fa-star text-warning"></i>
                                     <i class="fas fa-star text-warning"></i>
                                 </td>
-                                <td class="comment">Dịch vụ tốt, xe sạch sẽ, nhân viên thân thiện.</td>
-                                <td>30/05/2025</td>
+                                <td class="comment">Great service, clean car, friendly staff.</td>
+                                <td>05/30/2025</td>
                                 <td>
-                                    <span class="status-badge badge-success">Đã Phản Hồi</span>
+                                    <span class="status-badge badge-success">Responded</span>
                                 </td>
                                 <td>
                                     <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#replyModal">
-                                        <i class="fas fa-reply me-1"></i>Phản Hồi
+                                        <i class="fas fa-reply me-1"></i>Reply
                                     </button>
                                 </td>
                             </tr>
                             <tr>
                                 <td>2</td>
-                                <td class="customer-name">Trần Thị Bích</td>
+                                <td class="customer-name">Sarah Johnson</td>
                                 <td class="vehicle-name">Honda Civic 2022</td>
                                 <td class="rating">
                                     <i class="fas fa-star text-warning"></i>
@@ -157,20 +151,20 @@
                                     <i class="far fa-star text-warning"></i>
                                     <i class="far fa-star text-warning"></i>
                                 </td>
-                                <td class="comment">Xe ổn nhưng giao xe hơi chậm.</td>
-                                <td>29/05/2025</td>
+                                <td class="comment">Car was good but delivery was a bit late.</td>
+                                <td>05/29/2025</td>
                                 <td>
-                                    <span class="status-badge badge-warning">Chưa Phản Hồi</span>
+                                    <span class="status-badge badge-warning">Pending</span>
                                 </td>
                                 <td>
                                     <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#replyModal">
-                                        <i class="fas fa-reply me-1"></i>Phản Hồi
+                                        <i class="fas fa-reply me-1"></i>Reply
                                     </button>
                                 </td>
                             </tr>
                             <tr>
                                 <td>3</td>
-                                <td class="customer-name">Lê Văn Cường</td>
+                                <td class="customer-name">Michael Brown</td>
                                 <td class="vehicle-name">Tesla Model 3</td>
                                 <td class="rating">
                                     <i class="fas fa-star text-warning"></i>
@@ -179,14 +173,14 @@
                                     <i class="fas fa-star text-warning"></i>
                                     <i class="far fa-star text-warning"></i>
                                 </td>
-                                <td class="comment">Xe hiện đại, nhưng cần hướng dẫn sử dụng rõ hơn.</td>
-                                <td>28/05/2025</td>
+                                <td class="comment">Modern car, but needs better usage instructions.</td>
+                                <td>05/28/2025</td>
                                 <td>
-                                    <span class="status-badge badge-warning">Chưa Phản Hồi</span>
+                                    <span class="status-badge badge-warning">Pending</span>
                                 </td>
                                 <td>
                                     <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#replyModal">
-                                        <i class="fas fa-reply me-1"></i>Phản Hồi
+                                        <i class="fas fa-reply me-1"></i>Reply
                                     </button>
                                 </td>
                             </tr>
@@ -195,11 +189,11 @@
                 </div>
             </div>
 
-            <!-- Zalo Support Section -->
+            <!-- Support Requests Section -->
             <div class="content-section">
                 <div class="section-header">
-                    <h2 class="section-title">Hỗ Trợ Khách Hàng Qua Zalo</h2>
-                    <p class="section-subtitle">Liên hệ trực tiếp với khách hàng để giải quyết yêu cầu</p>
+                    <h2 class="section-title">Customer Support Requests</h2>
+                    <p class="section-subtitle">Handle direct customer support inquiries</p>
                 </div>
 
                 <div class="card">
@@ -207,32 +201,32 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>STT</th>
-                                    <th>Tên Khách</th>
-                                    <th>Yêu Cầu Hỗ Trợ</th>
-                                    <th>Ngày</th>
-                                    <th>Liên Hệ</th>
+                                    <th>#</th>
+                                    <th>Customer Name</th>
+                                    <th>Support Request</th>
+                                    <th>Date</th>
+                                    <th>Contact</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td>1</td>
-                                    <td class="customer-name">Trần Văn A</td>
-                                    <td class="support-request">Không nhận được hợp đồng</td>
-                                    <td>30/05/2025</td>
+                                    <td class="customer-name">Robert Wilson</td>
+                                    <td class="support-request">Contract not received</td>
+                                    <td>05/30/2025</td>
                                     <td>
-                                        <a href="https://zalo.me/0123456789" class="btn btn-success btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Trò chuyện với khách hàng trên Zalo">
+                                        <a href="https://zalo.me/0123456789" class="btn btn-success btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Chat with customer on Zalo">
                                             <i class="fas fa-comment-dots me-1"></i>Zalo
                                         </a>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>2</td>
-                                    <td class="customer-name">Phạm Thị B</td>
-                                    <td class="support-request">Cần hỗ trợ thay đổi thời gian thuê</td>
-                                    <td>29/05/2025</td>
+                                    <td class="customer-name">Emily Davis</td>
+                                    <td class="support-request">Need help changing rental time</td>
+                                    <td>05/29/2025</td>
                                     <td>
-                                        <a href="https://zalo.me/0987654321" class="btn btn-success btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Trò chuyện với khách hàng trên Zalo">
+                                        <a href="https://zalo.me/0987654321" class="btn btn-success btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Chat with customer on Zalo">
                                             <i class="fas fa-comment-dots me-1"></i>Zalo
                                         </a>
                                     </td>
@@ -246,51 +240,45 @@
     </div>
 
     <!-- Reply Modal -->
-    <div class="modal fade" id="replyModal" tabindex="-1" aria-labelledby="replyModalLabel" aria-hidden="true">
+    <div class="modal fade" id="replyModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="replyModalLabel">
-                        <i class="fas fa-reply me-2"></i>Phản Hồi Đánh Giá
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">Reply to Customer Review</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Original Comment -->
-                    <div class="inspection-section">
-                        <h6 class="section-title">
-                            <i class="fas fa-comment me-2"></i>Thông Tin Đánh Giá
-                        </h6>
-                        <div class="comment-info">
-                            <p><strong>Khách Hàng:</strong> Nguyễn Văn An</p>
-                            <p><strong>Xe Thuê:</strong> Toyota Camry 2023</p>
-                            <p><strong>Điểm Đánh Giá:</strong> 
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                            </p>
-                            <p><strong>Nội Dung:</strong> Dịch vụ tốt, xe sạch sẽ, nhân viên thân thiện.</p>
-                            <p><strong>Ngày:</strong> 30/05/2025</p>
+                    <form id="replyForm">
+                        <div class="mb-3">
+                            <label class="form-label">Customer Name</label>
+                            <input type="text" class="form-control" value="John Smith" readonly>
                         </div>
-                    </div>
-
-                    <!-- Reply Form -->
-                    <div class="inspection-section">
-                        <h6 class="section-title">
-                            <i class="fas fa-pen me-2"></i>Nội Dung Phản Hồi
-                        </h6>
-                        <form action="/api/reply-comment" method="post">
-                            <input type="hidden" name="commentId" value="CMT-001">
-                            <textarea class="form-control" name="replyContent" rows="5" placeholder="Nhập nội dung phản hồi..." required></textarea>
-                            <div class="mt-3 text-end">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-paper-plane me-1"></i>Gửi Phản Hồi
-                                </button>
+                        <div class="mb-3">
+                            <label class="form-label">Vehicle</label>
+                            <input type="text" class="form-control" value="Toyota Camry 2023" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Original Review</label>
+                            <div class="p-3 bg-light rounded">
+                                <div class="rating mb-2">
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                </div>
+                                <p class="mb-0">Great service, clean car, friendly staff.</p>
                             </div>
-                        </form>
-                    </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Your Response</label>
+                            <textarea class="form-control" rows="4" placeholder="Enter your response to the customer..." required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" form="replyForm" class="btn btn-primary">Send Response</button>
                 </div>
             </div>
         </div>
@@ -298,9 +286,6 @@
 
     <!-- ===== External JavaScript Libraries ===== -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- ===== Common Excel Handler ===== -->
-    <script src="${pageContext.request.contextPath}/scripts/common/excel-handler.js"></script>
     
     <!-- ===== Custom JavaScript ===== -->
     <script src="${pageContext.request.contextPath}/scripts/staff/customer-support.js"></script>
