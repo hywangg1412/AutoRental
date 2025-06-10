@@ -2,7 +2,7 @@ package Repository;
 
 import Config.DBContext;
 import Model.Entity.OAuth.PasswordResetToken;
-import Repository.Interfaces.IPasswordResetToken;
+import Repository.Interfaces.IAuth.IPasswordResetToken;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

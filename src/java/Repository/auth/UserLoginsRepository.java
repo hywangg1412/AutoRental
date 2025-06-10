@@ -2,7 +2,7 @@ package Repository.auth;
 
 import Config.DBContext;
 import Model.Entity.OAuth.UserLogins;
-import Repository.Interfaces.IUserLoginsRepository;
+import Repository.Interfaces.IAuth.IUserLoginsRepository;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
