@@ -8,7 +8,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 public interface Service<T> {
-    void display() throws EmptyDataException;
+    void display() throws EmptyDataException, EventException;
     
     T add(T entry) throws EventException, InvalidDataException;
     
