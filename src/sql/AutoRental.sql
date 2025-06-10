@@ -17,9 +17,9 @@ GO
 CREATE TABLE [UserRoles] (
     [UserId] uniqueidentifier NOT NULL,
     [RoleId] uniqueidentifier NOT NULL,
-    CONSTRAINT [PK_AspNetUserRoles] PRIMARY KEY ([UserId], [RoleId]),
-    CONSTRAINT [FK_AspNetUserRoles_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([Id]) ON DELETE CASCADE,
-    CONSTRAINT [FK_AspNetUserRoles_RoleId] FOREIGN KEY ([RoleId]) REFERENCES [Roles]([RoleId]) ON DELETE CASCADE
+    CONSTRAINT [PK_UserRoles] PRIMARY KEY ([UserId], [RoleId]),
+    CONSTRAINT [FK_UserRoles_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE,
+    CONSTRAINT [FK_UserRoles_RoleId] FOREIGN KEY ([RoleId]) REFERENCES [Roles]([RoleId]) ON DELETE CASCADE
 );
 -- Users Permission Table
 
@@ -61,7 +61,7 @@ CREATE TABLE [DriverLicenses] (
     [LicenseImage] NVARCHAR(MAX) NULL,
     [Status] VARCHAR(20) NULL, --DEFAULT 'Pending', -- Pending, Verified, Rejected
     [Note] NVARCHAR(255) NULL,
-    [CreatedDate] DATETIME2 NOT NULL DEFAULT GETDATE(),
+    [CreatedDate] DATETIME2 NULL,-- DEFAULT GETDATE(),
     CONSTRAINT [PK_DriverLicenses] PRIMARY KEY ([LicenseId]),
     CONSTRAINT [FK_DriverLicenses_Users] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE
 );
@@ -115,9 +115,14 @@ GO
 CREATE TABLE [CarCategories] (
     [CategoryId] UNIQUEIDENTIFIER NOT NULL,
     [CategoryName] NVARCHAR(100) NOT NULL, --UNIQUE
-    [Description] NVARCHAR(255) NULL,
-    [IconUrl] NVARCHAR(255) NULL,
     CONSTRAINT [PK_CarCategories] PRIMARY KEY ([CategoryId])
+);
+GO
+
+CREATE TABLE [CarFeature] (
+    [FeatureId] UNIQUEIDENTIFIER NOT NULL,
+    [FeatureName] NVARCHAR(100) NOT NULL,
+    CONSTRAINT [PK_CarFeature] PRIMARY KEY ([FeatureId])
 );
 GO
 
@@ -128,7 +133,6 @@ CREATE TABLE [Car] (
     [YearManufactured] INT, --CHECK ([YearManufactured] >= 1900 AND [YearManufactured] <= 2025),
     [TransmissionTypeId] UNIQUEIDENTIFIER NOT NULL,
     [FuelTypeId] UNIQUEIDENTIFIER NOT NULL,
-    [Color] NVARCHAR(30),
     [LicensePlate] NVARCHAR(20) NOT NULL, --UNIQUE
     [Seats] INT NOT NULL, --CHECK ([Seats] > 0),
     [Odometer] INT NOT NULL, --CHECK ([Odometer] >= 0),
@@ -137,14 +141,9 @@ CREATE TABLE [Car] (
     [PricePerMonth] DECIMAL(10,2) NOT NULL, --CHECK ([PricePerMonth] >= 0),
     [Status] VARCHAR(20) NOT NULL, --CHECK ([Status] IN ('Available', 'Rented', 'Unavailable')) DEFAULT 'Available',
     [Description] NVARCHAR(500) NULL,
-    [LastUpdatedBy] UNIQUEIDENTIFIER NULL,
-    [LastMaintenanceDate] DATE NULL,
-    [NextInspectionDate] DATE NULL,
-    [InsuranceExpiryDate] DATE NULL,
-    [HasDashcam] BIT NOT NULL, --DEFAULT 0,
     [CreatedDate] DATETIME2 NOT NULL, --DEFAULT GETDATE(),
-    [InternalNote] NVARCHAR(255) NULL,
     [CategoryId] UNIQUEIDENTIFIER NULL,
+    [LastUpdatedBy] UNIQUEIDENTIFIER NULL,
     CONSTRAINT [PK_Car] PRIMARY KEY ([CarId]),
     CONSTRAINT [FK_Car_BrandId] FOREIGN KEY ([BrandId]) REFERENCES [CarBrand]([BrandId]),
     CONSTRAINT [FK_Car_TransmissionTypeId] FOREIGN KEY ([TransmissionTypeId]) REFERENCES [TransmissionType]([TransmissionTypeId]),
@@ -161,6 +160,15 @@ CREATE TABLE [CarImages] (
     [IsMain] BIT NOT NULL, --DEFAULT 0,
     CONSTRAINT [PK_CarImages] PRIMARY KEY ([ImageId]),
     CONSTRAINT [FK_CarImages_CarId] FOREIGN KEY ([CarId]) REFERENCES [Car]([CarId]) ON DELETE CASCADE
+);
+GO
+
+CREATE TABLE [CarFeaturesMapping] (
+    [CarId] UNIQUEIDENTIFIER NOT NULL,
+    [FeatureId] UNIQUEIDENTIFIER NOT NULL,
+    CONSTRAINT [PK_CarFeaturesMapping] PRIMARY KEY ([CarId], [FeatureId]),
+    CONSTRAINT [FK_CarFeaturesMapping_CarId] FOREIGN KEY ([CarId]) REFERENCES [Car]([CarId]) ON DELETE CASCADE,
+    CONSTRAINT [FK_CarFeaturesMapping_FeatureId] FOREIGN KEY ([FeatureId]) REFERENCES [CarFeature]([FeatureId]) ON DELETE CASCADE
 );
 GO
 -- Car Information Table
@@ -196,7 +204,6 @@ GO
 
 -- Car Maintenance Table
 
-
 CREATE TABLE [CarRentalPriceHistory] (
     [PriceId] UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
     [CarId] UNIQUEIDENTIFIER NOT NULL,
@@ -213,19 +220,21 @@ GO
 
 CREATE TABLE [Discount] (
     [DiscountId] UNIQUEIDENTIFIER NOT NULL,
-    [StartDate] DATE NOT NULL,
-    [EndDate] DATE NOT NULL,
-    [PricePerHour] DECIMAL(10, 2) NOT NULL, --CHECK ([PricePerHour] >= 0),
-    [PricePerDay] DECIMAL(10, 2) NOT NULL, --CHECK ([PricePerDay] >= 0),
-    [PricePerMonth] DECIMAL(10, 2) NOT NULL, --CHECK ([PricePerMonth] >= 0),
-    [IsActive] BIT NOT NULL, --DEFAULT 1 CHECK ([IsActive] IN (0,1)),
     [DiscountName] NVARCHAR(100) NOT NULL,
     [Description] NVARCHAR(255) NULL,
-    [DiscountType] NVARCHAR(20) NOT NULL, --DEFAULT 'Fixed',
-    [DiscountValue] DECIMAL(10,2) NULL,
-    [CreatedDate] DATETIME2 NOT NULL, --DEFAULT GETDATE(),
-    CONSTRAINT [PK_Discount] PRIMARY KEY ([DiscountId])
-    --CONSTRAINT [CHK_Discount_Dates] CHECK ([EndDate] >= [StartDate])
+    [DiscountType] NVARCHAR(20) NOT NULL, -- 'Percent' hoặc 'Fixed'
+    [DiscountValue] DECIMAL(10,2) NOT NULL, -- Nếu là Percent thì 0-100, nếu Fixed thì là số tiền
+    [StartDate] DATE NOT NULL,
+    [EndDate] DATE NOT NULL,
+    [IsActive] BIT NOT,-- NULL DEFAULT 1,
+    [CreatedDate] DATETIME2 NULL DEFAULT GETDATE(),
+    CONSTRAINT [PK_Discount] PRIMARY KEY ([DiscountId]),
+    -- CONSTRAINT [CHK_Discount_Value] CHECK (
+    --     ([DiscountType] = 'Percent' AND [DiscountValue] >= 0 AND [DiscountValue] <= 100)
+    --     OR
+    --     ([DiscountType] = 'Fixed' AND [DiscountValue] >= 0)
+    -- ),
+    -- CONSTRAINT [CHK_Discount_Dates] CHECK ([EndDate] >= [StartDate])
 );
 GO
 
@@ -234,11 +243,8 @@ CREATE TABLE [Booking] (
     [UserId] UNIQUEIDENTIFIER NOT NULL,
     [CarId] UNIQUEIDENTIFIER NULL,
     [HandledBy] UNIQUEIDENTIFIER NULL,
-    [StartDate] DATE NOT NULL,
-    [EndDate] DATE NOT NULL,
-    [PickupLocation] NVARCHAR(100) NOT NULL,
-    [ReturnLocation] NVARCHAR(100) NOT NULL,
-    [Note] NVARCHAR(255) NULL,
+    [PickupDateTime] DATETIME2 NOT NULL,
+    [ReturnDateTime] DATETIME2 NOT NULL,
     [TotalAmount] DECIMAL(10, 2) NOT NULL, --CHECK ([TotalAmount] >= 0),
     [Status] VARCHAR(20) NOT NULL, --CHECK ([Status] IN ('Pending', 'Confirmed', 'Cancelled', 'Completed')) DEFAULT 'Pending',
     [DiscountId] UNIQUEIDENTIFIER NULL,
@@ -255,6 +261,18 @@ CREATE TABLE [Booking] (
 );
 GO
 
+CREATE TABLE [BookingApproval] (
+    [ApprovalId] UNIQUEIDENTIFIER NOT NULL,
+    [BookingId] UNIQUEIDENTIFIER NOT NULL,
+    [StaffId] UNIQUEIDENTIFIER NOT NULL,
+    [ApprovalStatus] VARCHAR(20) NOT NULL, -- 'Approved', 'Rejected'
+    [ApprovalDate] DATETIME2 NOT NULL DEFAULT GETDATE(),
+    [Note] NVARCHAR(500) NULL,
+    [RejectionReason] NVARCHAR(500) NULL,
+    CONSTRAINT [PK_BookingApproval] PRIMARY KEY ([ApprovalId]),
+    CONSTRAINT [FK_BookingApproval_BookingId] FOREIGN KEY ([BookingId]) REFERENCES [Booking]([BookingId]) ON DELETE CASCADE,
+    CONSTRAINT [FK_BookingApproval_StaffId] FOREIGN KEY ([StaffId]) REFERENCES [Users]([UserId])
+);
 
 CREATE TABLE [SupportTickets] (
     [TicketId] UNIQUEIDENTIFIER NOT NULL,
