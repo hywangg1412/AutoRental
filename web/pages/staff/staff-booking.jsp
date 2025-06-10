@@ -1,10 +1,11 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>CarRental Pro - Booking Requests</title>
+        <title>AutoRental - Staff</title>
         
         <!-- ===== External CSS Libraries ===== -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -186,70 +187,51 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>BK001</td>
-                                        <td>
-                                            <div>John Smith</div>
-                                            <small class="text-muted">john.smith@email.com</small>
-                                        </td>
-                                        <td>
-                                            <div>Toyota Camry</div>
-                                            <small class="text-muted">ABC-123</small>
-                                        </td>
-                                        <td>Nov 20, 2025</td>
-                                        <td>Nov 25, 2025</td>
-                                        <td><span class="badge badge-pending"><i class="fas fa-clock me-1"></i>Pending</span></td>
-                                        <td>$250</td>
-                                        <td>
-                                            <div class="d-flex gap-2">
-                                                <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#bookingModal"><i class="fas fa-eye"></i> View</button>
-                                                <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#acceptModal"><i class="fas fa-check"></i> Accept</button>
-                                                <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#declineModal"><i class="fas fa-times"></i> Decline</button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>BK002</td>
-                                        <td>
-                                            <div>Sarah Johnson</div>
-                                            <small class="text-muted">sarah.johnson@email.com</small>
-                                        </td>
-                                        <td>
-                                            <div>Honda Civic</div>
-                                            <small class="text-muted">XYZ-789</small>
-                                        </td>
-                                        <td>Nov 21, 2025</td>
-                                        <td>Nov 24, 2025</td>
-                                        <td><span class="badge badge-accepted"><i class="fas fa-check-circle me-1"></i>Accepted</span></td>
-                                        <td>$180</td>
-                                        <td>
-                                            <div class="d-flex gap-2">
-                                                <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#bookingModal"><i class="fas fa-eye"></i> View</button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>BK003</td>
-                                        <td>
-                                            <div>Mike Wilson</div>
-                                            <small class="text-muted">mike.wilson@email.com</small>
-                                        </td>
-                                        <td>
-                                            <div>BMW X5</div>
-                                            <small class="text-muted">DEF-456</small>
-                                        </td>
-                                        <td>Nov 22, 2025</td>
-                                        <td>Nov 26, 2025</td>
-                                        <td><span class="badge badge-pending"><i class="fas fa-clock me-1"></i>Pending</span></td>
-                                        <td>$450</td>
-                                        <td>
-                                            <div class="d-flex gap-2">
-                                                <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#bookingModal"><i class="fas fa-eye"></i> View</button>
-                                                <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#acceptModal"><i class="fas fa-check"></i> Accept</button>
-                                                <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#declineModal"><i class="fas fa-times"></i> Decline</button>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    <c:if test="${not empty error}">
+                                        <tr>
+                                            <td colspan="8" class="text-center text-danger">
+                                                ${error}
+                                            </td>
+                                        </tr>
+                                    </c:if>
+                                    <c:forEach var="booking" items="${requestScope.pendingBookings}">
+                                        <c:if test="${booking.approvalStatus == 'Pending'}">
+                                            <tr>
+                                                <td>${booking.bookingCode}</td>
+                                                <td>
+                                                    <div>${booking.customerName}</div>
+                                                    <small class="text-muted">${booking.customerEmail}</small>
+                                                </td>
+                                                <td>
+                                                    <div>${booking.carModel}</div>
+                                                    <small class="text-muted">${booking.licensePlate}</small>
+                                                </td>
+                                                <td>${booking.pickupDateTime}</td>
+                                                <td>${booking.returnDateTime}</td>
+                                                <td><span class="badge badge-pending"><i class="fas fa-clock me-1"></i>pending</span></td>
+                                                <td>${booking.totalAmount}</td>
+                                                <td>
+                                                    <div class="d-flex gap-2">
+                                                        <form action="${pageContext.request.contextPath}/staff/booking-approval" method="post" style="display:inline;">
+                                                            <input type="hidden" name="bookingId" value="${booking.bookingId}" />
+                                                            <input type="hidden" name="action" value="accept" />
+                                                            <button class="btn btn-success btn-sm" type="submit" onclick="this.form.action.value='accept'">
+                                                                <i class="fas fa-check"></i> Accept
+                                                            </button>
+                                                            <button class="btn btn-outline-danger btn-sm" type="submit" onclick="this.form.action.value='decline'">
+                                                                <i class="fas fa-times"></i> Decline
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </c:if>
+                                    </c:forEach>
+                                    <c:if test="${empty requestScope.pendingBookings}">
+                                        <tr>
+                                            <td colspan="8" class="text-center text-muted">No pending booking requests.</td>
+                                        </tr>
+                                    </c:if>
                                 </tbody>
                             </table>
                         </div>
