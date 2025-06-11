@@ -301,25 +301,39 @@ CREATE TABLE [BookingSurcharges] (
 GO
 
 CREATE TABLE [Contract] (
-    [ContractId] UNIQUEIDENTIFIER NOT NULL,
-    [UserId] UNIQUEIDENTIFIER NOT NULL,
-    [BookingId] UNIQUEIDENTIFIER NOT NULL,
-    [ContractContent] NVARCHAR(MAX) NOT NULL,
-    [StartDate] DATE NOT NULL,
-    [EndDate] DATE NOT NULL,
-    [TotalEstimatedPrice] DECIMAL(10, 2) NOT NULL, --CHECK ([TotalEstimatedPrice] >= 0),
-    [DepositAmount] DECIMAL(10, 2) NOT NULL, --CHECK ([DepositAmount] >= 0),
-    [DepositStatus] VARCHAR(20) NOT NULL, --CHECK ([DepositStatus] IN ('Pending', 'Paid', 'Failed')) DEFAULT 'Pending',
-    [Status] VARCHAR(20) NOT NULL, --DEFAULT 'Created',
-    [CompanyRepresentativeId] UNIQUEIDENTIFIER NOT NULL,
-    [CreatedDate] DATETIME2 NOT NULL, --DEFAULT GETDATE(),
-    [ContractFile] NVARCHAR(255) NULL,
-    [ContractCode] NVARCHAR(20) NULL, --UNIQUE
+    [ContractId] UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
+    [UserId] UNIQUEIDENTIFIER NOT NULL, 
+    [BookingId] UNIQUEIDENTIFIER NOT NULL, 
+    [ContractContent] NVARCHAR(MAX) NOT NULL, 
+    [PickupDateTime] DATETIME2 NOT NULL, -- Ngày bắt đầu thuê xe
+    [ReturnDateTime] DATETIME2 NOT NULL, -- Ngày kết thúc thuê xe
+    [TotalPrice] DECIMAL(10, 2) NOT NULL, -- Tổng giá trị hợp đồng
+    [DepositAmount] DECIMAL(10, 2) NOT NULL, -- Số tiền đặt cọc
+    [DepositStatus] VARCHAR(20) NOT NULL, -- Pending, Paid, Failed, Refunded
+    [Status] VARCHAR(20) NOT NULL, --DEFAULT 'Created', Created, Pending, Active, Completed, Cancelled, Terminated
+    [CompanyRepresentativeId] UNIQUEIDENTIFIER NOT NULL, -- ID của nhân viên duyệt
+    [CreatedDate] DATETIME2 NOT NULL DEFAULT GETDATE(), -- Ngày tạo hợp đồng
+    [ContractFile] NVARCHAR(MAX) NULL, -- Đường dẫn file hợp đồng
+    [ContractCode] NVARCHAR(20) NOT NULL, -- Mã hợp đồng
     CONSTRAINT [PK_Contract] PRIMARY KEY ([ContractId]),
     CONSTRAINT [FK_Contract_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE,
     CONSTRAINT [FK_Contract_BookingId] FOREIGN KEY ([BookingId]) REFERENCES [Booking]([BookingId]) ON DELETE NO ACTION,
     CONSTRAINT [FK_Contract_CompanyRepresentativeId] FOREIGN KEY ([CompanyRepresentativeId]) REFERENCES [Users]([UserId])
-    --CONSTRAINT [CHK_Contract_Dates] CHECK ([EndDate] >= [StartDate])
+    -- CONSTRAINT [CHK_Contract_Dates] CHECK ([EndDate] >= [StartDate])
+    -- CONSTRAINT [CHK_Contract_TotalEstimatedPrice] CHECK ([TotalEstimatedPrice] >= 0)
+    -- CONSTRAINT [CHK_Contract_DepositAmount] CHECK ([DepositAmount] >= 0)
+    -- CONSTRAINT [CHK_Contract_DepositStatus] CHECK ([DepositStatus] IN ('Pending', 'Paid', 'Failed', 'Refunded'))
+    -- CONSTRAINT [CHK_Contract_Status] CHECK ([Status] IN ('Created', 'Pending', 'Active', 'Completed', 'Cancelled', 'Terminated'))
+    -- CONSTRAINT [UQ_Contract_ContractCode] UNIQUE ([ContractCode])
+    -- CONSTRAINT [CHK_Contract_Booking_Approved] CHECK (
+    --     EXISTS (
+    --         SELECT 1 
+    --         FROM Booking b
+    --         JOIN BookingApproval ba ON b.BookingId = ba.BookingId
+    --         WHERE b.BookingId = [Contract].[BookingId]
+    --         AND ba.ApprovalStatus = 'Approved'
+    --     )
+    -- )
 );
 GO
 
