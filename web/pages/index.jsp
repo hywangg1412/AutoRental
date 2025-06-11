@@ -1,4 +1,9 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+
 <!DOCTYPE html>
+
 <html lang="en">
     <head>
         <title>Carbook - Free Bootstrap 4 Template by Colorlib</title>
@@ -453,6 +458,32 @@
                 </div>
             </div>
         </section>	
+                                    <%
+    String contextPath = request.getContextPath(); // lấy /your-app
+    String username = (String) session.getAttribute("username");
+%>
+
+<script>
+    var username = "<%= username %>";
+    var socket = new WebSocket("ws://" + window.location.host + "<%= contextPath %>/ws?user=" + username);
+
+    socket.onopen = function() {
+        console.log("✅ WebSocket đã kết nối");
+    };
+
+    socket.onmessage = function(event) {
+        console.log("📩 Tin nhắn từ server: " + event.data);
+    };
+
+    socket.onclose = function() {
+        console.log("⚠️ WebSocket đã đóng");
+    };
+
+    function guiTinNhan(msg) {
+        socket.send(msg);
+    }
+</script>
+
 
         <jsp:include page="includes/footer.jsp" />
 
