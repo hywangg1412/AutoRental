@@ -2,7 +2,7 @@ package Repository.Car;
 
 import Config.DBContext;
 import Model.Entity.Car.FuelType;
-import Repository.Interfaces.Icar.IFuelTypeRepository;
+import Repository.Interfaces.ICar.IFuelTypeRepository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;

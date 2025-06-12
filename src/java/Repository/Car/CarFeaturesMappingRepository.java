@@ -2,7 +2,7 @@ package Repository.Car;
 
 import Config.DBContext;
 import Model.Entity.Car.CarFeaturesMapping;
-import Repository.Interfaces.Icar.ICarFeaturesMappingRepository;
+import Repository.Interfaces.ICar.ICarFeaturesMappingRepository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
