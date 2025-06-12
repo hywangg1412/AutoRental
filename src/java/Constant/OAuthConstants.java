@@ -41,6 +41,11 @@ public class OAuthConstants {
     static {
         System.out.println("Working dir: " + System.getProperty("user.dir"));
         System.out.println("Env file GOOGLE_CLIENT_ID: " + dotenv.get("GOOGLE_CLIENT_ID"));
+        // Add Facebook debug info
+        System.out.println("Facebook Configuration:");
+        System.out.println("FACEBOOK_CLIENT_ID: " + FACEBOOK_CLIENT_ID);
+        System.out.println("FACEBOOK_REDIRECT_URI_REGISTER: " + FACEBOOK_REDIRECT_URI_REGISTER);
+        System.out.println("FACEBOOK_TOKEN_URL: " + FACEBOOK_TOKEN_URL);
     }
 
     /**

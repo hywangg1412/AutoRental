@@ -2,7 +2,7 @@ package Repository.Car;
 
 import Config.DBContext;
 import Model.Entity.Car.CarBrand;
-import Repository.Interfaces.Icar.ICarBrandRepository;
+import Repository.Interfaces.ICar.ICarBrandRepository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;

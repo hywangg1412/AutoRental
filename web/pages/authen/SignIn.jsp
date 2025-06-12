@@ -24,18 +24,30 @@
             <div class="login-container">
                 <div class="login-box">
                     <h2>Login to your account</h2>
-                    <% String errMsg=(String) request.getAttribute("error"); %>
-                    <% if (errMsg !=null) { %>
+                    <%
+                        String errMsg = (String) request.getAttribute("error");
+                        if (errMsg != null) {
+                    %>
                         <div class="social-login-error">
                             <%= errMsg %>
                         </div>
-                    <% } %>
-                    <% String successMsg=(String) request.getAttribute("message"); %>
-                    <% if (successMsg !=null) { %>
+                    <%
+                        }
+                        String successMsg = (String) request.getAttribute("message");
+                        if (successMsg == null) {
+                            successMsg = (String) session.getAttribute("message");
+                            if (successMsg != null) {
+                                session.removeAttribute("message");
+                            }
+                        }
+                        if (successMsg != null) {
+                    %>
                         <div class="success-message">
                             <%= successMsg %>
                         </div>
-                    <% } %>
+                    <%
+                        }
+                    %>
                     <form action="${pageContext.request.contextPath}/normalLogin" method="post" class="login-form">
                         <div class="form-group">
                             <label for="email">Email</label>
