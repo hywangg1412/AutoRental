@@ -1,4 +1,4 @@
-package Repository.Interfaces.Icar;
+package Repository.Interfaces.ICar;
 
 import Model.Entity.Car.TransmissionType;
 import Repository.Interfaces.Repository;
