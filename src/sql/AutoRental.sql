@@ -8,20 +8,10 @@ GO
 CREATE TABLE [Roles] (
     [RoleId] UNIQUEIDENTIFIER NOT NULL,
     [RoleName] NVARCHAR(50) NULL,
-    [ConcurrencyStamp] NVARCHAR(MAX) NULL,
     [NormalizedName] NVARCHAR(256) NULL,
     CONSTRAINT [PK_Roles] PRIMARY KEY ([RoleId])
 );
 GO
-
-CREATE TABLE [UserRoles] (
-    [UserId] uniqueidentifier NOT NULL,
-    [RoleId] uniqueidentifier NOT NULL,
-    CONSTRAINT [PK_UserRoles] PRIMARY KEY ([UserId], [RoleId]),
-    CONSTRAINT [FK_UserRoles_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE,
-    CONSTRAINT [FK_UserRoles_RoleId] FOREIGN KEY ([RoleId]) REFERENCES [Roles]([RoleId]) ON DELETE CASCADE
-);
--- Users Permission Table
 
 -- Users Information Table
 CREATE TABLE [Users] (
@@ -50,6 +40,23 @@ CREATE TABLE [Users] (
     [AccessFailedCount] INT NOT NULL, --DEFAULT 0,
     CONSTRAINT [PK_Users] PRIMARY KEY ([UserId])
 );
+GO
+
+CREATE TABLE [UserRoles] (
+    [UserId] uniqueidentifier NOT NULL,
+    [RoleId] uniqueidentifier NOT NULL,
+    CONSTRAINT [PK_UserRoles] PRIMARY KEY ([UserId], [RoleId]),
+    CONSTRAINT [FK_UserRoles_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE,
+    CONSTRAINT [FK_UserRoles_RoleId] FOREIGN KEY ([RoleId]) REFERENCES [Roles]([RoleId]) ON DELETE CASCADE
+);
+GO
+
+-- Insert default roles
+INSERT INTO [Roles] ([RoleId], [RoleName], [NormalizedName])
+VALUES 
+    ('7c9e6679-7425-40de-944b-e07fc1f90ae7', 'Admin', 'ADMIN'),
+    ('550e8400-e29b-41d4-a716-446655440000', 'Staff', 'STAFF'),
+    ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', 'User', 'USER');
 GO
 
 CREATE TABLE [DriverLicenses] (
@@ -88,7 +95,6 @@ CREATE TABLE [UserLogins] (
     CONSTRAINT [FK_UserLogins_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE
 );
 GO
--- Users Information Table
 
 -- Car Information Table
 CREATE TABLE [CarBrand] (
@@ -171,9 +177,7 @@ CREATE TABLE [CarFeaturesMapping] (
     CONSTRAINT [FK_CarFeaturesMapping_FeatureId] FOREIGN KEY ([FeatureId]) REFERENCES [CarFeature]([FeatureId]) ON DELETE CASCADE
 );
 GO
--- Car Information Table
 
--- Car Maintenance Table
 CREATE TABLE [CarMaintenanceHistory] (
     [MaintenanceId] UNIQUEIDENTIFIER NOT NULL,
     [CarId] UNIQUEIDENTIFIER NOT NULL,
@@ -202,8 +206,6 @@ CREATE TABLE [CarRentalPricingRule] (
 );
 GO
 
--- Car Maintenance Table
-
 CREATE TABLE [CarRentalPriceHistory] (
     [PriceId] UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
     [CarId] UNIQUEIDENTIFIER NOT NULL,
@@ -226,15 +228,9 @@ CREATE TABLE [Discount] (
     [DiscountValue] DECIMAL(10,2) NOT NULL, -- Nếu là Percent thì 0-100, nếu Fixed thì là số tiền
     [StartDate] DATE NOT NULL,
     [EndDate] DATE NOT NULL,
-    [IsActive] BIT NOT,-- NULL DEFAULT 1,
+    [IsActive] BIT NOT NULL,-- NULL DEFAULT 1,
     [CreatedDate] DATETIME2 NULL DEFAULT GETDATE(),
-    CONSTRAINT [PK_Discount] PRIMARY KEY ([DiscountId]),
-    -- CONSTRAINT [CHK_Discount_Value] CHECK (
-    --     ([DiscountType] = 'Percent' AND [DiscountValue] >= 0 AND [DiscountValue] <= 100)
-    --     OR
-    --     ([DiscountType] = 'Fixed' AND [DiscountValue] >= 0)
-    -- ),
-    -- CONSTRAINT [CHK_Discount_Dates] CHECK ([EndDate] >= [StartDate])
+    CONSTRAINT [PK_Discount] PRIMARY KEY ([DiscountId])
 );
 GO
 
@@ -257,7 +253,6 @@ CREATE TABLE [Booking] (
     CONSTRAINT [FK_Booking_CarId] FOREIGN KEY ([CarId]) REFERENCES [Car]([CarId]) ON DELETE SET NULL,
     CONSTRAINT [FK_Booking_HandledBy] FOREIGN KEY ([HandledBy]) REFERENCES [Users]([UserId]) ON DELETE NO ACTION,
     CONSTRAINT [FK_Booking_DiscountId] FOREIGN KEY ([DiscountId]) REFERENCES [Discount]([DiscountId]) ON DELETE SET NULL
-    --CONSTRAINT [CHK_Booking_Dates] CHECK ([EndDate] >= [StartDate])
 );
 GO
 
@@ -273,6 +268,7 @@ CREATE TABLE [BookingApproval] (
     CONSTRAINT [FK_BookingApproval_BookingId] FOREIGN KEY ([BookingId]) REFERENCES [Booking]([BookingId]) ON DELETE CASCADE,
     CONSTRAINT [FK_BookingApproval_StaffId] FOREIGN KEY ([StaffId]) REFERENCES [Users]([UserId])
 );
+GO
 
 CREATE TABLE [SupportTickets] (
     [TicketId] UNIQUEIDENTIFIER NOT NULL,
@@ -319,21 +315,6 @@ CREATE TABLE [Contract] (
     CONSTRAINT [FK_Contract_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE,
     CONSTRAINT [FK_Contract_BookingId] FOREIGN KEY ([BookingId]) REFERENCES [Booking]([BookingId]) ON DELETE NO ACTION,
     CONSTRAINT [FK_Contract_CompanyRepresentativeId] FOREIGN KEY ([CompanyRepresentativeId]) REFERENCES [Users]([UserId])
-    -- CONSTRAINT [CHK_Contract_Dates] CHECK ([EndDate] >= [StartDate])
-    -- CONSTRAINT [CHK_Contract_TotalEstimatedPrice] CHECK ([TotalEstimatedPrice] >= 0)
-    -- CONSTRAINT [CHK_Contract_DepositAmount] CHECK ([DepositAmount] >= 0)
-    -- CONSTRAINT [CHK_Contract_DepositStatus] CHECK ([DepositStatus] IN ('Pending', 'Paid', 'Failed', 'Refunded'))
-    -- CONSTRAINT [CHK_Contract_Status] CHECK ([Status] IN ('Created', 'Pending', 'Active', 'Completed', 'Cancelled', 'Terminated'))
-    -- CONSTRAINT [UQ_Contract_ContractCode] UNIQUE ([ContractCode])
-    -- CONSTRAINT [CHK_Contract_Booking_Approved] CHECK (
-    --     EXISTS (
-    --         SELECT 1 
-    --         FROM Booking b
-    --         JOIN BookingApproval ba ON b.BookingId = ba.BookingId
-    --         WHERE b.BookingId = [Contract].[BookingId]
-    --         AND ba.ApprovalStatus = 'Approved'
-    --     )
-    -- )
 );
 GO
 
@@ -385,11 +366,10 @@ CREATE TABLE [CarConditionLogs] (
     CONSTRAINT [PK_CarConditionLogs] PRIMARY KEY ([LogId]),
     CONSTRAINT [FK_CarConditionLogs_BookingId] FOREIGN KEY ([BookingId]) REFERENCES [Booking]([BookingId]) ON DELETE CASCADE,
     CONSTRAINT [FK_CarConditionLogs_CarId] FOREIGN KEY ([CarId]) REFERENCES [Car]([CarId]) ON DELETE CASCADE,
-    CONSTRAINT [FK_CarConditionLogs_StaffId] FOREIGN KEY ([StaffId]) REFERENCES [Users]([UserId]) ON DELETE SET NULL
+    CONSTRAINT [FK_CarConditionLogs_StaffId] FOREIGN KEY ([StaffId]) REFERENCES [Users]([UserId]) ON DELETE NO ACTION
 );
 GO
 
--- User Interaction Table
 CREATE TABLE [Notification] (
     [NotificationId] UNIQUEIDENTIFIER NOT NULL,
     [UserId] UNIQUEIDENTIFIER NOT NULL,
@@ -414,5 +394,46 @@ CREATE TABLE [UserFeedback] (
     CONSTRAINT [FK_UserFeedback_CarId] FOREIGN KEY ([CarId]) REFERENCES [Car]([CarId]) ON DELETE SET NULL
 );
 GO
--- User Interaction Table
+
+-- Insert Staff User
+INSERT INTO [Users] (
+    [UserId],
+    [Username],
+    [Email],
+    [PasswordHash],
+    [FirstName],
+    [LastName],
+    [Status],
+    [EmailVerifed],
+    [TwoFactorEnabled],
+    [LockoutEnabled],
+    [AccessFailedCount],
+    [CreatedDate]
+)
+VALUES (
+    '11111111-1111-1111-1111-111111111111', -- Staff User ID
+    'staff',
+    'staff@autorental.com',
+    'AQAAAAEAACcQAAAAELbXp1QrHhJ8vC8YwX8YwX8YwX8YwX8YwX8YwX8YwX8YwX8YwX8YwX8YwX8YwX8Yw==', -- Hashed password: Staff@123
+    'Staff',
+    'User',
+    'Active',
+    1, -- Email verified
+    0, -- Two factor disabled
+    1, -- Lockout enabled
+    0, -- Access failed count
+    GETDATE()
+);
+GO
+
+-- Assign Staff Role
+INSERT INTO [UserRoles] (
+    [UserId],
+    [RoleId]
+)
+VALUES (
+    '11111111-1111-1111-1111-111111111111', -- Staff User ID
+    '550e8400-e29b-41d4-a716-446655440000'  -- Staff Role ID
+);
+GO
  
