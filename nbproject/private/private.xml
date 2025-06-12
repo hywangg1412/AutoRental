@@ -8,7 +8,7 @@
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/Entity/Car/CarFeaturesMapping.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/Car/CarFeatureRepository.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/Car/CarFeaturesMappingRepository.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/Interfaces/IBooking/IBookingApprovalRepository.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/Interfaces/Ibooking/IBookingApprovalRepository.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/Interfaces/Icar/ICarRepository.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/Interfaces/Icar/ICarBrandRepository.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/Interfaces/Icar/ICarCategoriesRepository.java</file>
@@ -48,6 +48,9 @@
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Utils/FormatUtils.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/DTO/BookingRequestDTO.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/web/pages/staff/staff-booking.jsp</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/Entity/Booking/BookingApproval.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/Entity/Booking/Booking.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/Entity/Contract.java</file>
         </group>
     </open-files>
 </project-private>
