@@ -15,16 +15,38 @@
         <div class="forgot-container">
             <div class="forgot-box">
                 <div class="forgot-title">Forgot Password</div>
-                <% if (request.getAttribute("error") != null) {%>
-                <div class="error-message">
-                    <%= request.getAttribute("error")%>
-                </div>
-                <% } %>
-                <% if (request.getAttribute("message") != null) {%>
-                <div class="success-message">
-                    <%= request.getAttribute("message")%>
-                </div>
-                <% }%>
+                <%
+                    String errMsg = (String) request.getAttribute("error");
+                    if (errMsg == null) {
+                        errMsg = (String) session.getAttribute("error");
+                        if (errMsg != null) session.removeAttribute("error");
+                    }
+                    if (errMsg == null) {
+                        errMsg = request.getParameter("error");
+                    }
+                    if (errMsg != null) {
+                %>
+                    <div class="error-message">
+                        <%= errMsg %>
+                    </div>
+                <%
+                    }
+                    String successMsg = (String) request.getAttribute("message");
+                    if (successMsg == null) {
+                        successMsg = (String) session.getAttribute("message");
+                        if (successMsg != null) session.removeAttribute("message");
+                    }
+                    if (successMsg == null) {
+                        successMsg = request.getParameter("message");
+                    }
+                    if (successMsg != null) {
+                %>
+                    <div class="success-message">
+                        <%= successMsg %>
+                    </div>
+                <%
+                    }
+                %>
                 <div class="forgot-desc">Please enter your password to reset the password</div>
                 <form class="forgot-form" action="${pageContext.request.contextPath}/requestPassword"
                       method="post">

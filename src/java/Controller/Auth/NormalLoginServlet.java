@@ -1,7 +1,11 @@
 package Controller.Auth;
 
 import Model.Entity.User;
+import Model.Entity.Role.Role;
+import Model.Entity.Role.UserRole;
 import Service.UserService;
+import Service.Role.RoleService;
+import Service.Role.UserRoleService;
 import Utils.SessionUtil;
 import Utils.ObjectUtils;
 import java.io.IOException;
@@ -11,15 +15,20 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 
 // /normalLogin
 public class NormalLoginServlet extends HttpServlet {
 
     private UserService userService;
+    private RoleService roleService;
+    private UserRoleService userRoleService;
 
     @Override
     public void init() {
         userService = new UserService();
+        roleService = new RoleService();
+        userRoleService = new UserRoleService();
     }
 
     @Override
@@ -77,10 +86,20 @@ public class NormalLoginServlet extends HttpServlet {
                 user.setAccessFailedCount(0);
                 userService.update(user);
             }
+
+            UserRole userRole = userRoleService.findByUserId(user.getUserId());
+            Role actualRole = roleService.findById(userRole.getRoleId());
+            String redirectUrl = "/pages/index.jsp";
+            if (actualRole.getRoleName().equals("Staff")) {
+                redirectUrl = "/pages/staff/staff-dashboard.jsp";
+            } else if (actualRole.getRoleName().equals("Admin")) {
+                redirectUrl = "/pages/admin/admin-dashboard.jsp";
+            }
+
             SessionUtil.setSessionAttribute(request, "user", user);
             SessionUtil.setSessionAttribute(request, "isLoggedIn", true);
             SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
-            response.sendRedirect(request.getContextPath() + "/pages/index.jsp");
+            response.sendRedirect(request.getContextPath() + redirectUrl);
         } catch (Exception e) {
             request.setAttribute("error", "An error occurred during login. Please try again later.");
             request.getRequestDispatcher("pages/authen/SignIn.jsp").forward(request, response);

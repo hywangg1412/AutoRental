@@ -3,8 +3,12 @@ package Controller.Auth;
 import Mapper.UserMapper;
 import Model.Entity.OAuth.FacebookUser;
 import Model.Entity.User;
+import Model.Entity.Role.Role;
+import Model.Entity.Role.UserRole;
 import Service.UserService;
 import Service.auth.FacebookAuthService;
+import Service.Role.RoleService;
+import Service.Role.UserRoleService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -23,6 +27,8 @@ public class FacebookRegisterServlet extends HttpServlet {
     private UserMapper userMapper;
     private UserService userService;
     private UserLoginsService userLoginsService;
+    private RoleService roleService;
+    private UserRoleService userRoleService;
 
     @Override
     public void init() {
@@ -30,6 +36,8 @@ public class FacebookRegisterServlet extends HttpServlet {
         userMapper = new UserMapper();
         userService = new UserService();
         userLoginsService = new UserLoginsService();
+        roleService = new RoleService();
+        userRoleService = new UserRoleService();
     }
 
     @Override
@@ -54,14 +62,21 @@ public class FacebookRegisterServlet extends HttpServlet {
             User newUser = userMapper.mapFacebookUserToUser(facebookUser);
             User addedUser = userService.add(newUser);
             if (addedUser != null) {
-                // Tạo UserLogins cho Facebook
+                // Gán role User cho người dùng mới
+                Role userRole = roleService.findByRoleName("User");
+                if (userRole != null) {
+                    UserRole newUserRole = new UserRole(addedUser.getUserId(), userRole.getRoleId());
+                    userRoleService.add(newUserRole);
+                }
+
                 UserLogins userLogins = new UserLogins();
                 userLogins.setUserId(addedUser.getUserId());
                 userLogins.setLoginProvider("facebook");
                 userLogins.setProviderKey(facebookUser.getFacebookId());
                 try {
                     userLoginsService.add(userLogins);
-                    response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp");
+                    request.getSession().setAttribute("userId", addedUser.getUserId().toString());
+                    request.getRequestDispatcher("/pages/authen/SetPassword.jsp").forward(request, response);
                 } catch (Exception ex) {
                     userService.delete(addedUser.getUserId());
                     request.setAttribute("error", "Register failed (user login): " + ex.getMessage());

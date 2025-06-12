@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Reset Password - Auto Rental</title>
+        <title>Set Password - Auto Rental</title>
 
         <!-- ===== Google Fonts ===== -->
         <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700&display=swap" rel="stylesheet">
@@ -19,8 +19,8 @@
     <body>
         <div class="reset-container">
             <div class="reset-box">
-                <h2 class="reset-title">Change password</h2>
-                <div class="reset-desc">Please enter your new password. Make sure it is different from your previous passwords for better security.</div>
+                <h2 class="reset-title">Set Your Password</h2>
+                <div class="reset-desc">Please set a password for your new account. Make sure it is strong and secure.</div>
                 <%
                     String errMsg = (String) request.getAttribute("error");
                     if (errMsg == null) {
@@ -51,14 +51,21 @@
                 <%
                     }
                 %>
-                <form class="reset-form" method="post" action="${pageContext.request.contextPath}/resetPassword" >
+                <form class="reset-form" method="post" action="${pageContext.request.contextPath}/setPassword" onsubmit="console.log('Form submitted to:', this.action); return true;">
+                    <input type="hidden" name="userId" value="<%= session.getAttribute("userId") %>">
                     <div class="form-group">
-                        <input type="password" name="newPassword" placeholder="New Password" required>
+                        <label>New Password</label>
+                        <div class="input-row">
+                            <input type="password" name="newPassword" placeholder="New Password" required>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <input type="password" name="confirmPassword" placeholder="Confirm New Password" required>
+                        <label>Confirm New Password</label>
+                        <div class="input-row">
+                            <input type="password" name="confirmPassword" placeholder="Confirm New Password" required>
+                        </div>
                     </div>
-                    <button type="submit" class="reset-btn">Change Password</button>
+                    <button type="submit" class="reset-btn">Set Password</button>
                 </form>
             </div>
         </div>
