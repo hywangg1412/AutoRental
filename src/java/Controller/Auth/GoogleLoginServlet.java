@@ -15,6 +15,10 @@ import Utils.SessionUtil;
 import Model.Entity.User;
 import Model.Entity.OAuth.UserLogins;
 import Service.auth.UserLoginsService;
+import Model.Entity.Role.Role;
+import Model.Entity.Role.UserRole;
+import Service.Role.RoleService;
+import Service.Role.UserRoleService;
 
 // googleLogin
 public class GoogleLoginServlet extends HttpServlet {
@@ -23,6 +27,8 @@ public class GoogleLoginServlet extends HttpServlet {
     private UserMapper userMapper;
     private UserService userService;
     private UserLoginsService userLoginsService;
+    private RoleService roleService;
+    private UserRoleService userRoleService;
 
     @Override
     public void init() {
@@ -30,6 +36,8 @@ public class GoogleLoginServlet extends HttpServlet {
         userMapper = new UserMapper();
         userService = new UserService();
         userLoginsService = new UserLoginsService();
+        roleService = new RoleService();
+        userRoleService = new UserRoleService();
     }
 
     @Override
@@ -72,7 +80,16 @@ public class GoogleLoginServlet extends HttpServlet {
             SessionUtil.removeSessionAttribute(request, "user");
             SessionUtil.setSessionAttribute(request, "user", user);
             SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
-            response.sendRedirect(request.getContextPath() + "/pages/index.jsp");
+            // Lấy role thực tế và chuyển hướng phù hợp
+            UserRole userRole = userRoleService.findByUserId(user.getUserId());
+            Role actualRole = roleService.findById(userRole.getRoleId());
+            String redirectUrl = "/pages/index.jsp";
+            if (actualRole.getRoleName().equals("Staff")) {
+                redirectUrl = "/pages/staff/staff-dashboard.jsp";
+            } else if (actualRole.getRoleName().equals("Admin")) {
+                redirectUrl = "/pages/admin/admin-dashboard.jsp";
+            }
+            response.sendRedirect(request.getContextPath() + redirectUrl);
         } catch (Exception e) {
             request.setAttribute("error", "Google login failed - " + e.getMessage());
             request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
