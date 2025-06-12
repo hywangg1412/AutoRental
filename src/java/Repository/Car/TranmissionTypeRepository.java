@@ -2,7 +2,7 @@ package Repository.Car;
 
 import Config.DBContext;
 import Model.Entity.Car.TransmissionType;
-import Repository.Interfaces.Icar.ITransmissionTypeRepository;
+import Repository.Interfaces.ICar.ITransmissionTypeRepository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;

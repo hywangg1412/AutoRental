@@ -24,58 +24,84 @@
     <div class="container">
         <div class="signup-box">
             <div class="signup-title">Create an account</div>
-            <% String errMsg=(String) request.getAttribute("error"); %>
-                <% if (errMsg !=null) {%>
-                    <div class="social-login-error">
-                        <%= errMsg%>
+            <%
+                String errMsg = (String) request.getAttribute("error");
+                if (errMsg == null) {
+                    errMsg = (String) session.getAttribute("error");
+                    if (errMsg != null) session.removeAttribute("error");
+                }
+                if (errMsg == null) {
+                    errMsg = request.getParameter("error");
+                }
+                if (errMsg != null) {
+            %>
+                <div class="social-login-error">
+                    <%= errMsg %>
+                </div>
+            <%
+                }
+                String successMsg = (String) request.getAttribute("message");
+                if (successMsg == null) {
+                    successMsg = (String) session.getAttribute("message");
+                    if (successMsg != null) session.removeAttribute("message");
+                }
+                if (successMsg == null) {
+                    successMsg = request.getParameter("message");
+                }
+                if (successMsg != null) {
+            %>
+                <div class="success-message">
+                    <%= successMsg %>
+                </div>
+            <%
+                }
+            %>
+            <form action="${pageContext.request.contextPath}/normalRegister" method="post"
+                class="signup-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-row">
+                        <input type="password" id="password" name="password" tabindex="-1" required>
+                        <button type="button" class="toggle-password"
+                            onclick="togglePassword('password', this)" aria-label="Show/Hide Password">
+                        </button>
                     </div>
-                    <% }%>
-                        <form action="${pageContext.request.contextPath}/normalRegister" method="post"
-                            class="signup-form">
-                            <div class="form-group">
-                                <label for="username">Username</label>
-                                <input type="text" id="username" name="username" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="email" id="email" name="email" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="password">Password</label>
-                                <div class="input-row">
-                                    <input type="password" id="password" name="password" tabindex="-1" required>
-                                    <button type="button" class="toggle-password"
-                                        onclick="togglePassword('password', this)" aria-label="Show/Hide Password">
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="repassword">Re-Enter Password</label>
-                                <div class="input-row">
-                                    <input type="password" id="repassword" name="repassword" tabindex="-1" required>
-                                    <button type="button" class="toggle-password"
-                                        onclick="togglePassword('repassword', this)" aria-label="Show/Hide Password">
-                                    </button>
-                                </div>
-                            </div>
-                            <button class="signup-btn" type="submit">Create account</button>
-                        </form>
-                        <div class="or-divider">
-                            <span>or</span>
-                        </div>
+                </div>
+                <div class="form-group">
+                    <label for="repassword">Re-Enter Password</label>
+                    <div class="input-row">
+                        <input type="password" id="repassword" name="repassword" tabindex="-1" required>
+                        <button type="button" class="toggle-password"
+                            onclick="togglePassword('repassword', this)" aria-label="Show/Hide Password">
+                        </button>
+                    </div>
+                </div>
+                <button class="signup-btn" type="submit">Create account</button>
+            </form>
+            <div class="or-divider">
+                <span>or</span>
+            </div>
 
-                        <div class="social-login-col">
-                            <button type="button" class="social-btn google" onclick="continueWithGoogle()">
-                                <i class="fab fa-google"></i> Continue with Google
-                            </button>
-                            <button type="button" class="social-btn facebook" onclick="continueWithFacebook()">
-                                <i class="fab fa-facebook-f"></i> Continue with Facebook
-                            </button>
-                        </div>
-                        <div class="login-row">
-                            Already Have An Account?
-                            <a href="${pageContext.request.contextPath}/pages/authen/SignIn.jsp">Log In</a>
-                        </div>
+            <div class="social-login-col">
+                <button type="button" class="social-btn google" onclick="continueWithGoogle()">
+                    <i class="fab fa-google"></i> Continue with Google
+                </button>
+                <button type="button" class="social-btn facebook" onclick="continueWithFacebook()">
+                    <i class="fab fa-facebook-f"></i> Continue with Facebook
+                </button>
+            </div>
+            <div class="login-row">
+                Already Have An Account?
+                <a href="${pageContext.request.contextPath}/pages/authen/SignIn.jsp">Log In</a>
+            </div>
         </div>
     </div>
     <!-- ===== External JS Libraries ===== -->

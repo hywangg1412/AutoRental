@@ -3,7 +3,7 @@ package Repository.Car;
 import Config.DBContext;
 import Model.Entity.Car.Car;
 import Model.Entity.Car.Car.CarStatus;
-import Repository.Interfaces.Icar.ICarRepository;
+import Repository.Interfaces.ICar.ICarRepository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;

@@ -1,6 +1,8 @@
 package Controller.Auth;
 
 import Model.Entity.User;
+import Model.Entity.Role.Role;
+import Model.Entity.Role.UserRole;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,6 +16,8 @@ import Utils.ObjectUtils;
 import java.time.LocalDateTime;
 import java.util.Date;
 import Service.UserService;
+import Service.Role.RoleService;
+import Service.Role.UserRoleService;
 import java.util.UUID;
 import java.sql.SQLException;
 
@@ -21,10 +25,14 @@ import java.sql.SQLException;
 public class NormalRegisterServlet extends HttpServlet {
 
     private UserService userService;
+    private RoleService roleService;
+    private UserRoleService userRoleService;
 
     @Override
     public void init() {
         userService = new UserService();
+        roleService = new RoleService();
+        userRoleService = new UserRoleService();
     }
 
     @Override
@@ -99,7 +107,13 @@ public class NormalRegisterServlet extends HttpServlet {
 
             User addedUser = userService.add(user);
             if (addedUser != null) {
-                request.setAttribute("successMsg", "Registration successful! Please login to continue.");
+                Role userRole = roleService.findByRoleName("User");
+                if (userRole != null) {
+                    UserRole newUserRole = new UserRole(addedUser.getUserId(), userRole.getRoleId());
+                    userRoleService.add(newUserRole);
+                }
+                
+                request.getSession().setAttribute("message", "Registration successful! Please login to continue.");
                 response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp");
             } else {
                 request.setAttribute("error", "Register failed. Please try again.");

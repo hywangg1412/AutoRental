@@ -1,4 +1,4 @@
-package Repository.Interfaces.Icar;
+package Repository.Interfaces.ICar;
 
 import Model.Entity.Car.FuelType;
 import Repository.Interfaces.Repository;
