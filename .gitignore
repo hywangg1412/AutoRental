@@ -26,3 +26,14 @@ env.js
 ehthumbs.db
 Thumbs.db
 /dist/
+# Ant & NetBeans
+build/
+dist/
+*.class
+nbproject/private/
+nbproject/build-impl.xml
+*.log
+
+# OS-generated
+.DS_Store
+Thumbs.db
