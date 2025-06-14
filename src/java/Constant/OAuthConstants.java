@@ -5,7 +5,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 public class OAuthConstants {
 
     private static final Dotenv dotenv = Dotenv.configure()
-            .directory("L:/Workspace/SWP/AutoRental")
+            .directory("L:/Workspace/SWP/AutoRental/.env")
             .ignoreIfMalformed()
             .ignoreIfMissing()
             .load();
@@ -34,18 +34,15 @@ public class OAuthConstants {
     public static final String FACEBOOK_STATE = getenv("FACEBOOK_STATE", "some_random_string");
 
     // Email
-    public static final String SENDER_EMAIL = getenv("SENDER_EMAIL", "");
+    public static final String SENDER_EMAIL= getenv("SENDER_EMAIL", "");
     public static final String SENDER_EMAIL_PASSWORD = getenv("SENDER_EMAIL_PASSWORD", "");
 
     // Debug info
     static {
         System.out.println("Working dir: " + System.getProperty("user.dir"));
         System.out.println("Env file GOOGLE_CLIENT_ID: " + dotenv.get("GOOGLE_CLIENT_ID"));
-        // Add Facebook debug info
-        System.out.println("Facebook Configuration:");
-        System.out.println("FACEBOOK_CLIENT_ID: " + FACEBOOK_CLIENT_ID);
-        System.out.println("FACEBOOK_REDIRECT_URI_REGISTER: " + FACEBOOK_REDIRECT_URI_REGISTER);
-        System.out.println("FACEBOOK_TOKEN_URL: " + FACEBOOK_TOKEN_URL);
+        System.out.println("SENDER_EMAIL: " + SENDER_EMAIL);
+        System.out.println("SENDER_EMAIL_PASSWORD: " + SENDER_EMAIL_PASSWORD);
     }
 
     /**
