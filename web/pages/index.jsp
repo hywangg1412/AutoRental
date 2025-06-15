@@ -1,7 +1,9 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Carbook - Free Bootstrap 4 Template by Colorlib</title>
+        <title>AutoRental</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -25,10 +27,12 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/flaticon.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/icomoon.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
-        
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/car.css">
+
+
         <!-- ===== Include Styles ===== -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/nav.css">
-        
+
         <!-- ===== Custom Styles ===== -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/index.css">
     </head>
@@ -60,7 +64,7 @@
         <section class="ftco-section ftco-no-pt bg-light">
             <div class="container">
                 <div class="row no-gutters">
-                    <div class="col-md-12	featured-top">
+                    <div class="col-md-12 featured-top">
                         <div class="row no-gutters">
                             <div class="col-md-4 d-flex align-items-center">
                                 <form action="#" class="request-form ftco-animate bg-primary">
@@ -135,68 +139,33 @@
                 <div class="row justify-content-center">
                     <div class="col-md-12 heading-section text-center ftco-animate mb-5">
                         <span class="subheading">What we offer</span>
-                        <h2 class="mb-2">Feeatured Vehicles</h2>
+                        <h2 class="mb-2">Featured Vehicles</h2>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="carousel-car owl-carousel">
-                            <div class="item">
-                                <div class="car-wrap rounded ftco-animate">
-                                    <div class="img rounded d-flex align-items-end" style="background-image: url('${pageContext.request.contextPath}/assets/images/car-1.jpg');">
-                                    </div>
-                                    <div class="text">
-                                        <h2 class="mb-0"><a href="#">Mercedes Grand Sedan</a></h2>
-                                        <div class="d-flex mb-3">
-                                            <span class="cat">Cheverolet</span>
-                                            <p class="price ml-auto">$500 <span>/day</span></p>
+                            <c:forEach var="car" items="${carList}">
+                                <div class="item">
+                                    <div class="car-wrap rounded ftco-animate">
+                                        <div class="img rounded d-flex align-items-end" 
+                                             style="background-image: url('${pageContext.request.contextPath}${car.mainImageUrl}');">
                                         </div>
-                                        <p class="d-flex mb-0 d-block"><a href="#" class="btn btn-primary py-2 mr-1">Book now</a> <a href="#" class="btn btn-secondary py-2 ml-1">Details</a></p>
+                                        <div class="text">
+                                            <h2 class="mb-0"><a href="${pageContext.request.contextPath}/pages/car-single?id=${car.carId}">${car.carModel}</a></h2>
+                                            <div class="d-flex mb-3">
+                                                <span class="cat">${car.brandName}</span>
+                                                <p class="price ml-auto">$${car.pricePerDay} <span>/day</span></p>
+                                            </div>
+                                            <p class="d-flex mb-0 d-block">
+                                                <a href="pages/booking.jsp?id=${car.carId}" class="btn btn-book-now py-2 mr-1">Book now</a>
+                                                <a href="${pageContext.request.contextPath}/pages/car-single?id=${car.carId}" class="btn btn-details py-2 mr-1">Details</a>
+                                                <a href="${pageContext.request.contextPath}/pages/add-to-cart?id=${car.carId}" class="btn btn-add-to-cart py-2 ml-1">Add to Cart</a>
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="item">
-                                <div class="car-wrap rounded ftco-animate">
-                                    <div class="img rounded d-flex align-items-end" style="background-image: url('${pageContext.request.contextPath}/assets/images/car-2.jpg');">
-                                    </div>
-                                    <div class="text">
-                                        <h2 class="mb-0"><a href="#">Mercedes Grand Sedan</a></h2>
-                                        <div class="d-flex mb-3">
-                                            <span class="cat">Cheverolet</span>
-                                            <p class="price ml-auto">$500 <span>/day</span></p>
-                                        </div>
-                                        <p class="d-flex mb-0 d-block"><a href="#" class="btn btn-primary py-2 mr-1">Book now</a> <a href="#" class="btn btn-secondary py-2 ml-1">Details</a></p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="car-wrap rounded ftco-animate">
-                                    <div class="img rounded d-flex align-items-end" style="background-image: url('${pageContext.request.contextPath}/assets/images/car-3.jpg');">
-                                    </div>
-                                    <div class="text">
-                                        <h2 class="mb-0"><a href="#">Mercedes Grand Sedan</a></h2>
-                                        <div class="d-flex mb-3">
-                                            <span class="cat">Cheverolet</span>
-                                            <p class="price ml-auto">$500 <span>/day</span></p>
-                                        </div>
-                                        <p class="d-flex mb-0 d-block"><a href="#" class="btn btn-primary py-2 mr-1">Book now</a> <a href="#" class="btn btn-secondary py-2 ml-1">Details</a></p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="car-wrap rounded ftco-animate">
-                                    <div class="img rounded d-flex align-items-end" style="background-image: url('${pageContext.request.contextPath}/assets/images/car-4.jpg');">
-                                    </div>
-                                    <div class="text">
-                                        <h2 class="mb-0"><a href="#">Mercedes Grand Sedan</a></h2>
-                                        <div class="d-flex mb-3">
-                                            <span class="cat">Cheverolet</span>
-                                            <p class="price ml-auto">$500 <span>/day</span></p>
-                                        </div>
-                                        <p class="d-flex mb-0 d-block"><a href="#" class="btn btn-primary py-2 mr-1">Book now</a> <a href="#" class="btn btn-secondary py-2 ml-1">Details</a></p>
-                                    </div>
-                                </div>
-                            </div>
+                            </c:forEach>
                         </div>
                     </div>
                 </div>
@@ -479,6 +448,7 @@
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
         <script src="${pageContext.request.contextPath}/assets/js/google-map.js"></script>
         <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
+        <script src="${pageContext.request.contextPath}/scripts/common/index.js"></script>
 
     </body>
 </html>
