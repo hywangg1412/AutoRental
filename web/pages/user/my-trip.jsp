@@ -9,252 +9,9 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
         <!-- Bootstrap Icons -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-
+        <<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/user/my-trip.css"/>
         <style>
-            :root {
-                --primary-green: #10b981;
-                --light-green: #f0fdf4;
-                --warning-orange: #f59e0b;
-                --danger-red: #dc2626;
-                --light-gray: #f8f9fa;
-                --border-gray: #e5e7eb;
-                --text-gray: #6b7280;
-            }
-
-            body {
-                background-color: var(--light-gray);
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            }
-
-            .header {
-                background: white;
-                border-bottom: 1px solid var(--border-gray);
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            }
-
-            .logo {
-                font-weight: bold;
-                font-size: 1.25rem;
-            }
-
-            .logo .text-dark {
-                color: #333 !important;
-            }
-
-            .logo .text-success {
-                color: var(--primary-green) !important;
-            }
-
-            .nav-links a {
-                color: var(--text-gray);
-                text-decoration: none;
-                transition: color 0.2s;
-            }
-
-            .nav-links a:hover {
-                color: var(--primary-green);
-            }
-
-            .user-avatar {
-                width: 32px;
-                height: 32px;
-                background-color: #d1d5db;
-            }
-
-            .sidebar {
-                background: white;
-                border-radius: 12px;
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-                height: fit-content;
-            }
-
-            .sidebar-menu {
-                list-style: none;
-                padding: 0;
-                margin: 0;
-            }
-
-            .sidebar-menu .nav-link {
-                color: var(--text-gray);
-                border-radius: 0;
-                padding: 0.75rem 1.5rem;
-                display: flex;
-                align-items: center;
-                gap: 0.75rem;
-                transition: all 0.2s;
-                border: none;
-            }
-
-            .sidebar-menu .nav-link:hover {
-                background-color: #f3f4f6;
-                color: var(--primary-green);
-            }
-
-            .sidebar-menu .nav-link.active {
-                background-color: var(--light-green);
-                color: var(--primary-green);
-                border-right: 3px solid var(--primary-green);
-            }
-
-            .sidebar-menu .nav-link.text-danger:hover {
-                background-color: #fee2e2;
-                color: var(--danger-red);
-            }
-
-            .main-content {
-                background: white;
-                border-radius: 12px;
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            }
-
-            .custom-tabs {
-                border-bottom: 1px solid var(--border-gray);
-                margin-bottom: 2rem;
-            }
-
-            .custom-tabs .nav-link {
-                border: none;
-                color: var(--text-gray);
-                font-weight: 500;
-                padding: 1rem 0;
-                margin-right: 2rem;
-                background: transparent;
-                border-bottom: 2px solid transparent;
-                transition: all 0.3s ease;
-            }
-
-            .custom-tabs .nav-link:hover {
-                color: var(--primary-green);
-                border-bottom-color: var(--primary-green);
-            }
-
-            .custom-tabs .nav-link.active {
-                color: var(--primary-green);
-                border-bottom-color: var(--primary-green);
-            }
-
-            .empty-state {
-                text-align: center;
-                padding: 4rem 2rem;
-                color: var(--text-gray);
-            }
-
-            .filter-btn {
-                border: 1px solid var(--border-gray);
-                background: white;
-                color: var(--text-gray);
-                padding: 0.5rem 1rem;
-                border-radius: 6px;
-                font-size: 0.875rem;
-                transition: all 0.2s;
-            }
-
-            .filter-btn:hover {
-                border-color: var(--primary-green);
-                color: var(--primary-green);
-            }
-
-            .dropdown-toggle::after {
-                margin-left: 0.5rem;
-            }
-
-            /* Filter Modal Styles */
-            .filter-modal .modal-header {
-                border-bottom: 1px solid var(--border-gray);
-                padding: 1.5rem;
-            }
-
-            .filter-modal .modal-body {
-                padding: 1.5rem;
-            }
-
-            .filter-modal .modal-footer {
-                border-top: 1px solid var(--border-gray);
-                padding: 1.5rem;
-            }
-
-            .filter-section {
-                margin-bottom: 1.5rem;
-            }
-
-            .filter-label {
-                font-weight: 500;
-                color: #333;
-                margin-bottom: 0.75rem;
-                display: block;
-            }
-
-            .filter-options {
-                display: flex;
-                gap: 1rem;
-                margin-bottom: 1rem;
-            }
-
-            .filter-radio {
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-            }
-
-            .filter-radio input[type="radio"] {
-                accent-color: var(--primary-green);
-            }
-
-            .filter-radio label {
-                font-size: 0.875rem;
-                color: var(--text-gray);
-                margin: 0;
-            }
-
-            .filter-radio input[type="radio"]:checked + label {
-                color: var(--primary-green);
-                font-weight: 500;
-            }
-
-            .btn-clear-filter {
-                background: transparent;
-                border: 1px solid var(--border-gray);
-                color: var(--text-gray);
-                padding: 0.75rem 1.5rem;
-                border-radius: 6px;
-                transition: all 0.2s;
-            }
-
-            .btn-clear-filter:hover {
-                background-color: #f3f4f6;
-                border-color: var(--text-gray);
-                color: var(--text-gray);
-            }
-
-            .btn-apply-filter {
-                background-color: var(--primary-green);
-                border-color: var(--primary-green);
-                color: white;
-                padding: 0.75rem 1.5rem;
-                border-radius: 6px;
-                transition: all 0.2s;
-            }
-
-            .btn-apply-filter:hover {
-                background-color: #059669;
-                border-color: #059669;
-                color: white;
-            }
-
-            .tab-content {
-                animation: fadeIn 0.3s ease-in-out;
-            }
-
-            @keyframes fadeIn {
-                from {
-                    opacity: 0;
-                    transform: translateY(10px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
+            
         </style>
     </head>
     <body>
@@ -299,38 +56,38 @@
                     <div class="sidebar p-4">
                         <h2 class="h4 fw-bold mb-4">Hello !</h2>
                         <ul class="sidebar-menu">
-                            <li><a href="profile.jsp" class="nav-link">
-                                    <i class="bi bi-person"></i>
-                                    My account
-                                </a></li>
-                            <li><a href="FavoriteCar.jsp" class="nav-link">
-                                    <i class="bi bi-heart"></i>
-                                    Favorite cars
-                                </a></li>
-                            <li><a href="MyTrip.jsp" class="nav-link active">
-                                    <i class="bi bi-car-front"></i>
-                                    My trips
-                                </a></li>
-                            <li><a href="longtermrender.jsp" class="nav-link">
-                                    <i class="bi bi-clipboard-check"></i>
-                                    Long-term car rental orders
-                                </a></li>
-                            <li><a href="myaddress.jsp" class="nav-link">
-                                    <i class="bi bi-geo-alt"></i>
-                                    My address
-                                </a></li>
-                            <li><a href="changepassword.jsp" class="nav-link">
-                                    <i class="bi bi-lock"></i>
-                                    Change password
-                                </a></li>
-                            <li><a href="requestdelete" class="nav-link">
-                                    <i class="bi bi-trash"></i>
-                                    Request account deletion
-                                </a></li>
-                            <li class="mt-3"><a href="#" class="nav-link text-danger">
-                                    <i class="bi bi-box-arrow-right"></i>
-                                    Log out
-                                </a></li>
+                            <li><a href="my-account.jsp" class="nav-link">
+                            <i class="bi bi-person"></i>
+                            My account
+                        </a></li>
+                        <li><a href="favorite-car.jsp" class="nav-link">
+                            <i class="bi bi-heart"></i>
+                            Favorite cars
+                        </a></li>
+                        <li><a href="my-trip.jsp" class="nav-link active">
+                            <i class="bi bi-car-front"></i>
+                            My trips
+                        </a></li>
+                        <li><a href="longterm-booking.jsp" class="nav-link">
+                            <i class="bi bi-clipboard-check"></i>
+                            Long-term car rental orders
+                        </a></li>
+                        <li><a href="my-address.jsp" class="nav-link">
+                            <i class="bi bi-geo-alt"></i>
+                            My address
+                        </a></li>
+                        <li><a href="change-password.jsp" class="nav-link">
+                            <i class="bi bi-lock"></i>
+                            Change password
+                        </a></li>
+                        <li><a href="request-delete.jsp" class="nav-link">
+                            <i class="bi bi-trash"></i>
+                            Request account deletion
+                        </a></li>
+                        <li class="mt-3"><a href="#" class="nav-link text-danger">
+                            <i class="bi bi-box-arrow-right"></i>
+                            Log out
+                        </a></li>
                         </ul>
                     </div>
                 </div>

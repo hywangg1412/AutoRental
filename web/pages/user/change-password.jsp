@@ -10,8 +10,8 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="assets/css/common.css">
-    <link rel="stylesheet" href="styles/user/changepassword.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/common.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/user/change-password.css">
 </head>
 <body>
     <!-- Header -->
@@ -55,7 +55,7 @@
                 <div class="sidebar p-4">
                     <h2 class="h4 fw-bold mb-4">Hello !</h2>
                     <ul class="sidebar-menu">
-                        <li><a href="profile.jsp" class="nav-link">
+                        <li><a href="my-account.jsp" class="nav-link">
                             <i class="bi bi-person"></i>
                             My account
                         </a></li>
@@ -63,23 +63,23 @@
                             <i class="bi bi-heart"></i>
                             Favorite cars
                         </a></li>
-                        <li><a href="MyTrip.jsp" class="nav-link">
+                        <li><a href="my-trip.jsp" class="nav-link">
                             <i class="bi bi-car-front"></i>
                             My trips
                         </a></li>
-                        <li><a href="longtermrender.jsp" class="nav-link">
+                        <li><a href="longterm-booking.jsp" class="nav-link">
                             <i class="bi bi-clipboard-check"></i>
                             Long-term car rental orders
                         </a></li>
-                        <li><a href="myaddress.jsp" class="nav-link">
+                        <li><a href="my-address.jsp" class="nav-link">
                             <i class="bi bi-geo-alt"></i>
                             My address
                         </a></li>
-                        <li><a href="changepassword.jsp" class="nav-link active">
+                        <li><a href="change-password.jsp" class="nav-link active">
                             <i class="bi bi-lock"></i>
                             Change password
                         </a></li>
-                        <li><a href="requestdelete.jsp" class="nav-link">
+                        <li><a href="request-delete.jsp" class="nav-link">
                             <i class="bi bi-trash"></i>
                             Request account deletion
                         </a></li>
