@@ -23,6 +23,15 @@
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Booking/BookingApprovalListServlet.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/web/pages/staff/staff-booking.jsp</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/Entity/Car/Car.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/web/pages/user/user-proflie.jsp</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/web/styles/userV1/favorite-car.css</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/web/styles/userV1/longterm-booking.css</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/web/styles/userV1/my-address.css</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/web/pages/user/my-address.jsp</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/web/pages/user/my-trip.jsp</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/web/styles/userV1/my-trip.css</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/web/pages/user/favorite-car.jsp</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/web/pages/includes/UserSidebar.jsp</file>
         </group>
     </open-files>
 </project-private>
