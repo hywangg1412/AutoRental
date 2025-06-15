@@ -1,4 +1,4 @@
-package Repository;
+package Repository.Auth;
 
 import Config.DBContext;
 import Model.Entity.OAuth.PasswordResetToken;
