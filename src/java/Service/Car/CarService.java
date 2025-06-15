@@ -7,6 +7,7 @@ import Exception.NotFoundException;
 import Model.Entity.Car.Car;
 import Service.Interfaces.ICar.ICarService;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.logging.Level;
@@ -93,5 +94,8 @@ public class CarService implements ICarService{
             return null;
         }
     }
-
+        @Override
+    public List<Car> findAll() throws SQLException {
+    return carRepository.findAll();
+}
 }
