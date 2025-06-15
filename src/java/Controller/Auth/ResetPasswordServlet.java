@@ -3,7 +3,7 @@ package Controller.Auth;
 import Exception.NotFoundException;
 import Model.Entity.OAuth.PasswordResetToken;
 import Model.Entity.User;
-import Service.PasswordResetTokenService;
+import Service.Auth.PasswordResetTokenService;
 import Service.ResetPasswordService;
 import Service.UserService;
 import java.io.IOException;
