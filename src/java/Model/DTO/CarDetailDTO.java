@@ -21,6 +21,7 @@ public class CarDetailDTO {
     private List<String> featureNames;
     private List<String> imageUrls;
     private Date createdDate;
+    private List<String> allFeatureNames;
 
     // Getters + Setters
 
@@ -142,5 +143,13 @@ public class CarDetailDTO {
 
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public List<String> getAllFeatureNames() {
+        return allFeatureNames;
+    }
+
+    public void setAllFeatureNames(List<String> allFeatureNames) {
+        this.allFeatureNames = allFeatureNames;
     }
 }
