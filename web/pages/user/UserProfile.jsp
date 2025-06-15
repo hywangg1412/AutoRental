@@ -54,7 +54,7 @@
                 <div class="sidebar p-4">
                     <h2 class="h4 fw-bold mb-4">Hello !</h2>
                     <ul class="sidebar-menu">
-                        <li><a href="#" class="nav-link active">
+                        <li><a href="profile.jsp" class="nav-link active">
                             <i class="bi bi-person"></i>
                             My account
                         </a></li>
@@ -66,19 +66,19 @@
                             <i class="bi bi-car-front"></i>
                             My trips
                         </a></li>
-                        <li><a href="#" class="nav-link">
+                        <li><a href="longtermrender.jsp" class="nav-link">
                             <i class="bi bi-clipboard-check"></i>
                             Long-term car rental orders
                         </a></li>
-                        <li><a href="#" class="nav-link">
+                        <li><a href="myaddress.jsp" class="nav-link">
                             <i class="bi bi-geo-alt"></i>
                             My address
                         </a></li>
-                        <li><a href="#" class="nav-link">
+                        <li><a href="changepassword.jsp" class="nav-link">
                             <i class="bi bi-lock"></i>
                             Change password
                         </a></li>
-                        <li><a href="#" class="nav-link">
+                        <li><a href="requestdelete.jsp" class="nav-link">
                             <i class="bi bi-trash"></i>
                             Request account deletion
                         </a></li>
