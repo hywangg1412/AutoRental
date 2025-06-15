@@ -98,7 +98,7 @@ public class BookingRequestDTO {
             this.bookingCode = "BK" + s.substring(0, 6).toUpperCase();
         }
     }
-
+    
     public String getPickupDateTime() {
         return pickupDateTime;
     }

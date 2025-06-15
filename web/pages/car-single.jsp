@@ -1,3 +1,8 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="Model.DTO.CarDetailDTO" %>
+<%
+    CarDetailDTO car = (CarDetailDTO) request.getAttribute("car");
+%>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -53,45 +58,87 @@
     <section class="ftco-section ftco-car-details">
       <div class="container">
         <div class="row justify-content-center">
-          <div class="col-md-12">
-            <div class="car-details">
-              <div class="text text-center">
-                <span class="subheading">Small SUV</span>
-                <h2>Mercedes Grand Sedan</h2>
-              </div>
-            </div>
+      <div class="col-md-12">
+        <div class="car-details">
+          <div class="img rounded" style="background-image: url('${pageContext.request.contextPath}<%= car.getImageUrls().get(0) %>');"></div>
+          <div class="text text-center">
+            <span class="subheading"><%= car.getBrandName() %></span>
+            <h2><%= car.getCarModel() %></h2>
           </div>
         </div>
+      </div>
+    </div>
         <div class="row">
-          <div class="col-md-12">
-            <div class="carousel-car owl-carousel ftco-owl">
-              <div class="item">
-                <div class="car-wrap rounded ftco-animate">
-                  <div class="img rounded d-flex align-items-end" style="background-image: url('${pageContext.request.contextPath}/assets/images/car-1.jpg');">
-                  </div>
-                </div>
-              </div>
-              <div class="item">
-                <div class="car-wrap rounded ftco-animate">
-                  <div class="img rounded d-flex align-items-end" style="background-image: url('${pageContext.request.contextPath}/assets/images/car-2.jpg');">
-                  </div>
-                </div>
-              </div>
-              <div class="item">
-                <div class="car-wrap rounded ftco-animate">
-                  <div class="img rounded d-flex align-items-end" style="background-image: url('${pageContext.request.contextPath}/assets/images/car-3.jpg');">
-                  </div>
-                </div>
-              </div>
-              <div class="item">
-                <div class="car-wrap rounded ftco-animate">
-                  <div class="img rounded d-flex align-items-end" style="background-image: url('${pageContext.request.contextPath}/assets/images/car-4.jpg');">
-                  </div>
-                </div>
+      <!-- Odometer -->
+      <div class="col-md d-flex align-self-stretch ftco-animate">
+        <div class="media block-6 services">
+          <div class="media-body py-md-4">
+            <div class="d-flex mb-3 align-items-center">
+              <div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-dashboard"></span></div>
+              <div class="text">
+                <h3 class="heading mb-0 pl-3">Mileage<span><%= car.getOdometer() %> km</span></h3>
               </div>
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- Transmission -->
+      <div class="col-md d-flex align-self-stretch ftco-animate">
+        <div class="media block-6 services">
+          <div class="media-body py-md-4">
+            <div class="d-flex mb-3 align-items-center">
+              <div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-pistons"></span></div>
+              <div class="text">
+                <h3 class="heading mb-0 pl-3">Transmission<span><%= car.getTransmissionName() %></span></h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Seats -->
+      <div class="col-md d-flex align-self-stretch ftco-animate">
+        <div class="media block-6 services">
+          <div class="media-body py-md-4">
+            <div class="d-flex mb-3 align-items-center">
+              <div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-car-seat"></span></div>
+              <div class="text">
+                <h3 class="heading mb-0 pl-3">Seats<span><%= car.getSeats() %> Adults</span></h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Luggage (tạm tĩnh nếu chưa có cột trong DB) -->
+      <div class="col-md d-flex align-self-stretch ftco-animate">
+        <div class="media block-6 services">
+          <div class="media-body py-md-4">
+            <div class="d-flex mb-3 align-items-center">
+              <div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-backpack"></span></div>
+              <div class="text">
+                <h3 class="heading mb-0 pl-3">Luggage<span>4 Bags</span></h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fuel -->
+      <div class="col-md d-flex align-self-stretch ftco-animate">
+        <div class="media block-6 services">
+          <div class="media-body py-md-4">
+            <div class="d-flex mb-3 align-items-center">
+              <div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-diesel"></span></div>
+              <div class="text">
+                <h3 class="heading mb-0 pl-3">Fuel<span><%= car.getFuelName() %></span></h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      	</div>
         <div class="row">
           <div class="col-md-12 pills">
             <div class="bd-example bd-example-tabs">
@@ -303,3 +350,5 @@
 <script src="${pageContext.request.contextPath}/assets/js/scrollax.min.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/google-map.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
+</body>
+</html>
