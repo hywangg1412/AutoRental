@@ -1,0 +1,293 @@
+:root {
+    --primary-green: #10b981;
+    --light-green: #f0fdf4;
+    --warning-orange: #f59e0b;
+    --danger-red: #dc2626;
+    --light-gray: #f8f9fa;
+    --border-gray: #e5e7eb;
+    --text-gray: #6b7280;
+    --blue: #3b82f6;
+    --light-blue: #eff6ff;
+}
+
+body {
+    background-color: var(--light-gray);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.header {
+    background: white;
+    border-bottom: 1px solid var(--border-gray);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    font-weight: bold;
+    font-size: 1.25rem;
+}
+
+.logo .text-dark {
+    color: #333 !important;
+}
+
+.logo .text-success {
+    color: var(--primary-green) !important;
+}
+
+.nav-links a {
+    color: var(--text-gray);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.nav-links a:hover {
+    color: var(--primary-green);
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    background-color: #d1d5db;
+}
+
+.sidebar {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    height: fit-content;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu .nav-link {
+    color: var(--text-gray);
+    border-radius: 0;
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.2s;
+    border: none;
+}
+
+.sidebar-menu .nav-link:hover {
+    background-color: #f3f4f6;
+    color: var(--primary-green);
+}
+
+.sidebar-menu .nav-link.active {
+    background-color: var(--light-green);
+    color: var(--primary-green);
+    border-right: 3px solid var(--primary-green);
+}
+
+.sidebar-menu .nav-link.text-danger:hover {
+    background-color: #fee2e2;
+    color: var(--danger-red);
+}
+
+.main-content {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.address-card {
+    background: white;
+    border: 1px solid var(--border-gray);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.address-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.address-card.default {
+    border-color: var(--primary-green);
+    background-color: var(--light-green);
+}
+
+.address-header {
+    display: flex;
+    justify-content: between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.address-type {
+    display: inline-block;
+    background-color: var(--light-blue);
+    color: var(--blue);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.address-type.home {
+    background-color: var(--light-green);
+    color: var(--primary-green);
+}
+
+.address-type.work {
+    background-color: #fef3c7;
+    color: var(--warning-orange);
+}
+
+.default-badge {
+    background-color: var(--primary-green);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+.address-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.address-details {
+    color: var(--text-gray);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.address-phone {
+    color: var(--text-gray);
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+}
+
+.address-actions {
+    display: flex;
+    gap: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-gray);
+}
+
+.btn-action {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn-primary-custom {
+    background-color: var(--primary-green);
+    border-color: var(--primary-green);
+    color: white;
+}
+
+.btn-primary-custom:hover {
+    background-color: #059669;
+    border-color: #059669;
+    color: white;
+}
+
+.btn-outline-custom {
+    background: transparent;
+    border: 1px solid var(--border-gray);
+    color: var(--text-gray);
+}
+
+.btn-outline-custom:hover {
+    border-color: var(--primary-green);
+    color: var(--primary-green);
+}
+
+.btn-danger-custom {
+    background-color: var(--danger-red);
+    border-color: var(--danger-red);
+    color: white;
+}
+
+.btn-danger-custom:hover {
+    background-color: #b91c1c;
+    border-color: #b91c1c;
+    color: white;
+}
+
+.add-address-card {
+    background: white;
+    border: 2px dashed var(--border-gray);
+    border-radius: 12px;
+    padding: 3rem 1.5rem;
+    text-align: center;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.add-address-card:hover {
+    border-color: var(--primary-green);
+    background-color: var(--light-green);
+}
+
+.add-icon {
+    width: 48px;
+    height: 48px;
+    background-color: var(--primary-green);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin: 0 auto 1rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-gray);
+}
+
+.dropdown-toggle::after {
+    margin-left: 0.5rem;
+}
+
+/* Modal Styles */
+.modal-header {
+    border-bottom: 1px solid var(--border-gray);
+}
+
+.modal-footer {
+    border-top: 1px solid var(--border-gray);
+}
+
+.form-control:focus {
+    border-color: var(--primary-green);
+    box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25);
+}
+
+.form-select:focus {
+    border-color: var(--primary-green);
+    box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25);
+}
+
+.form-check-input:checked {
+    background-color: var(--primary-green);
+    border-color: var(--primary-green);
+}
+
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25);
+}
