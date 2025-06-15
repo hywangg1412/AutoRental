@@ -460,18 +460,18 @@ INSERT INTO CarCategories (CategoryId, CategoryName) VALUES
 
 INSERT INTO Car (CarId, BrandId, CarModel, YearManufactured, TransmissionTypeId, FuelTypeId, LicensePlate, Seats, Odometer, PricePerHour, PricePerDay, PricePerMonth, Status, Description, CreatedDate, CategoryId, LastUpdatedBy)
 VALUES
-('a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1', '11111111-1111-1111-1111-111111111111', N'Toyota Vios', 2020, '33333333-3333-3333-3333-333333333333', '55555555-5555-5555-5555-555555555555', '30A-12345', 5, 35000, 8, 40, 900, 'Available', N'Xe gia đình tiết kiệm xăng', GETDATE(), '77777777-7777-7777-7777-777777777777', NULL),
-('a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a2a2', '22222222-2222-2222-2222-222222222222', N'Honda City', 2021, '33333333-3333-3333-3333-333333333333', '55555555-5555-5555-5555-555555555555', '30A-23456', 5, 25000, 9, 45, 950, 'Available', N'Xe rộng rãi, phù hợp đi chơi', GETDATE(), '77777777-7777-7777-7777-777777777777', NULL),
-('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a3a3', '11111111-1111-1111-1111-111111111111', N'Toyota Innova', 2019, '44444444-4444-4444-4444-444444444444', '66666666-6666-6666-6666-666666666666', '30A-34567', 7, 60000, 12, 60, 1200, 'Available', N'Xe 7 chỗ cho gia đình', GETDATE(), '88888888-8888-8888-8888-888888888888', NULL),
-('a4a4a4a4-a4a4-a4a4-a4a4-a4a4a4a4a4a4', '22222222-2222-2222-2222-222222222222', N'Honda CRV', 2022, '33333333-3333-3333-3333-333333333333', '55555555-5555-5555-5555-555555555555', '30A-45678', 7, 20000, 15, 80, 1500, 'Available', N'Xe SUV mạnh mẽ', GETDATE(), '88888888-8888-8888-8888-888888888888', NULL),
-('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a5a5', '11111111-1111-1111-1111-111111111111', N'Toyota Fortuner', 2018, '44444444-4444-4444-4444-444444444444', '66666666-6666-6666-6666-666666666666', '30A-56789', 7, 80000, 10, 55, 1100, 'Available', N'Xe 7 chỗ gầm cao', GETDATE(), '88888888-8888-8888-8888-888888888888', NULL),
-('c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1', '99999999-9999-9999-9999-999999999999', N'Hyundai Accent', 2021, '33333333-3333-3333-3333-333333333333', '55555555-5555-5555-5555-555555555555', '30A-11223', 5, 15000, 10, 50, 1000, 'Available', N'Sedan nhỏ gọn, tiết kiệm nhiên liệu', GETDATE(), '77777777-7777-7777-7777-777777777777', NULL),
-('c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c2c2c2', '99999999-9999-9999-9999-999999999999', N'Hyundai SantaFe', 2022, '33333333-3333-3333-3333-333333333333', '66666666-6666-6666-6666-666666666666', '30A-22334', 7, 10000, 18, 90, 1700, 'Available', N'SUV 7 chỗ, mạnh mẽ', GETDATE(), '88888888-8888-8888-8888-888888888888', NULL),
-('d1d1d1d1-d1d1-d1d1-d1d1-d1d1d1d1d1d1', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Ford Ranger', 2020, '44444444-4444-4444-4444-444444444444', '66666666-6666-6666-6666-666666666666', '30A-33445', 5, 30000, 20, 100, 1800, 'Available', N'Bán tải đa dụng, mạnh mẽ', GETDATE(), '88888888-8888-8888-8888-888888888888', NULL),
-('d2d2d2d2-d2d2-d2d2-d2d2-d2d2d2d2d2d2', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Ford Everest', 2021, '33333333-3333-3333-3333-333333333333', '55555555-5555-5555-5555-555555555555', '30A-44556', 7, 25000, 17, 85, 1600, 'Available', N'SUV 7 chỗ, tiện nghi', GETDATE(), '88888888-8888-8888-8888-888888888888', NULL),
-('b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b1b1b1', '11111111-1111-1111-1111-111111111111', N'Toyota Camry', 2021, '33333333-3333-3333-3333-333333333333', '55555555-5555-5555-5555-555555555555', '30A-67890', 5, 18000, 14, 70, 1300, 'Available', N'Sedan cao cấp, sang trọng', GETDATE(), '77777777-7777-7777-7777-777777777777', NULL),
-('e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e1e1e1', '99999999-9999-9999-9999-999999999999', N'Hyundai Elantra', 2021, '33333333-3333-3333-3333-333333333333', '55555555-5555-5555-5555-555555555555', '30A-55667', 5, 20000, 11, 55, 1100, 'Available', N'Sedan hiện đại, tiết kiệm nhiên liệu', GETDATE(), '77777777-7777-7777-7777-777777777777', NULL),
-('e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e2e2e2', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Ford EcoSport', 2022, '33333333-3333-3333-3333-333333333333', '55555555-5555-5555-5555-555555555555', '30A-66778', 5, 15000, 12, 60, 1200, 'Available', N'SUV nhỏ gọn, phù hợp cho gia đình', GETDATE(), '88888888-8888-8888-8888-888888888888', NULL);
+('a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1', '11111111-1111-1111-1111-111111111111', N'Toyota Vios', 2020, '33333333-3333-3333-3333-333333333333', '55555555-5555-5555-5555-555555555555', '30A-12345', 5, 35000, 8, 40, 900, 'Available', N'Toyota Vios is a compact sedan renowned for its outstanding fuel efficiency, smooth and durable operation. Ideal for small families or individuals frequently traveling in the city. The modern interior, comfortable seats, and spacious trunk ensure peace of mind on every journey.', GETDATE(), '77777777-7777-7777-7777-777777777777', NULL),
+('a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a2a2', '22222222-2222-2222-2222-222222222222', N'Honda City', 2021, '33333333-3333-3333-3333-333333333333', '55555555-5555-5555-5555-555555555555', '30A-23456', 5, 25000, 9, 45, 950, 'Available', N'Honda City features a youthful, dynamic design with a powerful yet economical engine. The car is equipped with many safety features such as ABS brakes, electronic stability control, and hill-start assist. Spacious interior, cool air conditioning, and a modern entertainment system provide a great experience for the whole family.', GETDATE(), '77777777-7777-7777-7777-777777777777', NULL),
+('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a3a3', '11111111-1111-1111-1111-111111111111', N'Toyota Innova', 2019, '44444444-4444-4444-4444-444444444444', '66666666-6666-6666-6666-666666666666', '30A-34567', 7, 60000, 12, 60, 1200, 'Available', N'Toyota Innova is the ideal choice for large families or groups of friends thanks to its spacious 7-seat cabin, large luggage compartment, and stable performance on various terrains. The car is equipped with multi-zone air conditioning, flexible seating, and many entertainment amenities, ensuring comfort on every long trip.', GETDATE(), '88888888-8888-8888-8888-888888888888', NULL),
+('a4a4a4a4-a4a4-a4a4-a4a4-a4a4a4a4a4a4', '22222222-2222-2222-2222-222222222222', N'Honda CRV', 2022, '33333333-3333-3333-3333-333333333333', '55555555-5555-5555-5555-555555555555', '30A-45678', 7, 20000, 15, 80, 1500, 'Available', N'Honda CRV is a powerful SUV with a sporty design, fuel-efficient engine, and flexible handling. The car is equipped with many safety features such as a reversing camera, collision sensors, and cruise control. Luxurious interior, premium leather seats, and spacious space let you enjoy every trip, whether in the city or on the highway.', GETDATE(), '88888888-8888-8888-8888-888888888888', NULL),
+('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a5a5', '11111111-1111-1111-1111-111111111111', N'Toyota Fortuner', 2018, '44444444-4444-4444-4444-444444444444', '66666666-6666-6666-6666-666666666666', '30A-56789', 7, 80000, 10, 55, 1100, 'Available', N'Toyota Fortuner is a 7-seat high-clearance SUV, famous for its powerful, durable, and fuel-efficient performance. The car is suitable for long trips, picnics, or traveling with large families. Equipped with advanced safety systems, spacious interior, modern amenities, and a large trunk, you are always ready for any journey.', GETDATE(), '88888888-8888-8888-8888-888888888888', NULL),
+('c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1', '99999999-9999-9999-9999-999999999999', N'Hyundai Accent', 2021, '33333333-3333-3333-3333-333333333333', '55555555-5555-5555-5555-555555555555', '30A-11223', 5, 15000, 10, 50, 1000, 'Available', N'Hyundai Accent is a compact sedan with a youthful, modern design, suitable for individuals or small families. The car stands out for its fuel efficiency, smooth operation, and diverse entertainment system. Comfortable interior, cozy seats, and a sufficiently large trunk for weekend trips.', GETDATE(), '77777777-7777-7777-7777-777777777777', NULL),
+('c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c2c2c2', '99999999-9999-9999-9999-999999999999', N'Hyundai SantaFe', 2022, '33333333-3333-3333-3333-333333333333', '66666666-6666-6666-6666-666666666666', '30A-22334', 7, 10000, 18, 90, 1700, 'Available', N'Hyundai SantaFe is a premium 7-seat SUV with a powerful engine and stable performance on various terrains. The car is equipped with many safety features such as ABS brakes, electronic balance, and hill descent assist. Luxurious interior, premium leather seats, multi-zone air conditioning, and a spacious trunk make it ideal for family trips.', GETDATE(), '88888888-8888-8888-8888-888888888888', NULL),
+('d1d1d1d1-d1d1-d1d1-d1d1-d1d1d1d1d1d1', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Ford Ranger', 2020, '44444444-4444-4444-4444-444444444444', '66666666-6666-6666-6666-666666666666', '30A-33445', 5, 30000, 20, 100, 1800, 'Available', N'Ford Ranger is a versatile pickup truck, outstanding for its large cargo capacity, powerful and durable engine. The car is suitable for both work and outdoor trips, exploring difficult terrains. Comfortable interior, spacious seats, modern entertainment system, and many safety features give you peace of mind on every road.', GETDATE(), '88888888-8888-8888-8888-888888888888', NULL),
+('d2d2d2d2-d2d2-d2d2-d2d2-d2d2d2d2d2d2', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Ford Everest', 2021, '33333333-3333-3333-3333-333333333333', '55555555-5555-5555-5555-555555555555', '30A-44556', 7, 25000, 17, 85, 1600, 'Available', N'Ford Everest is a 7-seat SUV with a strong, luxurious design, equipped with many modern safety technologies such as blind spot warning and automatic parking assist. The car has a spacious interior, premium leather seats, multi-zone air conditioning, and a large trunk, suitable for long trips with family or friends.', GETDATE(), '88888888-8888-8888-8888-888888888888', NULL),
+('b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b1b1b1', '11111111-1111-1111-1111-111111111111', N'Toyota Camry', 2021, '33333333-3333-3333-3333-333333333333', '55555555-5555-5555-5555-555555555555', '30A-67890', 5, 18000, 14, 70, 1300, 'Available', N'Toyota Camry is a premium, luxurious sedan, outstanding for its elegant design, powerful engine, and excellent sound insulation. The car is equipped with many modern amenities such as electric leather seats, high-end entertainment system, automatic air conditioning, and advanced safety features, delivering a wonderful driving experience.', GETDATE(), '77777777-7777-7777-7777-777777777777', NULL),
+('e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e1e1e1', '99999999-9999-9999-9999-999999999999', N'Hyundai Elantra', 2021, '33333333-3333-3333-3333-333333333333', '55555555-5555-5555-5555-555555555555', '30A-55667', 5, 20000, 11, 55, 1100, 'Available', N'Hyundai Elantra is a modern sedan with a youthful design, fuel-efficient and stable operation. The car has a comfortable interior, cozy seats, diverse entertainment system, and a spacious trunk, suitable for dynamic young people or small families.', GETDATE(), '77777777-7777-7777-7777-777777777777', NULL),
+('e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e2e2e2', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Ford EcoSport', 2022, '33333333-3333-3333-3333-333333333333', '55555555-5555-5555-5555-555555555555', '30A-66778', 5, 15000, 12, 60, 1200, 'Available', N'Ford EcoSport is a compact, flexible SUV, easy to move in the city as well as the suburbs. The car has a sporty design, comfortable interior, modern entertainment system, and many safety features, suitable for young families or individuals who love to explore.', GETDATE(), '88888888-8888-8888-8888-888888888888', NULL);
 
 INSERT INTO CarImages (ImageId, CarId, ImageUrl, IsMain) VALUES
 (NEWID(), 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1', '/assets/images/toyota_vios.jpg', 1),
@@ -486,3 +486,146 @@ INSERT INTO CarImages (ImageId, CarId, ImageUrl, IsMain) VALUES
 (NEWID(), 'b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b1b1b1', '/assets/images/toyota_camry.jpg', 1),
 (NEWID(), 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e1e1e1', '/assets/images/hyundai_elantra.jpg', 1),
 (NEWID(), 'e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e2e2e2', '/assets/images/ford_ecosport.jpg', 1); 
+
+INSERT INTO CarFeature (FeatureId, FeatureName) VALUES
+('11111111-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Airconditions'),
+('22222222-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Child Seat'),
+('33333333-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'GPS'),
+('44444444-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Luggage'),
+('55555555-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Music'),
+('66666666-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Seat Belt'),
+('77777777-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Sleeping Bed'),
+('88888888-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Water'),
+('99999999-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Bluetooth'),
+('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Onboard computer'),
+('bbbbbbbb-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Audio input'),
+('cccccccc-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Long Term Trips'),
+('dddddddd-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Car Kit'),
+('eeeeeeee-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Remote central locking'),
+('ffffffff-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Climate control');
+
+-- Xe 1: Toyota Vios
+INSERT INTO CarFeaturesMapping (CarId, FeatureId) VALUES
+('a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1', '11111111-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1', '22222222-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1', '33333333-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1', '44444444-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1', '55555555-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1', '66666666-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1', '77777777-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1', '88888888-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1', '99999999-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1', 'bbbbbbbb-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1', 'cccccccc-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1', 'dddddddd-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1', 'eeeeeeee-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1', 'ffffffff-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
+
+-- Xe 2: Honda City
+INSERT INTO CarFeaturesMapping (CarId, FeatureId) VALUES
+('a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a2a2', '11111111-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a2a2', '22222222-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a2a2', '33333333-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a2a2', '44444444-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a2a2', '55555555-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a2a2', '66666666-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a2a2', '77777777-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a2a2', '88888888-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a2a2', '99999999-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a2a2', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
+
+-- Xe 3: Toyota Innova
+INSERT INTO CarFeaturesMapping (CarId, FeatureId) VALUES
+('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a3a3', '11111111-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a3a3', '22222222-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a3a3', '33333333-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a3a3', '44444444-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a3a3', '55555555-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a3a3', '66666666-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a3a3', '77777777-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a3a3', '88888888-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
+
+-- Xe 4: Honda CRV
+INSERT INTO CarFeaturesMapping (CarId, FeatureId) VALUES
+('a4a4a4a4-a4a4-a4a4-a4a4-a4a4a4a4a4a4', '11111111-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a4a4a4a4-a4a4-a4a4-a4a4-a4a4a4a4a4a4', '33333333-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a4a4a4a4-a4a4-a4a4-a4a4-a4a4a4a4a4a4', '55555555-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a4a4a4a4-a4a4-a4a4-a4a4-a4a4a4a4a4a4', '66666666-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a4a4a4a4-a4a4-a4a4-a4a4-a4a4a4a4a4a4', '99999999-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a4a4a4a4-a4a4-a4a4-a4a4-a4a4a4a4a4a4', 'bbbbbbbb-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
+
+-- Xe 5: Toyota Fortuner
+INSERT INTO CarFeaturesMapping (CarId, FeatureId) VALUES
+('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a5a5', '22222222-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a5a5', '44444444-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a5a5', '55555555-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a5a5', '88888888-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a5a5', 'cccccccc-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a5a5', 'ffffffff-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
+
+-- Xe 6: Hyundai Accent
+INSERT INTO CarFeaturesMapping (CarId, FeatureId) VALUES
+('c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1', '11111111-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1', '22222222-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1', '55555555-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1', '88888888-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1', '99999999-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
+
+-- Xe 7: Hyundai SantaFe
+INSERT INTO CarFeaturesMapping (CarId, FeatureId) VALUES
+('c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c2c2c2', '33333333-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c2c2c2', '44444444-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c2c2c2', '55555555-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c2c2c2', '66666666-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c2c2c2', 'bbbbbbbb-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c2c2c2', 'cccccccc-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
+
+-- Xe 8: Ford Ranger
+INSERT INTO CarFeaturesMapping (CarId, FeatureId) VALUES
+('d1d1d1d1-d1d1-d1d1-d1d1-d1d1d1d1d1d1', '11111111-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('d1d1d1d1-d1d1-d1d1-d1d1-d1d1d1d1d1d1', '33333333-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('d1d1d1d1-d1d1-d1d1-d1d1-d1d1d1d1d1d1', '55555555-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('d1d1d1d1-d1d1-d1d1-d1d1-d1d1d1d1d1d1', '88888888-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('d1d1d1d1-d1d1-d1d1-d1d1-d1d1d1d1d1d1', 'dddddddd-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('d1d1d1d1-d1d1-d1d1-d1d1-d1d1d1d1d1d1', 'ffffffff-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
+
+-- Xe 9: Ford Everest
+INSERT INTO CarFeaturesMapping (CarId, FeatureId) VALUES
+('d2d2d2d2-d2d2-d2d2-d2d2-d2d2d2d2d2d2', '22222222-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('d2d2d2d2-d2d2-d2d2-d2d2-d2d2d2d2d2d2', '44444444-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('d2d2d2d2-d2d2-d2d2-d2d2-d2d2d2d2d2d2', '55555555-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('d2d2d2d2-d2d2-d2d2-d2d2-d2d2d2d2d2d2', '66666666-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('d2d2d2d2-d2d2-d2d2-d2d2-d2d2d2d2d2d2', '99999999-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('d2d2d2d2-d2d2-d2d2-d2d2-d2d2d2d2d2d2', 'eeeeeeee-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
+
+-- Xe 10: Toyota Camry
+INSERT INTO CarFeaturesMapping (CarId, FeatureId) VALUES
+('b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b1b1b1', '11111111-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b1b1b1', '22222222-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b1b1b1', '33333333-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b1b1b1', '44444444-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b1b1b1', '55555555-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b1b1b1', '66666666-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b1b1b1', '77777777-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
+
+-- Xe 11: Hyundai Elantra
+INSERT INTO CarFeaturesMapping (CarId, FeatureId) VALUES
+('e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e1e1e1', '11111111-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e1e1e1', '22222222-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e1e1e1', '33333333-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e1e1e1', '44444444-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e1e1e1', '55555555-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e1e1e1', 'cccccccc-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e1e1e1', 'dddddddd-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
+
+-- Xe 12: Ford EcoSport
+INSERT INTO CarFeaturesMapping (CarId, FeatureId) VALUES
+('e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e2e2e2', '11111111-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e2e2e2', '22222222-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e2e2e2', '33333333-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e2e2e2', '44444444-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e2e2e2', '55555555-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e2e2e2', '66666666-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e2e2e2', 'bbbbbbbb-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+('e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e2e2e2', 'ffffffff-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
