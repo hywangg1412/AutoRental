@@ -94,8 +94,9 @@ public class CarService implements ICarService{
             return null;
         }
     }
-        @Override
+    @Override
     public List<Car> findAll() throws SQLException {
     return carRepository.findAll();
 }
+
 }

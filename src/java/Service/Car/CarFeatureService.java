@@ -100,4 +100,12 @@ public class CarFeatureService implements ICarFeatureService {
             return null;
         }
     }
+
+    public List<CarFeature> findByCarId(UUID carId) throws SQLException {
+        return repository.findByCarId(carId);
+    }
+
+    public List<CarFeature> findAll() throws SQLException {
+        return repository.findAll();
+    }
 } 
