@@ -436,4 +436,53 @@ VALUES (
     '550e8400-e29b-41d4-a716-446655440000'  -- Staff Role ID
 );
 GO
- 
+-- Brand
+INSERT INTO CarBrand (BrandId, BrandName) VALUES
+('11111111-1111-1111-1111-111111111111', N'Toyota'),
+('22222222-2222-2222-2222-222222222222', N'Honda'),
+('99999999-9999-9999-9999-999999999999', N'Hyundai'),
+('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Ford');
+
+-- TransmissionType
+INSERT INTO TransmissionType (TransmissionTypeId, TransmissionName) VALUES
+('33333333-3333-3333-3333-333333333333', N'Số tự động'),
+('44444444-4444-4444-4444-444444444444', N'Số sàn');
+
+-- FuelType
+INSERT INTO FuelType (FuelTypeId, FuelName) VALUES
+('55555555-5555-5555-5555-555555555555', N'Xăng'),
+('66666666-6666-6666-6666-666666666666', N'Dầu');
+
+-- CarCategories
+INSERT INTO CarCategories (CategoryId, CategoryName) VALUES
+('77777777-7777-7777-7777-777777777777', N'Xe 4 chỗ'),
+('88888888-8888-8888-8888-888888888888', N'Xe 7 chỗ');
+
+INSERT INTO Car (CarId, BrandId, CarModel, YearManufactured, TransmissionTypeId, FuelTypeId, LicensePlate, Seats, Odometer, PricePerHour, PricePerDay, PricePerMonth, Status, Description, CreatedDate, CategoryId, LastUpdatedBy)
+VALUES
+('a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1', '11111111-1111-1111-1111-111111111111', N'Toyota Vios', 2020, '33333333-3333-3333-3333-333333333333', '55555555-5555-5555-5555-555555555555', '30A-12345', 5, 35000, 8, 40, 900, 'Available', N'Xe gia đình tiết kiệm xăng', GETDATE(), '77777777-7777-7777-7777-777777777777', NULL),
+('a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a2a2', '22222222-2222-2222-2222-222222222222', N'Honda City', 2021, '33333333-3333-3333-3333-333333333333', '55555555-5555-5555-5555-555555555555', '30A-23456', 5, 25000, 9, 45, 950, 'Available', N'Xe rộng rãi, phù hợp đi chơi', GETDATE(), '77777777-7777-7777-7777-777777777777', NULL),
+('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a3a3', '11111111-1111-1111-1111-111111111111', N'Toyota Innova', 2019, '44444444-4444-4444-4444-444444444444', '66666666-6666-6666-6666-666666666666', '30A-34567', 7, 60000, 12, 60, 1200, 'Available', N'Xe 7 chỗ cho gia đình', GETDATE(), '88888888-8888-8888-8888-888888888888', NULL),
+('a4a4a4a4-a4a4-a4a4-a4a4-a4a4a4a4a4a4', '22222222-2222-2222-2222-222222222222', N'Honda CRV', 2022, '33333333-3333-3333-3333-333333333333', '55555555-5555-5555-5555-555555555555', '30A-45678', 7, 20000, 15, 80, 1500, 'Available', N'Xe SUV mạnh mẽ', GETDATE(), '88888888-8888-8888-8888-888888888888', NULL),
+('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a5a5', '11111111-1111-1111-1111-111111111111', N'Toyota Fortuner', 2018, '44444444-4444-4444-4444-444444444444', '66666666-6666-6666-6666-666666666666', '30A-56789', 7, 80000, 10, 55, 1100, 'Available', N'Xe 7 chỗ gầm cao', GETDATE(), '88888888-8888-8888-8888-888888888888', NULL),
+('c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1', '99999999-9999-9999-9999-999999999999', N'Hyundai Accent', 2021, '33333333-3333-3333-3333-333333333333', '55555555-5555-5555-5555-555555555555', '30A-11223', 5, 15000, 10, 50, 1000, 'Available', N'Sedan nhỏ gọn, tiết kiệm nhiên liệu', GETDATE(), '77777777-7777-7777-7777-777777777777', NULL),
+('c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c2c2c2', '99999999-9999-9999-9999-999999999999', N'Hyundai SantaFe', 2022, '33333333-3333-3333-3333-333333333333', '66666666-6666-6666-6666-666666666666', '30A-22334', 7, 10000, 18, 90, 1700, 'Available', N'SUV 7 chỗ, mạnh mẽ', GETDATE(), '88888888-8888-8888-8888-888888888888', NULL),
+('d1d1d1d1-d1d1-d1d1-d1d1-d1d1d1d1d1d1', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Ford Ranger', 2020, '44444444-4444-4444-4444-444444444444', '66666666-6666-6666-6666-666666666666', '30A-33445', 5, 30000, 20, 100, 1800, 'Available', N'Bán tải đa dụng, mạnh mẽ', GETDATE(), '88888888-8888-8888-8888-888888888888', NULL),
+('d2d2d2d2-d2d2-d2d2-d2d2-d2d2d2d2d2d2', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Ford Everest', 2021, '33333333-3333-3333-3333-333333333333', '55555555-5555-5555-5555-555555555555', '30A-44556', 7, 25000, 17, 85, 1600, 'Available', N'SUV 7 chỗ, tiện nghi', GETDATE(), '88888888-8888-8888-8888-888888888888', NULL),
+('b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b1b1b1', '11111111-1111-1111-1111-111111111111', N'Toyota Camry', 2021, '33333333-3333-3333-3333-333333333333', '55555555-5555-5555-5555-555555555555', '30A-67890', 5, 18000, 14, 70, 1300, 'Available', N'Sedan cao cấp, sang trọng', GETDATE(), '77777777-7777-7777-7777-777777777777', NULL),
+('e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e1e1e1', '99999999-9999-9999-9999-999999999999', N'Hyundai Elantra', 2021, '33333333-3333-3333-3333-333333333333', '55555555-5555-5555-5555-555555555555', '30A-55667', 5, 20000, 11, 55, 1100, 'Available', N'Sedan hiện đại, tiết kiệm nhiên liệu', GETDATE(), '77777777-7777-7777-7777-777777777777', NULL),
+('e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e2e2e2', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Ford EcoSport', 2022, '33333333-3333-3333-3333-333333333333', '55555555-5555-5555-5555-555555555555', '30A-66778', 5, 15000, 12, 60, 1200, 'Available', N'SUV nhỏ gọn, phù hợp cho gia đình', GETDATE(), '88888888-8888-8888-8888-888888888888', NULL);
+
+INSERT INTO CarImages (ImageId, CarId, ImageUrl, IsMain) VALUES
+(NEWID(), 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1', '/assets/images/toyota_vios.jpg', 1),
+(NEWID(), 'a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a2a2', '/assets/images/honda_city.jpg', 1),
+(NEWID(), 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a3a3', '/assets/images/toyota_innova.jpg', 1),
+(NEWID(), 'a4a4a4a4-a4a4-a4a4-a4a4-a4a4a4a4a4a4', '/assets/images/honda_CRV.jpg', 1),
+(NEWID(), 'a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a5a5', '/assets/images/toyota_fortuner.jpg', 1),
+(NEWID(), 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1', '/assets/images/hyundai_accent.jpg', 1),
+(NEWID(), 'c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c2c2c2', '/assets/images/hyundai_santaFe.jpg', 1),
+(NEWID(), 'd1d1d1d1-d1d1-d1d1-d1d1-d1d1d1d1d1d1', '/assets/images/ford_ranger.jpg', 1),
+(NEWID(), 'd2d2d2d2-d2d2-d2d2-d2d2-d2d2d2d2d2d2', '/assets/images/ford_everest.jpg', 1),
+(NEWID(), 'b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b1b1b1', '/assets/images/toyota_camry.jpg', 1),
+(NEWID(), 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e1e1e1', '/assets/images/hyundai_elantra.jpg', 1),
+(NEWID(), 'e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e2e2e2', '/assets/images/ford_ecosport.jpg', 1); 
