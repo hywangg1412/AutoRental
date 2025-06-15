@@ -1,262 +1,257 @@
-
-    <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile - Auto Rental</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-   <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/user/user-profile.css">
-</head>
-<body>
-    <!-- Header -->
-    <header class="header">
-        <div class="container-fluid">
-            <div class="d-flex justify-content-between align-items-center py-3">
-                <div class="logo">
-                    <span class="text-dark">AUTO</span><span class="text-success">RENTAL</span>
-                </div>
-                <div class="d-flex align-items-center gap-4">
-                    <nav class="nav-links d-flex gap-4">
-                        <a href="#" class="fw-medium">About</a>
-                        <a href="#" class="fw-medium">My trips</a>
-                    </nav>
-                    <div class="d-flex align-items-center gap-2">
-                        <i class="bi bi-bell"></i>
-                        <i class="bi bi-chat-dots"></i>
-                        <div class="dropdown">
-                            <button class="btn btn-link text-decoration-none text-dark dropdown-toggle d-flex align-items-center gap-2" 
-                                    type="button" data-bs-toggle="dropdown">
-                                <div class="user-avatar rounded-circle"></div>
-                                <span>hywang1412</span>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">Profile</a></li>
-                                <li><a class="dropdown-item" href="#">Settings</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#">Logout</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Profile - Auto Rental</title>
 
-    <div class="container-fluid mt-4">
-        <div class="row g-4">
-            <!-- Sidebar -->
-            <div class="col-lg-3">
-                <div class="sidebar p-4">
-                    <h2 class="h4 fw-bold mb-4">Hello !</h2>
-                    <ul class="sidebar-menu">
-                        <li><a href="my-account.jsp" class="nav-link active">
-                            <i class="bi bi-person"></i>
-                            My account
-                        </a></li>
-                        <li><a href="favorite-car.jsp" class="nav-link">
-                            <i class="bi bi-heart"></i>
-                            Favorite cars
-                        </a></li>
-                        <li><a href="my-trip.jsp" class="nav-link">
-                            <i class="bi bi-car-front"></i>
-                            My trips
-                        </a></li>
-                        <li><a href="longterm-booking.jsp" class="nav-link">
-                            <i class="bi bi-clipboard-check"></i>
-                            Long-term car rental orders
-                        </a></li>
-                        <li><a href="my-address.jsp" class="nav-link">
-                            <i class="bi bi-geo-alt"></i>
-                            My address
-                        </a></li>
-                        <li><a href="change-password.jsp" class="nav-link">
-                            <i class="bi bi-lock"></i>
-                            Change password
-                        </a></li>
-                        <li><a href="request-delete.jsp" class="nav-link">
-                            <i class="bi bi-trash"></i>
-                            Request account deletion
-                        </a></li>
-                        <li class="mt-3"><a href="#" class="nav-link text-danger">
-                            <i class="bi bi-box-arrow-right"></i>
-                            Log out
-                        </a></li>
-                    </ul>
-                </div>
-            </div>
+        <!-- ===== External CSS Libraries ===== -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800&display=swap" rel="stylesheet">
 
-            <!-- Main Content -->
-            <div class="col-lg-9">
-                <div class="main-content p-4">
-                    <!-- Account Header -->
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <div class="d-flex align-items-center gap-3">
-                            <h1 class="h4 fw-semibold mb-0">Account Information</h1>
-                            <i class="bi bi-pencil text-muted"></i>
-                        </div>
-                        <span class="badge trips-badge px-3 py-2">
-                            <i class="bi bi-car-front me-1"></i>0 trips
-                        </span>
-                    </div>
+        <!-- ===== Include Styles ===== -->
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/userNav.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/nav.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/user/about.css">
 
-                    <!-- Profile Picture Upload Section -->
-                    <div class="profile-upload-section">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h2 class="h5 fw-semibold mb-0">Profile Picture</h2>
-                            <button class="btn btn-outline-secondary btn-sm" onclick="document.getElementById('profileImageInput').click()">
-                                <i class="bi bi-pencil me-1"></i>Change Photo
-                            </button>
-                        </div>
-                        
-                        <div class="d-flex align-items-center gap-4">
-                            <div class="profile-upload-area" onclick="document.getElementById('profileImageInput').click()">
-                                <img id="profileImagePreview" src="/placeholder.svg" alt="Profile" class="profile-image-preview" style="display: none;">
-                                <div class="upload-overlay">
-                                    <i class="bi bi-camera"></i>
-                                </div>
-                                <div id="profilePlaceholder" class="d-flex align-items-center justify-content-center h-100">
-                                    <i class="bi bi-person-circle text-muted" style="font-size: 3rem;"></i>
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <h6 class="fw-semibold mb-1">Upload your profile picture</h6>
-                                <p class="text-muted small mb-2">Recommended size: 400x400px</p>
-                                <p class="text-muted small mb-0">Supported formats: JPG, PNG, GIF (max 5MB)</p>
-                            </div>
-                        </div>
-                        
-                        <input type="file" id="profileImageInput" class="profile-file-input" accept="image/*" onchange="previewProfileImage(this)">
-                    </div>
+        <!-- ===== Custom Styles ===== -->
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/open-iconic-bootstrap.min.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/animate.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/owl.carousel.min.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/owl.theme.default.min.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/magnific-popup.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/aos.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/ionicons.min.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/bootstrap-datepicker.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/jquery.timepicker.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/flaticon.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/icomoon.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
 
-                    <!-- User Info -->
-                    <div class="row g-5 mb-5">
-                        <div class="col-md-6">
-                            <h2 class="h5 fw-semibold mb-2">hywang1412</h2>
-                            <p class="text-muted mb-3">Joined 23/09/2025</p>
-                            <div class="points-badge d-flex align-items-center gap-2">
-                                <i class="bi bi-star-fill"></i>
-                                <span>0 Point</span>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="info-row d-flex justify-content-between align-items-center py-3">
-                                <span class="text-muted">Date of birth</span>
-                                <span class="fw-medium">--/--/----</span>
-                            </div>
-                            <div class="info-row d-flex justify-content-between align-items-center py-3">
-                                <span class="text-muted">Gender</span>
-                                <span class="fw-medium">Male</span>
-                            </div>
-                            <div class="info-row d-flex justify-content-between align-items-center py-3">
-                                <span class="text-muted">Phone Number</span>
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="badge not-verified px-2 py-1">Not verified</span>
-                                    <span class="fw-medium">+84831837721</span>
-                                    <i class="bi bi-pencil text-muted"></i>
-                                </div>
-                            </div>
-                            <div class="info-row d-flex justify-content-between align-items-center py-3">
-                                <span class="text-muted">Email</span>
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="badge not-verified px-2 py-1">Not verified</span>
-                                    <a href="#" class="add-link">Add email</a>
-                                    <i class="bi bi-pencil text-muted"></i>
-                                </div>
-                            </div>
-                            <div class="info-row d-flex justify-content-between align-items-center py-3">
-                                <span class="text-muted">Facebook</span>
-                                <div class="d-flex align-items-center gap-2">
-                                    <a href="#" class="add-link">Add a link</a>
-                                    <i class="bi bi-pencil text-muted"></i>
-                                </div>
-                            </div>
-                            <div class="info-row d-flex justify-content-between align-items-center py-3">
-                                <span class="text-muted">Google</span>
-                                <div class="d-flex align-items-center gap-2">
-                                    <a href="#" class="add-link">Add a link</a>
-                                    <i class="bi bi-pencil text-muted"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Driver's License Section -->
-                    <div class="mt-5">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <div class="d-flex align-items-center gap-3">
-                                <h2 class="h5 fw-semibold mb-0">Driver's License</h2>
-                                <span class="badge verification-failed px-3 py-1">
-                                    <i class="bi bi-exclamation-triangle me-1"></i>Verification failed
-                                </span>
-                            </div>
-                            <button class="btn btn-outline-secondary btn-sm">
-                                <i class="bi bi-pencil me-1"></i>Edit
-                            </button>
-                        </div>
-
-                        <div class="row g-5">
-                            <div class="col-md-4">
-                                <h6 class="text-muted mb-3">Image</h6>
-                                <div class="upload-area p-5 text-center">
-                                    <div class="upload-icon rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
-                                        <i class="bi bi-upload"></i>
-                                    </div>
-                                    <p class="text-muted mb-0">Click to upload</p>
-                                </div>
-                            </div>
-
-                            <div class="col-md-8">
-                                <h6 class="text-muted mb-4">General Information</h6>
-                                
-                                <div class="mb-4">
-                                    <label class="form-label text-muted">Driver's License Number</label>
-                                    <input type="text" class="form-control" placeholder="">
-                                </div>
-
-                                <div class="mb-4">
-                                    <label class="form-label text-muted">Full name</label>
-                                    <input type="text" class="form-control" placeholder="">
-                                </div>
-
-                                <div class="mb-4">
-                                    <label class="form-label text-muted">Date of birth</label>
-                                    <input type="date" class="form-control" placeholder="">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-        function previewProfileImage(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    const preview = document.getElementById('profileImagePreview');
-                    const placeholder = document.getElementById('profilePlaceholder');
-                    
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                    placeholder.style.display = 'none';
-                };
-                
-                reader.readAsDataURL(input.files[0]);
+        <style>
+            .account-info-block .info-list a, .account-info-block .info-list .add-link {
+                text-decoration: none !important;
             }
-        }
-    </script>
-</body>
+        </style>
+    </head>
+    <body>
+        <!-- Header -->
+        <jsp:include page="/pages/includes/userNav.jsp" />
+
+        <div class="container">
+            <div class="row g-5 mt-4">
+                <!-- Sidebar -->                
+                <div class="col-lg-3 col-md-4">
+                    <div class="sidebar">
+                        <h2 class="h2 fw-bold mb-3">Hello !</h2>
+                        <ul class="sidebar-menu">
+                            <li><a href="${pageContext.request.contextPath}/pages/user/user-profile.jsp" class="nav-link active text-dark border-top-custom">
+                                    <i class="bi bi-person text-dark"></i>
+                                    My account
+                                </a></li>
+                            <li><a href="${pageContext.request.contextPath}/pages/user/favorite-car.jsp" class="nav-link text-dark">
+                                    <i class="bi bi-heart text-dark"></i>
+                                    Favorite cars
+                                </a></li>
+                            <li><a href="${pageContext.request.contextPath}/pages/user/my-trip.jsp" class="nav-link text-dark">
+                                    <i class="bi bi-car-front text-dark"></i>
+                                    My trips
+                                </a></li>
+                            <li><a href="${pageContext.request.contextPath}/pages/user/longterm-booking.jsp" class="nav-link text-dark">
+                                    <i class="bi bi-clipboard-check text-dark"></i>
+                                    Long-term car rental orders
+                                </a></li>
+                            <li><a href="${pageContext.request.contextPath}/pages/user/my-address.jsp" class="nav-link text-dark">
+                                    <i class="bi bi-geo-alt text-dark"></i>
+                                    My address
+                                </a></li>
+                            <li><a href="${pageContext.request.contextPath}/pages/user/change-password.jsp" class="nav-link text-dark border-top-custom">
+                                    <i class="bi bi-lock text-dark"></i>
+                                    Change password
+                                </a></li>
+                            <li><a href="${pageContext.request.contextPath}/pages/user/request-delete.jsp" class="nav-link text-dark border-bottom-custom">
+                                    <i class="bi bi-trash text-dark"></i>
+                                    Request account deletion
+                                </a></li>
+                            <li><a href="#" class="nav-link text-danger">
+                                    <i class="bi bi-box-arrow-right"></i>
+                                    Log out
+                                </a></li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Main content -->
+                <div class="col-lg-9 col-md-8">
+                    <div class="main-content">
+                        <div class="container mt-4">
+                            <div class="row g-5">
+                                <!-- Main Content -->
+                                <div class="main-content p-4 mt-1">
+                                    <!-- Account Information Block -->
+                                    <div class="account-info-block mb-4 p-4 bg-white rounded shadow-sm">
+                                        <div class="row align-items-center">
+                                            <!-- Left: Avatar + Info -->
+                                            <h1 class="h5 fw-semibold mb-0 text-dark d-flex align-items-center gap-2" style="font-size:1.25rem;color:#222;">
+                                                Account Information
+                                                <a href="#" class="btn btn-light border rounded-circle p-1 d-flex align-items-center justify-content-center ms-2" title="Edit" style="font-size:0.95rem;width:28px;height:28px;line-height:1;">
+                                                    <i class="bi bi-pencil" style="font-size:1.1em;"></i>
+                                                </a>
+                                            </h1>
+                                            <div class="col-md-4 d-flex flex-column align-items-center mb-3 mb-md-0">
+                                                <div class="rounded-circle overflow-hidden mb-3 bg-light border" style="width:120px;height:120px;background:#fff;">
+                                                    <img src="https://i.imgur.com/0y0y0y0.png" alt="avatar" style="width:100%;height:100%;object-fit:cover;">
+                                                </div>
+                                                <div class="fw-semibold text-center" style="font-size:1.25rem;color:#111;">hywang1412</div>
+                                                <div class="text-center mb-2" style="font-size:0.95rem;color:#111;">Joined: 28/05/2025</div>
+                                                <div class="d-flex justify-content-center">
+                                                    <span class="badge bg-white rounded-3 px-3 py-2 d-flex align-items-center gap-1"
+                                                          style="color:#111;font-weight:600;font-size:1rem;border:1.5px solid #e0e0e0;">
+                                                        <i class="bi bi-star-fill" style="color:#fbbf24;font-size:1.1em;"></i>
+                                                        0 Point
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <!-- Right: Account Details -->
+                                            <div class="col-md-8" style="margin-top:2.4rem;">
+                                                <!-- Box: Date of birth & Gender -->
+                                                <div class="bg-light rounded px-3 py-2 mb-2 d-flex justify-content-between align-items-center" style="font-size:0.97rem;">
+                                                    <div>
+                                                        <div class="text-muted mb-1" style="font-size:0.93rem;">Date of birth</div>
+                                                        <div class="text-muted mb-1" style="font-size:0.93rem;">Gender</div>
+                                                    </div>
+                                                    <div>
+                                                        <div style="font-size:0.97rem;">--/--/----</div>
+                                                        <div style="font-size:0.97rem;">Male</div>
+                                                    </div>
+                                                </div>
+                                                <!-- List: Other info -->
+                                                <div class="info-list">
+                                                    <div class="info-row d-flex align-items-center justify-content-between mb-1" style="font-size:0.97rem;">
+                                                        <span class="text-muted">Phone</span>
+                                                        <span class="d-flex align-items-center gap-1">
+                                                            <span class="badge badge-not-verified">
+                                                                <i class="bi bi-exclamation-circle-fill me-1"></i>Not verified
+                                                            </span>
+                                                            <span class="fw-semibold" style="font-size:0.97rem;">+84931937721</span>
+                                                            <a href="#" class="ms-1 text-muted d-flex align-items-center" style="font-size:1em;"><i class="bi bi-pencil"></i></a>
+                                                        </span>
+                                                    </div>
+                                                    <div class="info-row d-flex align-items-center justify-content-between mb-1" style="font-size:0.97rem;">
+                                                        <span class="text-muted">Email</span>
+                                                        <span class="d-flex align-items-center gap-1">
+                                                            <span class="badge badge-not-verified">
+                                                                <i class="bi bi-exclamation-circle-fill me-1"></i>Not verified
+                                                            </span>
+                                                            <a href="#" class="add-link" style="font-size:0.97em;">Add email</a>
+                                                            <a href="#" class="ms-1 text-muted d-flex align-items-center" style="font-size:1em;"><i class="bi bi-pencil"></i></a>
+                                                        </span>
+                                                    </div>
+                                                    <div class="info-row d-flex align-items-center justify-content-between mb-1" style="font-size:0.97rem;">
+                                                        <span class="text-muted">Facebook</span>
+                                                        <span class="d-flex align-items-center gap-1">
+                                                            <a href="#" class="add-link" style="font-size:0.97em;">Add link</a>
+                                                            <a href="#" class="ms-1 text-muted d-flex align-items-center" style="font-size:1em;"><i class="bi bi-link-45deg"></i></a>
+                                                        </span>
+                                                    </div>
+                                                    <div class="info-row d-flex align-items-center justify-content-between" style="font-size:0.97rem;">
+                                                        <span class="text-muted">Google</span>
+                                                        <span class="d-flex align-items-center gap-1">
+                                                            <a href="#" class="add-link" style="font-size:0.97em;">Add link</a>
+                                                            <a href="#" class="ms-1 text-muted d-flex align-items-center" style="font-size:1em;"><i class="bi bi-link-45deg"></i></a>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Driver's License Block -->
+                                    <div class="driver-license-block p-4 bg-white rounded shadow-sm">
+                                        <!-- Driver's License Section -->
+                                        <div class="d-flex justify-content-between align-items-center mb-4">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <h2 class="h5 fw-semibold mb-0">Driver's License</h2>
+                                                <span class="badge verification-failed px-3 py-1">
+                                                    <i class="bi bi-exclamation-triangle me-1"></i>Verification failed
+                                                </span>
+                                            </div>
+                                            <div class="driver-license-actions">
+                                                <button type="button" class="btn btn-outline-secondary btn-edit">
+                                                    <i class="bi bi-pencil me-1"></i>Edit
+                                                </button>
+                                                <button type="button" class="btn btn-cancel d-none ms-2">Cancel</button>
+                                                <button type="button" class="btn btn-save d-none ms-2">Update</button>
+                                            </div>
+                                        </div>
+                                        <div class="row g-5">
+                                            <div class="col-md-4">
+                                                <h6 class="text-muted mb-3">Image</h6>
+                                                <div class="upload-area p-5 text-center">
+                                                    <div class="upload-icon rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                                                        <i class="bi bi-upload"></i>
+                                                    </div>
+                                                    <p class="text-muted mb-0">Click to upload</p>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-8">
+                                                <h6 class="text-muted mb-4">General Information</h6>
+
+                                                <div class="mb-4">
+                                                    <label class="form-label text-muted">Driver's License Number</label>
+                                                    <input type="text" class="form-control driver-license-input" placeholder="" disabled>
+                                                </div>
+
+                                                <div class="mb-4">
+                                                    <label class="form-label text-muted">Full name</label>
+                                                    <input type="text" class="form-control driver-license-input" placeholder="" disabled>
+                                                </div>
+
+                                                <div class="mb-4">
+                                                    <label class="form-label text-muted">Date of birth</label>
+                                                    <input type="date" class="form-control driver-license-input" placeholder="" disabled>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <jsp:include page="/pages/includes/footer.jsp" />
+
+        <!-- Bootstrap JS -->
+        <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+
+
+        <script src="${pageContext.request.contextPath}/assets/js/jquery.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/jquery-migrate-3.0.1.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/popper.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/bootstrap.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/jquery.easing.1.3.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/jquery.waypoints.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/jquery.stellar.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/owl.carousel.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/jquery.magnific-popup.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/aos.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/jquery.animateNumber.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/bootstrap-datepicker.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/jquery.timepicker.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/scrollax.min.js"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/google-map.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
+
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="${pageContext.request.contextPath}/scripts/user/UserAboutSidebar.js"></script>
+        <script src="${pageContext.request.contextPath}/scripts/user/userAbout.js"></script>
+
+    </body>
 </html>

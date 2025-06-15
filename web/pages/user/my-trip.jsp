@@ -5,137 +5,129 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>My Trips - Auto Rental</title>
-        <!-- Bootstrap CSS -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-        <!-- Bootstrap Icons -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-        <<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/user/my-trip.css"/>
-        <style>
-            
-        </style>
+
+        <!-- ===== External CSS Libraries ===== -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800&display=swap" rel="stylesheet">
+
+        <!-- ===== Include Styles ===== -->
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/userNav.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/nav.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/user/my-trip.css">
+
+        <!-- ===== Custom Styles ===== -->
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/open-iconic-bootstrap.min.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/animate.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/owl.carousel.min.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/owl.theme.default.min.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/magnific-popup.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/aos.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/ionicons.min.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/bootstrap-datepicker.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/jquery.timepicker.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/flaticon.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/icomoon.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
     </head>
     <body>
         <!-- Header -->
-        <header class="header">
-            <div class="container-fluid">
-                <div class="d-flex justify-content-between align-items-center py-3">
-                    <div class="logo">
-                        <span class="text-dark">AUTO</span><span class="text-success">RENTAL</span>
-                    </div>
-                    <div class="d-flex align-items-center gap-4">
-                        <nav class="nav-links d-flex gap-4">
-                            <a href="#" class="fw-medium">About</a>
-                            <a href="#" class="fw-medium">My trips</a>
-                        </nav>
-                        <div class="d-flex align-items-center gap-2">
-                            <i class="bi bi-bell"></i>
-                            <i class="bi bi-chat-dots"></i>
-                            <div class="dropdown">
-                                <button class="btn btn-link text-decoration-none text-dark dropdown-toggle d-flex align-items-center gap-2" 
-                                        type="button" data-bs-toggle="dropdown">
-                                    <div class="user-avatar rounded-circle"></div>
-                                    <span>hywang1412</span>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#">Profile</a></li>
-                                    <li><a class="dropdown-item" href="#">Settings</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" href="#">Logout</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
+        <jsp:include page="/pages/includes/userNav.jsp" />
 
-        <div class="container-fluid mt-4">
-            <div class="row g-4">
+        <div class="container">
+            <div class="row g-5 mt-4 mb-3">
                 <!-- Sidebar -->
-                <div class="col-lg-3">
-                    <div class="sidebar p-4">
-                        <h2 class="h4 fw-bold mb-4">Hello !</h2>
+                <div class="col-lg-3 col-md-4">
+                    <div class="sidebar">
+                        <h2 class="h2 fw-bold mb-3">Hello !</h2>
                         <ul class="sidebar-menu">
-                            <li><a href="my-account.jsp" class="nav-link">
-                            <i class="bi bi-person"></i>
-                            My account
-                        </a></li>
-                        <li><a href="favorite-car.jsp" class="nav-link">
-                            <i class="bi bi-heart"></i>
-                            Favorite cars
-                        </a></li>
-                        <li><a href="my-trip.jsp" class="nav-link active">
-                            <i class="bi bi-car-front"></i>
-                            My trips
-                        </a></li>
-                        <li><a href="longterm-booking.jsp" class="nav-link">
-                            <i class="bi bi-clipboard-check"></i>
-                            Long-term car rental orders
-                        </a></li>
-                        <li><a href="my-address.jsp" class="nav-link">
-                            <i class="bi bi-geo-alt"></i>
-                            My address
-                        </a></li>
-                        <li><a href="change-password.jsp" class="nav-link">
-                            <i class="bi bi-lock"></i>
-                            Change password
-                        </a></li>
-                        <li><a href="request-delete.jsp" class="nav-link">
-                            <i class="bi bi-trash"></i>
-                            Request account deletion
-                        </a></li>
-                        <li class="mt-3"><a href="#" class="nav-link text-danger">
-                            <i class="bi bi-box-arrow-right"></i>
-                            Log out
-                        </a></li>
+                            <li><a href="${pageContext.request.contextPath}/pages/user/user-profile.jsp" class="nav-link text-dark border-top-custom">
+                                    <i class="bi bi-person text-dark"></i>
+                                    My account
+                                </a></li>
+                            <li><a href="${pageContext.request.contextPath}/pages/user/favorite-car.jsp" class="nav-link text-dark">
+                                    <i class="bi bi-heart text-dark"></i>
+                                    Favorite cars
+                                </a></li>
+                            <li><a href="${pageContext.request.contextPath}/pages/user/my-trip.jsp" class="nav-link active text-dark">
+                                    <i class="bi bi-car-front text-dark"></i>
+                                    My trips
+                                </a></li>
+                            <li><a href="${pageContext.request.contextPath}/pages/user/longterm-booking.jsp" class="nav-link text-dark">
+                                    <i class="bi bi-clipboard-check text-dark"></i>
+                                    Long-term car rental orders
+                                </a></li>
+                            <li><a href="${pageContext.request.contextPath}/pages/user/my-address.jsp" class="nav-link text-dark">
+                                    <i class="bi bi-geo-alt text-dark"></i>
+                                    My address
+                                </a></li>
+                            <li><a href="${pageContext.request.contextPath}/pages/user/change-password.jsp" class="nav-link text-dark border-top-custom">
+                                    <i class="bi bi-lock text-dark"></i>
+                                    Change password
+                                </a></li>
+                            <li><a href="${pageContext.request.contextPath}/pages/user/request-delete.jsp" class="nav-link text-dark border-bottom-custom">
+                                    <i class="bi bi-trash text-dark"></i>
+                                    Request account deletion
+                                </a></li>
+                            <li><a href="#" class="nav-link text-danger">
+                                    <i class="bi bi-box-arrow-right"></i>
+                                    Log out
+                                </a></li>
                         </ul>
                     </div>
                 </div>
+                <!-- Main content -->
+                <div class="col-lg-9 col-md-8">
+                    <div class="main-content">
+                        <div class="container mt-4">
+                            <div class="row g-5">
+                                <!-- Main Content -->
+                                <div class="main-content p-4 mt-1">
+                                    <!-- Page Header -->
+                                    <div class="d-flex justify-content-between align-items-center mb-4">
+                                        <h1 class="h5 fw-semibold mb-0 text-dark">My trips</h1>
+                                        <button class="filter-btn d-none" id="filterBtn" data-bs-toggle="modal" data-bs-target="#filterModal">
+                                            <i class="bi bi-funnel me-2"></i>Filter
+                                        </button>
+                                    </div>
 
-                <!-- Main Content -->
-                <div class="col-lg-9">
-                    <div class="main-content p-4">
-                        <!-- Page Header -->
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h1 class="h4 fw-semibold mb-0">My trips</h1>
-                            <button class="filter-btn d-none" id="filterBtn" data-bs-toggle="modal" data-bs-target="#filterModal">
-                                <i class="bi bi-funnel me-2"></i>Filter
-                            </button>
-                        </div>
+                                    <!-- Custom Tabs -->
+                                    <ul class="nav custom-tabs" id="tripTabs" role="tablist">
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link active" id="current-trip-tab" data-bs-toggle="tab" 
+                                                    data-bs-target="#current-trip" type="button" role="tab">
+                                                Current trip
+                                            </button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="trip-history-tab" data-bs-toggle="tab" 
+                                                    data-bs-target="#trip-history" type="button" role="tab">
+                                                Trip history
+                                            </button>
+                                        </li>
+                                    </ul>
 
-                        <!-- Custom Tabs -->
-                        <ul class="nav custom-tabs" id="tripTabs" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="current-trip-tab" data-bs-toggle="tab" 
-                                        data-bs-target="#current-trip" type="button" role="tab">
-                                    Current trip
-                                </button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="trip-history-tab" data-bs-toggle="tab" 
-                                        data-bs-target="#trip-history" type="button" role="tab">
-                                    Trip history
-                                </button>
-                            </li>
-                        </ul>
+                                    <!-- Tab Content -->
+                                    <div class="tab-content" id="tripTabContent">
+                                        <!-- Current Trip Tab -->
+                                        <div class="tab-pane fade show active" id="current-trip" role="tabpanel">
+                                            <div class="empty-state">
+                                                <i class="bi bi-car-front" style="font-size: 3rem; color: var(--text-gray); margin-bottom: 1rem;"></i>
+                                                <h5 class="mb-3">You have no trip yet</h5>
+                                                <p class="text-muted">Start your first trip by booking a car!</p>
+                                            </div>
+                                        </div>
 
-                        <!-- Tab Content -->
-                        <div class="tab-content" id="tripTabContent">
-                            <!-- Current Trip Tab -->
-                            <div class="tab-pane fade show active" id="current-trip" role="tabpanel">
-                                <div class="empty-state">
-                                    <i class="bi bi-car-front" style="font-size: 3rem; color: var(--text-gray); margin-bottom: 1rem;"></i>
-                                    <h5 class="mb-3">You have no trip yet</h5>
-                                    <p class="text-muted">Start your first trip by booking a car!</p>
-                                </div>
-                            </div>
-
-                            <!-- Trip History Tab -->
-                            <div class="tab-pane fade" id="trip-history" role="tabpanel">
-                                <div class="empty-state">
-                                    <i class="bi bi-clock-history" style="font-size: 3rem; color: var(--text-gray); margin-bottom: 1rem;"></i>
-                                    <h5 class="mb-3">You have no trip yet</h5>
-                                    <p class="text-muted">Your completed trips will appear here.</p>
+                                        <!-- Trip History Tab -->
+                                        <div class="tab-pane fade" id="trip-history" role="tabpanel">
+                                            <div class="empty-state">
+                                                <i class="bi bi-clock-history" style="font-size: 3rem; color: var(--text-gray); margin-bottom: 1rem;"></i>
+                                                <h5 class="mb-3">You have no trip yet</h5>
+                                                <p class="text-muted">Your completed trips will appear here.</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -144,102 +136,31 @@
             </div>
         </div>
 
-        <!-- Filter Modal -->
-        <div class="modal fade filter-modal" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title fw-semibold" id="filterModalLabel">Bộ lọc</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <!-- Chỉ dẫn -->
-                        <div class="filter-section">
-                            <label class="filter-label">Chỉ dẫn</label>
-                            <div class="filter-options">
-                                <div class="filter-radio">
-                                    <input type="radio" id="all-guide" name="guide" value="all" checked>
-                                    <label for="all-guide">Tất cả</label>
-                                </div>
-                                <div class="filter-radio">
-                                    <input type="radio" id="self-drive" name="guide" value="self">
-                                    <label for="self-drive">Tự lái</label>
-                                </div>
-                                <div class="filter-radio">
-                                    <input type="radio" id="with-driver" name="guide" value="driver">
-                                    <label for="with-driver">Có tài</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Tình trạng xe -->
-                        <div class="filter-section">
-                            <label class="filter-label">Tình trạng xe</label>
-                            <input type="text" class="form-control" placeholder="Nhập thông tin tìm kiếm">
-                        </div>
-
-                        <!-- Hiệp định đối tác -->
-                        <div class="filter-section">
-                            <label class="filter-label">Hiệp định đối tác</label>
-                            <input type="text" class="form-control" placeholder="Nhập thông tin đối tác">
-                        </div>
-
-                        <!-- Sắp xếp -->
-                        <div class="filter-section">
-                            <label class="filter-label">Sắp xếp</label>
-                            <select class="form-select">
-                                <option selected>Ưu tiên thời gian thay đổi</option>
-                                <option value="1">Giá tăng dần</option>
-                                <option value="2">Giá giảm dần</option>
-                                <option value="3">Đánh giá cao nhất</option>
-                            </select>
-                        </div>
-
-                        <!-- Loại chuyến -->
-                        <div class="filter-section">
-                            <label class="filter-label">Loại chuyến</label>
-                            <select class="form-select">
-                                <option selected>Tất cả</option>
-                                <option value="1">Chuyến ngắn</option>
-                                <option value="2">Chuyến dài</option>
-                                <option value="3">Chuyến theo giờ</option>
-                            </select>
-                        </div>
-
-                        <!-- Trạng thái -->
-                        <div class="filter-section">
-                            <label class="filter-label">Trạng thái</label>
-                            <select class="form-select">
-                                <option selected>Tất cả</option>
-                                <option value="1">Đang diễn ra</option>
-                                <option value="2">Hoàn thành</option>
-                                <option value="3">Đã hủy</option>
-                                <option value="4">Chờ xác nhận</option>
-                            </select>
-                        </div>
-
-                        <!-- Thời gian kết thúc (first) -->
-                        <div class="filter-section">
-                            <label class="filter-label">Thời gian kết thúc</label>
-                            <input type="text" class="form-control" placeholder="Bắt đầu" readonly>
-                        </div>
-
-                        <!-- Thời gian kết thúc (second) -->
-                        <div class="filter-section">
-                            <label class="filter-label">Thời gian kết thúc</label>
-                            <input type="text" class="form-control" placeholder="Bắt đầu" readonly>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-clear-filter">Xóa bộ lọc</button>
-                        <button type="button" class="btn btn-apply-filter" data-bs-dismiss="modal">Áp dụng</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <jsp:include page="/pages/includes/footer.jsp" />
 
         <!-- Bootstrap JS -->
+        <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+
+        <script src="${pageContext.request.contextPath}/assets/js/jquery.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/jquery-migrate-3.0.1.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/popper.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/bootstrap.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/jquery.easing.1.3.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/jquery.waypoints.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/jquery.stellar.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/owl.carousel.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/jquery.magnific-popup.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/aos.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/jquery.animateNumber.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/bootstrap-datepicker.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/jquery.timepicker.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/scrollax.min.js"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/google-map.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="${pageContext.request.contextPath}/scripts/user/UserAboutSidebar.js"></script>
 
         <script>
             // Show/hide filter button based on active tab
