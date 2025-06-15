@@ -52,9 +52,9 @@ body {
     background: transparent !important;
     border-radius: 0 !important;
     box-shadow: none !important;
-    min-height: 100vh;
-    padding-top: 40px;
-    min-width: 260px;
+    min-height: 90vh;
+    /*padding-top: 40px;*/
+    min-width: 270px;
     max-width: 100%;
 }
 
@@ -139,7 +139,7 @@ body {
     border-radius: 12px;
     /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); */
     min-height: calc(100vh - 100px);
-    width: 100%;
+    width: 115%;
     margin-left: auto;
     margin-right: auto;
 }
@@ -280,11 +280,11 @@ body {
 }
 
 .border-bottom-custom {
-    border-bottom: 1.5px solid #ededed !important;
+    border-bottom: 1.5px solid #cccccc !important;
 }
 
 .border-top-custom {
-    border-top: 1.5px solid #ededed !important;
+    border-top: 1.5px solid #cccccc !important;
 }
 
 .ftco-footer {

@@ -17,7 +17,6 @@ document.querySelectorAll('.sidebar-menu .nav-link').forEach(function(link) {
         });
         this.classList.add('active');
         moveIndicatorToActive();
-        e.preventDefault(); 
     });
 });
 
