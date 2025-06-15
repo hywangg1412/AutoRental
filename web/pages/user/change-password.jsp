@@ -6,206 +6,206 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Change Password - Auto Rental</title>
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/common.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800&display=swap" rel="stylesheet">
+    <!-- ===== Include Styles ===== -->
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/userNav.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/nav.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/user/change-password.css">
+    <!-- ===== Custom Styles ===== -->
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/open-iconic-bootstrap.min.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/animate.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/magnific-popup.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/aos.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/ionicons.min.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/bootstrap-datepicker.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/jquery.timepicker.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/flaticon.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/icomoon.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
 </head>
 <body>
     <!-- Header -->
-    <header class="header">
-        <div class="container-fluid">
-            <div class="d-flex justify-content-between align-items-center py-3">
-                <div class="logo">
-                    <span class="text-dark">AUTO</span><span class="text-success">RENTAL</span>
-                </div>
-                <div class="d-flex align-items-center gap-4">
-                    <nav class="nav-links d-flex gap-4">
-                        <a href="#" class="fw-medium">About</a>
-                        <a href="#" class="fw-medium">My trips</a>
-                    </nav>
-                    <div class="d-flex align-items-center gap-2">
-                        <i class="bi bi-bell"></i>
-                        <i class="bi bi-chat-dots"></i>
-                        <div class="dropdown">
-                            <button class="btn btn-link text-decoration-none text-dark dropdown-toggle d-flex align-items-center gap-2" 
-                                    type="button" data-bs-toggle="dropdown">
-                                <div class="user-avatar rounded-circle"></div>
-                                <span>hywang1412</span>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">Profile</a></li>
-                                <li><a class="dropdown-item" href="#">Settings</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#">Logout</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <div class="container-fluid mt-4">
-        <div class="row g-4">
+    <jsp:include page="/pages/includes/userNav.jsp" />
+    <div class="container">
+        <div class="row g-5 mt-4">
             <!-- Sidebar -->
-            <div class="col-lg-3">
-                <div class="sidebar p-4">
-                    <h2 class="h4 fw-bold mb-4">Hello !</h2>
+            <div class="col-lg-3 col-md-4">
+                <div class="sidebar">
+                    <h2 class="h2 fw-bold mb-3">Hello !</h2>
                     <ul class="sidebar-menu">
-                        <li><a href="my-account.jsp" class="nav-link">
-                            <i class="bi bi-person"></i>
-                            My account
-                        </a></li>
-                        <li><a href="FavouriteCar.jsp" class="nav-link">
-                            <i class="bi bi-heart"></i>
-                            Favorite cars
-                        </a></li>
-                        <li><a href="my-trip.jsp" class="nav-link">
-                            <i class="bi bi-car-front"></i>
-                            My trips
-                        </a></li>
-                        <li><a href="longterm-booking.jsp" class="nav-link">
-                            <i class="bi bi-clipboard-check"></i>
-                            Long-term car rental orders
-                        </a></li>
-                        <li><a href="my-address.jsp" class="nav-link">
-                            <i class="bi bi-geo-alt"></i>
-                            My address
-                        </a></li>
-                        <li><a href="change-password.jsp" class="nav-link active">
-                            <i class="bi bi-lock"></i>
-                            Change password
-                        </a></li>
-                        <li><a href="request-delete.jsp" class="nav-link">
-                            <i class="bi bi-trash"></i>
-                            Request account deletion
-                        </a></li>
-                        <li class="mt-3"><a href="#" class="nav-link text-danger">
-                            <i class="bi bi-box-arrow-right"></i>
-                            Log out
-                        </a></li>
+                        <li><a href="${pageContext.request.contextPath}/pages/user/user-profile.jsp" class="nav-link text-dark border-top-custom">
+                                <i class="bi bi-person text-dark"></i>
+                                My account
+                            </a></li>
+                        <li><a href="${pageContext.request.contextPath}/pages/user/favorite-car.jsp" class="nav-link text-dark">
+                                <i class="bi bi-heart text-dark"></i>
+                                Favorite cars
+                            </a></li>
+                        <li><a href="${pageContext.request.contextPath}/pages/user/my-trip.jsp" class="nav-link text-dark">
+                                <i class="bi bi-car-front text-dark"></i>
+                                My trips
+                            </a></li>
+                        <li><a href="${pageContext.request.contextPath}/pages/user/longterm-booking.jsp" class="nav-link text-dark">
+                                <i class="bi bi-clipboard-check text-dark"></i>
+                                Long-term car rental orders
+                            </a></li>
+                        <li><a href="${pageContext.request.contextPath}/pages/user/my-address.jsp" class="nav-link text-dark">
+                                <i class="bi bi-geo-alt text-dark"></i>
+                                My address
+                            </a></li>
+                        <li><a href="${pageContext.request.contextPath}/pages/user/change-password.jsp" class="nav-link active text-dark border-top-custom">
+                                <i class="bi bi-lock text-dark"></i>
+                                Change password
+                            </a></li>
+                        <li><a href="${pageContext.request.contextPath}/pages/user/request-delete.jsp" class="nav-link text-dark border-bottom-custom">
+                                <i class="bi bi-trash text-dark"></i>
+                                Request account deletion
+                            </a></li>
+                        <li><a href="#" class="nav-link text-danger">
+                                <i class="bi bi-box-arrow-right"></i>
+                                Log out
+                            </a></li>
                     </ul>
                 </div>
             </div>
-
-            <!-- Main Content -->
-            <div class="col-lg-9">
-                <div class="main-content p-4">
-                    <!-- Page Header -->
-                    <div class="mb-4">
-                        <h1 class="h4 fw-semibold mb-1">Change Password</h1>
-                        <p class="text-muted mb-0">Update your password to keep your account secure</p>
-                    </div>
-
-                    <!-- Success/Error Messages -->
-                    <div id="alertContainer"></div>
-
-                    <!-- Password Change Form -->
-                    <div class="password-form-container">
-                        <form id="passwordForm">
-                            <!-- Current Password -->
-                            <div class="form-group">
-                                <label for="currentPassword" class="form-label">Current Password *</label>
-                                <div class="password-input-group">
-                                    <input type="password" class="form-control" id="currentPassword" required>
-                                    <button type="button" class="password-toggle" onclick="togglePassword('currentPassword')">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
+            <!-- Main content -->
+            <div class="col-lg-9 col-md-8">
+                <div class="main-content">
+                    <div class="container mt-4">
+                        <div class="row g-5">
+                            <div class="main-content p-4 mt-1">
+                                <div class="account-info-block mb-4 p-4 bg-white rounded shadow-sm w-100" style="max-width:900px;margin-left:auto;margin-right:auto;">
+                                    <!-- Page Header -->
+                                    <div class="mb-4">
+                                        <h1 class="h4 fw-semibold mb-1">Change Password</h1>
+                                        <p class="text-muted mb-0">Update your password to keep your account secure</p>
+                                    </div>
+                                    <!-- Success/Error Messages -->
+                                    <div id="alertContainer"></div>
+                                    <!-- Password Change Form -->
+                                    <div class="password-form-container">
+                                        <form id="passwordForm">
+                                            <!-- Current Password -->
+                                            <div class="form-group">
+                                                <label for="currentPassword" class="form-label">Current Password *</label>
+                                                <div class="password-input-group">
+                                                    <input type="password" class="form-control" id="currentPassword" required>
+                                                    <button type="button" class="password-toggle" onclick="togglePassword('currentPassword')">
+                                                        <i class="bi bi-eye"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <!-- New Password -->
+                                            <div class="form-group">
+                                                <label for="newPassword" class="form-label">New Password *</label>
+                                                <div class="password-input-group">
+                                                    <input type="password" class="form-control" id="newPassword" required>
+                                                    <button type="button" class="password-toggle" onclick="togglePassword('newPassword')">
+                                                        <i class="bi bi-eye"></i>
+                                                    </button>
+                                                </div>
+                                                <!-- Password Strength Meter -->
+                                                <div class="strength-meter">
+                                                    <div class="strength-fill" id="strengthFill"></div>
+                                                </div>
+                                                <div class="strength-text" id="strengthText"></div>
+                                                <!-- Password Requirements -->
+                                                <div class="password-requirements">
+                                                    <div class="requirement invalid" id="lengthReq">
+                                                        <div class="requirement-icon">
+                                                            <i class="bi bi-check"></i>
+                                                        </div>
+                                                        <span>At least 8 characters long</span>
+                                                    </div>
+                                                    <div class="requirement invalid" id="uppercaseReq">
+                                                        <div class="requirement-icon">
+                                                            <i class="bi bi-check"></i>
+                                                        </div>
+                                                        <span>Contains uppercase letter (A-Z)</span>
+                                                    </div>
+                                                    <div class="requirement invalid" id="lowercaseReq">
+                                                        <div class="requirement-icon">
+                                                            <i class="bi bi-check"></i>
+                                                        </div>
+                                                        <span>Contains lowercase letter (a-z)</span>
+                                                    </div>
+                                                    <div class="requirement invalid" id="numberReq">
+                                                        <div class="requirement-icon">
+                                                            <i class="bi bi-check"></i>
+                                                        </div>
+                                                        <span>Contains number (0-9)</span>
+                                                    </div>
+                                                    <div class="requirement invalid" id="specialReq">
+                                                        <div class="requirement-icon">
+                                                            <i class="bi bi-check"></i>
+                                                        </div>
+                                                        <span>Contains special character (!@#$%^&*)</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Confirm Password -->
+                                            <div class="form-group">
+                                                <label for="confirmPassword" class="form-label">Confirm New Password *</label>
+                                                <div class="password-input-group">
+                                                    <input type="password" class="form-control" id="confirmPassword" required>
+                                                    <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">
+                                                        <i class="bi bi-eye"></i>
+                                                    </button>
+                                                </div>
+                                                <div id="passwordMatchMessage" class="mt-2"></div>
+                                            </div>
+                                            <!-- Submit Button -->
+                                            <button type="submit" class="btn btn-primary-custom" id="submitBtn" disabled>
+                                                <i class="bi bi-shield-check me-2"></i>Update Password
+                                            </button>
+                                        </form>
+                                        <!-- Security Tips -->
+                                        <div class="security-tips">
+                                            <h6><i class="bi bi-shield-exclamation me-2"></i>Security Tips</h6>
+                                            <ul>
+                                                <li>Use a unique password that you don't use for other accounts</li>
+                                                <li>Consider using a password manager to generate and store strong passwords</li>
+                                                <li>Never share your password with anyone</li>
+                                                <li>Change your password regularly, especially if you suspect it's been compromised</li>
+                                                <li>Avoid using personal information like names, birthdays, or common words</li>
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-
-                            <!-- New Password -->
-                            <div class="form-group">
-                                <label for="newPassword" class="form-label">New Password *</label>
-                                <div class="password-input-group">
-                                    <input type="password" class="form-control" id="newPassword" required>
-                                    <button type="button" class="password-toggle" onclick="togglePassword('newPassword')">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                </div>
-                                
-                                <!-- Password Strength Meter -->
-                                <div class="strength-meter">
-                                    <div class="strength-fill" id="strengthFill"></div>
-                                </div>
-                                <div class="strength-text" id="strengthText"></div>
-
-                                <!-- Password Requirements -->
-                                <div class="password-requirements">
-                                    <div class="requirement invalid" id="lengthReq">
-                                        <div class="requirement-icon">
-                                            <i class="bi bi-check"></i>
-                                        </div>
-                                        <span>At least 8 characters long</span>
-                                    </div>
-                                    <div class="requirement invalid" id="uppercaseReq">
-                                        <div class="requirement-icon">
-                                            <i class="bi bi-check"></i>
-                                        </div>
-                                        <span>Contains uppercase letter (A-Z)</span>
-                                    </div>
-                                    <div class="requirement invalid" id="lowercaseReq">
-                                        <div class="requirement-icon">
-                                            <i class="bi bi-check"></i>
-                                        </div>
-                                        <span>Contains lowercase letter (a-z)</span>
-                                    </div>
-                                    <div class="requirement invalid" id="numberReq">
-                                        <div class="requirement-icon">
-                                            <i class="bi bi-check"></i>
-                                        </div>
-                                        <span>Contains number (0-9)</span>
-                                    </div>
-                                    <div class="requirement invalid" id="specialReq">
-                                        <div class="requirement-icon">
-                                            <i class="bi bi-check"></i>
-                                        </div>
-                                        <span>Contains special character (!@#$%^&*)</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Confirm Password -->
-                            <div class="form-group">
-                                <label for="confirmPassword" class="form-label">Confirm New Password *</label>
-                                <div class="password-input-group">
-                                    <input type="password" class="form-control" id="confirmPassword" required>
-                                    <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                </div>
-                                <div id="passwordMatchMessage" class="mt-2"></div>
-                            </div>
-
-                            <!-- Submit Button -->
-                            <button type="submit" class="btn btn-primary-custom" id="submitBtn" disabled>
-                                <i class="bi bi-shield-check me-2"></i>Update Password
-                            </button>
-                        </form>
-
-                        <!-- Security Tips -->
-                        <div class="security-tips">
-                            <h6><i class="bi bi-shield-exclamation me-2"></i>Security Tips</h6>
-                            <ul>
-                                <li>Use a unique password that you don't use for other accounts</li>
-                                <li>Consider using a password manager to generate and store strong passwords</li>
-                                <li>Never share your password with anyone</li>
-                                <li>Change your password regularly, especially if you suspect it's been compromised</li>
-                                <li>Avoid using personal information like names, birthdays, or common words</li>
-                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Bootstrap JS -->
+    <jsp:include page="/pages/includes/footer.jsp" />
+    <!-- Bootstrap JS & Custom Scripts giống UserAbout -->
+    <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+    <script src="${pageContext.request.contextPath}/assets/js/jquery.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/jquery-migrate-3.0.1.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/popper.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/bootstrap.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/jquery.easing.1.3.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/jquery.waypoints.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/jquery.stellar.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/owl.carousel.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/jquery.magnific-popup.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/aos.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/jquery.animateNumber.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/bootstrap-datepicker.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/jquery.timepicker.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/scrollax.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/google-map.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
+    <!-- Giữ lại các script quản lý password như cũ -->
     <script>
         // Password visibility toggle
         function togglePassword(fieldId) {
