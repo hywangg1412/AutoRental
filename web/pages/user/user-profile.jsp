@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -48,7 +49,7 @@
                     <div class="sidebar">
                         <h2 class="h2 fw-bold mb-3">Hello !</h2>
                         <ul class="sidebar-menu">
-                            <li><a href="${pageContext.request.contextPath}/pages/user/user-profile.jsp" class="nav-link active text-dark border-top-custom">
+                            <li><a href="${pageContext.request.contextPath}/user/profile" class="nav-link active text-dark border-top-custom">
                                     <i class="bi bi-person text-dark"></i>
                                     My account
                                 </a></li>
@@ -102,10 +103,10 @@
                                             </h1>
                                             <div class="col-md-4 d-flex flex-column align-items-center mb-3 mb-md-0">
                                                 <div class="rounded-circle overflow-hidden mb-3 bg-light border" style="width:120px;height:120px;background:#fff;">
-                                                    <img src="https://i.imgur.com/0y0y0y0.png" alt="avatar" style="width:100%;height:100%;object-fit:cover;">
+                                                    <img src="${profile.avatarUrl != null ? profile.avatarUrl : 'https://i.imgur.com/0y0y0y0.png'}" alt="avatar" style="width:100%;height:100%;object-fit:cover;">
                                                 </div>
-                                                <div class="fw-semibold text-center" style="font-size:1.25rem;color:#111;">hywang1412</div>
-                                                <div class="text-center mb-2" style="font-size:0.95rem;color:#111;">Joined: 28/05/2025</div>
+                                                <div class="fw-semibold text-center" style="font-size:1.25rem;color:#111;">${profile.username}</div>
+                                                <div class="text-center mb-2" style="font-size:0.95rem;color:#111;">Joined: ${profile.createdAt}</div>
                                                 <div class="d-flex justify-content-center">
                                                     <span class="badge bg-white rounded-3 px-3 py-2 d-flex align-items-center gap-1"
                                                           style="color:#111;font-weight:600;font-size:1rem;border:1.5px solid #e0e0e0;">
@@ -123,8 +124,8 @@
                                                         <div class="text-muted mb-1" style="font-size:0.93rem;">Gender</div>
                                                     </div>
                                                     <div>
-                                                        <div style="font-size:0.97rem;">--/--/----</div>
-                                                        <div style="font-size:0.97rem;">Male</div>
+                                                        <div style="font-size:0.97rem;">${profile.userDOB != null ? profile.userDOB : '--/--/----'}</div>
+                                                        <div style="font-size:0.97rem;">${profile.gender != null ? profile.gender : 'Not specified'}</div>
                                                     </div>
                                                 </div>
                                                 <!-- List: Other info -->
@@ -132,34 +133,40 @@
                                                     <div class="info-row d-flex align-items-center justify-content-between mb-1" style="font-size:0.97rem;">
                                                         <span class="text-muted">Phone</span>
                                                         <span class="d-flex align-items-center gap-1">
-                                                            <span class="badge badge-not-verified">
-                                                                <i class="bi bi-exclamation-circle-fill me-1"></i>Not verified
+                                                            <span class="badge ${profile.phoneNumber != null ? 'badge-verified' : 'badge-not-verified'}">
+                                                                <i class="bi ${profile.phoneNumber != null ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill'} me-1"></i>
+                                                                ${profile.phoneNumber != null ? 'Verified' : 'Not verified'}
                                                             </span>
-                                                            <span class="fw-semibold" style="font-size:0.97rem;">+84931937721</span>
+                                                            <span class="fw-semibold" style="font-size:0.97rem;">${profile.phoneNumber != null ? profile.phoneNumber : 'Not added'}</span>
                                                             <a href="#" class="ms-1 text-muted d-flex align-items-center" style="font-size:1em;"><i class="bi bi-pencil"></i></a>
                                                         </span>
                                                     </div>
                                                     <div class="info-row d-flex align-items-center justify-content-between mb-1" style="font-size:0.97rem;">
                                                         <span class="text-muted">Email</span>
                                                         <span class="d-flex align-items-center gap-1">
-                                                            <span class="badge badge-not-verified">
-                                                                <i class="bi bi-exclamation-circle-fill me-1"></i>Not verified
+                                                            <span class="badge ${profile.email != null ? 'badge-verified' : 'badge-not-verified'}">
+                                                                <i class="bi ${profile.email != null ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill'} me-1"></i>
+                                                                ${profile.email != null ? 'Verified' : 'Not verified'}
                                                             </span>
-                                                            <a href="#" class="add-link" style="font-size:0.97em;">Add email</a>
+                                                            <span class="fw-semibold" style="font-size:0.97rem;">${profile.email != null ? profile.email : 'Not added'}</span>
                                                             <a href="#" class="ms-1 text-muted d-flex align-items-center" style="font-size:1em;"><i class="bi bi-pencil"></i></a>
                                                         </span>
                                                     </div>
                                                     <div class="info-row d-flex align-items-center justify-content-between mb-1" style="font-size:0.97rem;">
                                                         <span class="text-muted">Facebook</span>
                                                         <span class="d-flex align-items-center gap-1">
-                                                            <a href="#" class="add-link" style="font-size:0.97em;">Add link</a>
+                                                            ${profile.hasFacebookLogin ? 
+                                                                '<span class="badge badge-verified"><i class="bi bi-check-circle-fill me-1"></i>Connected</span>' : 
+                                                                '<a href="#" class="add-link" style="font-size:0.97em;">Add link</a>'}
                                                             <a href="#" class="ms-1 text-muted d-flex align-items-center" style="font-size:1em;"><i class="bi bi-link-45deg"></i></a>
                                                         </span>
                                                     </div>
                                                     <div class="info-row d-flex align-items-center justify-content-between" style="font-size:0.97rem;">
                                                         <span class="text-muted">Google</span>
                                                         <span class="d-flex align-items-center gap-1">
-                                                            <a href="#" class="add-link" style="font-size:0.97em;">Add link</a>
+                                                            ${profile.hasGoogleLogin ? 
+                                                                '<span class="badge badge-verified"><i class="bi bi-check-circle-fill me-1"></i>Connected</span>' : 
+                                                                '<a href="#" class="add-link" style="font-size:0.97em;">Add link</a>'}
                                                             <a href="#" class="ms-1 text-muted d-flex align-items-center" style="font-size:1em;"><i class="bi bi-link-45deg"></i></a>
                                                         </span>
                                                     </div>
