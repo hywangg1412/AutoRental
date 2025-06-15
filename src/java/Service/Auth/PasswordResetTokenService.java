@@ -1,12 +1,12 @@
-package Service;
+package Service.Auth;
 
 import Exception.EmptyDataException;
 import Exception.EventException;
 import Exception.InvalidDataException;
 import Exception.NotFoundException;
 import Model.Entity.OAuth.PasswordResetToken;
-import Repository.PasswordResetTokenRepository;
-import Service.Interfaces.IPasswordResetTokenService;
+import Repository.Auth.PasswordResetTokenRepository;
+import Service.Interfaces.IAuth.IPasswordResetTokenService;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
