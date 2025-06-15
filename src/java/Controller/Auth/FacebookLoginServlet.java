@@ -4,7 +4,7 @@ import Mapper.UserMapper;
 import Model.Entity.OAuth.FacebookUser;
 import Model.Entity.User;
 import Service.UserService;
-import Service.auth.FacebookAuthService;
+import Service.Auth.FacebookAuthService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -18,7 +18,7 @@ import Model.Entity.Role.Role;
 import Model.Entity.Role.UserRole;
 import Service.Role.RoleService;
 import Service.Role.UserRoleService;
-import Service.auth.UserLoginsService;
+import Service.Auth.UserLoginsService;
 import java.util.UUID;
 
 // facebookLogin
