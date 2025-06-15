@@ -348,6 +348,25 @@ input:disabled:active {
     align-items: center;
     gap: 0.3em;
 }
+
+.badge-verified {
+    background: #dcfce7 !important;   
+    color: #059669 !important;        
+    font-size: 0.95em;
+    font-weight: 500;
+    border-radius: 20px;
+    padding: 0.35em 1.1em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+}
+
+.badge-verified i {
+    font-size: 1em;
+    color: #059669 !important;
+    margin-right: 0.3em;
+}
+
 .badge-not-verified i {
     font-size: 1em;
     color: #d97706 !important;

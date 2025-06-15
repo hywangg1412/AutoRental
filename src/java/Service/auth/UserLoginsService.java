@@ -1,12 +1,12 @@
-package Service.auth;
+package Service.Auth;
 
 import Exception.EmptyDataException;
 import Exception.EventException;
 import Exception.InvalidDataException;
 import Exception.NotFoundException;
 import Model.Entity.OAuth.UserLogins;
-import Repository.auth.UserLoginsRepository;
-import Service.Interfaces.IUserLoginsService;
+import Repository.Auth.UserLoginsRepository;
+import Service.Interfaces.IAuth.IUserLoginsService;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class UserLoginsService implements IUserLoginsService {
+
     private static final Logger LOGGER = Logger.getLogger(UserLoginsService.class.getName());
     private final UserLoginsRepository userLoginsRepository;
 
@@ -43,7 +44,7 @@ public class UserLoginsService implements IUserLoginsService {
                 LOGGER.log(Level.WARNING, "Attempt to add null user login entry");
                 throw new InvalidDataException("User login entry cannot be null");
             }
-            
+
             UserLogins addedLogin = userLoginsRepository.add(entry);
             if (addedLogin == null) {
                 LOGGER.log(Level.SEVERE, "Failed to add user login for user ID: {0}", entry.getUserId());
@@ -136,6 +137,15 @@ public class UserLoginsService implements IUserLoginsService {
     public UserLogins findByProviderAndKey(String provider, String key) throws Exception {
         try {
             return userLoginsRepository.findByProviderAndKey(provider, key);
+        } catch (SQLException e) {
+            throw new Exception("Error finding user login: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public List<UserLogins> findByUserId(UUID userId) throws Exception {
+        try {
+            return userLoginsRepository.findByUserId(userId);
         } catch (SQLException e) {
             throw new Exception("Error finding user login: " + e.getMessage());
         }
