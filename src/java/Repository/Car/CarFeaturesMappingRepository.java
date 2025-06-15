@@ -77,6 +77,20 @@ public class CarFeaturesMappingRepository implements ICarFeaturesMappingReposito
         return mappings;
     }
 
+    public List<UUID> findFeatureIdsByCarId(UUID carId) throws SQLException {
+        String sql = "SELECT FeatureId FROM CarFeaturesMapping WHERE CarId = ?";
+        List<UUID> featureIds = new ArrayList<>();
+        try (var conn = dbContext.getConnection(); var ps = conn.prepareStatement(sql)) {
+            ps.setObject(1, carId);
+            try (var rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    featureIds.add(UUID.fromString(rs.getString("FeatureId")));
+                }
+            }
+        }
+        return featureIds;
+    }
+
     private CarFeaturesMapping mapResultSetToCarFeaturesMapping(ResultSet rs) throws SQLException {
         CarFeaturesMapping mapping = new CarFeaturesMapping();
         mapping.setCarId(UUID.fromString(rs.getString("CarId")));
