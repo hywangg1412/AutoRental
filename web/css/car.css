@@ -1,0 +1,52 @@
+.btn-book-now {
+    background-color: #007bff; /* Màu xanh dương cho Book now */
+    color: white;
+    border-color: #007bff;
+}
+
+.btn-book-now:hover {
+    background-color: #0056b3; /* Màu khi hover */
+    border-color: #0056b3;
+}
+
+.btn-details {
+    background-color: #28a745; /* Màu xanh lá nhạt cho Details */
+    color: white;
+    border-color: #28a745;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-details:hover {
+    background-color: #218838; /* Màu khi hover */
+    border-color: #218838;
+}
+
+.btn-add-to-cart {
+    background-color: #ffc107; /* Màu vàng cho Add to Cart */
+    color: black;
+    border-color: #ffc107;
+}
+
+.btn-add-to-cart:hover {
+    background-color: #e0a800; /* Màu khi hover */
+    border-color: #e0a800;
+}
+
+/* Đảm bảo các nút có kích thước đồng đều */
+.btn {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border-radius: 0.25rem;
+}
+.btn-add-to-cart {
+    background-color: #ffc107; /* Màu vàng cho Add to Cart */
+    color: white; /* Chữ trắng */
+    border-color: #ffc107;
+}
+
+.btn-add-to-cart:hover {
+    background-color: #e0a800; /* Màu khi hover */
+    border-color: #e0a800;
+}
