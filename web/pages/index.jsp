@@ -27,6 +27,8 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/flaticon.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/icomoon.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/car.css">
+
 
         <!-- ===== Include Styles ===== -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/nav.css">
@@ -156,8 +158,9 @@
                                                 <p class="price ml-auto">$${car.pricePerDay} <span>/day</span></p>
                                             </div>
                                             <p class="d-flex mb-0 d-block">
-                                                <a href="${pageContext.request.contextPath}/pages/booking.jsp?id=${car.carId}" class="btn btn-primary py-2 mr-1">Book now</a>
-                                                <a href="${pageContext.request.contextPath}/pages/car-single?id=${car.carId}" class="btn btn-secondary py-2 ml-1">Details</a>
+                                                <a href="pages/booking.jsp?id=${car.carId}" class="btn btn-book-now py-2 mr-1">Book now</a>
+                                                <a href="${pageContext.request.contextPath}/pages/car-single?id=${car.carId}" class="btn btn-details py-2 mr-1">Details</a>
+                                                <a href="${pageContext.request.contextPath}/pages/add-to-cart?id=${car.carId}" class="btn btn-add-to-cart py-2 ml-1">Add to Cart</a>
                                             </p>
                                         </div>
                                     </div>
@@ -445,6 +448,7 @@
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
         <script src="${pageContext.request.contextPath}/assets/js/google-map.js"></script>
         <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
+        <script src="${pageContext.request.contextPath}/scripts/common/index.js"></script>
 
     </body>
 </html>
