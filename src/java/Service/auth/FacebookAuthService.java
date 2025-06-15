@@ -1,4 +1,4 @@
-package Service.auth;
+package Service.Auth;
 
 import Constant.OAuthConstants;
 import Model.Entity.OAuth.FacebookUser;

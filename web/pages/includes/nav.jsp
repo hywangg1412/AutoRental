@@ -26,7 +26,7 @@
           <!-- Display profile logo and logout button when logged in -->
           <div class="d-flex align-items-center justify-content-between w-100">
             <div>
-              <a href="${pageContext.request.contextPath}/pages/user/user-profile.jsp" class="me-4">
+              <a href="${pageContext.request.contextPath}/user/profile" class="me-4">
                 <img src="${user.avatarUrl}" width="32" height="32" class="rounded-circle">
               </a>
             </div>

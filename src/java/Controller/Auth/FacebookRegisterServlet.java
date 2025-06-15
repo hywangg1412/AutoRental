@@ -6,7 +6,7 @@ import Model.Entity.User;
 import Model.Entity.Role.Role;
 import Model.Entity.Role.UserRole;
 import Service.UserService;
-import Service.auth.FacebookAuthService;
+import Service.Auth.FacebookAuthService;
 import Service.Role.RoleService;
 import Service.Role.UserRoleService;
 import java.io.IOException;
@@ -18,7 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import Utils.SessionUtil;
 import Model.Entity.OAuth.UserLogins;
-import Service.auth.UserLoginsService;
+import Service.Auth.UserLoginsService;
 
 //facebookLogin
 public class FacebookRegisterServlet extends HttpServlet {

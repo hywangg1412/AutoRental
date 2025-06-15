@@ -1,7 +1,7 @@
 package Controller.Auth;
 
 import Mapper.UserMapper;
-import Service.auth.GoogleAuthService;
+import Service.Auth.GoogleAuthService;
 import Model.Entity.OAuth.GoogleUser;
 import Service.UserService;
 import java.io.IOException;
@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpSession;
 import Utils.SessionUtil;
 import Model.Entity.User;
 import Model.Entity.OAuth.UserLogins;
-import Service.auth.UserLoginsService;
+import Service.Auth.UserLoginsService;
 import Model.Entity.Role.Role;
 import Model.Entity.Role.UserRole;
 import Service.Role.RoleService;
