@@ -1,5 +1,17 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="Model.DTO.CarDetailDTO" %>
+<%@ page import="Model.Entity.User" %>
+<%
+    User user = (User) session.getAttribute("user");
+    if (user == null) {
+        response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp");
+        return;
+    }
+
+    CarDetailDTO car = (CarDetailDTO) request.getAttribute("car");
+%>
+
 <!DOCTYPE html>
 <html lang="vi">
     <head>
@@ -7,34 +19,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Book Car - AutoRental</title>
         <!-- Sau -->
-        <link rel="stylesheet" href="<%= request.getContextPath() %>/styles/booking-form/booking-form-details.css">
+        <link rel="stylesheet" href="<%= request.getContextPath()%>/styles/booking-form/booking-form-details.css">
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     </head>
     <body>
         <!-- Header -->
-        <header class="header">
-            <div class="container">
-                <div class="header-content">
-                    <div class="logo">
-                        <h1>AUTO<span>RENTAL</span></h1>
-                    </div>
-                    <nav class="nav">
-                        <a href="#" class="nav-link">Home</a>
-                        <a href="#" class="nav-link">My Booking</a>
-                        <div class="user-menu">
-                            <i class="fas fa-bell"></i>
-                            <i class="fas fa-comment"></i>
-                            <div class="user-avatar">
-                                <span>hywang1412</span>
-                                <i class="fas fa-chevron-down"></i>
-                            </div>
-                        </div>
-                    </nav>
-                </div>
-            </div>
-        </header>
-
+        <jsp:include page="/pages/booking-form/booking-form-header.jsp"/>
         <!-- Progress Steps -->
         <div class="progress-container">
             <div class="container">
@@ -67,43 +58,32 @@
                     <div class="car-info-section">
                         <div class="car-gallery">
                             <div class="main-image">
-                                <img src="/placeholder.svg?height=400&width=600" alt="Car Main Image" id="mainCarImage">
-                            </div>
-                            <div class="thumbnail-gallery">
-                                <img src="/placeholder.svg?height=100&width=150" alt="Car Image 1" class="thumbnail active" onclick="changeMainImage(this)">
-                                <img src="/placeholder.svg?height=100&width=150" alt="Car Image 2" class="thumbnail" onclick="changeMainImage(this)">
-                                <img src="/placeholder.svg?height=100&width=150" alt="Car Image 3" class="thumbnail" onclick="changeMainImage(this)">
-                                <img src="/placeholder.svg?height=100&width=150" alt="Car Image 4" class="thumbnail" onclick="changeMainImage(this)">
+                                <img src="<%= request.getContextPath() + car.getImageUrls().get(0)%>"
+                                     alt="Car Main Image"
+                                     id="mainCarImage"
+                                     style="width: 100%; height: auto; object-fit: cover;">
                             </div>
                         </div>
 
+
+
                         <div class="car-details">
                             <div class="car-header">
-                                <h2 class="car-title">KIA SEDONA PREMIUM 2017</h2>
-                                <div class="car-rating">
-                                    <div class="stars">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                    <span class="rating-text">5.0 (35 trips)</span>
-                                </div>
+                                <h2 class="car-title"><%= car.getCarModel()%> <%= car.getYearManufactured()%></h2>
                             </div>
 
                             <div class="car-specs">
                                 <div class="spec-item">
                                     <i class="fas fa-cog"></i>
-                                    <span>Automatic</span>
+                                    <span><%= car.getTransmissionName()%></span>
                                 </div>
                                 <div class="spec-item">
                                     <i class="fas fa-users"></i>
-                                    <span>7 seats</span>
+                                    <span><%= car.getSeats()%> seats</span>
                                 </div>
                                 <div class="spec-item">
                                     <i class="fas fa-gas-pump"></i>
-                                    <span>Gasoline</span>
+                                    <span><%= car.getFuelName()%></span>
                                 </div>
                                 <div class="spec-item">
                                     <i class="fas fa-map-marker-alt"></i>
@@ -114,21 +94,22 @@
                             <div class="pricing">
                                 <div class="price-item">
                                     <span class="price-label">Hourly rate:</span>
-                                    <span class="price-value">150K/hour</span>
+                                    <span class="price-value"><%= car.getPricePerHour()%>K/hour</span>
                                 </div>
                                 <div class="price-item">
                                     <span class="price-label">Daily rate:</span>
-                                    <span class="price-value">1,301K/day</span>
+                                    <span class="price-value"><%= car.getPricePerDay()%>K/day</span>
                                 </div>
                                 <div class="price-item">
                                     <span class="price-label">Monthly rate:</span>
-                                    <span class="price-value">25,000K/month</span>
+                                    <span class="price-value"><%= car.getPricePerMonth()%>K/month</span>
                                 </div>
                             </div>
 
+
                             <div class="car-description">
                                 <h3>Car Description</h3>
-                                <p>${car.description}</p>
+                                <p><%= car.getDescription()%></p>
                             </div>
 
                             <div class="car-features">
@@ -153,28 +134,6 @@
                                 </div>
                             </div>
 
-                            <div class="reviews-section">
-                                <h3>Customer Reviews</h3>
-                                <div class="review-item">
-                                    <div class="review-header">
-                                        <div class="reviewer-info">
-                                            <img src="/placeholder.svg?height=40&width=40" alt="Reviewer" class="reviewer-avatar">
-                                            <div>
-                                                <span class="reviewer-name">Nguyễn Văn A</span>
-                                                <div class="review-stars">
-                                                    <i class="fas fa-star"></i>
-                                                    <i class="fas fa-star"></i>
-                                                    <i class="fas fa-star"></i>
-                                                    <i class="fas fa-star"></i>
-                                                    <i class="fas fa-star"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <span class="review-date">2 days ago</span>
-                                    </div>
-                                    <p class="review-text">Very clean car, enthusiastic owner. Will rent again next time!</p>
-                                </div>
-                            </div>
                         </div>
                     </div>
 
@@ -182,17 +141,41 @@
                     <div class="booking-form-section">
                         <div class="booking-form-container">
                             <h3>Car Booking Information</h3>
-                            <form id="bookingForm" action="booking-form-deposit.jsp" method="post">
-                                <input type="hidden" name="carId" value="${car.carId}">
+                            <form id="bookingForm" action="${pageContext.request.contextPath}/booking/create" method="post">
+                                <input type="hidden" name="carId" value="<%= car.getCarId()%>">
 
+                                <div class="form-group">
+                                    <label for="customerName">Account Name</label>
+                                    <input type="text" id="customerName" name="customerName"
+                                           value="<%= user != null ? user.getUsername() : ""%>" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="customerEmail">Email</label>
+                                    <input type="email" id="customerEmail" name="customerEmail"
+                                           value="<%= user != null ? user.getEmail() : ""%>" required>
+                                    <small>You can use another email if you want.</small>
+                                </div>
                                 <div class="form-group">
                                     <label for="rentalType">Rental Type</label>
                                     <select id="rentalType" name="rentalType" required>
-                                        <option value="">Select rental type</option>
+                                        <option value="">-- Select Type --</option>
                                         <option value="hourly">Hourly</option>
                                         <option value="daily">Daily</option>
                                         <option value="monthly">Monthly</option>
                                     </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="customerPhone">Phone Number</label>
+                                    <input type="tel" id="customerPhone" name="customerPhone"
+                                           value="<%= user.getPhoneNumber() != null ? user.getPhoneNumber() : ""%>" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="customerAddress">Address</label>
+                                    <input type="text" id="customerAddress" name="customerAddress"
+                                           value="<%= user.getUserAddress() != null ? user.getUserAddress() : ""%>" required>
                                 </div>
 
                                 <div class="form-group">
@@ -204,46 +187,10 @@
                                     <label for="endDate">End Date</label>
                                     <input type="datetime-local" id="endDate" name="endDate" required>
                                 </div>
-
-                                <div class="form-group">
-                                    <label for="pickupLocation">Pickup Location</label>
-                                    <select id="pickupLocation" name="pickupLocation" required>
-                                        <option value="">Select location</option>
-                                        <option value="office">At office</option>
-                                        <option value="delivery">Home delivery</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="customerName">Full Name</label>
-                                    <input type="text" id="customerName" name="customerName" required>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="customerPhone">Phone Number</label>
-                                    <input type="tel" id="customerPhone" name="customerPhone" required>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="customerEmail">Email</label>
-                                    <input type="email" id="customerEmail" name="customerEmail" required>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="customerAddress">Address</label>
-                                    <textarea id="customerAddress" name="customerAddress" rows="3" required></textarea>
-                                </div>
-
                                 <div class="form-group">
                                     <label for="licenseNumber">Driver License Number</label>
                                     <input type="text" id="licenseNumber" name="licenseNumber" required>
                                 </div>
-
-                                <div class="form-group">
-                                    <label for="notes">Notes (optional)</label>
-                                    <textarea id="notes" name="notes" rows="3" placeholder="Special requests..."></textarea>
-                                </div>
-
                                 <div class="total-price">
                                     <div class="price-breakdown">
                                         <div class="price-row">
@@ -271,14 +218,30 @@
                         <i class="fas fa-home"></i>
                         Back to Home
                     </button>
-                    <button type="submit" form="bookingForm" class="btn btn-primary">
+
+                    <!-- Nút gửi booking để duyệt -->
+                    <button type="submit" form="bookingForm" class="btn btn-warning">
+                        Request Booking Approval
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+
+                    <!-- Nút tiếp tục đặt cọc -->
+                    <button type="button" class="btn btn-primary" onclick="goToDeposit()">
                         Continue to Deposit
                         <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>
+
+
             </div>
         </main>
+        
+        <div id="carPriceData"
+             data-hourly="<%= car.getPricePerHour()%>"
+             data-daily="<%= car.getPricePerDay()%>"
+             data-monthly="<%= car.getPricePerMonth()%>">
+        </div>
 
-        <script src="<%= request.getContextPath() %>/scripts/booking-form/booking-form-details.js"></script>
+      <script src="<%= request.getContextPath()%>/scripts/booking-form/booking-form-detail.js"></script>
     </body>
 </html>
