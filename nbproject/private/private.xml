@@ -3,7 +3,6 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/L:/Workspace/SWP/AutoRental/nbproject/private/private.properties</file>
             <file>file:/L:/Workspace/SWP/AutoRental/web/WEB-INF/web.xml</file>
             <file>file:/L:/Workspace/SWP/AutoRental/nbproject/build-impl.xml</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Config/CloudinaryConfig.java</file>
@@ -12,9 +11,8 @@
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/Interfaces/ICar/ICarBrandRepository.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Auth/RequestPasswordServlet.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/.env</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Service/auth/UserLoginsService.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Service/Auth/UserLoginsService.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Auth/ResetPasswordServlet.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Service/PasswordResetTokenService.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Constant/OAuthConstants.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Service/ResetPasswordService.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/sql/AutoRental.sql</file>
@@ -23,15 +21,23 @@
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Booking/BookingApprovalListServlet.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/web/pages/staff/staff-booking.jsp</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/Entity/Car/Car.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/web/pages/user/user-proflie.jsp</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/web/styles/userV1/favorite-car.css</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/web/styles/userV1/longterm-booking.css</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/web/styles/userV1/my-address.css</file>
             <file>file:/L:/Workspace/SWP/AutoRental/web/pages/user/my-address.jsp</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/web/pages/user/my-trip.jsp</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/web/styles/userV1/my-trip.css</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/web/pages/user/favorite-car.jsp</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/web/pages/includes/UserSidebar.jsp</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/web/pages/user/request-delete.jsp</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/web/styles/user/request-delete.css</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/web/pages/user/user-profile.jsp</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/web/styles/user/about.css</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/web/styles/user/change-password.css</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/web/pages/includes/nav.jsp</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/Entity/OAuth/UserLogins.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/Auth/UserLoginsRepository.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/Interfaces/IAuth/IUserLoginsRepository.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/Entity/User.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Auth/FacebookLoginServlet.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Auth/FacebookRegisterServlet.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Car/CarServlet.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/web/pages/index.jsp</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/web/pages/car.jsp</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Auth/GoogleLoginServlet.java</file>
         </group>
     </open-files>
 </project-private>

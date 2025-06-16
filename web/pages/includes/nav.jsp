@@ -13,7 +13,7 @@
         <li class="nav-item"><a href="about.jsp" class="nav-link">About</a></li>
         <li class="nav-item"><a href="services.jsp" class="nav-link">Services</a></li>
         <li class="nav-item"><a href="pricing.jsp" class="nav-link">Pricing</a></li>
-        <li class="nav-item"><a href="car.jsp" class="nav-link">Cars</a></li>
+        <li class="nav-item"><a href="${pageContext.request.contextPath}/pages/car" class="nav-link">Cars</a></li>
         <li class="nav-item"><a href="blog.jsp" class="nav-link">Blog</a></li>
         <li class="nav-item"><a href="contact.jsp" class="nav-link">Contact</a></li>
       </ul>
@@ -23,7 +23,6 @@
       <div class="vr mx-8"></div>
       <c:choose>
         <c:when test="${isLoggedIn}">
-          <!-- Display profile logo and logout button when logged in -->
           <div class="d-flex align-items-center justify-content-between w-100">
             <div>
               <a href="${pageContext.request.contextPath}/user/profile" class="me-4">
@@ -36,7 +35,6 @@
           </div>
         </c:when>
         <c:otherwise>
-          <!-- Display Login and Sign Up buttons when not logged in -->
           <a href="${pageContext.request.contextPath}/pages/authen/SignIn.jsp" class="btn custom-login-btn px-4 me-0">Login</a>
           <a href="${pageContext.request.contextPath}/pages/authen/SignUp.jsp" class="btn custom-signup-btn px-4 ms-2">Sign Up</a>
         </c:otherwise>
