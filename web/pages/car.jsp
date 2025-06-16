@@ -24,12 +24,12 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/icomoon.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/nav.css">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/car.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/car.css">
     </head>
     <body>
         <jsp:include page="includes/nav.jsp"/>
 
-        <section class="hero-wrap hero-wrap-2 js-fullheight" style="background-image: url('${pageContext.request.contextPath}/assets/images/bg_3.jpg');" data-stellar-background-ratio="0.5">
+        <section class="hero-wrap hero-wrap-2 js-fullheight" style="background-image: url('images/bg_3.jpg');" data-stellar-background-ratio="0.5">
             <div class="overlay"></div>
             <div class="container">
                 <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-start">
@@ -40,7 +40,6 @@
                 </div>
             </div>
         </section>
-
 
         <section class="ftco-section bg-light">
             <div class="container">
@@ -58,36 +57,33 @@
                                         <p class="price ml-auto">$${car.pricePerDay} <span>/day</span></p>
                                     </div>
                                     <p class="d-flex mb-0 d-block">
-                                        <a href="${pageContext.request.contextPath}/booking/form/details?id=${car.carId}" class="btn btn-primary py-2 mr-1">Book now</a>
-
-
-                                        <a href="${pageContext.request.contextPath}/pages/car-single?id=${car.carId}" class="btn btn-secondary py-2 ml-1">Details</a>
+                                        <a href="pages/booking.jsp?id=${car.carId}" class="btn btn-book-now py-2 mr-1">Book now</a>
+                                        <a href="${pageContext.request.contextPath}/pages/car-single?id=${car.carId}" class="btn btn-details py-2 mr-1">Details</a>
+                                        <a href="${pageContext.request.contextPath}/pages/add-to-cart?id=${car.carId}" class="btn btn-add-to-cart py-2 ml-1">Add to Cart</a>
                                     </p>
                                 </div>
                             </div>
                         </div>
                     </c:forEach>
-
                 </div>
 
                 <div class="row mt-5">
                     <div class="col text-center">
                         <div class="block-27">
                             <ul>
-                                <li><a href="#">&lt;</a></li>
+                                <li><a href="#"><</a></li>
                                 <li class="active"><span>1</span></li>
                                 <li><a href="#">2</a></li>
                                 <li><a href="#">3</a></li>
                                 <li><a href="#">4</a></li>
                                 <li><a href="#">5</a></li>
-                                <li><a href="#">&gt;</a></li>
+                                <li><a href="#">></a></li>
                             </ul>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-        <!-- loader -->
 
         <jsp:include page="includes/footer.jsp" />
 
