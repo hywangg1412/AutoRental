@@ -93,20 +93,19 @@ public class CarImageRepository implements ICarImageRepository {
         image.setIsMain(rs.getBoolean("IsMain"));
         return image;
     }
-
     @Override
-    public List<CarImage> findByCarId(UUID carId) throws SQLException {
-        String sql = "SELECT * FROM CarImages WHERE CarId = ?";
-        List<CarImage> images = new ArrayList<>();
-        try (var conn = dbContext.getConnection(); var ps = conn.prepareStatement(sql)) {
-            ps.setObject(1, carId);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    images.add(map(rs));
-                }
+public List<CarImage> findByCarId(UUID carId) throws SQLException {
+    String sql = "SELECT * FROM CarImages WHERE CarId = ?";
+    List<CarImage> images = new ArrayList<>();
+    try (var conn = dbContext.getConnection(); var ps = conn.prepareStatement(sql)) {
+        ps.setObject(1, carId);
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                images.add(map(rs));
             }
         }
-        return images;
     }
+    return images;
+}
 
 }
