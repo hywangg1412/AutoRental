@@ -21,6 +21,7 @@ public class CarDetailDTO {
     private List<String> featureNames;
     private List<String> imageUrls;
     private Date createdDate;
+    private Integer yearManufactured;
 
     // Getters + Setters
 
@@ -142,5 +143,13 @@ public class CarDetailDTO {
 
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public Integer getYearManufactured() {
+        return yearManufactured;
+    }
+
+    public void setYearManufactured(Integer yearManufactured) {
+        this.yearManufactured = yearManufactured;
     }
 }
