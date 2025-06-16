@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class CarDetailDTO {
+
     private UUID carId;
     private String carModel;
     private String brandName;
@@ -21,10 +22,10 @@ public class CarDetailDTO {
     private List<String> featureNames;
     private List<String> imageUrls;
     private Date createdDate;
-    private Integer yearManufactured;
+    private List<String> allFeatureNames;
+    
 
     // Getters + Setters
-
     public UUID getCarId() {
         return carId;
     }
@@ -145,11 +146,11 @@ public class CarDetailDTO {
         this.createdDate = createdDate;
     }
 
-    public Integer getYearManufactured() {
-        return yearManufactured;
+    public List<String> getAllFeatureNames() {
+        return allFeatureNames;
     }
 
-    public void setYearManufactured(Integer yearManufactured) {
-        this.yearManufactured = yearManufactured;
+    public void setAllFeatureNames(List<String> allFeatureNames) {
+        this.allFeatureNames = allFeatureNames;
     }
 }
