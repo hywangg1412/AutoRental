@@ -4,11 +4,11 @@ import java.util.UUID;
 
 public class CarFeature {
     private UUID featureId;
-    private String fetureName;
+    private String featureName;
 
     public CarFeature(UUID featureId, String fetureName) {
         this.featureId = featureId;
-        this.fetureName = fetureName;
+        this.featureName = fetureName;
     }
 
     public CarFeature() {
@@ -22,17 +22,17 @@ public class CarFeature {
         this.featureId = featureId;
     }
 
-    public String getFetureName() {
-        return fetureName;
+    public String getFeatureName() {
+        return featureName;
     }
 
-    public void setFetureName(String fetureName) {
-        this.fetureName = fetureName;
+    public void setFeatureName(String fetureName) {
+        this.featureName = fetureName;
     }
 
     @Override
     public String toString() {
-        return "CarFeature{" + "featureId=" + featureId + ", fetureName=" + fetureName + '}';
+        return "CarFeature{" + "featureId=" + featureId + ", fetureName=" + featureName + '}';
     }
     
     
