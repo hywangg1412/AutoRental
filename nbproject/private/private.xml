@@ -3,6 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Booking/BookingApprovalServlet.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/web/WEB-INF/web.xml</file>
             <file>file:/L:/Workspace/SWP/AutoRental/nbproject/build-impl.xml</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Config/CloudinaryConfig.java</file>
@@ -17,7 +18,6 @@
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Service/ResetPasswordService.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/sql/AutoRental.sql</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/DTO/BookingRequestDTO.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Booking/BookingApprovalServlet.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Booking/BookingApprovalListServlet.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/web/pages/staff/staff-booking.jsp</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/Entity/Car/Car.java</file>
@@ -41,6 +41,7 @@
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Auth/NormalLoginServlet.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Booking/BookingFormDetailsServlet.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Booking/BookingServlet.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/DTO/CarDetailDTO.java</file>
         </group>
     </open-files>
 </project-private>
