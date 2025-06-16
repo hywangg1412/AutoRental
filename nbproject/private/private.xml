@@ -38,6 +38,9 @@
             <file>file:/L:/Workspace/SWP/AutoRental/web/pages/index.jsp</file>
             <file>file:/L:/Workspace/SWP/AutoRental/web/pages/car.jsp</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Auth/GoogleLoginServlet.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Auth/NormalLoginServlet.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Booking/BookingFormDetailsServlet.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Booking/BookingServlet.java</file>
         </group>
     </open-files>
 </project-private>

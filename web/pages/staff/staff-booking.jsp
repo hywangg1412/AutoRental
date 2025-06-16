@@ -212,13 +212,17 @@
                                                 <td>${booking.totalAmount}</td>
                                                 <td>
                                                     <div class="d-flex gap-2">
-                                                        <form action="${pageContext.request.contextPath}/staff/booking-approval" method="post" style="display:inline;">
+                                                        <form action="booking-approval" method="post" style="display:inline;">
                                                             <input type="hidden" name="bookingId" value="${booking.bookingId}" />
                                                             <input type="hidden" name="action" value="accept" />
-                                                            <button class="btn btn-success btn-sm" type="submit" onclick="this.form.action.value='accept'">
+                                                            <button class="btn btn-success btn-sm" type="submit">
                                                                 <i class="fas fa-check"></i> Accept
                                                             </button>
-                                                            <button class="btn btn-outline-danger btn-sm" type="submit" onclick="this.form.action.value='decline'">
+                                                        </form>
+                                                        <form action="booking-approval" method="post" style="display:inline;">
+                                                            <input type="hidden" name="bookingId" value="${booking.bookingId}" />
+                                                            <input type="hidden" name="action" value="decline" />
+                                                            <button class="btn btn-outline-danger btn-sm" type="submit">
                                                                 <i class="fas fa-times"></i> Decline
                                                             </button>
                                                         </form>

@@ -34,6 +34,7 @@ public class CarDetailService {
         dto.setPricePerHour(car.getPricePerHour());
         dto.setPricePerMonth(car.getPricePerMonth());
         dto.setCreatedDate(car.getCreatedDate());
+        dto.setYearManufactured(car.getYearManufactured());
 
         // Brand
         var brand = brandService.findById(car.getBrandId());

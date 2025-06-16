@@ -84,7 +84,18 @@ public class BookingRepository implements IBookingRepository {
         try (Connection conn = dbContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_UPDATE)) {
             
-            setBookingParameters(ps, entity);
+            ps.setObject(1, entity.getUserId());
+            ps.setObject(2, entity.getCarId());
+            ps.setObject(3, entity.getHandledBy());
+            ps.setTimestamp(4, Timestamp.valueOf(entity.getPickupDateTime()));
+            ps.setTimestamp(5, Timestamp.valueOf(entity.getReturnDateTime()));
+            ps.setBigDecimal(6, BigDecimal.valueOf(entity.getTotalAmount()));
+            ps.setString(7, entity.getStatus());
+            ps.setObject(8, entity.getDiscountId());
+            ps.setTimestamp(9, Timestamp.valueOf(entity.getCreatedDate()));
+            ps.setString(10, entity.getCancelReason());
+            ps.setString(11, entity.getBookingCode());
+            ps.setString(12, entity.getExpectedPaymentMethod());
             ps.setObject(13, entity.getBookingId());
             
             int affectedRows = ps.executeUpdate();
@@ -147,20 +158,20 @@ public class BookingRepository implements IBookingRepository {
         return bookings;
     }
 
-    private void setBookingParameters(PreparedStatement ps, Booking booking) throws SQLException {
-        ps.setObject(1, booking.getBookingId());
-        ps.setObject(2, booking.getUserId());
-        ps.setObject(3, booking.getCarId());
-        ps.setObject(4, booking.getHandledBy());
-        ps.setObject(5, booking.getPickupDateTime());
-        ps.setObject(6, booking.getReturnDateTime());
-        ps.setDouble(7, booking.getTotalAmount());
-        ps.setString(8, booking.getStatus());
-        ps.setObject(9, booking.getDiscountId());
-        ps.setObject(10, booking.getCreatedDate());
-        ps.setString(11, booking.getCancelReason());
-        ps.setString(12, booking.getBookingCode());
-        ps.setString(13, booking.getExpectedPaymentMethod());
+    private void setBookingParameters(PreparedStatement ps, Booking entity) throws SQLException {
+        ps.setObject(1, entity.getBookingId());
+        ps.setObject(2, entity.getUserId());
+        ps.setObject(3, entity.getCarId());
+        ps.setObject(4, entity.getHandledBy());
+        ps.setTimestamp(5, Timestamp.valueOf(entity.getPickupDateTime()));
+        ps.setTimestamp(6, Timestamp.valueOf(entity.getReturnDateTime()));
+        ps.setBigDecimal(7, BigDecimal.valueOf(entity.getTotalAmount()));
+        ps.setString(8, entity.getStatus());
+        ps.setObject(9, entity.getDiscountId());
+        ps.setTimestamp(10, Timestamp.valueOf(entity.getCreatedDate()));
+        ps.setString(11, entity.getCancelReason());
+        ps.setString(12, entity.getBookingCode());
+        ps.setString(13, entity.getExpectedPaymentMethod());
     }
 
     private Booking mapResultSetToBooking(ResultSet rs) throws SQLException {
@@ -171,7 +182,7 @@ public class BookingRepository implements IBookingRepository {
         booking.setHandledBy(rs.getString("HandledBy") != null ? UUID.fromString(rs.getString("HandledBy")) : null);
         booking.setPickupDateTime(rs.getTimestamp("PickupDateTime").toLocalDateTime());
         booking.setReturnDateTime(rs.getTimestamp("ReturnDateTime").toLocalDateTime());
-        booking.setTotalAmount(rs.getDouble("TotalAmount"));
+        booking.setTotalAmount(rs.getBigDecimal("TotalAmount").doubleValue());
         booking.setStatus(rs.getString("Status"));
         booking.setDiscountId(rs.getString("DiscountId") != null ? UUID.fromString(rs.getString("DiscountId")) : null);
         booking.setCreatedDate(rs.getTimestamp("CreatedDate").toLocalDateTime());
