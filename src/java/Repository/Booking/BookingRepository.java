@@ -148,18 +148,19 @@ public class BookingRepository implements IBookingRepository {
     }
 
     private void setBookingParameters(PreparedStatement ps, Booking booking) throws SQLException {
-        ps.setObject(1, booking.getUserId());
-        ps.setObject(2, booking.getCarId());
-        ps.setObject(3, booking.getHandledBy());
-        ps.setObject(4, booking.getPickupDateTime());
-        ps.setObject(5, booking.getReturnDateTime());
-        ps.setDouble(6, booking.getTotalAmount());
-        ps.setString(7, booking.getStatus());
-        ps.setObject(8, booking.getDiscountId());
-        ps.setObject(9, booking.getCreatedDate());
-        ps.setString(10, booking.getCancelReason());
-        ps.setString(11, booking.getBookingCode());
-        ps.setString(12, booking.getExpectedPaymentMethod());
+        ps.setObject(1, booking.getBookingId());
+        ps.setObject(2, booking.getUserId());
+        ps.setObject(3, booking.getCarId());
+        ps.setObject(4, booking.getHandledBy());
+        ps.setObject(5, booking.getPickupDateTime());
+        ps.setObject(6, booking.getReturnDateTime());
+        ps.setDouble(7, booking.getTotalAmount());
+        ps.setString(8, booking.getStatus());
+        ps.setObject(9, booking.getDiscountId());
+        ps.setObject(10, booking.getCreatedDate());
+        ps.setString(11, booking.getCancelReason());
+        ps.setString(12, booking.getBookingCode());
+        ps.setString(13, booking.getExpectedPaymentMethod());
     }
 
     private Booking mapResultSetToBooking(ResultSet rs) throws SQLException {
@@ -179,4 +180,10 @@ public class BookingRepository implements IBookingRepository {
         booking.setExpectedPaymentMethod(rs.getString("ExpectedPaymentMethod"));
         return booking;
     }
+    public static String generateBookingCode() {
+    String datePart = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd"));
+    String randomPart = UUID.randomUUID().toString().substring(0, 5).toUpperCase();
+    return "BK-" + datePart + "-" + randomPart;
+    }
+
 }
