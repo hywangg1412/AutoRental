@@ -2,6 +2,7 @@ package Service.Car;
 
 import Model.DTO.CarDetailDTO;
 import Model.Entity.Car.Car;
+import Model.Entity.Car.CarFeature;
 import Model.Entity.Car.CarImage;
 import Repository.Car.CarImageRepository;
 import java.util.ArrayList;
@@ -54,14 +55,14 @@ public class CarDetailService {
         }
 
         // Features
-        List<String> featureNames = new ArrayList<>();
-        for (UUID featureId : car.getFeatureIds()) {
-            var feature = featureService.findById(featureId);
-            if (feature != null) {
-                featureNames.add(feature.getFetureName());
-            }
-        }
-        dto.setFeatureNames(featureNames);
+        List<String> carFeatures = featureService.findByCarId(car.getCarId())
+            .stream().map(CarFeature::getFeatureName).toList();
+        dto.setFeatureNames(carFeatures);
+
+        // Lấy tất cả feature có thể có trong hệ thống
+        List<String> allFeatures = featureService.findAll()
+            .stream().map(CarFeature::getFeatureName).toList();
+        dto.setAllFeatureNames(allFeatures);
 
         // Images
         List<String> imageUrls = imageRepository.findAll()

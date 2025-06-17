@@ -15,6 +15,9 @@ public class LogoutServlet extends HttpServlet {
             throws ServletException, IOException {
         SessionUtil.removeSessionAttribute(request, "user");
         SessionUtil.removeSessionAttribute(request, "isLoggedIn");
+        
+        SessionUtil.deleteCookie(response, "userId", "/");
+        
         response.sendRedirect(request.getContextPath() + "/pages/index.jsp");
     }
 } 

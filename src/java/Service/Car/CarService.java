@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class CarService implements ICarService{
+public class CarService implements ICarService {
 
     private final Repository.Car.CarRepository carRepository = new Repository.Car.CarRepository();
 
@@ -94,8 +94,10 @@ public class CarService implements ICarService{
             return null;
         }
     }
-        @Override
+
+    @Override
     public List<Car> findAll() throws SQLException {
-    return carRepository.findAll();
-}
+        return carRepository.findAll();
+    }
+
 }
