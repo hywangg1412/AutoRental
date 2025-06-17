@@ -1,4 +1,4 @@
-package Controller.User;
+package Controller.User.UserAccount;
 
 import Exception.NotFoundException;
 import Model.DTO.User.UserProfileDTO;
@@ -53,7 +53,6 @@ public class UserProfileServlet extends HttpServlet {
         profile.setAvatarUrl(user.getAvatarUrl());
         profile.setCreatedAt(user.getCreatedDate().format(formatter));
 
-        // Tối ưu việc kiểm tra OAuth bằng Set
         Set<String> providers = new HashSet<>();
         userLogins.forEach(login -> providers.add(login.getLoginProvider().toLowerCase()));
 
