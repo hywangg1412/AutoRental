@@ -1,5 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%
+    String successMessage = (String) session.getAttribute("success");
+    String errorMessage = (String) session.getAttribute("error");
+    session.removeAttribute("success");
+    session.removeAttribute("error");
+%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -16,7 +23,7 @@
         <!-- ===== Include Styles ===== -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/userNav.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/nav.css">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/user/about.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/user/user-profile.css">
 
         <!-- ===== Custom Styles ===== -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/open-iconic-bootstrap.min.css">
@@ -31,14 +38,34 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/flaticon.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/icomoon.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
-
-        <style>
-            .account-info-block .info-list a, .account-info-block .info-list .add-link {
-                text-decoration: none !important;
-            }
-        </style>
     </head>
     <body>
+        <!-- Toast Container -->
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <% if (successMessage != null) { %>
+            <div class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <%= successMessage %>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+            <% } %>
+            
+            <% if (errorMessage != null) { %>
+            <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <%= errorMessage %>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+            <% } %>
+        </div>
         <!-- Header -->
         <jsp:include page="/pages/includes/userNav.jsp" />
 
@@ -97,14 +124,30 @@
                                             <!-- Left: Avatar + Info -->
                                             <h1 class="h5 fw-semibold mb-0 text-dark d-flex align-items-center gap-2" style="font-size:1.25rem;color:#222;">
                                                 Account Information
-                                                <a href="#" class="btn btn-light border rounded-circle p-1 d-flex align-items-center justify-content-center ms-2" title="Edit" style="font-size:0.95rem;width:28px;height:28px;line-height:1;">
+                                                <a href="#" class="btn btn-light border rounded-circle p-1 d-flex align-items-center justify-content-center ms-2" title="Edit" style="font-size:0.95rem;width:28px;height:28px;line-height:1;" data-bs-toggle="modal" data-bs-target="#editUserInfoModal">
                                                     <i class="bi bi-pencil" style="font-size:1.1em;"></i>
                                                 </a>
                                             </h1>
                                             <div class="col-md-4 d-flex flex-column align-items-center mb-3 mb-md-0">
-                                                <div class="rounded-circle overflow-hidden mb-3 bg-light border" style="width:120px;height:120px;background:#fff;">
-                                                    <img src="${profile.avatarUrl != null ? profile.avatarUrl : 'https://i.imgur.com/0y0y0y0.png'}" alt="avatar" style="width:100%;height:100%;object-fit:cover;">
-                                                </div>
+                                                <form id="changeAvatarForm" action="${pageContext.request.contextPath}/user/update-avatar" method="post" enctype="multipart/form-data">
+                                                    <label class="avatar-upload-wrapper" title="Change avatar">
+                                                        <img src="<c:choose>
+                                                            <c:when test='${not empty profile.avatarUrl}'>
+                                                                ${profile.avatarUrl}
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                ${pageContext.request.contextPath}/assets/images/default-avatar.png
+                                                            </c:otherwise>
+                                                        </c:choose>" alt="Avatar" onerror="this.onerror=null;this.src='${pageContext.request.contextPath}/assets/images/default-avatar.png';">
+                                                        <span class="avatar-upload-icon">
+                                                            <i class="bi bi-camera-fill"></i>
+                                                        </span>
+                                                        <input type="file" name="avatar" class="avatar-upload-input" accept="image/*" onchange="document.getElementById('changeAvatarForm').submit();">
+                                                    </label>
+                                                </form>
+                                                <c:if test="${not empty avatarError}">
+                                                    <div class="text-danger">${avatarError}</div>
+                                                </c:if>
                                                 <div class="fw-semibold text-center" style="font-size:1.25rem;color:#111;">${profile.username}</div>
                                                 <div class="text-center mb-2" style="font-size:0.95rem;color:#111;">Joined: ${profile.createdAt}</div>
                                                 <div class="d-flex justify-content-center">
@@ -138,7 +181,7 @@
                                                                 ${profile.phoneNumber != null ? 'Verified' : 'Not verified'}
                                                             </span>
                                                             <span class="fw-semibold" style="font-size:0.97rem;">${profile.phoneNumber != null ? profile.phoneNumber : 'Not added'}</span>
-                                                            <a href="#" class="ms-1 text-muted d-flex align-items-center" style="font-size:1em;"><i class="bi bi-pencil"></i></a>
+                                                            <a href="#" class="ms-1 text-muted d-flex align-items-center" style="font-size:1em;" data-bs-toggle="modal" data-bs-target="#editPhoneModal"><i class="bi bi-pencil"></i></a>
                                                         </span>
                                                     </div>
                                                     <div class="info-row d-flex align-items-center justify-content-between mb-1" style="font-size:0.97rem;">
@@ -188,8 +231,10 @@
                                                 <button type="button" class="btn btn-outline-secondary btn-edit">
                                                     <i class="bi bi-pencil me-1"></i>Edit
                                                 </button>
-                                                <button type="button" class="btn btn-cancel d-none ms-2">Cancel</button>
-                                                <button type="button" class="btn btn-save d-none ms-2">Update</button>
+                                                <div class="d-flex gap-2">
+                                                    <button type="button" class="btn btn-cancel d-none">Cancel</button>
+                                                    <button type="button" class="btn btn-save d-none">Update</button>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="row g-5">
@@ -260,5 +305,93 @@
         <script src="${pageContext.request.contextPath}/scripts/user/UserAboutSidebar.js"></script>
         <script src="${pageContext.request.contextPath}/scripts/user/userAbout.js"></script>
 
+        <!-- Modal: Update User Info -->
+        <div class="modal fade" id="editUserInfoModal" tabindex="-1" aria-labelledby="editUserInfoModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h2 class="modal-title fs-4" id="editUserInfoModalLabel">Update Information</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+              </div>
+              <form id="updateUserInfoForm" action="${pageContext.request.contextPath}/user/update-info" method="POST">
+                <div class="modal-body">
+                  <div class="mb-3">
+                    <label class="form-label">Username</label>
+                    <input type="text" class="form-control" name="username" value="${not empty profile_username ? profile_username : profile.username}" required>
+                    <c:if test="${not empty usernameError}">
+                      <div class="text-danger">${usernameError}</div>
+                    </c:if>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Date of birth</label>
+                    <input type="text" class="form-control" id="dob" name="dob"
+                           value="${not empty profile_userDOB ? profile_userDOB : (not empty profile.userDOB ? profile.userDOB : '')}"
+                           placeholder="dd/MM/yyyy" autocomplete="off">
+                    <c:if test="${not empty dobError}">
+                      <div class="text-danger">${dobError}</div>
+                    </c:if>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Gender</label>
+                    <select class="form-select" name="gender">
+                      <option value="Male" ${((not empty profile_gender ? profile_gender : profile.gender) == 'Male') ? 'selected' : ''}>Male</option>
+                      <option value="Female" ${((not empty profile_gender ? profile_gender : profile.gender) == 'Female') ? 'selected' : ''}>Female</option>
+                    </select>
+                    <c:if test="${not empty genderError}">
+                      <div class="text-danger">${genderError}</div>
+                    </c:if>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-save-modal">Update</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <c:if test="${not empty dobError}">
+          <script>
+            document.addEventListener("DOMContentLoaded", function() {
+              var myModal = new bootstrap.Modal(document.getElementById('editUserInfoModal'));
+              myModal.show();
+            });
+          </script>
+        </c:if>
+
+        <!-- Modal: Update Phone Number -->
+        <div class="modal fade" id="editPhoneModal" tabindex="-1" aria-labelledby="editPhoneModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h2 class="modal-title w-100 text-center" id="editPhoneModalLabel" style="font-size:1rem;font-weight:700;">Update Phone Number</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <form id="updatePhoneForm" action="${pageContext.request.contextPath}/user/update-phone" method="post">
+                <div class="modal-body">
+                  <input type="text" class="form-control" name="phone" placeholder="" value="${profile.phoneNumber != null ? profile.phoneNumber : ''}" required>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="submit" class="btn btn-save-modal">Update</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <script src="${pageContext.request.contextPath}/scripts/user/user-profile.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+                var toastList = toastElList.map(function(toastEl) {
+                    return new bootstrap.Toast(toastEl, {
+                        animation: true,
+                        autohide: true,
+                        delay: 3000 // Tự động ẩn sau 3 giây
+                    });
+                });
+                // Show all toasts
+                toastList.forEach(toast => toast.show());
+            });
+        </script>
     </body>
 </html>
