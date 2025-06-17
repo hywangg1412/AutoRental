@@ -11,7 +11,7 @@ public class CloudinaryServiceTest {
         try {
             Cloudinary cloudinary = CloudinaryConfig.getInstance();
             
-            CloudinaryService cloudinaryService = new CloudinaryService(cloudinary);
+            CloudinaryService cloudinaryService = new CloudinaryService();
 
             File imageFile = new File("D:/My_shit/ava.jpg");
             Map uploadResult = cloudinaryService.uploadImage(imageFile);
