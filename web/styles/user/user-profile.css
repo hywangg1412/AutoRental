@@ -306,20 +306,25 @@ input:disabled:active {
 }
 
 .btn-save {
-    background-color: #6fdc8c !important;
+    width: auto;
+    min-width: 120px;
+    border-radius: 12px !important;
+    font-size: 1.3rem;
+    font-weight: 600;
+    padding: 1.2rem 2rem;
+    background: #6fdc8c !important;
     color: #fff !important;
     border: none !important;
-    border-radius: 14px !important;
-    font-weight: 600;
-    padding: 0.6rem 2.2rem;
     box-shadow: 0 2px 8px rgba(0,0,0,0.07);
     transition: background 0.2s, box-shadow 0.2s;
+    line-height: 1.2 !important;
+    text-align: center;
 }
 
 .btn-save:hover, .btn-save:focus {
-    background-color: #4ec16e !important;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.13);
+    background: #4ec16e !important;
     color: #fff !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.13);
 }
 
 .btn-cancel {
@@ -387,3 +392,172 @@ input:disabled:active {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.modal.fade {
+  transition: opacity 0.7s cubic-bezier(.4,0,.2,1);
+}
+.modal.fade .modal-dialog {
+  transition: opacity 0.4s cubic-bezier(0.4,0,0.2,1);
+  transform: none !important;
+  /* opacity: 0; */
+}
+.modal.fade.show .modal-dialog {
+  opacity: 1;
+}
+
+.modal-content {
+    border-radius: 16px !important;
+    padding: 0 0 1.5rem 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+}
+
+.modal-title {
+    width: 100%;
+    text-align: center;
+    font-size: 2rem !important;
+    font-weight: 700 !important;
+    margin: 0.5rem 0 0.5rem 0;
+}
+
+.modal-header .btn-close {
+    position: absolute;
+    right: 1.5rem;
+    top: 1.5rem;
+    z-index: 2;
+}
+
+.modal-body .form-control, 
+.modal-body .form-select {
+    border-radius: 10px;
+    font-size: 1.15rem;
+    padding: 0.9rem 1.1rem;
+    margin-bottom: 1.2rem;
+}
+
+.modal-body .form-label {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+}
+
+.btn-save-modal {
+    width: 100%;
+    border-radius: 12px !important;
+    font-size: 1.3rem;
+    font-weight: 600;
+    padding: 1.2rem 2rem;
+    background: #6fdc8c !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    transition: background 0.2s, box-shadow 0.2s;
+    line-height: 3 !important;
+    text-align: center;
+}
+
+.btn-save-modal:hover, .btn-save-modal:focus {
+    background: #4ec16e !important;
+    color: #fff !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.13);
+}
+
+/* Toast Notifications */
+.toast-container {
+    z-index: 1056;
+}
+
+.toast {
+    opacity: 0;
+    transform: translateX(100%);
+}
+
+.toast.showing {
+    opacity: 1;
+    transform: translateX(0);
+    transition: all 0.3s ease-in-out;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.toast.hide {
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s ease-in-out;
+}
+
+.toast.success {
+    background-color: #4ec16e !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.toast.error {
+    background-color: #dc2626 !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.toast .toast-body {
+    padding: 0.8rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: white;
+}
+
+.toast .btn-close {
+    filter: brightness(0) invert(1);
+    opacity: 0.8;
+}
+
+.toast i {
+    margin-right: 8px;
+}
+
+/* Avatar Upload Styles */
+.account-info-block .info-list a, 
+.account-info-block .info-list .add-link {
+    text-decoration: none !important;
+}
+
+.avatar-upload-wrapper {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.avatar-upload-wrapper img {
+    width: 120px; 
+    height: 120px; 
+    object-fit: cover; 
+    border-radius: 50%;
+    border: 2px solid #eee;
+    transition: filter 0.2s;
+}
+
+.avatar-upload-wrapper:hover img {
+    filter: brightness(0.7);
+}
+
+.avatar-upload-icon {
+    position: absolute;
+    top: 50%; 
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-size: 2.2rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+
+.avatar-upload-wrapper:hover .avatar-upload-icon {
+    opacity: 1;
+}
+
+.avatar-upload-input {
+    display: none;
+}
+
+
+

@@ -14,7 +14,11 @@ public class CloudinaryConfig {
 
     static {
         try {
-            dotenv = Dotenv.load();
+            dotenv = Dotenv.configure()
+            .directory("L:/Workspace/SWP/AutoRental/.env")
+            .ignoreIfMalformed()
+            .ignoreIfMissing()
+            .load();
         } catch (DotenvException e) {
             System.err.println("Error while loading .env file - " + e.getMessage());
             throw new RuntimeException("Failed to load .env file");
