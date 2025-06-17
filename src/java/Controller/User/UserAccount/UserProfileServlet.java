@@ -1,4 +1,4 @@
-package Controller.User;
+package Controller.User.UserAccount;
 
 import Exception.NotFoundException;
 import Model.DTO.User.UserProfileDTO;

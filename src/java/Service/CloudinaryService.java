@@ -4,14 +4,19 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.Map;
+import io.github.cdimascio.dotenv.Dotenv;
+import java.util.HashMap;
+import Config.CloudinaryConfig;
+import java.io.ByteArrayOutputStream;
 
 public class CloudinaryService {
     private final Cloudinary cloudinary;
     
-    public CloudinaryService(Cloudinary cloudinary) {
-        this.cloudinary = cloudinary;
+    public CloudinaryService() {
+        this.cloudinary = CloudinaryConfig.getInstance();
     }
     
     public String getImageUrlAfterUpload(Map uploadResult) {
@@ -44,5 +49,28 @@ public class CloudinaryService {
     
     public Map uploadImageToFolder(byte[] fileBytes, String folderName) throws IOException {
         return cloudinary.uploader().upload(fileBytes, ObjectUtils.asMap("folder", folderName));
+    }
+
+    public String uploadAndGetUrl(InputStream inputStream, String publicId) throws IOException {
+        byte[] bytes = toByteArray(inputStream);
+        Map uploadResult = cloudinary.uploader().upload(bytes, ObjectUtils.asMap("public_id", publicId));
+        return getImageUrlAfterUpload(uploadResult);
+    }
+
+    public String uploadAndGetUrlToFolder(InputStream inputStream, String folderName, String publicId) throws IOException {
+        byte[] bytes = toByteArray(inputStream);
+        Map uploadResult = cloudinary.uploader().upload(bytes, ObjectUtils.asMap("folder", folderName, "public_id", publicId));
+        return getImageUrlAfterUpload(uploadResult);
+    }
+
+    private static byte[] toByteArray(InputStream in) throws IOException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        int nRead;
+        byte[] data = new byte[16384];
+        while ((nRead = in.read(data, 0, data.length)) != -1) {
+            buffer.write(data, 0, nRead);
+        }
+        buffer.flush();
+        return buffer.toByteArray();
     }
 }
