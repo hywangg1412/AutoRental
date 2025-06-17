@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class CarFeatureService implements ICarFeatureService {
+
     private CarFeatureRepository repository;
 
     public CarFeatureService() {
@@ -39,7 +40,7 @@ public class CarFeatureService implements ICarFeatureService {
         if (entry == null) {
             throw new InvalidDataException("Car feature cannot be null");
         }
-        if (entry.getFetureName() == null || entry.getFetureName().trim().isEmpty()) {
+        if (entry.getFeatureName() == null || entry.getFeatureName().trim().isEmpty()) {
             throw new InvalidDataException("Car feature name cannot be empty");
         }
     }
@@ -100,4 +101,12 @@ public class CarFeatureService implements ICarFeatureService {
             return null;
         }
     }
-} 
+
+    public List<CarFeature> findByCarId(UUID carId) throws SQLException {
+        return repository.findByCarId(carId);
+    }
+
+    public List<CarFeature> findAll() throws SQLException {
+        return repository.findAll();
+    }
+}

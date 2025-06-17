@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.time.LocalDateTime;
+import Utils.SessionUtil;
 
 // /staff/booking-approval-list
 public class BookingApprovalListServlet extends HttpServlet {
@@ -46,13 +47,18 @@ public class BookingApprovalListServlet extends HttpServlet {
 
             for (Booking booking : pendingBookings) {
                 BookingApproval approval = BAService.findByBookingId(booking.getBookingId());
-                // Get staff id từ session
-//                UUID staffId = UUID.fromString("CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCAA");
+                User staff = (User) SessionUtil.getSessionAttribute(request, "user");
+                if (staff == null) {
+                    response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp");
+                    return;
+                }
+                UUID staffId = staff.getUserId();
+                
                 if (approval == null) {
                     approval = new BookingApproval();
                     approval.setApprovalId(UUID.randomUUID());
                     approval.setBookingId(booking.getBookingId());
-                    approval.setStaffId(UUID.randomUUID());
+                    approval.setStaffId(staffId);
                     approval.setApprovalStatus("Pending");
                     approval.setApprovalDate(LocalDateTime.now());
                     BAService.add(approval);
