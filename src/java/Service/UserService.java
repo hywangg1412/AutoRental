@@ -94,4 +94,34 @@ public class UserService implements IUserService {
         }
     }
 
+
+    @Override
+    public boolean updateUserInfo(UUID userId, String username, String dob, String gender) {
+        try {
+            return userRepsitory.updateUserInfo(userId, username, dob, gender);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean updatePhoneNumber(UUID userId, String phoneNumber) {
+        try {
+            return userRepsitory.updatePhoneNumber(userId, phoneNumber);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }   
+
+    @Override
+    public boolean updateUserAvatar(UUID userId, String avatarUrl) {
+        try {
+            return userRepsitory.updateUserAvatar(userId, avatarUrl);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
