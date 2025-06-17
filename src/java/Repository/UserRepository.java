@@ -9,6 +9,8 @@ import java.sql.*;
 import java.util.UUID;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UserRepository implements IUserRepository {
 
@@ -191,5 +193,53 @@ public class UserRepository implements IUserRepository {
         user.setAccessFailedCount(rs.getInt("AccessFailedCount"));
         return user;
     }
+
+    @Override
+    public boolean updateUserInfo(UUID userId, String username, String dob, String gender) {
+        String sql = "UPDATE Users SET Username = ?, UserDOB = ?, Gender = ? WHERE UserId = ?";
+        try (Connection conn = dbContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, username);
+            if (dob != null && !dob.isEmpty()) {
+                ps.setDate(2, java.sql.Date.valueOf(dob));
+            } else {
+                ps.setNull(2, java.sql.Types.DATE);
+            }
+            ps.setString(3, gender);
+            ps.setObject(4, userId);
+            int rows = ps.executeUpdate();
+            return rows > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean updatePhoneNumber(UUID userId, String phoneNumber) {
+        String sql = "UPDATE Users SET PhoneNumber = ? WHERE UserId = ?";
+        try (Connection conn = dbContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, phoneNumber);
+            ps.setObject(2, userId);
+            int rows = ps.executeUpdate();
+            return rows > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+        @Override
+        public boolean updateUserAvatar(UUID userId, String avatarUrl) {
+            String sql = "UPDATE Users SET AvatarUrl = ? WHERE UserId = ?";
+            try (Connection conn = dbContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, avatarUrl);
+                ps.setObject(2, userId);
+                int rows = ps.executeUpdate();
+                return rows > 0;
+            } catch (SQLException ex) {
+                Logger.getLogger(UserRepository.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return false;
+        }
 
 }
