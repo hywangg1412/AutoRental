@@ -1,29 +1,35 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const toastElList = document.querySelectorAll('.toast');
-    
-    toastElList.forEach(function(toastEl, index) {
-        // Thêm class dựa vào nội dung
-        const message = toastEl.querySelector('.toast-body').textContent.trim().toLowerCase();
-        toastEl.classList.add(message.includes('success') ? 'success' : 'error');
-        
-        // Khởi tạo toast
-        const toast = new bootstrap.Toast(toastEl, {
-            animation: true,
-            autohide: true,
-            delay: 3000
-        });
-        
-        // Hiển thị toast với delay
-        setTimeout(() => {
-            toast.show();
-        }, index * 300);
-        
-        // Xử lý animation khi ẩn
-        toastEl.addEventListener('hide.bs.toast', () => {
-            toastEl.classList.add('hide');
-        });
-    });
+// Toast JS nhúng trực tiếp
+function showToast(message, type = 'success', duration = 3000) {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        document.body.appendChild(container);
+    }
+    container.innerHTML = '';
+    const toast = document.createElement('div');
+    toast.className = `toast-custom ${type} show`;
+    toast.innerHTML = `
+        <div class="toast-body">
+            <span class="toast-icon">
+                ${type === 'success' ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-exclamation-circle"></i>'}
+            </span>
+            <span>${message}</span>
+            <button type="button" class="btn-close ms-2" aria-label="Close">&times;</button>
+        </div>
+    `;
+    container.appendChild(toast);
+    toast.querySelector('.btn-close').onclick = () => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 400);
+    };
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 400);
+    }, duration);
+}
 
+document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('updateUserInfoForm');
     if (form) {
         form.addEventListener('submit', function(e) {
@@ -54,22 +60,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 dobError = 'Date of birth cannot be empty.';
                 hasError = true;
             } else {
-                if (!/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/.test(dob)) {
-                    dobError = 'Invalid date format!';
+                let birthDate = new Date(dob);
+                let today = new Date();
+                let age = today.getFullYear() - birthDate.getFullYear();
+                let m = today.getMonth() - birthDate.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                if (age < 18) {
+                    dobError = 'You must be at least 18 years old!';
                     hasError = true;
-                } else {
-                    let parts = dob.split('/');
-                    let birthDate = new Date(parts[2], parts[1] - 1, parts[0]);
-                    let today = new Date();
-                    let age = today.getFullYear() - birthDate.getFullYear();
-                    let m = today.getMonth() - birthDate.getMonth();
-                    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-                        age--;
-                    }
-                    if (age < 18) {
-                        dobError = 'You must be at least 18 years old!';
-                        hasError = true;
-                    }
                 }
             }
 
@@ -92,6 +92,203 @@ document.addEventListener('DOMContentLoaded', function() {
             const modal = bootstrap.Modal.getInstance(document.getElementById('editUserInfoModal'));
             if (modal) {
                 modal.hide();
+            }
+        });
+    }
+
+    const editBtn = document.getElementById('editDriverLicenseBtn');
+    const cancelBtn = document.getElementById('cancelDriverLicenseBtn');
+    const saveBtn = document.getElementById('saveDriverLicenseBtn');
+    const inputs = [
+        document.getElementById('licenseNumber'),
+        document.getElementById('fullName'),
+        document.getElementById('dob')
+    ];
+    const formDL = document.getElementById('driverLicenseInfoForm');
+    const licenseImageInput = document.getElementById('licenseImageInput');
+
+    if (editBtn && cancelBtn && saveBtn && formDL) {
+        let originalValues = {};
+        
+        function storeOriginalValues() {
+            inputs.forEach(input => {
+                originalValues[input.id] = input.value;
+            });
+        }
+
+        function resetToOriginalValues() {
+            inputs.forEach((input, idx) => {
+                input.value = originalValues[input.id];
+                input.disabled = true;
+            });
+        }
+
+        function validateDriverLicenseFields() {
+            let valid = true;
+            document.getElementById('licenseNumberError').textContent = '';
+            document.getElementById('fullNameError').textContent = '';
+            document.getElementById('dobError').textContent = '';
+
+            const licenseNumberVal = inputs[0].value.trim();
+            const fullNameVal = inputs[1].value.trim();
+            const dobVal = inputs[2].value;
+
+            if (!licenseNumberVal) {
+                document.getElementById('licenseNumberError').textContent = 'License number is required';
+                valid = false;
+            } else if (!/^[0-9]{12}$/.test(licenseNumberVal)) {
+                document.getElementById('licenseNumberError').textContent = 'License number must be exactly 12 digits and contain only numbers';
+                valid = false;
+            }
+
+            if (!fullNameVal) {
+                document.getElementById('fullNameError').textContent = 'Full name is required';
+                valid = false;
+            } else if (!/^[\p{L} ]+$/u.test(fullNameVal)) {
+                document.getElementById('fullNameError').textContent = 'Full name must not contain special characters or numbers';
+                valid = false;
+            }
+
+            if (!dobVal) {
+                document.getElementById('dobError').textContent = 'Date of birth is required';
+                valid = false;
+            } else {
+                const dob = new Date(dobVal);
+                const today = new Date();
+                if (dob > today) {
+                    document.getElementById('dobError').textContent = 'Date of birth cannot be in the future';
+                    valid = false;
+                } else {
+                    let age = today.getFullYear() - dob.getFullYear();
+                    let m = today.getMonth() - dob.getMonth();
+                    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+                        age--;
+                    }
+                    if (age < 18) {
+                        document.getElementById('dobError').textContent = 'You must be at least 18 years old';
+                        valid = false;
+                    }
+                }
+            }
+            saveBtn.disabled = !valid;
+            return valid;
+        }
+
+        editBtn.addEventListener('click', function() {
+            storeOriginalValues();
+            inputs.forEach(input => input.disabled = false);
+            cancelBtn.classList.remove('d-none');
+            saveBtn.classList.remove('d-none');
+            saveBtn.disabled = true;
+            editBtn.classList.add('d-none');
+        });
+
+        cancelBtn.addEventListener('click', function() {
+            resetToOriginalValues();
+            inputs.forEach(input => input.disabled = true);
+            cancelBtn.classList.add('d-none');
+            saveBtn.classList.add('d-none');
+            editBtn.classList.remove('d-none');
+        });
+
+        inputs.forEach(input => {
+            input.addEventListener('input', validateDriverLicenseFields);
+        });
+
+        // Handle image upload separately
+        licenseImageInput.addEventListener('change', function(e) {
+            if (this.files && this.files[0]) {
+                const formData = new FormData();
+                formData.append('licenseImage', this.files[0]);
+                formData.append('action', 'uploadImage');
+
+                fetch(formDL.action, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    } else {
+                        return response.text();
+                    }
+                })
+                .then(data => {
+                    if (data) {
+                        try {
+                            const result = JSON.parse(data);
+                            if (result.success) {
+                                // Update image preview
+                                const preview = document.querySelector('.driver-license-img-preview');
+                                if (preview) {
+                                    preview.src = result.imageUrl;
+                                } else {
+                                    const uploadArea = document.querySelector('.driver-license-upload-area');
+                                    uploadArea.innerHTML = `
+                                        <img src="${result.imageUrl}" alt="Driver License Image" class="driver-license-img-preview">
+                                        <span class="driver-license-upload-icon">
+                                            <i class="bi bi-camera-fill"></i>
+                                        </span>
+                                    `;
+                                }
+                                showToast('success', 'Driver license image updated successfully!');
+                            } else {
+                                showToast('error', result.message || 'Failed to upload image');
+                            }
+                        } catch (e) {
+                            window.location.reload();
+                        }
+                    }
+                })
+                .catch(error => {
+                    showToast('error', 'Failed to upload image. Please try again.');
+                });
+            }
+        });
+
+        // Handle information update separately
+        saveBtn.addEventListener('click', function() {
+            if (validateDriverLicenseFields()) {
+                inputs.forEach(input => input.disabled = false);
+                
+                const formData = new FormData();
+                formData.append('action', 'updateInfo');
+                formData.append('licenseNumber', inputs[0].value);
+                formData.append('fullName', inputs[1].value);
+                formData.append('dob', inputs[2].value);
+                
+                fetch(formDL.action, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    } else {
+                        return response.text();
+                    }
+                })
+                .then(data => {
+                    if (data) {
+                        try {
+                            const result = JSON.parse(data);
+                            if (result.success) {
+                                showToast('success', 'Driver license information updated successfully!');
+                                inputs.forEach(input => input.disabled = true);
+                                editBtn.classList.remove('d-none');
+                                cancelBtn.classList.add('d-none');
+                                saveBtn.classList.add('d-none');
+                            } else {
+                                showToast('error', result.message || 'Failed to update information');
+                            }
+                        } catch (e) {
+                            window.location.reload();
+                        }
+                    }
+                })
+                .catch(error => {
+                    showToast('error', 'Failed to update information. Please try again.');
+                });
             }
         });
     }
