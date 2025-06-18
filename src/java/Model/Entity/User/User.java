@@ -1,4 +1,4 @@
-package Model.Entity;
+package Model.Entity.User;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
