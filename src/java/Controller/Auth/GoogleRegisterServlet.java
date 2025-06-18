@@ -2,11 +2,11 @@ package Controller.Auth;
 
 import Mapper.UserMapper;
 import Model.Entity.OAuth.GoogleUser;
-import Model.Entity.User;
+import Model.Entity.User.User;
 import Model.Entity.OAuth.UserLogins;
 import Model.Entity.Role.Role;
 import Model.Entity.Role.UserRole;
-import Service.UserService;
+import Service.User.UserService;
 import Service.Auth.GoogleAuthService;
 import Service.Auth.UserLoginsService;
 import Service.Role.RoleService;

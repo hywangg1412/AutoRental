@@ -1,7 +1,8 @@
 
-package Repository.Interfaces;
+package Repository.Interfaces.IUser;
 
-import Model.Entity.User;
+import Model.Entity.User.User;
+import Repository.Interfaces.Repository;
 import java.util.UUID;
 
 

@@ -1,8 +1,8 @@
-package Repository;
+package Repository.User;
 
 import Config.DBContext;
-import Model.Entity.User;
-import Repository.Interfaces.IUserRepository;
+import Model.Entity.User.User;
+import Repository.Interfaces.IUser.IUserRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.*;
