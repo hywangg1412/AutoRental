@@ -62,12 +62,10 @@ GO
 CREATE TABLE [DriverLicenses] (
     [LicenseId] UNIQUEIDENTIFIER NOT NULL,
     [UserId] UNIQUEIDENTIFIER NOT NULL,
-    [LicenseNumber] NVARCHAR(50) NOT NULL,
-    [FullName] NVARCHAR(100) NOT NULL,
-    [DOB] DATE NOT NULL,
+    [LicenseNumber] NVARCHAR(50) NULL,
+    [FullName] NVARCHAR(100) NULL,
+    [DOB] DATE NULL,
     [LicenseImage] NVARCHAR(MAX) NULL,
-    [Status] VARCHAR(20) NULL, --DEFAULT 'Pending', -- Pending, Verified, Rejected
-    [Note] NVARCHAR(255) NULL,
     [CreatedDate] DATETIME2 NULL,-- DEFAULT GETDATE(),
     CONSTRAINT [PK_DriverLicenses] PRIMARY KEY ([LicenseId]),
     CONSTRAINT [FK_DriverLicenses_Users] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE
