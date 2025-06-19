@@ -680,56 +680,61 @@ input:disabled:active {
 }
 
 /* Toast CSS nhúng trực tiếp */
-#toast-container {
+.toast-container {
     position: fixed;
     bottom: 0;
     right: 0;
     z-index: 9999;
     padding: 1.5rem;
 }
-.toast-custom {
+
+.toast {
     min-width: 320px;
     max-width: 400px;
     border-radius: 12px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.18);
     font-size: 1rem;
     font-weight: 500;
-    opacity: 0;
-    transform: translateY(40px) scale(0.98);
-    transition: opacity 0.4s, transform 0.4s;
-    pointer-events: auto;
     margin-bottom: 1rem;
 }
-.toast-custom.show {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+
+.toast.bg-success {
+    background-color: #10b981 !important;
 }
-.toast-custom .toast-body {
+
+.toast.bg-danger {
+    background-color: #dc2626 !important;
+}
+
+.toast .toast-body {
     display: flex;
     align-items: center;
     gap: 10px;
+    padding: 1rem 1.25rem;
 }
-.toast-custom .toast-icon {
-    font-size: 1.5rem;
-}
-.toast-custom.success {
-    background: #e6f9f0;
-    color: #1abc9c;
-    border-left: 5px solid #1abc9c;
-}
-.toast-custom.error {
-    background: #ffeaea;
-    color: #e74c3c;
-    border-left: 5px solid #e74c3c;
-}
-.toast-custom .btn-close {
+
+.toast .btn-close {
     margin-left: auto;
     filter: none;
-    opacity: 0.7;
+    opacity: 0.8;
     background: none;
     border: none;
     font-size: 1.2rem;
     cursor: pointer;
+    color: white;
+}
+
+.toast .btn-close:hover {
+    opacity: 1;
+}
+
+/* Ensure toast container is visible */
+.toast-container.position-fixed {
+    position: fixed !important;
+    bottom: 0 !important;
+    right: 0 !important;
+    z-index: 9999 !important;
+    padding: 1.5rem !important;
 }
 
 
