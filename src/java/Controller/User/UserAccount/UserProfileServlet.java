@@ -2,10 +2,12 @@ package Controller.User.UserAccount;
 
 import Exception.NotFoundException;
 import Model.DTO.User.UserProfileDTO;
-import Model.Entity.User;
+import Model.Entity.User.User;
 import Model.Entity.OAuth.UserLogins;
-import Service.UserService;
+import Service.User.UserService;
 import Service.Auth.UserLoginsService;
+import Service.User.DriverLicenseService;
+import Model.Entity.User.DriverLicense;
 import Utils.SessionUtil;
 import java.io.IOException;
 import java.util.List;
@@ -30,11 +32,13 @@ public class UserProfileServlet extends HttpServlet {
 
     private UserService userService;
     private UserLoginsService userLoginsService;
+    private DriverLicenseService driverLicenseService;
 
     @Override
     public void init() {
         userService = new UserService();
         userLoginsService = new UserLoginsService();
+        driverLicenseService = new DriverLicenseService();
     }
 
     private UserProfileDTO mapUserToProfileDTO(User user, List<UserLogins> userLogins) {
@@ -78,6 +82,15 @@ public class UserProfileServlet extends HttpServlet {
             List<UserLogins> userLogins = userLoginsService.findByUserId(user.getUserId());
             UserProfileDTO profile = mapUserToProfileDTO(user, userLogins);
             request.setAttribute("profile", profile);
+
+            DriverLicense driverLicense = null;
+            try {
+                driverLicense = driverLicenseService.findByUserId(user.getUserId());
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, "Error getting driver license", e);
+            }
+            request.setAttribute("driverLicense", driverLicense);
+
             request.getRequestDispatcher("/pages/user/user-profile.jsp").forward(request, response);
 
         } catch (Exception e) {

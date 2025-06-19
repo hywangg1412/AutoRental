@@ -3,7 +3,6 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Booking/BookingApprovalServlet.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/web/WEB-INF/web.xml</file>
             <file>file:/L:/Workspace/SWP/AutoRental/nbproject/build-impl.xml</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Config/CloudinaryConfig.java</file>
@@ -25,13 +24,12 @@
             <file>file:/L:/Workspace/SWP/AutoRental/web/pages/user/request-delete.jsp</file>
             <file>file:/L:/Workspace/SWP/AutoRental/web/styles/user/request-delete.css</file>
             <file>file:/L:/Workspace/SWP/AutoRental/web/pages/user/user-profile.jsp</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/web/styles/user/about.css</file>
             <file>file:/L:/Workspace/SWP/AutoRental/web/styles/user/change-password.css</file>
             <file>file:/L:/Workspace/SWP/AutoRental/web/pages/includes/nav.jsp</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/Entity/OAuth/UserLogins.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/Auth/UserLoginsRepository.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/Interfaces/IAuth/IUserLoginsRepository.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/Entity/User.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/Entity/User/User.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Auth/FacebookLoginServlet.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Auth/FacebookRegisterServlet.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Car/CarServlet.java</file>
@@ -40,6 +38,17 @@
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Auth/GoogleLoginServlet.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Auth/NormalLoginServlet.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/DTO/CarDetailDTO.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/User/UserAccount/UserProfileServlet.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/Interfaces/IUser/IUserRepository.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/User/UserRepository.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Service/Interfaces/IUser/IUserService.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/User/UserAccount/UpdateDriverLicenseServlet.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/Entity/User/DriverLicense.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Auth/AuthorizationFilter.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Service/Interfaces/IUser/IDriverLicenseService.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Service/User/DriverLicenseService.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/Interfaces/IUser/IDriverLicenseRepository.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/User/DriverLicenseRepository.java</file>
         </group>
     </open-files>
 </project-private>

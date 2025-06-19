@@ -1,4 +1,3 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
@@ -38,6 +37,7 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/flaticon.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/icomoon.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/common/toast.css">
     </head>
     <body>
         <!-- Toast Container -->
@@ -223,51 +223,69 @@
                                         <div class="d-flex justify-content-between align-items-center mb-4">
                                             <div class="d-flex align-items-center gap-3">
                                                 <h2 class="h5 fw-semibold mb-0">Driver's License</h2>
-                                                <span class="badge verification-failed px-3 py-1">
-                                                    <i class="bi bi-exclamation-triangle me-1"></i>Verification failed
-                                                </span>
                                             </div>
                                             <div class="driver-license-actions">
-                                                <button type="button" class="btn btn-outline-secondary btn-edit">
+                                                <button type="button" class="btn btn-outline-secondary btn-edit" id="editDriverLicenseBtn">
                                                     <i class="bi bi-pencil me-1"></i>Edit
                                                 </button>
                                                 <div class="d-flex gap-2">
-                                                    <button type="button" class="btn btn-cancel d-none">Cancel</button>
-                                                    <button type="button" class="btn btn-save d-none">Update</button>
+                                                    <button type="button" class="btn btn-cancel d-none" id="cancelDriverLicenseBtn">Cancel</button>
+                                                    <button type="button" class="btn btn-save d-none" id="saveDriverLicenseBtn">Update</button>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row g-5">
-                                            <div class="col-md-4">
-                                                <h6 class="text-muted mb-3">Image</h6>
-                                                <div class="upload-area p-5 text-center">
-                                                    <div class="upload-icon rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
-                                                        <i class="bi bi-upload"></i>
+                                        <form id="driverLicenseInfoForm" action="${pageContext.request.contextPath}/user/update-driver-license" method="post" enctype="multipart/form-data">
+                                            <div class="row g-5">
+                                                <div class="col-md-5">
+                                                    <h6 class="driver-license-label">Image</h6>
+                                                    <label class="driver-license-upload-area" style="width:100%;display:block;cursor:pointer;position:relative;">
+                                                        <c:choose>
+                                                            <c:when test="${not empty driverLicense.licenseImage}">
+                                                                <img src="${driverLicense.licenseImage}"
+                                                                     alt="Driver License Image"
+                                                                     class="driver-license-img-preview">
+                                                                <span class="driver-license-upload-icon">
+                                                                    <i class="bi bi-camera-fill"></i>
+                                                                </span>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <div class="upload-area-empty">
+                                                                    <div class="upload-icon">
+                                                                        <i class="bi bi-upload"></i>
+                                                                    </div>
+                                                                    <div class="upload-text">Click to upload</div>
+                                                                </div>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                        <input type="file" name="licenseImage" accept="image/*" style="display:none;" id="licenseImageInput">
+                                                    </label>
+                                                    <c:if test="${not empty licenseImageError}">
+                                                        <div class="text-danger">${licenseImageError}</div>
+                                                    </c:if>
+                                                </div>
+                                                <div class="col-md-7">
+                                                    <h6 class="text-muted mb-4">General Information</h6>
+                                                    <div class="mb-4">
+                                                        <label class="form-label text-muted">Driver's License Number</label>
+                                                        <input type="text" class="form-control driver-license-input" name="licenseNumber" id="licenseNumber"
+                                                               value="${driverLicense.licenseNumber}" disabled required>
+                                                        <div class="invalid-feedback" id="licenseNumberError"></div>
                                                     </div>
-                                                    <p class="text-muted mb-0">Click to upload</p>
+                                                    <div class="mb-4">
+                                                        <label class="form-label text-muted">Full name</label>
+                                                        <input type="text" class="form-control driver-license-input" name="fullName" id="fullName"
+                                                               value="${driverLicense.fullName}" disabled required>
+                                                        <div class="invalid-feedback" id="fullNameError"></div>
+                                                    </div>
+                                                    <div class="mb-4">
+                                                        <label class="form-label text-muted">Date of birth</label>
+                                                        <input type="date" class="form-control driver-license-input" name="dob" id="dob"
+                                                               value="${driverLicense.dob}" disabled required>
+                                                        <div class="invalid-feedback" id="dobError"></div>
+                                                    </div>
                                                 </div>
                                             </div>
-
-                                            <div class="col-md-8">
-                                                <h6 class="text-muted mb-4">General Information</h6>
-
-                                                <div class="mb-4">
-                                                    <label class="form-label text-muted">Driver's License Number</label>
-                                                    <input type="text" class="form-control driver-license-input" placeholder="" disabled>
-                                                </div>
-
-                                                <div class="mb-4">
-                                                    <label class="form-label text-muted">Full name</label>
-                                                    <input type="text" class="form-control driver-license-input" placeholder="" disabled>
-                                                </div>
-
-                                                <div class="mb-4">
-                                                    <label class="form-label text-muted">Date of birth</label>
-                                                    <input type="date" class="form-control driver-license-input" placeholder="" disabled>
-                                                </div>
-                                            </div>
-                                        </div>
-
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -311,9 +329,10 @@
             <div class="modal-content">
               <div class="modal-header">
                 <h2 class="modal-title fs-4" id="editUserInfoModalLabel">Update Information</h2>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <form id="updateUserInfoForm" action="${pageContext.request.contextPath}/user/update-info" method="POST">
+                <input type="hidden" name="fromUpdateUserInfo" value="true" />
                 <div class="modal-body">
                   <div class="mb-3">
                     <label class="form-label">Username</label>
@@ -350,7 +369,7 @@
           </div>
         </div>
 
-        <c:if test="${not empty dobError}">
+        <c:if test="${not empty dobError && param.fromUpdateUserInfo == 'true'}">
           <script>
             document.addEventListener("DOMContentLoaded", function() {
               var myModal = new bootstrap.Modal(document.getElementById('editUserInfoModal'));
@@ -379,19 +398,5 @@
           </div>
         </div>
         <script src="${pageContext.request.contextPath}/scripts/user/user-profile.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                var toastElList = [].slice.call(document.querySelectorAll('.toast'));
-                var toastList = toastElList.map(function(toastEl) {
-                    return new bootstrap.Toast(toastEl, {
-                        animation: true,
-                        autohide: true,
-                        delay: 3000 // Tự động ẩn sau 3 giây
-                    });
-                });
-                // Show all toasts
-                toastList.forEach(toast => toast.show());
-            });
-        </script>
     </body>
 </html>

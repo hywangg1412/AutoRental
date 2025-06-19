@@ -1,6 +1,7 @@
-package Service.Interfaces;
+package Service.Interfaces.IUser;
 
-import Model.Entity.User;
+import Model.Entity.User.User;
+import Service.Interfaces.Service;
 import java.util.UUID;
 
 public interface IUserService extends Service<User>{

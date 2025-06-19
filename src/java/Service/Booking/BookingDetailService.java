@@ -4,11 +4,11 @@ import Model.DTO.BookingDTO;
 import Model.Entity.Booking.Booking;
 import Model.Entity.Car.Car;
 import Model.Entity.Car.CarImage;
-import Model.Entity.User;
+import Model.Entity.User.User;
 import Repository.Booking.BookingRepository;
 import Repository.Car.CarImageRepository;
 import Service.Car.CarService;
-import Service.UserService;
+import Service.User.UserService;
 
 import java.util.UUID;
 

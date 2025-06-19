@@ -1,6 +1,6 @@
 package Controller.Auth;
 
-import Model.Entity.User;
+import Model.Entity.User.User;
 import Model.Entity.Role.Role;
 import Model.Entity.Role.UserRole;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import Utils.SessionUtil;
 import Utils.ObjectUtils;
 import java.time.LocalDateTime;
 import java.util.Date;
-import Service.UserService;
+import Service.User.UserService;
 import Service.Role.RoleService;
 import Service.Role.UserRoleService;
 import java.util.UUID;

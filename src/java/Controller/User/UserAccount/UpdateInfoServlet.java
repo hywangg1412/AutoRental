@@ -1,8 +1,8 @@
 package Controller.User.UserAccount;
 
 import Exception.NotFoundException;
-import Model.Entity.User;
-import Service.UserService;
+import Model.Entity.User.User;
+import Service.User.UserService;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;

@@ -1,12 +1,12 @@
-package Service;
+package Service.User;
 
 import Exception.EmptyDataException;
 import Exception.EventException;
 import Exception.InvalidDataException;
 import Exception.NotFoundException;
-import Model.Entity.User;
-import Repository.UserRepository;
-import Service.Interfaces.IUserService;
+import Model.Entity.User.User;
+import Repository.User.UserRepository;
+import Service.Interfaces.IUser.IUserService;
 import java.sql.SQLException;
 import java.util.UUID;
 import java.util.function.Predicate;
