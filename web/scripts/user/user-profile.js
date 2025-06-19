@@ -262,3 +262,81 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// Toast logic: showToast function and auto-show for server-rendered toasts
+(function() {
+    function waitForBootstrap() {
+        if (typeof bootstrap !== 'undefined' && bootstrap.Toast) {
+            // Auto-show all server-rendered toasts with animation
+            var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+            var toastList = toastElList.map(function(toastEl) {
+                toastEl.classList.add('slide-in');
+                toastEl.addEventListener('animationend', function handler(e) {
+                    if (e.animationName === 'slideInRight') {
+                        toastEl.classList.remove('slide-in');
+                        toastEl.removeEventListener('animationend', handler);
+                    }
+                });
+                var bsToast = new bootstrap.Toast(toastEl, {
+                    animation: true,
+                    autohide: true,
+                    delay: 3000 
+                });
+                toastEl.addEventListener('hide.bs.toast', () => {
+                    toastEl.classList.add('slide-out');
+                });
+                toastEl.addEventListener('hidden.bs.toast', () => {
+                    toastEl.remove();
+                });
+                return bsToast;
+            });
+            toastList.forEach(toast => toast.show());
+
+            // Global showToast function
+            window.showToast = function(message, type = 'success', duration = 3000) {
+                let container = document.querySelector('.toast-container');
+                if (!container) {
+                    container = document.createElement('div');
+                    container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+                    document.body.appendChild(container);
+                }
+                const toast = document.createElement('div');
+                toast.className = `toast align-items-center text-white border-0 ${type == 'success' ? 'bg-success' : 'bg-danger'} slide-in`;
+                toast.setAttribute('role', 'alert');
+                toast.setAttribute('aria-live', 'assertive');
+                toast.setAttribute('aria-atomic', 'true');
+                toast.innerHTML = `
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <i class="fas ${type == 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} me-2"></i>
+                            ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                `;
+                container.appendChild(toast);
+                toast.addEventListener('animationend', function handler(e) {
+                    if (e.animationName === 'slideInRight') {
+                        toast.classList.remove('slide-in');
+                        toast.removeEventListener('animationend', handler);
+                    }
+                });
+                const bsToast = new bootstrap.Toast(toast, {
+                    animation: true,
+                    autohide: true,
+                    delay: duration
+                });
+                toast.addEventListener('hide.bs.toast', () => {
+                    toast.classList.add('slide-out');
+                });
+                toast.addEventListener('hidden.bs.toast', () => {
+                    toast.remove();
+                });
+                bsToast.show();
+            };
+        } else {
+            setTimeout(waitForBootstrap, 100);
+        }
+    }
+    document.addEventListener('DOMContentLoaded', waitForBootstrap);
+})();
