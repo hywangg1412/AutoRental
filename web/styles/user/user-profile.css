@@ -679,62 +679,55 @@ input:disabled:active {
     color: #fff;
 }
 
-/* Toast CSS nhúng trực tiếp */
-.toast-container {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    z-index: 9999;
-    padding: 1.5rem;
-}
-
 .toast {
-    min-width: 320px;
-    max-width: 400px;
-    border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-    font-size: 1rem;
-    font-weight: 500;
-    margin-bottom: 1rem;
-}
+  border-radius: 10px !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12), 0 1.5px 4px rgba(0,0,0,0.08);
+  font-family: 'Poppins', Arial, sans-serif;
+  font-size: 1.05rem;
+  padding: 1rem 1.5rem;
+  min-width: 320px;
+  max-width: 400px;
+  margin-bottom: 1.2rem;
+  opacity: 1;
+  transition: box-shadow 0.2s, transform 0.2s;
+  background: #01d28e;
 
-.toast.bg-success {
-    background-color: #10b981 !important;
 }
-
 .toast.bg-danger {
-    background-color: #dc2626 !important;
+  background: linear-gradient(90deg, #e74c3c 0%, #c0392b 100%);
 }
-
 .toast .toast-body {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 1rem 1.25rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  display: flex;
+  align-items: center;
 }
-
+.toast .fa-check-circle, .toast .fa-exclamation-circle {
+  font-size: 1.3em;
+  margin-right: 0.7em;
+}
 .toast .btn-close {
-    margin-left: auto;
-    filter: none;
-    opacity: 0.8;
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    cursor: pointer;
-    color: white;
+  filter: invert(1);
+  opacity: 0.7;
+  transition: opacity 0.2s;
 }
-
 .toast .btn-close:hover {
-    opacity: 1;
+  opacity: 1;
 }
 
-/* Ensure toast container is visible */
-.toast-container.position-fixed {
-    position: fixed !important;
-    bottom: 0 !important;
-    right: 0 !important;
-    z-index: 9999 !important;
-    padding: 1.5rem !important;
+@keyframes slideOutRight {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(120%);
+  }
+}
+
+.toast.slide-out {
+  animation: slideOutRight 0.7s forwards;
 }
 
 
