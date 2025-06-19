@@ -1,4 +1,3 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
@@ -330,7 +329,7 @@
             <div class="modal-content">
               <div class="modal-header">
                 <h2 class="modal-title fs-4" id="editUserInfoModalLabel">Update Information</h2>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <form id="updateUserInfoForm" action="${pageContext.request.contextPath}/user/update-info" method="POST">
                 <input type="hidden" name="fromUpdateUserInfo" value="true" />
@@ -401,19 +400,77 @@
         <script src="${pageContext.request.contextPath}/scripts/user/user-profile.js"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                var toastElList = [].slice.call(document.querySelectorAll('.toast'));
-                var toastList = toastElList.map(function(toastEl) {
-                    return new bootstrap.Toast(toastEl, {
-                        animation: true,
-                        autohide: true,
-                        delay: 3000 // Tự động ẩn sau 3 giây
-                    });
-                });
-                // Show all toasts
-                toastList.forEach(toast => toast.show());
+                // Wait for Bootstrap to be available
+                function waitForBootstrap() {
+                    if (typeof bootstrap !== 'undefined' && bootstrap.Toast) {
+                        // Initialize existing toasts from server
+                        var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+                        var toastList = toastElList.map(function(toastEl) {
+                            return new bootstrap.Toast(toastEl, {
+                                animation: true,
+                                autohide: true,
+                                delay: 3000 
+                            });
+                        });
+                        toastList.forEach(toast => toast.show());
+                        
+                        window.showToast = function(message, type = 'success', duration = 3000) {
+                            let container = document.querySelector('.toast-container');
+                            if (!container) {
+                                container = document.createElement('div');
+                                container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+                                document.body.appendChild(container);
+                            }
+                            
+                            const toast = document.createElement('div');
+                            toast.className = `toast align-items-center text-white border-0 ${type == 'success' ? 'bg-success' : 'bg-danger'}`;
+                            toast.setAttribute('role', 'alert');
+                            toast.setAttribute('aria-live', 'assertive');
+                            toast.setAttribute('aria-atomic', 'true');
+                            
+                            toast.innerHTML = `
+                                <div class="d-flex">
+                                    <div class="toast-body">
+                                        <i class="fas ${type == 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} me-2"></i>
+                                        ${message}
+                                    </div>
+                                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                                </div>
+                            `;
+                            
+                            container.appendChild(toast);
+                            
+                            const bsToast = new bootstrap.Toast(toast, {
+                                animation: true,
+                                autohide: true,
+                                delay: duration
+                            });
+                            
+                            bsToast.show();
+                            
+                            toast.addEventListener('hidden.bs.toast', () => {
+                                toast.remove();
+                            });
+                        };
+                    } else {
+                        setTimeout(waitForBootstrap, 100);
+                    }
+                }
+                
+                waitForBootstrap();
             });
         </script>
-        <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous"></script>
         <script src="${pageContext.request.contextPath}/scripts/common/toast.js"></script>
+        <script>
+            // Test toast function
+            setTimeout(() => {
+                if (typeof window.showToast === 'function') {
+                    console.log('Toast function is available');
+                } else {
+                    console.log('Toast function is not available');
+                }
+            }, 2000);
+        </script>
     </body>
 </html>

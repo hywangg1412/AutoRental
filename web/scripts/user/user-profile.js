@@ -1,34 +1,3 @@
-// Toast JS nhúng trực tiếp
-function showToast(message, type = 'success', duration = 3000) {
-    let container = document.getElementById('toast-container');
-    if (!container) {
-        container = document.createElement('div');
-        container.id = 'toast-container';
-        document.body.appendChild(container);
-    }
-    container.innerHTML = '';
-    const toast = document.createElement('div');
-    toast.className = `toast-custom ${type} show`;
-    toast.innerHTML = `
-        <div class="toast-body">
-            <span class="toast-icon">
-                ${type === 'success' ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-exclamation-circle"></i>'}
-            </span>
-            <span>${message}</span>
-            <button type="button" class="btn-close ms-2" aria-label="Close">&times;</button>
-        </div>
-    `;
-    container.appendChild(toast);
-    toast.querySelector('.btn-close').onclick = () => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 400);
-    };
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 400);
-    }, duration);
-}
-
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('updateUserInfoForm');
     if (form) {
@@ -231,9 +200,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                         </span>
                                     `;
                                 }
-                                showToast('success', 'Driver license image updated successfully!');
+                                showToast('Driver license image updated successfully!', 'success');
                             } else {
-                                showToast('error', result.message || 'Failed to upload image');
+                                showToast(result.message || 'Failed to upload image', 'error');
                             }
                         } catch (e) {
                             window.location.reload();
@@ -241,7 +210,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 })
                 .catch(error => {
-                    showToast('error', 'Failed to upload image. Please try again.');
+                    showToast('Failed to upload image. Please try again.', 'error');
                 });
             }
         });
@@ -273,13 +242,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         try {
                             const result = JSON.parse(data);
                             if (result.success) {
-                                showToast('success', 'Driver license information updated successfully!');
+                                showToast('Driver license information updated successfully!', 'success');
                                 inputs.forEach(input => input.disabled = true);
                                 editBtn.classList.remove('d-none');
                                 cancelBtn.classList.add('d-none');
                                 saveBtn.classList.add('d-none');
                             } else {
-                                showToast('error', result.message || 'Failed to update information');
+                                showToast(result.message || 'Failed to update information', 'error');
                             }
                         } catch (e) {
                             window.location.reload();
@@ -287,7 +256,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 })
                 .catch(error => {
-                    showToast('error', 'Failed to update information. Please try again.');
+                    showToast('Failed to update information. Please try again.', 'error');
                 });
             }
         });
