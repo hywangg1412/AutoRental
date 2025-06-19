@@ -1,7 +1,7 @@
 package Controller.User.UserAccount;
 
 import Service.CloudinaryService;
-import Service.UserService;
+import Service.User.UserService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import java.io.InputStream;
-import Model.Entity.User;
+import Model.Entity.User.User;
 import java.util.UUID;
 import jakarta.servlet.annotation.MultipartConfig;
 

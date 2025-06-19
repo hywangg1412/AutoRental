@@ -2,7 +2,7 @@ package Mapper;
 
 import Model.Entity.OAuth.FacebookUser;
 import Model.Entity.OAuth.GoogleUser;
-import Model.Entity.User;
+import Model.Entity.User.User;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;

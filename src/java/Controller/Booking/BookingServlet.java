@@ -1,7 +1,7 @@
 package Controller.Booking;
 
 import Model.Entity.Booking.Booking;
-import Model.Entity.User;
+import Model.Entity.User.User;
 import Service.Booking.BookingService;
 
 import jakarta.servlet.ServletException;
