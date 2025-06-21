@@ -29,7 +29,6 @@
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/Entity/OAuth/UserLogins.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/Auth/UserLoginsRepository.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/Interfaces/IAuth/IUserLoginsRepository.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/Entity/User/User.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Auth/FacebookLoginServlet.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Auth/FacebookRegisterServlet.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Car/CarServlet.java</file>
@@ -39,16 +38,9 @@
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Auth/NormalLoginServlet.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/DTO/CarDetailDTO.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/User/UserAccount/UserProfileServlet.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/Interfaces/IUser/IUserRepository.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/User/UserRepository.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Service/Interfaces/IUser/IUserService.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/User/UserAccount/UpdateDriverLicenseServlet.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Model/Entity/User/DriverLicense.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Auth/AuthorizationFilter.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Service/Interfaces/IUser/IDriverLicenseService.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Service/User/DriverLicenseService.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/Interfaces/IUser/IDriverLicenseRepository.java</file>
-            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/User/DriverLicenseRepository.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/User/UserAccount/ChangePasswordServlet.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/web/pages/user/change-password.jsp</file>
         </group>
     </open-files>
 </project-private>
