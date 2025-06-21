@@ -679,6 +679,7 @@ input:disabled:active {
     color: #fff;
 }
 
+/* Toast Custom Styles */
 .toast {
   border-radius: 10px !important;
   box-shadow: 0 4px 24px rgba(0,0,0,0.12), 0 1.5px 4px rgba(0,0,0,0.08);
@@ -690,7 +691,7 @@ input:disabled:active {
   margin-bottom: 1.2rem;
   opacity: 1;
   transition: box-shadow 0.2s, transform 0.2s;
-  background: #01d28e;
+  background: #01d28e !important;
 
 }
 .toast.bg-danger {
@@ -714,6 +715,7 @@ input:disabled:active {
 .toast .btn-close:hover {
   opacity: 1;
 }
+
 
 @keyframes slideOutRight {
   0% {
