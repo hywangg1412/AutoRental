@@ -64,18 +64,24 @@ public class CarCategoriesRepository implements ICarCategoriesRepository{
     }
 
     @Override
-    public List<CarCategories> findAll() throws SQLException {
+    public List<CarCategories> findAll() {
+        List<CarCategories> list = new ArrayList<>();
         String sql = "SELECT * FROM CarCategories";
-        List<CarCategories> categories = new ArrayList<>();
-        try (var conn = dbContext.getConnection();
+        try (var conn = new DBContext().getConnection();
              var ps = conn.prepareStatement(sql);
              var rs = ps.executeQuery()) {
             while (rs.next()) {
-                categories.add(mapResultSetToCarCategories(rs));
+                CarCategories cat = new CarCategories();
+                cat.setCategoryId(UUID.fromString(rs.getString("CategoryId")));
+                cat.setCategoryName(rs.getString("CategoryName"));
+                list.add(cat);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return categories;
+        return list;
     }
+
 
     private CarCategories mapResultSetToCarCategories(ResultSet rs) throws SQLException {
         CarCategories category = new CarCategories();
