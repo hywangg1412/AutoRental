@@ -3,35 +3,35 @@ package Model.Entity.Car;
 import java.util.UUID;
 
 public class TransmissionType {
-    private UUID tranmissionTypeId;
-    private String tranmissionName;
+    private UUID transmissionTypeId;
+    private String transmissionName;
 
     public TransmissionType() {
     }
 
-    public TransmissionType(UUID tranmissionTypeId, String tranmissionName) {
-        this.tranmissionTypeId = tranmissionTypeId;
-        this.tranmissionName = tranmissionName;
+    public TransmissionType(UUID transmissionTypeId, String transmissionName) {
+        this.transmissionTypeId = transmissionTypeId;
+        this.transmissionName = transmissionName;
     }
 
-    public UUID getTranmissionTypeId() {
-        return tranmissionTypeId;
+    public UUID getTransmissionTypeId() {
+        return transmissionTypeId;
     }
 
-    public void setTranmissionTypeId(UUID tranmissionTypeId) {
-        this.tranmissionTypeId = tranmissionTypeId;
+    public void setTransmissionTypeId(UUID transmissionTypeId) {
+        this.transmissionTypeId = transmissionTypeId;
     }
 
-    public String getTranmissionName() {
-        return tranmissionName;
+    public String getTransmissionName() {
+        return transmissionName;
     }
 
-    public void setTranmissionName(String tranmissionName) {
-        this.tranmissionName = tranmissionName;
+    public void setTransmissionName(String transmissionName) {
+        this.transmissionName = transmissionName;
     }
 
     @Override
     public String toString() {
-        return "TranmissionType{" + "tranmissionTypeId=" + tranmissionTypeId + ", tranmissionName=" + tranmissionName + '}';
+        return "TranmissionType{" + "tranmissionTypeId=" + transmissionTypeId + ", tranmissionName=" + transmissionName + '}';
     }
 }
