@@ -160,8 +160,9 @@
                                                 <div id="passwordMatchMessage" class="mt-2"></div>
                                             </div>
                                             <!-- Submit Button -->
-                                            <button type="submit" class="btn btn-primary-custom" id="submitBtn" disabled>
-                                                <i class="bi bi-shield-check me-2"></i>Update Password
+                                            <button type="submit" class="btn btn-save-modal w-100 d-flex align-items-center justify-content-center gap-2" id="submitBtn" disabled>
+                                                <i class="bi bi-shield-check"></i>
+                                                Update Password
                                             </button>
                                         </form>
                                         <!-- Security Tips -->
