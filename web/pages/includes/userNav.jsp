@@ -18,7 +18,10 @@
           <a href="#" class="nav-link p-0 text-dark"><i class="bi bi-bell text-dark" style="font-size: 1.2rem;"></i></a>
           <a href="#" class="nav-link p-0 text-dark"><i class="bi bi-chat-dots text-dark" style="font-size: 1.2rem;"></i></a>
           <div class="d-flex align-items-center gap-2 ms-2">
-            <img src="${sessionScope.user.avatarUrl}" alt="avatar" style="width:32px;height:32px;object-fit:cover;border-radius:50%;display:inline-block;">
+            <img src="${not empty sessionScope.user.avatarUrl ? sessionScope.user.avatarUrl : pageContext.request.contextPath.concat('/assets/images/default-avatar.png')}" 
+                 alt="avatar" 
+                 style="width:32px;height:32px;object-fit:cover;border-radius:50%;display:inline-block;"
+                 onerror="this.onerror=null;this.src='${pageContext.request.contextPath}/assets/images/default-avatar.png';">
             <a href="UserAbout.jsp" class="text-dark" style="font-weight:500; text-decoration: none;">
               ${sessionScope.user.username}
             </a>
