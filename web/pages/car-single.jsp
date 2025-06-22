@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="Model.DTO.CarDetailDTO" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%
     CarDetailDTO car = (CarDetailDTO) request.getAttribute("car");
 %>
@@ -146,9 +147,9 @@
                     <div class="col-md-8">
                         <div class="car-price-info">
                             <div class="price-label">Price per day</div>
-                            <div class="price"><%= car.getPricePerDay() != null ? car.getPricePerDay().toString() + " VND/day" : "Contact"%></div>
+                            <p class="price ml-auto"><fmt:formatNumber value="${car.pricePerDay * 1000}" type="number" pattern="#,###,###" /> <span>&nbsp;VND/day</span></p>
                             <div class="price-label">Price per hour</div>
-                            <div class="price"><%= car.getPricePerHour() != null ? car.getPricePerHour().toString() + " VND/day" : "Contact"%></div>
+                            <p class="price ml-auto"><fmt:formatNumber value="${car.pricePerHour * 1000}" type="number" pattern="#,###" /> <span>&nbsp;VND/hour</span></p>
                         </div>
                         <div class="car-action-buttons">
                             <a href="${pageContext.request.contextPath}/pages/booking?carId=<%= car.getCarId()%>" class="btn btn-book-now">
