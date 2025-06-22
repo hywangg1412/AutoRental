@@ -66,7 +66,7 @@
                                 <i class="bi bi-trash text-dark"></i>
                                 Request account deletion
                             </a></li>
-                        <li><a href="#" class="nav-link text-danger">
+                        <li><a href="${pageContext.request.contextPath}/logout" class="nav-link text-danger">
                                 <i class="bi bi-box-arrow-right"></i>
                                 Log out
                             </a></li>
