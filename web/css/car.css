@@ -50,3 +50,136 @@
     background-color: #e0a800; /* Màu khi hover */
     border-color: #e0a800;
 }
+.btn-book-now,
+.btn-details,
+.btn-add-to-cart {
+    transition: all 0.3s ease-in-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-book-now:hover,
+.btn-details:hover,
+.btn-add-to-cart:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-book-now::before,
+.btn-details::before,
+.btn-add-to-cart::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300%;
+    height: 300%;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.5s ease;
+    z-index: 0;
+}
+
+.btn-book-now:hover::before,
+.btn-details:hover::before,
+.btn-add-to-cart:hover::before {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Specific button colors on hover */
+.btn-details:hover {
+    background: #007bff !important; /* A slightly darker blue */
+    border-color: #007bff !important;
+    color: #fff !important;
+}
+
+.btn-add-to-cart:hover {
+    background: #28a745 !important; /* A slightly darker green */
+    border-color: #28a745 !important;
+    color: #fff !important;
+}
+
+.car-status-inline {
+    display: inline-block;
+    padding: 2px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+.status-available {
+    background: #22c55e;
+    color: #fff;
+}
+.status-rented {
+    background: #fbbf24;
+    color: #fff;
+}
+.status-unavailable {
+    background: #ef4444;
+    color: #fff;
+}
+.search-bar {
+    width: 100%;
+}
+.search-bar .form-control {
+    border-radius: 30px 0 0 30px;
+    height: 48px;
+    font-size: 16px;
+    box-shadow: none;
+    border: 1px solid #e5e5e5;
+    background: #fff;
+    transition: border-color 0.2s;
+}
+.search-bar .form-control:focus {
+    border-color: #22c55e;
+    box-shadow: 0 2px 8px rgba(34,197,94,0.07);
+}
+.search-bar .btn-primary {
+    border-radius: 0 30px 30px 0;
+    height: 48px;
+    font-size: 16px;
+    background: #22c55e;
+    border: none;
+    padding: 0 28px;
+    transition: background 0.2s;
+}
+.search-bar .btn-primary:hover {
+    background: #16a34a;
+}
+@media (max-width: 767px) {
+    .search-bar .form-control, .search-bar .btn-primary {
+        height: 40px;
+        font-size: 14px;
+    }
+}
+#filterForm h6 { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; }
+#filterForm .form-check { margin-bottom: 0.25rem; }
+#filterForm .form-check-label { font-size: 0.95rem; }
+#filterForm input[type='number'] { width: 45%; }
+#filterForm { background: #fff; border-radius: 12px; box-shadow: 0 2px 8px #eee; }
+
+
+
+.status-available { background: #28a745; color: #fff; }
+.status-rented { background: #ffc107; color: #222; }
+.status-unavailable { background: #dc3545; color: #fff; }
+
+.car-wrap, .card {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px #eee;
+    background: #fff;
+    margin-bottom: 24px;
+}
+.car-wrap .img, .card-img-top {
+    border-radius: 12px 12px 0 0;
+    height: 180px;
+    object-fit: cover;
+}
+.car-status-inline {
+    font-size: 0.85rem;
+    padding: 0.4em 0.8em;
+    border-radius: 12px;
+}
