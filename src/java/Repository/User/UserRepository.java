@@ -228,18 +228,28 @@ public class UserRepository implements IUserRepository {
         }
     }
 
-        @Override
-        public boolean updateUserAvatar(UUID userId, String avatarUrl) {
-            String sql = "UPDATE Users SET AvatarUrl = ? WHERE UserId = ?";
-            try (Connection conn = dbContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setString(1, avatarUrl);
-                ps.setObject(2, userId);
-                int rows = ps.executeUpdate();
-                return rows > 0;
-            } catch (SQLException ex) {
-                Logger.getLogger(UserRepository.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            return false;
+    @Override
+    public boolean updateUserAvatar(UUID userId, String avatarUrl) {
+        String sql = "UPDATE Users SET AvatarUrl = ? WHERE UserId = ?";
+        try (Connection conn = dbContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, avatarUrl);
+            ps.setObject(2, userId);
+            int rows = ps.executeUpdate();
+            return rows > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(UserRepository.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return false;
+    }
+
+    public boolean updateStatus(UUID userId, String status) throws SQLException {
+        String sql = "UPDATE Users SET Status = ? WHERE UserId = ?";
+        try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setString(1, status);
+            st.setObject(2, userId);
+            int affectedRows = st.executeUpdate();
+            return affectedRows > 0;
+        }
+    }
 
 }

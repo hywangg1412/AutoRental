@@ -7,6 +7,7 @@ import Exception.NotFoundException;
 import Model.Entity.User.User;
 import Repository.User.UserRepository;
 import Service.Interfaces.IUser.IUserService;
+import Utils.ObjectUtils;
 import java.sql.SQLException;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -120,6 +121,36 @@ public class UserService implements IUserService {
         try {
             return userRepsitory.updateUserAvatar(userId, avatarUrl);
         } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean verifyPassword(UUID userId, String password) throws NotFoundException {
+        User user = findById(userId);
+        return ObjectUtils.verifyPassword(password, user.getPasswordHash());
+    }
+
+    public boolean deactivateUser(UUID userId) {
+        try {
+            // First check if user exists
+            User user = userRepsitory.findById(userId);
+            if (user == null) {
+                System.out.println("User not found with ID: " + userId);
+                return false;
+            }
+            
+            // Use soft delete - update status to "Deleted" instead of hard delete
+            // This avoids foreign key constraint issues
+            boolean updated = userRepsitory.updateStatus(userId, "Deleted");
+            if (updated) {
+                System.out.println("User successfully marked as deleted: " + userId);
+            } else {
+                System.out.println("Failed to mark user as deleted: " + userId);
+            }
+            return updated;
+        } catch (Exception e) {
+            System.out.println("Error marking user as deleted: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
