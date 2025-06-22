@@ -46,7 +46,7 @@ public class CarDetailService {
 
         // Transmission
         var transmission = transmissionService.findById(car.getTransmissionTypeId());
-        dto.setTransmissionName(transmission != null ? transmission.getTranmissionName() : "Unknown");
+        dto.setTransmissionName(transmission != null ? transmission.getTransmissionName() : "Unknown");
 
         // Category (optional)
         if (car.getCategoryId() != null) {
@@ -60,7 +60,7 @@ public class CarDetailService {
         dto.setFeatureNames(carFeatures);
 
         // Lấy tất cả feature có thể có trong hệ thống
-        List<String> allFeatures = featureService.findAll()
+        List<String> allFeatures = featureService.getAll()
             .stream().map(CarFeature::getFeatureName).toList();
         dto.setAllFeatureNames(allFeatures);
 
