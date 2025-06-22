@@ -115,7 +115,7 @@ public class DriverLicenseRepository implements IDriverLicenseRepository {
         if (entity.getDob() != null) {
             ps.setDate(5, java.sql.Date.valueOf(entity.getDob()));
         } else {
-            throw new SQLException("DOB cannot be null (NOT NULL in DB)");
+            ps.setNull(5, java.sql.Types.DATE);
         }
         ps.setString(6, entity.getLicenseImage());
         ps.setTimestamp(7, entity.getCreatedDate() != null ? java.sql.Timestamp.valueOf(entity.getCreatedDate()) : java.sql.Timestamp.valueOf(java.time.LocalDateTime.now()));
@@ -127,7 +127,7 @@ public class DriverLicenseRepository implements IDriverLicenseRepository {
         if (entity.getDob() != null) {
             ps.setDate(3, java.sql.Date.valueOf(entity.getDob()));
         } else {
-            throw new SQLException("DOB cannot be null (NOT NULL in DB)");
+            ps.setNull(3, java.sql.Types.DATE);
         }
         ps.setString(4, entity.getLicenseImage());
         ps.setString(5, entity.getLicenseId() != null ? entity.getLicenseId().toString() : null);

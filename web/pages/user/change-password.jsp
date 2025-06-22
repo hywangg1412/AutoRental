@@ -89,12 +89,12 @@
                                     <div id="alertContainer"></div>
                                     <!-- Password Change Form -->
                                     <div class="password-form-container">
-                                        <form id="passwordForm">
+                                        <form id="passwordForm" action="${pageContext.request.contextPath}/user/change-password" method="post">
                                             <!-- Current Password -->
                                             <div class="form-group">
                                                 <label for="currentPassword" class="form-label">Current Password *</label>
                                                 <div class="password-input-group">
-                                                    <input type="password" class="form-control" id="currentPassword" required>
+                                                    <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
                                                     <button type="button" class="password-toggle" onclick="togglePassword('currentPassword')">
                                                         <i class="bi bi-eye"></i>
                                                     </button>
@@ -104,7 +104,7 @@
                                             <div class="form-group">
                                                 <label for="newPassword" class="form-label">New Password *</label>
                                                 <div class="password-input-group">
-                                                    <input type="password" class="form-control" id="newPassword" required>
+                                                    <input type="password" class="form-control" id="newPassword" name="newPassword" required>
                                                     <button type="button" class="password-toggle" onclick="togglePassword('newPassword')">
                                                         <i class="bi bi-eye"></i>
                                                     </button>
@@ -152,7 +152,7 @@
                                             <div class="form-group">
                                                 <label for="confirmPassword" class="form-label">Confirm New Password *</label>
                                                 <div class="password-input-group">
-                                                    <input type="password" class="form-control" id="confirmPassword" required>
+                                                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
                                                     <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">
                                                         <i class="bi bi-eye"></i>
                                                     </button>
@@ -337,47 +337,6 @@
         document.getElementById('newPassword').addEventListener('input', validateForm);
         document.getElementById('confirmPassword').addEventListener('input', validateForm);
         document.getElementById('currentPassword').addEventListener('input', validateForm);
-
-        // Form submission
-        document.getElementById('passwordForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const currentPassword = document.getElementById('currentPassword').value;
-            const newPassword = document.getElementById('newPassword').value;
-            
-            // Check if new password is different from current
-            if (currentPassword === newPassword) {
-                showAlert('New password must be different from your current password.', 'error');
-                return;
-            }
-            
-            // Simulate API call
-            const submitBtn = document.getElementById('submitBtn');
-            const originalText = submitBtn.innerHTML;
-            
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="bi bi-arrow-clockwise spin me-2"></i>Updating...';
-            
-            setTimeout(() => {
-                // Simulate success
-                showAlert('Password updated successfully! Please log in again with your new password.', 'success');
-                
-                // Reset form
-                document.getElementById('passwordForm').reset();
-                document.getElementById('passwordMatchMessage').innerHTML = '';
-                document.getElementById('strengthText').textContent = '';
-                document.getElementById('strengthFill').className = 'strength-fill';
-                
-                // Reset requirements
-                document.querySelectorAll('.requirement').forEach(req => {
-                    req.classList.remove('valid');
-                    req.classList.add('invalid');
-                });
-                
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = true;
-            }, 2000);
-        });
 
         // Add CSS for spin animation
         const style = document.createElement('style');

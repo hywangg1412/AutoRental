@@ -95,4 +95,28 @@ public class DriverLicenseService implements IDriverLicenseService {
             throw new NotFoundException("Error finding driver license by userId.");
         }
     }
+
+    /**
+     * Creates a default driver license for a new user
+     * @param userId The user ID
+     * @return The created driver license
+     * @throws EventException If creation fails
+     */
+    public DriverLicense createDefaultForUser(UUID userId) throws EventException {
+        if (userId == null) throw new EventException("UserId cannot be null");
+        try {
+            DriverLicense license = new DriverLicense();
+            license.setLicenseId(UUID.randomUUID());
+            license.setUserId(userId);
+            license.setCreatedDate(java.time.LocalDateTime.now());
+            // Other fields (LicenseNumber, FullName, DOB, LicenseImage) will be null initially
+            
+            DriverLicense result = repository.add(license);
+            if (result == null) throw new EventException("Failed to create default driver license");
+            return result;
+        } catch (SQLException e) {
+            System.err.println("[DriverLicenseService] Error creating default driver license: " + e.getMessage());
+            throw new EventException("Error creating default driver license.");
+        }
+    }
 }

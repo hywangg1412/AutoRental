@@ -469,33 +469,49 @@ input:disabled:active {
 
 .avatar-upload-wrapper {
     position: relative;
-    display: inline-block;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
     cursor: pointer;
+    border: 3px solid #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.avatar-upload-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+
+.avatar-upload-wrapper:hover::after {
+    opacity: 1;
 }
 
 .avatar-upload-wrapper img {
-    width: 120px; 
-    height: 120px; 
-    object-fit: cover; 
-    border-radius: 50%;
-    border: 2px solid #eee;
-    transition: filter 0.2s;
-}
-
-.avatar-upload-wrapper:hover img {
-    filter: brightness(0.7);
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .avatar-upload-icon {
     position: absolute;
-    top: 50%; 
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    color: #fff;
-    font-size: 2.2rem;
+    color: white;
+    font-size: 2rem;
     opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s;
+    transition: opacity 0.3s ease;
+    pointer-events: none; 
+    z-index: 2;
 }
 
 .avatar-upload-wrapper:hover .avatar-upload-icon {
@@ -679,6 +695,7 @@ input:disabled:active {
     color: #fff;
 }
 
+/* Toast Custom Styles */
 .toast {
   border-radius: 10px !important;
   box-shadow: 0 4px 24px rgba(0,0,0,0.12), 0 1.5px 4px rgba(0,0,0,0.08);
@@ -690,7 +707,7 @@ input:disabled:active {
   margin-bottom: 1.2rem;
   opacity: 1;
   transition: box-shadow 0.2s, transform 0.2s;
-  background: #01d28e;
+  background: #01d28e !important;
 
 }
 .toast.bg-danger {
@@ -714,6 +731,7 @@ input:disabled:active {
 .toast .btn-close:hover {
   opacity: 1;
 }
+
 
 @keyframes slideOutRight {
   0% {
