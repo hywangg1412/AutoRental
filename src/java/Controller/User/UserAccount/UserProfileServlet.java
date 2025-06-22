@@ -86,8 +86,18 @@ public class UserProfileServlet extends HttpServlet {
             DriverLicense driverLicense = null;
             try {
                 driverLicense = driverLicenseService.findByUserId(user.getUserId());
+            } catch (NotFoundException e) {
+                // User doesn't have a driver license yet, create a new one
+                LOGGER.log(Level.INFO, "User {0} doesn't have a driver license yet, creating new one", user.getUserId());
+                try {
+                    driverLicense = driverLicenseService.createDefaultForUser(user.getUserId());
+                } catch (Exception ex) {
+                    LOGGER.log(Level.SEVERE, "Error creating new driver license for user {0}", user.getUserId());
+                    driverLicense = null;
+                }
             } catch (Exception e) {
                 LOGGER.log(Level.SEVERE, "Error getting driver license", e);
+                driverLicense = null;
             }
             request.setAttribute("driverLicense", driverLicense);
 
