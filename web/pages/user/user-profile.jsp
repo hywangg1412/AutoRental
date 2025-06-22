@@ -268,19 +268,19 @@
                                                     <div class="mb-4">
                                                         <label class="form-label text-muted">Driver's License Number</label>
                                                         <input type="text" class="form-control driver-license-input" name="licenseNumber" id="licenseNumber"
-                                                               value="${driverLicense.licenseNumber}" disabled required>
+                                                               value="${driverLicense != null ? driverLicense.licenseNumber : ''}" disabled required>
                                                         <div class="invalid-feedback" id="licenseNumberError"></div>
                                                     </div>
                                                     <div class="mb-4">
                                                         <label class="form-label text-muted">Full name</label>
                                                         <input type="text" class="form-control driver-license-input" name="fullName" id="fullName"
-                                                               value="${driverLicense.fullName}" disabled required>
+                                                               value="${driverLicense != null ? driverLicense.fullName : ''}" disabled required>
                                                         <div class="invalid-feedback" id="fullNameError"></div>
                                                     </div>
                                                     <div class="mb-4">
                                                         <label class="form-label text-muted">Date of birth</label>
                                                         <input type="date" class="form-control driver-license-input" name="dob" id="dob"
-                                                               value="${driverLicense.dob}" disabled required>
+                                                               value="${driverLicense != null ? driverLicense.dob : ''}" disabled required>
                                                         <div class="invalid-feedback" id="dobError"></div>
                                                     </div>
                                                 </div>

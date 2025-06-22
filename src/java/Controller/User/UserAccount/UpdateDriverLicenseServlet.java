@@ -11,6 +11,7 @@ import Service.CloudinaryService;
 import Model.Entity.User.DriverLicense;
 import Service.User.DriverLicenseService;
 import Model.Entity.User.User;
+import Exception.NotFoundException;
 import java.util.UUID;
 import jakarta.servlet.http.HttpSession;
 import java.io.InputStream;
@@ -78,15 +79,27 @@ public class UpdateDriverLicenseServlet extends HttpServlet {
             String publicId = "driver_license_" + user.getUserId();
             String imageUrl = cloudinaryService.uploadAndGetUrlToFolder(inputStream, "driver_license", publicId);
             
-            DriverLicense license = driverLicenseService.findByUserId(user.getUserId());
-            if (license == null) {
+            DriverLicense license = null;
+            boolean isNewLicense = false;
+            try {
+                license = driverLicenseService.findByUserId(user.getUserId());
+            } catch (NotFoundException e) {
+                // User doesn't have a driver license yet, create a new one
                 license = new DriverLicense();
                 license.setLicenseId(UUID.randomUUID());
                 license.setUserId(user.getUserId());
                 license.setCreatedDate(java.time.LocalDateTime.now());
+                isNewLicense = true;
             }
+            
             license.setLicenseImage(imageUrl);
-            driverLicenseService.update(license);
+            
+            // If it's a new license, add it; otherwise update it
+            if (isNewLicense) {
+                driverLicenseService.add(license);
+            } else {
+                driverLicenseService.update(license);
+            }
             
             // Set success message in session
             session.setAttribute("success", "Driver license image updated successfully");
@@ -156,17 +169,31 @@ public class UpdateDriverLicenseServlet extends HttpServlet {
                 return;
             }
 
-            DriverLicense license = driverLicenseService.findByUserId(user.getUserId());
-            if (license == null) {
+            DriverLicense license = null;
+            boolean isNewLicense = false;
+            try {
+                license = driverLicenseService.findByUserId(user.getUserId());
+            } catch (NotFoundException e) {
+                // User doesn't have a driver license yet, create a new one
                 license = new DriverLicense();
                 license.setLicenseId(UUID.randomUUID());
                 license.setUserId(user.getUserId());
                 license.setCreatedDate(java.time.LocalDateTime.now());
+                isNewLicense = true;
             }
+            
             license.setLicenseNumber(licenseNumber);
             license.setFullName(fullName);
             license.setDob(dobDate);
-            driverLicenseService.update(license);
+            
+            // If it's a new license, add it; otherwise update it
+            if (isNewLicense) {
+                // This is a newly created license, add it
+                driverLicenseService.add(license);
+            } else {
+                // This is an existing license, update it
+                driverLicenseService.update(license);
+            }
             
             // Set success message in session
             session.setAttribute("success", "Driver license information updated successfully");
