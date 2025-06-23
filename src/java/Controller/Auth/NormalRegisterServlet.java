@@ -81,9 +81,14 @@ public class NormalRegisterServlet extends HttpServlet {
         try {
             User existingUser = userService.findByEmail(email);
             if (existingUser != null) {
-                String errorMsg = existingUser.isBanned() ?
-                    "This email is associated with a banned account. Please contact support." :
-                    "Email already exists!";
+                String errorMsg;
+                if (existingUser.isDeleted()) {
+                    errorMsg = "This email is associated with a deleted account and cannot be reused.";
+                } else if (existingUser.isBanned()) {
+                    errorMsg = "This email is associated with a banned account. Please contact support.";
+                } else {
+                    errorMsg = "An account with this email already exists.";
+                }
                 request.setAttribute("error", errorMsg);
                 request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
                 return;

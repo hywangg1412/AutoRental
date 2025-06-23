@@ -4,6 +4,7 @@ import Exception.EmptyDataException;
 import Exception.EventException;
 import Exception.InvalidDataException;
 import Exception.NotFoundException;
+import Model.Constants.UserStatusConstants;
 import Model.Entity.User.User;
 import Repository.User.UserRepository;
 import Service.Interfaces.IUser.IUserService;
@@ -17,6 +18,7 @@ import java.util.logging.Logger;
 public class UserService implements IUserService {
 
     private UserRepository userRepsitory;
+    private static final Logger LOGGER = Logger.getLogger(UserService.class.getName());
 
     public UserService() {
         userRepsitory = new UserRepository();
@@ -27,7 +29,7 @@ public class UserService implements IUserService {
         try {
             userRepsitory.findAll();
         } catch (SQLException ex) {
-            System.out.println("Error while display all user - " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "Error while displaying all users", ex);
         }
     }
 
@@ -36,7 +38,7 @@ public class UserService implements IUserService {
         try {
             return userRepsitory.add(entry);
         } catch (SQLException ex) {
-            System.out.println("Error while adding user - " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "Error while adding user", ex);
             return null;
         }
     }
@@ -46,7 +48,7 @@ public class UserService implements IUserService {
         try {
             return userRepsitory.update(entry);
         } catch (Exception ex) {
-            System.out.println("Error while updating user - " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "Error while updating user", ex);
             return false;
         }
     }
@@ -56,7 +58,7 @@ public class UserService implements IUserService {
         try {
             return userRepsitory.delete(id);
         } catch (Exception ex) {
-            System.out.println("Error while deleting user - " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "Error while deleting user", ex);
             return false;
         }
     }
@@ -80,7 +82,7 @@ public class UserService implements IUserService {
         try {
             return userRepsitory.findByEmail(email);
         } catch (Exception ex) {
-            System.out.println("Error while finding user by email - " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "Error while finding user by email", ex);
             return null;
         }
     }
@@ -90,7 +92,7 @@ public class UserService implements IUserService {
         try {
             return findByEmail(email) != null;
         } catch (Exception ex) {
-            System.out.println("Error while checking if email exists - " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "Error while checking if email exists", ex);
             return false;
         }
     }
@@ -101,7 +103,7 @@ public class UserService implements IUserService {
         try {
             return userRepsitory.updateUserInfo(userId, username, dob, gender);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error updating user info for userId: " + userId, e);
             return false;
         }
     }
@@ -111,7 +113,7 @@ public class UserService implements IUserService {
         try {
             return userRepsitory.updatePhoneNumber(userId, phoneNumber);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error updating phone number for userId: " + userId, e);
             return false;
         }
     }   
@@ -121,7 +123,7 @@ public class UserService implements IUserService {
         try {
             return userRepsitory.updateUserAvatar(userId, avatarUrl);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error updating user avatar for userId: " + userId, e);
             return false;
         }
     }
@@ -131,27 +133,39 @@ public class UserService implements IUserService {
         return ObjectUtils.verifyPassword(password, user.getPasswordHash());
     }
 
-    public boolean deactivateUser(UUID userId) {
+    public boolean markUserAsDeleted(UUID userId) {
         try {
-            // First check if user exists
             User user = userRepsitory.findById(userId);
             if (user == null) {
-                System.out.println("User not found with ID: " + userId);
+                LOGGER.log(Level.WARNING, "Attempted to delete non-existent user. UserId: {0}", userId);
                 return false;
             }
             
-            // Use soft delete - update status to "Deleted" instead of hard delete
-            // This avoids foreign key constraint issues
-            boolean updated = userRepsitory.updateStatus(userId, "Deleted");
+            boolean updated = userRepsitory.updateStatus(userId, UserStatusConstants.DELETED);
             if (updated) {
-                System.out.println("User successfully marked as deleted: " + userId);
+                LOGGER.log(Level.INFO, "User successfully marked as deleted: {0}", userId);
             } else {
-                System.out.println("Failed to mark user as deleted: " + userId);
+                LOGGER.log(Level.SEVERE, "Failed to mark user as deleted: {0}", userId);
             }
             return updated;
         } catch (Exception e) {
-            System.out.println("Error marking user as deleted: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error marking user as deleted: {0}", new Object[]{userId, e});
+            return false;
+        }
+    }
+
+    public boolean anonymizeDeletedUser(UUID userId) {
+        try {
+            User user = userRepsitory.findById(userId);
+            if (user == null || !user.isDeleted()) {
+                LOGGER.log(Level.WARNING, "Attempted to anonymize a user who is not marked as deleted or does not exist. UserId: {0}", userId);
+                return false;
+            }
+            
+            return userRepsitory.anonymize(userId);
+
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error during user anonymization service call", e);
             return false;
         }
     }

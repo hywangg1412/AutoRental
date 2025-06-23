@@ -151,10 +151,6 @@
                                             </div>
                                             <ul class="alternatives-list">
                                                 <li>
-                                                    <i class="bi bi-pause-circle"></i>
-                                                    <span><strong>Temporarily deactivate</strong> your account instead of permanent deletion</span>
-                                                </li>
-                                                <li>
                                                     <i class="bi bi-gear"></i>
                                                     <span><strong>Update privacy settings</strong> to limit data collection and usage</span>
                                                 </li>

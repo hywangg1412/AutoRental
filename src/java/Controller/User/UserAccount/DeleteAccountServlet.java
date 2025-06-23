@@ -76,8 +76,13 @@ public class DeleteAccountServlet extends HttpServlet {
             }
 
             if (isPasswordCorrect) {
-                boolean deactivated = userService.deactivateUser(user.getUserId());
-                if (deactivated) {
+                boolean deleted = userService.markUserAsDeleted(user.getUserId());
+                if (deleted) {
+                    boolean anonymized = userService.anonymizeDeletedUser(user.getUserId());
+                    if (!anonymized) {
+                        LOGGER.log(Level.SEVERE, "Failed to anonymize data for deleted user: {0}", user.getUserId());
+                    }
+
                     String reason = request.getParameter("reason");
                     String comments = request.getParameter("comments");
                     
@@ -96,20 +101,19 @@ public class DeleteAccountServlet extends HttpServlet {
                                 new Object[]{user.getUserId(), e.getMessage()});
                     }
 
-                    // Invalidate session and clear cookies
                     SessionUtil.removeSessionAttribute(request, "user");
                     SessionUtil.removeSessionAttribute(request, "isLoggedIn");
                     request.getSession().invalidate();
                     SessionUtil.deleteCookie(response, "userId", "/");
 
                     jsonResponse.addProperty("status", "success");
-                    jsonResponse.addProperty("message", "Account successfully marked as deleted. You will be logged out.");
+                    jsonResponse.addProperty("message", "Account successfully deleted. You will be logged out.");
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
-                    LOGGER.log(Level.SEVERE, "Failed to deactivate account for user: {0}", user.getUserId());
+                    LOGGER.log(Level.SEVERE, "Failed to delete account for user: {0}", user.getUserId());
                     response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                     jsonResponse.addProperty("status", "error");
-                    jsonResponse.addProperty("message", "Failed to deactivate account. Please try again later.");
+                    jsonResponse.addProperty("message", "Failed to delete account. Please try again later.");
                 }
             } else {
                 jsonResponse.addProperty("status", "error");
