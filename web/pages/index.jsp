@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -152,10 +153,18 @@
                                              style="background-image: url('${pageContext.request.contextPath}${car.mainImageUrl}');">
                                         </div>
                                         <div class="text">
-                                            <h2 class="mb-0"><a href="${pageContext.request.contextPath}/pages/car-single?id=${car.carId}">${car.carModel}</a></h2>
+                                            <div class="d-flex align-items-center mb-2">
+                                                <h2 class="mb-0" style="font-size: 1.25rem;">
+                                                    <a href="car-single.jsp?id=${car.carId}">${car.carModel}</a>
+                                                </h2>
+                                                <span class="car-status-inline ${car.statusCssClass}" style="margin-left:10px;">${car.statusDisplay}</span>
+                                            </div>
                                             <div class="d-flex mb-3">
                                                 <span class="cat">${car.brandName}</span>
-                                                <p class="price ml-auto">$${car.pricePerDay} <span>/day</span></p>
+                                                <p class="price ml-auto">
+                                                    <fmt:formatNumber value="${car.pricePerHour * 1000}" type="number" pattern="#,###" />
+                                                    <span>&nbsp;VND/hour</span>
+                                                </p>
                                             </div>
                                             <p class="d-flex mb-0 d-block">
                                                 <a href="pages/booking.jsp?id=${car.carId}" class="btn btn-book-now py-2 mr-1">Book now</a>

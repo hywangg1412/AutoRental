@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page import="java.sql.*, java.util.*" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -44,41 +45,243 @@
         <section class="ftco-section bg-light">
             <div class="container">
                 <div class="row">
-                    <c:forEach var="car" items="${carList}">
-                        <div class="col-md-4">
-                            <div class="car-wrap rounded ftco-animate">
-                                <div class="img rounded d-flex align-items-end"
-                                     style="background-image: url('${pageContext.request.contextPath}${car.mainImageUrl}');">
-                                </div>
-                                <div class="text">
-                                    <h2 class="mb-0"><a href="car-single.jsp?id=${car.carId}">${car.carModel}</a></h2>
-                                    <div class="d-flex mb-3">
-                                        <span class="cat">${car.brandName}</span>
-                                        <p class="price ml-auto">$${car.pricePerDay} <span>/day</span></p>
+                    <!-- Sidebar bộ lọc -->
+                    <div class="col-md-3">
+                        <form method="get" action="car" id="filterForm" class="bg-white p-3 rounded shadow-sm mb-4">
+                            <h5 class="mb-3 font-weight-bold">Bộ lọc</h5>
+                            <!-- Hãng xe -->
+                            <div class="mb-3">
+                                <h6>Hãng xe</h6>
+                                <c:forEach var="brand" items="${brandList}">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="brandId" value="${brand.brandId}"
+                                            <c:if test="${paramValues.brandId != null && fn:contains(paramValues.brandId, brand.brandId)}">checked</c:if>
+                                            id="brand${brand.brandId}">
+                                        <label class="form-check-label" for="brand${brand.brandId}">${brand.brandName}</label>
                                     </div>
-                                    <p class="d-flex mb-0 d-block">
-                                        <a href="pages/booking.jsp?id=${car.carId}" class="btn btn-book-now py-2 mr-1">Book now</a>
-                                        <a href="${pageContext.request.contextPath}/pages/car-single?id=${car.carId}" class="btn btn-details py-2 mr-1">Details</a>
-                                        <a href="${pageContext.request.contextPath}/pages/add-to-cart?id=${car.carId}" class="btn btn-add-to-cart py-2 ml-1">Add to Cart</a>
-                                    </p>
+                                </c:forEach>
+                            </div>
+                            <!-- Hộp số -->
+                            <div class="mb-3">
+                                <h6>Hộp số</h6>
+                                <c:forEach var="trans" items="${transmissionTypeList}">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="transmissionTypeId" value="${trans.transmissionTypeId}"
+                                            <c:if test="${paramValues.transmissionTypeId != null && fn:contains(paramValues.transmissionTypeId, trans.transmissionTypeId)}">checked</c:if>
+                                            id="trans${trans.transmissionTypeId}">
+                                        <label class="form-check-label" for="trans${trans.transmissionTypeId}">${trans.transmissionName}</label>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                            <!-- Nhiên liệu -->
+                            <div class="mb-3">
+                                <h6>Nhiên liệu</h6>
+                                <c:forEach var="fuel" items="${fuelTypeList}">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="fuelTypeId" value="${fuel.fuelTypeId}"
+                                            <c:if test="${paramValues.fuelTypeId != null && fn:contains(paramValues.fuelTypeId, fuel.fuelTypeId)}">checked</c:if>
+                                            id="fuel${fuel.fuelTypeId}">
+                                        <label class="form-check-label" for="fuel${fuel.fuelTypeId}">${fuel.fuelName}</label>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                            <!-- Số ghế -->
+                            <div class="mb-3">
+                                <h6>Số ghế</h6>
+                                <c:forEach var="seat" items="${seatList}">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="seat" value="${seat}"
+                                            <c:if test="${paramValues.seat != null && fn:contains(paramValues.seat, seat)}">checked</c:if>
+                                            id="seat${seat}">
+                                        <label class="form-check-label" for="seat${seat}">${seat}</label>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                            <!-- Loại xe -->
+                            <div class="mb-3">
+                                <h6>Loại xe</h6>
+                                <c:forEach var="cat" items="${categoryList}">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="categoryId" value="${cat.categoryId}"
+                                            <c:if test="${paramValues.categoryId != null && fn:contains(paramValues.categoryId, cat.categoryId)}">checked</c:if>
+                                            id="cat${cat.categoryId}">
+                                        <label class="form-check-label" for="cat${cat.categoryId}">${cat.categoryName}</label>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                            <!-- Trạng thái -->
+                            <div class="mb-3">
+                                <h6>Trạng thái</h6>
+                                <c:forEach var="status" items="${statusList}">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="status" value="${status.value}"
+                                            <c:if test="${paramValues.status != null && fn:contains(paramValues.status, status.value)}">checked</c:if>
+                                            id="status${status.value}">
+                                        <label class="form-check-label" for="status${status.value}">${status.display}</label>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                            <!-- Tính năng (Feature) - collapsible -->
+                            <div class="mb-3">
+                                <h6 style="cursor:pointer;" onclick="toggleFeatureFilter()">
+                                    Tính năng
+                                    <span id="feature-toggle-icon" style="font-size:1rem;">&#9660;</span>
+                                </h6>
+                                <div id="feature-filter-content">
+                                    <c:forEach var="feature" items="${featureList}">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="featureId" value="${feature.featureId}"
+                                                <c:if test="${paramValues.featureId != null && fn:contains(paramValues.featureId, feature.featureId)}">checked</c:if>
+                                                id="feature${feature.featureId}">
+                                            <label class="form-check-label" for="feature${feature.featureId}">${feature.featureName}</label>
+                                        </div>
+                                    </c:forEach>
                                 </div>
                             </div>
+                            <!-- Khoảng giá -->
+                            <div class="mb-3">
+                                <h6>Khoảng giá (VND/giờ)</h6>
+                                <div class="d-flex">
+                                    <input type="number" class="form-control form-control-sm mr-2" name="minPrice" placeholder="Từ" value="${param.minPrice}">
+                                    <input type="number" class="form-control form-control-sm" name="maxPrice" placeholder="Đến" value="${param.maxPrice}">
+                                </div>
+                            </div>
+                            <!-- Năm sản xuất -->
+                            <div class="mb-3">
+                                <h6>Năm sản xuất</h6>
+                                <div class="d-flex">
+                                    <input type="number" class="form-control form-control-sm mr-2" name="minYear" placeholder="Từ" value="${param.minYear}">
+                                    <input type="number" class="form-control form-control-sm" name="maxYear" placeholder="Đến" value="${param.maxYear}">
+                                </div>
+                            </div>
+                            <!-- Giữ lại keyword và sort khi lọc -->
+                            <c:if test="${not empty param.keyword}"><input type="hidden" name="keyword" value="${param.keyword}"/></c:if>
+                            <c:if test="${not empty param.sort}"><input type="hidden" name="sort" value="${param.sort}"/></c:if>
+                            <button type="submit" class="btn btn-success w-100 mt-2">Lọc xe</button>
+                        </form>
+                    </div>
+                    <!-- Danh sách xe + sort + search -->
+                    <div class="col-md-9">
+                        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+                            <!-- Search bar -->
+                            <form class="form-inline mb-2" method="get" action="car" style="flex:1; min-width:250px;">
+                                <input type="text" name="keyword" class="form-control mr-2 w-75" placeholder="Tìm kiếm theo tên xe, hãng xe..." value="${param.keyword}">
+                                <!-- giữ lại filter/sort -->
+                                <c:forEach var="brand" items="${paramValues.brandId}"><input type="hidden" name="brandId" value="${brand}"/></c:forEach>
+                                <c:forEach var="fuel" items="${paramValues.fuelTypeId}"><input type="hidden" name="fuelTypeId" value="${fuel}"/></c:forEach>
+                                <c:forEach var="seat" items="${paramValues.seat}"><input type="hidden" name="seat" value="${seat}"/></c:forEach>
+                                <c:forEach var="cat" items="${paramValues.categoryId}"><input type="hidden" name="categoryId" value="${cat}"/></c:forEach>
+                                <c:forEach var="st" items="${paramValues.status}"><input type="hidden" name="status" value="${st}"/></c:forEach>
+                                <c:forEach var="feature" items="${paramValues.featureId}"><input type="hidden" name="featureId" value="${feature}"/></c:forEach>
+                                <c:if test="${not empty param.sort}"><input type="hidden" name="sort" value="${param.sort}"/></c:if>
+                                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                            </form>
+                            <!-- Sort -->
+                            <form method="get" action="car" class="mb-2 ml-3" id="sortForm">
+                                <!-- giữ lại filter/search -->
+                                <c:forEach var="brand" items="${paramValues.brandId}"><input type="hidden" name="brandId" value="${brand}"/></c:forEach>
+                                <c:forEach var="fuel" items="${paramValues.fuelTypeId}"><input type="hidden" name="fuelTypeId" value="${fuel}"/></c:forEach>
+                                <c:forEach var="seat" items="${paramValues.seat}"><input type="hidden" name="seat" value="${seat}"/></c:forEach>
+                                <c:forEach var="cat" items="${paramValues.categoryId}"><input type="hidden" name="categoryId" value="${cat}"/></c:forEach>
+                                <c:forEach var="st" items="${paramValues.status}"><input type="hidden" name="status" value="${st}"/></c:forEach>
+                                <c:forEach var="feature" items="${paramValues.featureId}"><input type="hidden" name="featureId" value="${feature}"/></c:forEach>
+                                <c:if test="${not empty param.keyword}"><input type="hidden" name="keyword" value="${param.keyword}"/></c:if>
+                                <select name="sort" class="form-control" onchange="document.getElementById('sortForm').submit()">
+                                    <option value="">Sắp xếp</option>
+                                    <option value="priceAsc" ${param.sort == 'priceAsc' ? 'selected' : ''}>Giá tăng dần</option>
+                                    <option value="priceDesc" ${param.sort == 'priceDesc' ? 'selected' : ''}>Giá giảm dần</option>
+                                    <option value="nameAsc" ${param.sort == 'nameAsc' ? 'selected' : ''}>Tên A-Z</option>
+                                    <option value="nameDesc" ${param.sort == 'nameDesc' ? 'selected' : ''}>Tên Z-A</option>
+                                    <option value="yearDesc" ${param.sort == 'yearDesc' ? 'selected' : ''}>Năm mới nhất</option>
+                                    <option value="yearAsc" ${param.sort == 'yearAsc' ? 'selected' : ''}>Năm cũ nhất</option>
+                                </select>
+                            </form>
                         </div>
-                    </c:forEach>
-                </div>
-
-                <div class="row mt-5">
-                    <div class="col text-center">
-                        <div class="block-27">
-                            <ul>
-                                <li><a href="#"><</a></li>
-                                <li class="active"><span>1</span></li>
-                                <li><a href="#">2</a></li>
-                                <li><a href="#">3</a></li>
-                                <li><a href="#">4</a></li>
-                                <li><a href="#">5</a></li>
-                                <li><a href="#">></a></li>
-                            </ul>
+                        <!-- Danh sách xe -->
+                        <div class="row">
+                            <c:forEach var="car" items="${carList}">
+                                <div class="col-md-4">
+                                    <div class="car-wrap rounded ftco-animate">
+                                        <div class="img rounded d-flex align-items-end"
+                                             style="background-image: url('${pageContext.request.contextPath}${car.mainImageUrl}');">
+                                        </div>
+                                        <div class="text">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <h2 class="mb-0" style="font-size: 1.25rem;">
+                                                    <a href="car-single.jsp?id=${car.carId}">${car.carModel}</a>
+                                                </h2>
+                                                <span class="car-status-inline ${car.statusCssClass}" style="margin-left:10px;">${car.statusDisplay}</span>
+                                            </div>
+                                            <div class="d-flex mb-3">
+                                                <span class="cat">${car.brandName}</span>
+                                                <p class="price ml-auto">
+                                                    <fmt:formatNumber value="${car.pricePerHour * 1000}" type="number" pattern="#,###" />
+                                                    <span>&nbsp;VND/hour</span>
+                                                </p>
+                                            </div>
+                                            <p class="d-flex mb-0 d-block">
+                                                <a href="pages/booking.jsp?id=${car.carId}" class="btn btn-book-now py-2 mr-1">Book now</a>
+                                                <a href="${pageContext.request.contextPath}/pages/car-single?id=${car.carId}" class="btn btn-details py-2 mr-1">Details</a>
+                                                <a href="${pageContext.request.contextPath}/pages/add-to-cart?id=${car.carId}" class="btn btn-add-to-cart py-2 ml-1">Add to Cart</a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </c:forEach>
+                            <c:if test="${empty carList}">
+                                <div class="col-12 text-center text-danger mb-4">Không tìm thấy xe phù hợp!</div>
+                            </c:if>
+                        </div>
+                        <!-- Phân trang -->
+                        <div class="row mt-5">
+                            <div class="col text-center">
+                                <div class="block-27">
+                                    <ul>
+                                        <c:if test="${currentPage > 1}">
+                                            <li>
+                                                <a href="?page=${currentPage - 1}
+                                                    <c:forEach var='brand' items='${paramValues.brandId}'> &brandId=${brand}</c:forEach>
+                                                    <c:forEach var='fuel' items='${paramValues.fuelTypeId}'> &fuelTypeId=${fuel}</c:forEach>
+                                                    <c:forEach var='seat' items='${paramValues.seat}'> &seat=${seat}</c:forEach>
+                                                    <c:forEach var='cat' items='${paramValues.categoryId}'> &categoryId=${cat}</c:forEach>
+                                                    <c:forEach var='st' items='${paramValues.status}'> &status=${st}</c:forEach>
+                                                    <c:forEach var='feature' items='${paramValues.featureId}'> &featureId=${feature}</c:forEach>
+                                                    <c:if test='${not empty param.sort}'> &sort=${param.sort}</c:if>
+                                                    <c:if test='${not empty param.keyword}'> &keyword=${param.keyword}</c:if>
+                                                ">&lt;</a>
+                                            </li>
+                                        </c:if>
+                                        <c:forEach begin="1" end="${totalPages}" var="i">
+                                            <li class="${i == currentPage ? 'active' : ''}">
+                                                <a href="?page=${i}
+                                                    <c:forEach var='brand' items='${paramValues.brandId}'> &brandId=${brand}</c:forEach>
+                                                    <c:forEach var='fuel' items='${paramValues.fuelTypeId}'> &fuelTypeId=${fuel}</c:forEach>
+                                                    <c:forEach var='seat' items='${paramValues.seat}'> &seat=${seat}</c:forEach>
+                                                    <c:forEach var='cat' items='${paramValues.categoryId}'> &categoryId=${cat}</c:forEach>
+                                                    <c:forEach var='st' items='${paramValues.status}'> &status=${st}</c:forEach>
+                                                    <c:forEach var='feature' items='${paramValues.featureId}'> &featureId=${feature}</c:forEach>
+                                                    <c:if test='${not empty param.sort}'> &sort=${param.sort}</c:if>
+                                                    <c:if test='${not empty param.keyword}'> &keyword=${param.keyword}</c:if>
+                                                ">${i}</a>
+                                            </li>
+                                        </c:forEach>
+                                        <c:if test="${currentPage < totalPages}">
+                                            <li>
+                                                <a href="?page=${currentPage + 1}
+                                                    <c:forEach var='brand' items='${paramValues.brandId}'> &brandId=${brand}</c:forEach>
+                                                    <c:forEach var='fuel' items='${paramValues.fuelTypeId}'> &fuelTypeId=${fuel}</c:forEach>
+                                                    <c:forEach var='seat' items='${paramValues.seat}'> &seat=${seat}</c:forEach>
+                                                    <c:forEach var='cat' items='${paramValues.categoryId}'> &categoryId=${cat}</c:forEach>
+                                                    <c:forEach var='st' items='${paramValues.status}'> &status=${st}</c:forEach>
+                                                    <c:forEach var='feature' items='${paramValues.featureId}'> &featureId=${feature}</c:forEach>
+                                                    <c:if test='${not empty param.sort}'> &sort=${param.sort}</c:if>
+                                                    <c:if test='${not empty param.keyword}'> &keyword=${param.keyword}</c:if>
+                                                ">&gt;</a>
+                                            </li>
+                                        </c:if>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -106,5 +309,6 @@
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
         <script src="${pageContext.request.contextPath}/assets/js/google-map.js"></script>
         <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/car.js"></script>
     </body>
 </html>
