@@ -78,9 +78,9 @@ public class CarServlet extends HttpServlet {
             request.setAttribute("featureList", carFeatureService.getAll());
             request.setAttribute("transmissionTypeList", transmissionTypeService.getAll());
             request.setAttribute("statusList", Arrays.asList(
-                new StatusOption("Available", "Còn trống"),
-                new StatusOption("Rented", "Đã thuê"),
-                new StatusOption("Unavailable", "Không có sẵn")
+                new StatusOption("Available", "Available"),
+                new StatusOption("Rented", "Rented"),
+                new StatusOption("Unavailable", "Unavailable")
             ));
             request.setAttribute("paramNames", request.getParameterMap().keySet());
             request.setAttribute("paramValues", request.getParameterMap());
@@ -88,7 +88,7 @@ public class CarServlet extends HttpServlet {
             request.getRequestDispatcher("/pages/car.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Đã xảy ra lỗi hệ thống.");
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while processing your request.");
         }
     }
 }

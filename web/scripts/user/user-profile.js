@@ -1,3 +1,6 @@
+let isEditingUserInfo = false;
+let isEditingDriverLicense = false;
+
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('updateUserInfoForm');
     if (form) {
@@ -52,6 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (genderError) form.querySelector('select[name="gender"]').parentElement.insertAdjacentHTML('beforeend', `<div class="text-danger">${genderError}</div>`);
 
             if (hasError) e.preventDefault();
+            isEditingUserInfo = false;
         });
     }
 
@@ -150,6 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
             saveBtn.classList.remove('d-none');
             saveBtn.disabled = true;
             editBtn.classList.add('d-none');
+            isEditingDriverLicense = true;
         });
 
         cancelBtn.addEventListener('click', function() {
@@ -158,13 +163,13 @@ document.addEventListener('DOMContentLoaded', function() {
             cancelBtn.classList.add('d-none');
             saveBtn.classList.add('d-none');
             editBtn.classList.remove('d-none');
+            isEditingDriverLicense = false;
         });
 
         inputs.forEach(input => {
             input.addEventListener('input', validateDriverLicenseFields);
         });
 
-        // Handle image upload separately
         licenseImageInput.addEventListener('change', function(e) {
             if (this.files && this.files[0]) {
                 const formData = new FormData();
@@ -215,7 +220,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // Handle information update separately
         saveBtn.addEventListener('click', function() {
             if (validateDriverLicenseFields()) {
                 inputs.forEach(input => input.disabled = false);
@@ -247,6 +251,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 editBtn.classList.remove('d-none');
                                 cancelBtn.classList.add('d-none');
                                 saveBtn.classList.add('d-none');
+                                isEditingDriverLicense = false;
                             } else {
                                 showToast(result.message || 'Failed to update information', 'error');
                             }
@@ -260,14 +265,36 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
         });
+
+        inputs.forEach(input => {
+            input.addEventListener('input', function() {
+                if (!input.disabled) isEditingDriverLicense = true;
+            });
+        });
+    }
+
+    const userInfoModal = document.getElementById('editUserInfoModal');
+    const userInfoForm = document.getElementById('updateUserInfoForm');
+    if (userInfoForm) {
+        userInfoForm.querySelectorAll('input, select').forEach(input => {
+            input.addEventListener('input', function() {
+                isEditingUserInfo = true;
+            });
+        });
+        userInfoForm.addEventListener('submit', function() {
+            isEditingUserInfo = false;
+        });
+    }
+    if (userInfoModal) {
+        userInfoModal.addEventListener('hide.bs.modal', function() {
+            isEditingUserInfo = false;
+        });
     }
 });
 
-// Toast logic: showToast function and auto-show for server-rendered toasts
 (function() {
     function waitForBootstrap() {
         if (typeof bootstrap !== 'undefined' && bootstrap.Toast) {
-            // Auto-show all server-rendered toasts with animation
             var toastElList = [].slice.call(document.querySelectorAll('.toast'));
             var toastList = toastElList.map(function(toastEl) {
                 toastEl.classList.add('slide-in');
@@ -292,7 +319,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             toastList.forEach(toast => toast.show());
 
-            // Global showToast function
             window.showToast = function(message, type = 'success', duration = 3000) {
                 let container = document.querySelector('.toast-container');
                 if (!container) {
@@ -340,3 +366,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     document.addEventListener('DOMContentLoaded', waitForBootstrap);
 })();
+
+window.addEventListener('beforeunload', function (e) {
+    console.log('beforeunload', isEditingUserInfo, isEditingDriverLicense);
+    if (isEditingUserInfo || isEditingDriverLicense) {
+        e.preventDefault();
+        e.returnValue = '';
+    }
+});
