@@ -67,7 +67,7 @@
             <% } %>
         </div>
         <!-- Header -->
-        <jsp:include page="/pages/includes/userNav.jsp" />
+        <jsp:include page="/pages/includes/nav.jsp" />
 
         <div class="container">
             <div class="row g-5 mt-4">
