@@ -2,7 +2,7 @@ package Service.Auth;
 
 import Constant.OAuthConstants;
 import Model.Entity.OAuth.GoogleUser;
-import Model.Entity.User;
+import Model.Entity.User.User;
 import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;

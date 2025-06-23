@@ -35,7 +35,7 @@
                         <i class="fas fa-home"></i>
                         <span>Dashboard</span>
                     </a>
-                    <a href="staff-booking.jsp" class="nav-item active">
+                    <a href="booking-approval-list" class="nav-item active">
                         <i class="fas fa-calendar-alt"></i>
                         <span>Booking Requests</span>
                     </a>

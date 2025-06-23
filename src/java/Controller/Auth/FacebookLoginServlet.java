@@ -2,8 +2,8 @@ package Controller.Auth;
 
 import Mapper.UserMapper;
 import Model.Entity.OAuth.FacebookUser;
-import Model.Entity.User;
-import Service.UserService;
+import Model.Entity.User.User;
+import Service.User.UserService;
 import Service.Auth.FacebookAuthService;
 import java.io.IOException;
 import java.io.PrintWriter;

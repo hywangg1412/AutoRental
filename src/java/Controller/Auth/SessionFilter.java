@@ -1,7 +1,7 @@
 package Controller.Auth;
 
-import Model.Entity.User;
-import Service.UserService;
+import Model.Entity.User.User;
+import Service.User.UserService;
 import Utils.SessionUtil;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;

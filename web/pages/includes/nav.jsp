@@ -26,7 +26,12 @@
           <div class="d-flex align-items-center justify-content-between w-100">
             <div>
               <a href="${pageContext.request.contextPath}/user/profile" class="me-4">
-                <img src="${user.avatarUrl}" width="32" height="32" class="rounded-circle">
+                <img src="${not empty user.avatarUrl ? user.avatarUrl : pageContext.request.contextPath.concat('/assets/images/default-avatar.png')}" 
+                     alt="User Avatar" 
+                     width="32" 
+                     height="32" 
+                     class="rounded-circle"
+                     onerror="this.onerror=null;this.src='${pageContext.request.contextPath}/assets/images/default-avatar.png';">
               </a>
             </div>
             <div>

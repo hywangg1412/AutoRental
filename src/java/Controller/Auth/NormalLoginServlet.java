@@ -1,9 +1,9 @@
 package Controller.Auth;
 
-import Model.Entity.User;
+import Model.Entity.User.User;
 import Model.Entity.Role.Role;
 import Model.Entity.Role.UserRole;
-import Service.UserService;
+import Service.User.UserService;
 import Service.Role.RoleService;
 import Service.Role.UserRoleService;
 import Utils.SessionUtil;

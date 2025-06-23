@@ -26,14 +26,16 @@ public class CarFeature {
         return featureName;
     }
 
+
     public void setFeatureName(String featureName) {
         this.featureName = featureName;
+
     }
 
     @Override
     public String toString() {
+
         return "CarFeature{" + "featureId=" + featureId + ", featureName=" + featureName + '}';
-    }
-    
+
     
 }

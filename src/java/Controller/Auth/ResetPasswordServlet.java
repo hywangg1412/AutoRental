@@ -2,10 +2,10 @@ package Controller.Auth;
 
 import Exception.NotFoundException;
 import Model.Entity.OAuth.PasswordResetToken;
-import Model.Entity.User;
+import Model.Entity.User.User;
 import Service.Auth.PasswordResetTokenService;
 import Service.ResetPasswordService;
-import Service.UserService;
+import Service.User.UserService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
