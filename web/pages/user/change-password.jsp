@@ -38,7 +38,7 @@
                 <div class="sidebar">
                     <h2 class="h2 fw-bold mb-3">Hello !</h2>
                     <ul class="sidebar-menu">
-                        <li><a href="${pageContext.request.contextPath}/pages/user/user-profile.jsp" class="nav-link text-dark border-top-custom">
+                        <li><a href="${pageContext.request.contextPath}/user/profile" class="nav-link text-dark border-top-custom">
                                 <i class="bi bi-person text-dark"></i>
                                 My account
                             </a></li>
@@ -50,15 +50,7 @@
                                 <i class="bi bi-car-front text-dark"></i>
                                 My trips
                             </a></li>
-                        <li><a href="${pageContext.request.contextPath}/pages/user/longterm-booking.jsp" class="nav-link text-dark">
-                                <i class="bi bi-clipboard-check text-dark"></i>
-                                Long-term car rental orders
-                            </a></li>
-                        <li><a href="${pageContext.request.contextPath}/pages/user/my-address.jsp" class="nav-link text-dark">
-                                <i class="bi bi-geo-alt text-dark"></i>
-                                My address
-                            </a></li>
-                        <li><a href="${pageContext.request.contextPath}/pages/user/change-password.jsp" class="nav-link active text-dark border-top-custom">
+                            <li><a href="${pageContext.request.contextPath}/pages/user/change-password.jsp" class="nav-link text-dark border-top-custom">
                                 <i class="bi bi-lock text-dark"></i>
                                 Change password
                             </a></li>

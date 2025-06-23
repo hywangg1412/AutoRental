@@ -103,7 +103,7 @@ public class DeleteAccountServlet extends HttpServlet {
 
                     SessionUtil.removeSessionAttribute(request, "user");
                     SessionUtil.removeSessionAttribute(request, "isLoggedIn");
-                    request.getSession().invalidate();
+                     request.getSession().invalidate();
                     SessionUtil.deleteCookie(response, "userId", "/");
 
                     jsonResponse.addProperty("status", "success");
