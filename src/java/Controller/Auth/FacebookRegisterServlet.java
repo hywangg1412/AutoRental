@@ -2,10 +2,10 @@ package Controller.Auth;
 
 import Mapper.UserMapper;
 import Model.Entity.OAuth.FacebookUser;
-import Model.Entity.User;
+import Model.Entity.User.User;
 import Model.Entity.Role.Role;
 import Model.Entity.Role.UserRole;
-import Service.UserService;
+import Service.User.UserService;
 import Service.Auth.FacebookAuthService;
 import Service.Role.RoleService;
 import Service.Role.UserRoleService;

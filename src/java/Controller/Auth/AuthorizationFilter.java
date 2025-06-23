@@ -3,7 +3,7 @@ package Controller.Auth;
 import Exception.NotFoundException;
 import Model.Constants.RoleConstants;
 import Model.Entity.Role.UserRole;
-import Model.Entity.User;
+import Model.Entity.User.User;
 import Service.Role.RoleService;
 import Service.Role.UserRoleService;
 import Utils.SessionUtil;
