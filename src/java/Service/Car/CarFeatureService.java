@@ -31,7 +31,7 @@ public class CarFeatureService implements ICarFeatureService {
             for (CarFeature feature : features) {
                 System.out.println(feature);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new EventException("Error displaying car features: " + e.getMessage());
         }
     }
@@ -106,7 +106,7 @@ public class CarFeatureService implements ICarFeatureService {
         return repository.findByCarId(carId);
     }
 
-    public List<CarFeature> findAll() throws SQLException {
+    public List<CarFeature> getAll() {
         return repository.findAll();
     }
 }

@@ -64,18 +64,24 @@ public class CarBrandRepository implements ICarBrandRepository{
     }
 
     @Override
-    public List<CarBrand> findAll() throws SQLException {
+    public List<CarBrand> findAll() {
+        List<CarBrand> list = new ArrayList<>();
         String sql = "SELECT * FROM CarBrand";
-        List<CarBrand> brands = new ArrayList<>();
-        try (var conn = dbContext.getConnection();
+        try (var conn = new DBContext().getConnection();
              var ps = conn.prepareStatement(sql);
              var rs = ps.executeQuery()) {
             while (rs.next()) {
-                brands.add(mapResultSetToCarBrand(rs));
+                CarBrand brand = new CarBrand();
+                brand.setBrandId(UUID.fromString(rs.getString("BrandId")));
+                brand.setBrandName(rs.getString("BrandName"));
+                list.add(brand);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return brands;
+        return list;
     }
+
 
     private CarBrand mapResultSetToCarBrand(ResultSet rs) throws SQLException {
         CarBrand brand = new CarBrand();

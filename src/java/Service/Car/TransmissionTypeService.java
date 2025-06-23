@@ -5,7 +5,7 @@ import Exception.EventException;
 import Exception.InvalidDataException;
 import Exception.NotFoundException;
 import Model.Entity.Car.TransmissionType;
-import Repository.Car.TranmissionTypeRepository;
+import Repository.Car.TransmissionTypeRepository;
 import Service.Interfaces.ICar.ITransmissionTypeService;
 import java.sql.SQLException;
 import java.util.List;
@@ -14,11 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class TransmissionTypeService implements ITransmissionTypeService {
-    private TranmissionTypeRepository repository;
-
-    public TransmissionTypeService() {
-        repository = new TranmissionTypeRepository();
-    }
+    private final TransmissionTypeRepository repository = new TransmissionTypeRepository();
 
     @Override
     public void display() throws EmptyDataException, EventException {
@@ -30,7 +26,7 @@ public class TransmissionTypeService implements ITransmissionTypeService {
             for (TransmissionType transmissionType : transmissionTypes) {
                 System.out.println(transmissionType);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new EventException("Error displaying transmission types: " + e.getMessage());
         }
     }
@@ -66,9 +62,9 @@ public class TransmissionTypeService implements ITransmissionTypeService {
             } catch (InvalidDataException ex) {
                 Logger.getLogger(TransmissionTypeService.class.getName()).log(Level.SEVERE, null, ex);
             }
-            TransmissionType existingTransmissionType = repository.findById(entry.getTranmissionTypeId());
+            TransmissionType existingTransmissionType = repository.findById(entry.getTransmissionTypeId());
             if (existingTransmissionType == null) {
-                throw new NotFoundException("Transmission type not found with ID: " + entry.getTranmissionTypeId());
+                throw new NotFoundException("Transmission type not found with ID: " + entry.getTransmissionTypeId());
             }
             return repository.update(entry);
         } catch (SQLException e) {
@@ -91,14 +87,18 @@ public class TransmissionTypeService implements ITransmissionTypeService {
         }
     }
 
+    public List<TransmissionType> getAll() {
+        return repository.findAll();
+    }
+
     private void validateTransmissionType(TransmissionType entry) throws InvalidDataException {
         if (entry == null) {
             throw new InvalidDataException("Transmission type cannot be null");
         }
-        if (entry.getTranmissionTypeId() == null) {
+        if (entry.getTransmissionTypeId() == null) {
             throw new InvalidDataException("Transmission type ID cannot be null");
         }
-        if (entry.getTranmissionName() == null || entry.getTranmissionName().trim().isEmpty()) {
+        if (entry.getTransmissionName() == null || entry.getTransmissionName().trim().isEmpty()) {
             throw new InvalidDataException("Transmission type name cannot be empty");
         }
     }
