@@ -1,4 +1,3 @@
-
 package Repository.Interfaces.IUser;
 
 import Model.Entity.User.User;
@@ -16,4 +15,6 @@ public interface IUserRepository extends Repository<User, Integer>{
     boolean updatePhoneNumber(UUID userId, String phoneNumber);
 
     boolean updateUserAvatar(UUID userId, String avatarUrl);
+    
+    boolean anonymize(UUID userId);
 }

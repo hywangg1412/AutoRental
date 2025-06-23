@@ -54,6 +54,11 @@ public class RequestPasswordServlet extends HttpServlet {
                 request.getRequestDispatcher("pages/authen/RequestPassword.jsp").forward(request, response);
                 return;
             }
+            if (user.isDeleted()) {
+                request.setAttribute("error", "This account has been deleted and password cannot be reset.");
+                request.getRequestDispatcher("pages/authen/RequestPassword.jsp").forward(request, response);
+                return;
+            }
             if (user.isBanned()) {
                 request.setAttribute("error", "This account has been banned. Please contact support.");
                 request.getRequestDispatcher("pages/authen/RequestPassword.jsp").forward(request, response);

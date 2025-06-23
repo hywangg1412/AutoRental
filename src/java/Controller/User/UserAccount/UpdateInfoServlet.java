@@ -43,6 +43,20 @@ public class UpdateInfoServlet extends HttpServlet {
             return;
         }
 
+        // Re-check user status from DB to prevent actions from banned/deleted accounts with active sessions
+        try {
+            User freshUser = userService.findById(user.getUserId());
+            if (freshUser.isBanned() || freshUser.isDeleted()) {
+                request.getSession().invalidate(); // Log them out
+                response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp?error=Your+account+is+no+longer+active.");
+                return;
+            }
+        } catch (NotFoundException e) {
+            request.getSession().invalidate(); // Log them out
+            response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp?error=User+not+found.");
+            return;
+        }
+
         UUID userId = user.getUserId();
         String username = request.getParameter("username");
         String dob = request.getParameter("dob");

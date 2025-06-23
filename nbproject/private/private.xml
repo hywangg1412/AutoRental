@@ -41,6 +41,11 @@
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/Auth/AuthorizationFilter.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/User/UserAccount/ChangePasswordServlet.java</file>
             <file>file:/L:/Workspace/SWP/AutoRental/web/pages/user/change-password.jsp</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Controller/User/UserAccount/DeleteAccountServlet.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Utils/SessionUtil.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/Interfaces/IUser/IAccountDeletionLogRepository.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Repository/User/AccountDeletionLogRepository.java</file>
+            <file>file:/L:/Workspace/SWP/AutoRental/src/java/Service/User/AccountDeletionLogService.java</file>
         </group>
     </open-files>
 </project-private>

@@ -1,5 +1,6 @@
 package Model.Entity.User;
 
+import Model.Constants.UserStatusConstants;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -158,11 +159,15 @@ public class User {
     }
 
     public boolean isBanned() {
-        return "Banned".equalsIgnoreCase(status);
+        return UserStatusConstants.BANNED.equalsIgnoreCase(status);
     }
 
     public boolean isActive() {
-        return "Active".equalsIgnoreCase(status);
+        return UserStatusConstants.ACTIVE.equalsIgnoreCase(status);
+    }
+
+    public boolean isDeleted() {
+        return UserStatusConstants.DELETED.equalsIgnoreCase(status);
     }
 
     public LocalDateTime getCreatedDate() {
