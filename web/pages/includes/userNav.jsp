@@ -12,7 +12,7 @@
       <div class="collapse navbar-collapse" id="ftco-nav">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item"><a href="about.jsp" class="nav-link text-dark">About</a></li>
-          <li class="nav-item"><a href="my-trip.jsp" class="nav-link text-dark">My trips</a></li>
+          <li class="nav-item"><a href="${pageContext.request.contextPath}/pages/user/my-trip.jsp" class="nav-link text-dark">My trips</a></li>
         </ul>
         <div class="d-flex align-items-center ms-3 gap-3">
           <a href="#" class="nav-link p-0 text-dark"><i class="bi bi-bell text-dark" style="font-size: 1.2rem;"></i></a>
