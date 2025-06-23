@@ -393,6 +393,17 @@ CREATE TABLE [UserFeedback] (
 );
 GO
 
+CREATE TABLE [AccountDeletionLogs] (
+    [LogId] UNIQUEIDENTIFIER NOT NULL,
+    [UserId] UNIQUEIDENTIFIER NOT NULL,
+    [DeletionReason] NVARCHAR(255) NOT NULL,
+    [AdditionalComments] NVARCHAR(MAX) NULL,
+    [Timestamp] DATETIME2 NOT NULL DEFAULT GETDATE(),
+    CONSTRAINT [PK_AccountDeletionLogs] PRIMARY KEY ([LogId]),
+    CONSTRAINT [FK_AccountDeletionLogs_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE
+);
+GO 
+
 -- Insert Staff User
 INSERT INTO [Users] (
     [UserId],
@@ -483,4 +494,5 @@ INSERT INTO CarImages (ImageId, CarId, ImageUrl, IsMain) VALUES
 (NEWID(), 'd2d2d2d2-d2d2-d2d2-d2d2-d2d2d2d2d2d2', '/assets/images/ford_everest.jpg', 1),
 (NEWID(), 'b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b1b1b1', '/assets/images/toyota_camry.jpg', 1),
 (NEWID(), 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e1e1e1', '/assets/images/hyundai_elantra.jpg', 1),
-(NEWID(), 'e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e2e2e2', '/assets/images/ford_ecosport.jpg', 1); 
+(NEWID(), 'e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e2e2e2', '/assets/images/ford_ecosport.jpg', 1);
+

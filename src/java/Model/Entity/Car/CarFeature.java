@@ -34,8 +34,6 @@ public class CarFeature {
 
     @Override
     public String toString() {
-
         return "CarFeature{" + "featureId=" + featureId + ", featureName=" + featureName + '}';
-
-    
+    }
 }

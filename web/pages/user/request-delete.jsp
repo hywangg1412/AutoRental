@@ -66,7 +66,7 @@
                                 <i class="bi bi-trash text-dark"></i>
                                 Request account deletion
                             </a></li>
-                        <li><a href="#" class="nav-link text-danger">
+                        <li><a href="${pageContext.request.contextPath}/logout" class="nav-link text-danger">
                                 <i class="bi bi-box-arrow-right"></i>
                                 Log out
                             </a></li>
@@ -150,10 +150,6 @@
                                                 Consider these alternatives:
                                             </div>
                                             <ul class="alternatives-list">
-                                                <li>
-                                                    <i class="bi bi-pause-circle"></i>
-                                                    <span><strong>Temporarily deactivate</strong> your account instead of permanent deletion</span>
-                                                </li>
                                                 <li>
                                                     <i class="bi bi-gear"></i>
                                                     <span><strong>Update privacy settings</strong> to limit data collection and usage</span>
@@ -256,6 +252,9 @@
                                             <button type="button" class="btn btn-outline-custom" onclick="window.history.back()">
                                                 <i class="bi bi-arrow-left me-2"></i>Cancel and Go Back
                                             </button>
+                                            <button type="button" class="btn btn-secondary" onclick="testFunction()">
+                                                <i class="bi bi-bug me-2"></i>Test JavaScript
+                                            </button>
                                             <button type="submit" class="btn btn-danger-custom" id="deleteBtn" disabled>
                                                 <i class="bi bi-trash me-2"></i>Delete My Account Permanently
                                             </button>
@@ -290,156 +289,7 @@
     <script src="${pageContext.request.contextPath}/assets/js/google-map.js"></script>
     <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Giữ lại các script quản lý xóa tài khoản như cũ -->
-    <script>
-        // Password visibility toggle
-        function togglePassword(fieldId) {
-            const field = document.getElementById(fieldId);
-            const button = field.nextElementSibling;
-            const icon = button.querySelector('i');
-            
-            if (field.type === 'password') {
-                field.type = 'text';
-                icon.className = 'bi bi-eye-slash';
-            } else {
-                field.type = 'password';
-                icon.className = 'bi bi-eye';
-            }
-        }
-
-        // Confirmation text validation
-        function validateConfirmationText() {
-            const input = document.getElementById('confirmationText');
-            const expectedText = 'DELETE MY ACCOUNT';
-            const isValid = input.value === expectedText;
-            
-            input.classList.remove('valid', 'invalid');
-            if (input.value !== '') {
-                input.classList.add(isValid ? 'valid' : 'invalid');
-            }
-            
-            return isValid;
-        }
-
-        // Form validation
-        function validateForm() {
-            const reason = document.getElementById('deletionReason').value;
-            const password = document.getElementById('passwordConfirm').value;
-            const confirmationText = validateConfirmationText();
-            const dataCheck = document.getElementById('dataUnderstanding').checked;
-            const bookingCheck = document.getElementById('bookingUnderstanding').checked;
-            const finalCheck = document.getElementById('finalConfirmation').checked;
-            
-            const isValid = reason !== '' && 
-                           password !== '' && 
-                           confirmationText &&
-                           dataCheck && 
-                           bookingCheck && 
-                           finalCheck;
-            
-            document.getElementById('deleteBtn').disabled = !isValid;
-        }
-
-        // Show alert message
-        function showAlert(message, type) {
-            const alertContainer = document.getElementById('alertContainer');
-            const alertClass = type === 'success' ? 'alert-success-custom' : 'alert-danger-custom';
-            const icon = type === 'success' ? 'bi-check-circle' : 'bi-exclamation-triangle';
-            
-            alertContainer.innerHTML = `
-                <div class="alert-custom ${alertClass}">
-                    <i class="bi ${icon} me-2"></i>${message}
-                </div>
-            `;
-            
-            // Auto-hide after 5 seconds
-            setTimeout(() => {
-                alertContainer.innerHTML = '';
-            }, 5000);
-        }
-
-        // Event listeners
-        document.getElementById('deletionReason').addEventListener('change', validateForm);
-        document.getElementById('passwordConfirm').addEventListener('input', validateForm);
-        document.getElementById('confirmationText').addEventListener('input', function() {
-            validateConfirmationText();
-            validateForm();
-        });
-        document.getElementById('dataUnderstanding').addEventListener('change', validateForm);
-        document.getElementById('bookingUnderstanding').addEventListener('change', validateForm);
-        document.getElementById('finalConfirmation').addEventListener('change', validateForm);
-
-        // Form submission
-        document.getElementById('deletionForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Final confirmation dialog
-            const confirmed = confirm(
-                'This is your final warning!\n\n' +
-                'Are you absolutely sure you want to delete your account?\n\n' +
-                'This action is PERMANENT and CANNOT be undone.\n\n' +
-                'Click OK to proceed with account deletion, or Cancel to abort.'
-            );
-            
-            if (!confirmed) {
-                return;
-            }
-            
-            // Simulate API call
-            const deleteBtn = document.getElementById('deleteBtn');
-            const originalText = deleteBtn.innerHTML;
-            
-            deleteBtn.disabled = true;
-            deleteBtn.innerHTML = '<i class="bi bi-arrow-clockwise spin me-2"></i>Processing Deletion...';
-            
-            setTimeout(() => {
-                // Simulate successful deletion
-                showAlert(
-                    'Account deletion request submitted successfully. You will receive a confirmation email shortly. ' +
-                    'Your account will be permanently deleted within 30 days unless you cancel the request.',
-                    'success'
-                );
-                
-                // Reset form
-                document.getElementById('deletionForm').reset();
-                document.getElementById('confirmationText').classList.remove('valid', 'invalid');
-                
-                deleteBtn.innerHTML = originalText;
-                deleteBtn.disabled = true;
-                
-                // Redirect after 3 seconds
-                setTimeout(() => {
-                    window.location.href = 'profile.jsp';
-                }, 3000);
-            }, 3000);
-        });
-
-        // Add CSS for spin animation
-        const style = document.createElement('style');
-        style.textContent = `
-            .spin {
-                animation: spin 1s linear infinite;
-            }
-            @keyframes spin {
-                from { transform: rotate(0deg); }
-                to { transform: rotate(360deg); }
-            }
-        `;
-        document.head.appendChild(style);
-
-        // Show additional fields for "Other" reason
-        document.getElementById('deletionReason').addEventListener('change', function() {
-            const commentsGroup = document.getElementById('additionalComments').closest('.form-group');
-            const label = commentsGroup.querySelector('label');
-            
-            if (this.value === 'other') {
-                label.innerHTML = 'Please specify your reason *';
-                document.getElementById('additionalComments').required = true;
-            } else {
-                label.innerHTML = 'Additional comments (optional)';
-                document.getElementById('additionalComments').required = false;
-            }
-        });
-    </script>
+    <!-- Account deletion script -->
+    <script src="${pageContext.request.contextPath}/scripts/user/request-delete.js"></script>
 </body>
 </html>

@@ -68,6 +68,11 @@ public class GoogleLoginServlet extends HttpServlet {
                 request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
                 return;
             }
+            if (user.isDeleted()) {
+                request.setAttribute("error", "This account has been deleted.");
+                request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
+                return;
+            }
             if (user.isBanned()) {
                 request.setAttribute("error", "This account has been banned. Please contact support.");
                 request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
@@ -81,7 +86,6 @@ public class GoogleLoginServlet extends HttpServlet {
             SessionUtil.setSessionAttribute(request, "user", user);
             SessionUtil.setSessionAttribute(request, "isLoggedIn", true);
             SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
-            // Lấy role thực tế và chuyển hướng phù hợp
             UserRole userRole = userRoleService.findByUserId(user.getUserId());
             Role actualRole = roleService.findById(userRole.getRoleId());
             String redirectUrl = "/pages/index.jsp";

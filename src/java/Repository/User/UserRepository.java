@@ -14,7 +14,8 @@ import java.util.logging.Logger;
 
 public class UserRepository implements IUserRepository {
 
-    private DBContext dbContext = new DBContext();
+    private static final Logger LOGGER = Logger.getLogger(UserRepository.class.getName());
+    private final DBContext dbContext = new DBContext();
 
     @Override
     public User findByEmail(String email) {
@@ -26,7 +27,7 @@ public class UserRepository implements IUserRepository {
                 return mapResultSetToUser(rs);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error finding user by email: " + email, e);
         }
         return null;
     }
@@ -161,7 +162,7 @@ public class UserRepository implements IUserRepository {
                 }
             }
         } catch (SQLException ex) {
-            System.out.println("Error While Finding Username and Password - " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "Error finding user by username and password for username: " + username, ex);
         }
         return null;
     }
@@ -209,7 +210,7 @@ public class UserRepository implements IUserRepository {
             int rows = ps.executeUpdate();
             return rows > 0;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error updating user info in repository for userId: " + userId, e);
             return false;
         }
     }
@@ -223,23 +224,65 @@ public class UserRepository implements IUserRepository {
             int rows = ps.executeUpdate();
             return rows > 0;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error updating phone number in repository for userId: " + userId, e);
             return false;
         }
     }
 
-        @Override
-        public boolean updateUserAvatar(UUID userId, String avatarUrl) {
-            String sql = "UPDATE Users SET AvatarUrl = ? WHERE UserId = ?";
-            try (Connection conn = dbContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setString(1, avatarUrl);
-                ps.setObject(2, userId);
-                int rows = ps.executeUpdate();
-                return rows > 0;
-            } catch (SQLException ex) {
-                Logger.getLogger(UserRepository.class.getName()).log(Level.SEVERE, null, ex);
-            }
+    @Override
+    public boolean updateUserAvatar(UUID userId, String avatarUrl) {
+        String sql = "UPDATE Users SET AvatarUrl = ? WHERE UserId = ?";
+        try (Connection conn = dbContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, avatarUrl);
+            ps.setObject(2, userId);
+            int rows = ps.executeUpdate();
+            return rows > 0;
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error updating user avatar in repository for userId: " + userId, ex);
+        }
+        return false;
+    }
+
+    public boolean updateStatus(UUID userId, String status) throws SQLException {
+        String sql = "UPDATE Users SET Status = ? WHERE UserId = ?";
+        try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setString(1, status);
+            st.setObject(2, userId);
+            int affectedRows = st.executeUpdate();
+            return affectedRows > 0;
+        }
+    }
+
+    @Override
+    public boolean anonymize(UUID userId) {
+        String sql = "UPDATE Users SET " +
+                     "Username = ?, " +
+                     "Email = ?, " +
+                     "PhoneNumber = NULL, " +
+                     "UserAddress = NULL, " +
+                     "UserDescription = NULL, " +
+                     "AvatarUrl = NULL, " +
+                     "FirstName = NULL, " +
+                     "LastName = NULL, " +
+                     "UserDOB = NULL, " +
+                     "PasswordHash = ?, " +
+                     "SecurityStamp = ? " +
+                     "WHERE UserId = ?";
+
+        try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
+            String uniqueId = userId.toString().substring(0, 8);
+            st.setString(1, "deleted_user_" + uniqueId);
+            st.setString(2, "deleted_" + uniqueId + "@deleted.com");
+            st.setString(3, "ANONYMIZED_PASSWORD_" + UUID.randomUUID().toString());
+            st.setString(4, UUID.randomUUID().toString());
+            st.setObject(5, userId);
+
+            int affectedRows = st.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error during user anonymization in repository for userId: " + userId, e);
             return false;
         }
+    }
 
 }
