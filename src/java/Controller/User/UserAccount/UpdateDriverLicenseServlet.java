@@ -84,7 +84,6 @@ public class UpdateDriverLicenseServlet extends HttpServlet {
             try {
                 license = driverLicenseService.findByUserId(user.getUserId());
             } catch (NotFoundException e) {
-                // User doesn't have a driver license yet, create a new one
                 license = new DriverLicense();
                 license.setLicenseId(UUID.randomUUID());
                 license.setUserId(user.getUserId());
@@ -94,17 +93,14 @@ public class UpdateDriverLicenseServlet extends HttpServlet {
             
             license.setLicenseImage(imageUrl);
             
-            // If it's a new license, add it; otherwise update it
             if (isNewLicense) {
                 driverLicenseService.add(license);
             } else {
                 driverLicenseService.update(license);
             }
             
-            // Set success message in session
             session.setAttribute("success", "Driver license image updated successfully");
             
-            // If it's an AJAX request, send JSON response
             if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
@@ -114,7 +110,6 @@ public class UpdateDriverLicenseServlet extends HttpServlet {
                 responseData.put("imageUrl", imageUrl);
                 response.getWriter().write(gson.toJson(responseData));
             } else {
-                // Regular form submission, redirect
                 response.sendRedirect(request.getContextPath() + "/user/profile");
             }
         } catch (Exception e) {
@@ -138,7 +133,6 @@ public class UpdateDriverLicenseServlet extends HttpServlet {
         String fullName = request.getParameter("fullName");
         String dob = request.getParameter("dob");
 
-        // Validate input
         if (licenseNumber == null || !licenseNumber.matches("^[0-9]{12}$")) {
             handleError(request, response, session, "License number must be exactly 12 digits");
             return;
@@ -174,7 +168,6 @@ public class UpdateDriverLicenseServlet extends HttpServlet {
             try {
                 license = driverLicenseService.findByUserId(user.getUserId());
             } catch (NotFoundException e) {
-                // User doesn't have a driver license yet, create a new one
                 license = new DriverLicense();
                 license.setLicenseId(UUID.randomUUID());
                 license.setUserId(user.getUserId());
@@ -186,19 +179,14 @@ public class UpdateDriverLicenseServlet extends HttpServlet {
             license.setFullName(fullName);
             license.setDob(dobDate);
             
-            // If it's a new license, add it; otherwise update it
             if (isNewLicense) {
-                // This is a newly created license, add it
                 driverLicenseService.add(license);
             } else {
-                // This is an existing license, update it
                 driverLicenseService.update(license);
             }
             
-            // Set success message in session
             session.setAttribute("success", "Driver license information updated successfully");
             
-            // If it's an AJAX request, send JSON response
             if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
@@ -207,7 +195,6 @@ public class UpdateDriverLicenseServlet extends HttpServlet {
                 responseData.put("message", "Driver license information updated successfully");
                 response.getWriter().write(gson.toJson(responseData));
             } else {
-                // Regular form submission, redirect
                 response.sendRedirect(request.getContextPath() + "/user/profile");
             }
         } catch (Exception e) {
