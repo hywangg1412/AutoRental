@@ -55,6 +55,11 @@ public class NormalLoginServlet extends HttpServlet {
                 request.getRequestDispatcher("pages/authen/SignIn.jsp").forward(request, response);
                 return;
             }
+            if (user.isDeleted()) {
+                request.setAttribute("error", "This account has been deleted and cannot be accessed.");
+                request.getRequestDispatcher("pages/authen/SignIn.jsp").forward(request, response);
+                return;
+            }
             if (user.isBanned()) {
                 request.setAttribute("error", "This account has been banned. Please contact support.");
                 request.getRequestDispatcher("pages/authen/SignIn.jsp").forward(request, response);
