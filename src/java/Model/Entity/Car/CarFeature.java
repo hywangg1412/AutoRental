@@ -6,9 +6,9 @@ public class CarFeature {
     private UUID featureId;
     private String featureName;
 
-    public CarFeature(UUID featureId, String fetureName) {
+    public CarFeature(UUID featureId, String featureName) {
         this.featureId = featureId;
-        this.featureName = fetureName;
+        this.featureName = featureName;
     }
 
     public CarFeature() {
@@ -26,14 +26,16 @@ public class CarFeature {
         return featureName;
     }
 
-    public void setFeatureName(String fetureName) {
-        this.featureName = fetureName;
+
+    public void setFeatureName(String featureName) {
+        this.featureName = featureName;
+
     }
 
     @Override
     public String toString() {
-        return "CarFeature{" + "featureId=" + featureId + ", fetureName=" + featureName + '}';
-    }
-    
+
+        return "CarFeature{" + "featureId=" + featureId + ", featureName=" + featureName + '}';
+
     
 }

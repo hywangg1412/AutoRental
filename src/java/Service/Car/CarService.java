@@ -100,4 +100,44 @@ public class CarService implements ICarService {
         return carRepository.findAll();
     }
 
+    @Override
+    public List<Car> findByPage(int offset, int limit) throws SQLException {
+        return carRepository.findByPage(offset, limit);
+    }
+
+    @Override
+    public int countAll() throws SQLException {
+        return carRepository.countAll();
+    }
+
+    @Override
+    public List<Car> searchByKeyword(String keyword, int offset, int limit) throws SQLException {
+        return carRepository.searchByKeyword(keyword, offset, limit);
+    }
+
+    @Override
+    public int countByKeyword(String keyword) throws SQLException {
+        return carRepository.countByKeyword(keyword);
+    }
+
+    @Override
+    public List<Car> filterCars(
+        String[] brandIds, String[] fuelTypeIds, String[] seats, String[] categoryIds,
+        String[] statuses, String[] featureIds, String[] transmissionTypeIds, String sort, String keyword, int offset, int limit
+    ) throws SQLException {
+        return carRepository.filterCars(brandIds, fuelTypeIds, seats, categoryIds, statuses, featureIds, transmissionTypeIds, sort, keyword, offset, limit);
+    }
+
+    @Override
+    public int countFilteredCars(
+        String[] brandIds, String[] fuelTypeIds, String[] seats, String[] categoryIds,
+        String[] statuses, String[] featureIds, String[] transmissionTypeIds, String keyword
+    ) throws SQLException {
+        return carRepository.countFilteredCars(brandIds, fuelTypeIds, seats, categoryIds, statuses, featureIds, transmissionTypeIds, keyword);
+    }
+
+    public List<Integer> getAllSeatNumbers() {
+        return carRepository.getAllSeatNumbers();
+    }
+
 }
