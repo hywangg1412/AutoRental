@@ -48,10 +48,10 @@
                     <!-- Sidebar bộ lọc -->
                     <div class="col-md-3">
                         <form method="get" action="car" id="filterForm" class="bg-white p-3 rounded shadow-sm mb-4">
-                            <h5 class="mb-3 font-weight-bold">Bộ lọc</h5>
+                            <h5 class="mb-3 font-weight-bold">Filter</h5>
                             <!-- Hãng xe -->
                             <div class="mb-3">
-                                <h6>Hãng xe</h6>
+                                <h6>Car Brand</h6>
                                 <c:forEach var="brand" items="${brandList}">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" name="brandId" value="${brand.brandId}"
@@ -63,7 +63,7 @@
                             </div>
                             <!-- Hộp số -->
                             <div class="mb-3">
-                                <h6>Hộp số</h6>
+                                <h6>Transmission Type</h6>
                                 <c:forEach var="trans" items="${transmissionTypeList}">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" name="transmissionTypeId" value="${trans.transmissionTypeId}"
@@ -75,7 +75,7 @@
                             </div>
                             <!-- Nhiên liệu -->
                             <div class="mb-3">
-                                <h6>Nhiên liệu</h6>
+                                <h6>Fuel Type</h6>
                                 <c:forEach var="fuel" items="${fuelTypeList}">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" name="fuelTypeId" value="${fuel.fuelTypeId}"
@@ -87,7 +87,7 @@
                             </div>
                             <!-- Số ghế -->
                             <div class="mb-3">
-                                <h6>Số ghế</h6>
+                                <h6>Seats</h6>
                                 <c:forEach var="seat" items="${seatList}">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" name="seat" value="${seat}"
@@ -99,7 +99,7 @@
                             </div>
                             <!-- Loại xe -->
                             <div class="mb-3">
-                                <h6>Loại xe</h6>
+                                <h6>Car Categories</h6>
                                 <c:forEach var="cat" items="${categoryList}">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" name="categoryId" value="${cat.categoryId}"
@@ -111,7 +111,7 @@
                             </div>
                             <!-- Trạng thái -->
                             <div class="mb-3">
-                                <h6>Trạng thái</h6>
+                                <h6>Status</h6>
                                 <c:forEach var="status" items="${statusList}">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" name="status" value="${status.value}"
@@ -124,7 +124,7 @@
                             <!-- Tính năng (Feature) - collapsible -->
                             <div class="mb-3">
                                 <h6 style="cursor:pointer;" onclick="toggleFeatureFilter()">
-                                    Tính năng
+                                    Features
                                     <span id="feature-toggle-icon" style="font-size:1rem;">&#9660;</span>
                                 </h6>
                                 <div id="feature-filter-content">
@@ -140,24 +140,24 @@
                             </div>
                             <!-- Khoảng giá -->
                             <div class="mb-3">
-                                <h6>Khoảng giá (VND/giờ)</h6>
+                                <h6>Price Range (VND/hour)</h6>
                                 <div class="d-flex">
-                                    <input type="number" class="form-control form-control-sm mr-2" name="minPrice" placeholder="Từ" value="${param.minPrice}">
-                                    <input type="number" class="form-control form-control-sm" name="maxPrice" placeholder="Đến" value="${param.maxPrice}">
+                                    <input type="number" class="form-control form-control-sm mr-2" name="minPrice" placeholder="From" value="${param.minPrice}">
+                                    <input type="number" class="form-control form-control-sm" name="maxPrice" placeholder="To" value="${param.maxPrice}">
                                 </div>
                             </div>
                             <!-- Năm sản xuất -->
                             <div class="mb-3">
-                                <h6>Năm sản xuất</h6>
+                                <h6>Year Manufactured</h6>
                                 <div class="d-flex">
-                                    <input type="number" class="form-control form-control-sm mr-2" name="minYear" placeholder="Từ" value="${param.minYear}">
-                                    <input type="number" class="form-control form-control-sm" name="maxYear" placeholder="Đến" value="${param.maxYear}">
+                                    <input type="number" class="form-control form-control-sm mr-2" name="minYear" placeholder="From" value="${param.minYear}">
+                                    <input type="number" class="form-control form-control-sm" name="maxYear" placeholder="To" value="${param.maxYear}">
                                 </div>
                             </div>
                             <!-- Giữ lại keyword và sort khi lọc -->
                             <c:if test="${not empty param.keyword}"><input type="hidden" name="keyword" value="${param.keyword}"/></c:if>
                             <c:if test="${not empty param.sort}"><input type="hidden" name="sort" value="${param.sort}"/></c:if>
-                            <button type="submit" class="btn btn-success w-100 mt-2">Lọc xe</button>
+                            <button type="submit" class="btn btn-success w-100 mt-2">Filter Car</button>
                         </form>
                     </div>
                     <!-- Danh sách xe + sort + search -->
@@ -165,7 +165,7 @@
                         <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
                             <!-- Search bar -->
                             <form class="form-inline mb-2" method="get" action="car" style="flex:1; min-width:250px;">
-                                <input type="text" name="keyword" class="form-control mr-2 w-75" placeholder="Tìm kiếm theo tên xe, hãng xe..." value="${param.keyword}">
+                                <input type="text" name="keyword" class="form-control mr-2 w-75" placeholder="Search by car name, car brand" value="${param.keyword}">
                                 <!-- giữ lại filter/sort -->
                                 <c:forEach var="brand" items="${paramValues.brandId}"><input type="hidden" name="brandId" value="${brand}"/></c:forEach>
                                 <c:forEach var="fuel" items="${paramValues.fuelTypeId}"><input type="hidden" name="fuelTypeId" value="${fuel}"/></c:forEach>
@@ -174,7 +174,7 @@
                                 <c:forEach var="st" items="${paramValues.status}"><input type="hidden" name="status" value="${st}"/></c:forEach>
                                 <c:forEach var="feature" items="${paramValues.featureId}"><input type="hidden" name="featureId" value="${feature}"/></c:forEach>
                                 <c:if test="${not empty param.sort}"><input type="hidden" name="sort" value="${param.sort}"/></c:if>
-                                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                                <button type="submit" class="btn btn-primary">Search</button>
                             </form>
                             <!-- Sort -->
                             <form method="get" action="car" class="mb-2 ml-3" id="sortForm">
@@ -187,13 +187,13 @@
                                 <c:forEach var="feature" items="${paramValues.featureId}"><input type="hidden" name="featureId" value="${feature}"/></c:forEach>
                                 <c:if test="${not empty param.keyword}"><input type="hidden" name="keyword" value="${param.keyword}"/></c:if>
                                 <select name="sort" class="form-control" onchange="document.getElementById('sortForm').submit()">
-                                    <option value="">Sắp xếp</option>
-                                    <option value="priceAsc" ${param.sort == 'priceAsc' ? 'selected' : ''}>Giá tăng dần</option>
-                                    <option value="priceDesc" ${param.sort == 'priceDesc' ? 'selected' : ''}>Giá giảm dần</option>
-                                    <option value="nameAsc" ${param.sort == 'nameAsc' ? 'selected' : ''}>Tên A-Z</option>
-                                    <option value="nameDesc" ${param.sort == 'nameDesc' ? 'selected' : ''}>Tên Z-A</option>
-                                    <option value="yearDesc" ${param.sort == 'yearDesc' ? 'selected' : ''}>Năm mới nhất</option>
-                                    <option value="yearAsc" ${param.sort == 'yearAsc' ? 'selected' : ''}>Năm cũ nhất</option>
+                                    <option value="">Sort</option>
+                                    <option value="priceAsc" ${param.sort == 'priceAsc' ? 'selected' : ''}>Price Ascending</option>
+                                    <option value="priceDesc" ${param.sort == 'priceDesc' ? 'selected' : ''}>Price Descending</option>
+                                    <option value="nameAsc" ${param.sort == 'nameAsc' ? 'selected' : ''}>Car Name A-Z</option>
+                                    <option value="nameDesc" ${param.sort == 'nameDesc' ? 'selected' : ''}>Car Name Z-A</option>
+                                    <option value="yearDesc" ${param.sort == 'yearDesc' ? 'selected' : ''}>Lastest Year Manufactured</option>
+                                    <option value="yearAsc" ${param.sort == 'yearAsc' ? 'selected' : ''}>Oldest Year Manufactured</option>
                                 </select>
                             </form>
                         </div>
