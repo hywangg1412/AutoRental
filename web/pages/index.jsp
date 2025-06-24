@@ -83,7 +83,7 @@
                     </div>
                 </div>
 
-                <!-- 2. Booking Form/Quick Search -->
+<!--                 2. Booking Form/Quick Search 
                 <section class="ftco-section ftco-no-pt bg-light">
                     <div class="container">
                         <div class="row no-gutters">
@@ -167,7 +167,7 @@
                                 </div>
                             </div>
                         </div>
-                </section>
+                </section>-->
                
                 <!-- 3. Featured Vehicles -->
                 <section class="ftco-section ftco-no-pt bg-light">
