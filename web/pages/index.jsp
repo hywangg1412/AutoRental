@@ -3,7 +3,6 @@
         <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
             <!DOCTYPE html>
             <html lang="en">
-
             <head>
                 <title>AutoRental</title>
                 <meta charset="utf-8">
