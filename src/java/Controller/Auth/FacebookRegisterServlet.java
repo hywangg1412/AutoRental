@@ -61,13 +61,12 @@ public class FacebookRegisterServlet extends HttpServlet {
                     errorMsg = "An account with this email already exists.";
                 }
                 request.setAttribute("error", errorMsg);
-                request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
+                request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
                 return;
             }
             User newUser = userMapper.mapFacebookUserToUser(facebookUser);
             User addedUser = userService.add(newUser);
             if (addedUser != null) {
-                // Gán role User cho người dùng mới
                 Role userRole = roleService.findByRoleName("User");
                 if (userRole != null) {
                     UserRole newUserRole = new UserRole(addedUser.getUserId(), userRole.getRoleId());

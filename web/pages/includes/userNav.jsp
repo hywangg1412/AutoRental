@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg bg-white" id="ftco-navbar" style="width:100%;margin:0;border-bottom:1px solid #e0e0e0;">
   <div class="container">
-    <a class="navbar-brand" href="${pageContext.request.contextPath}/pages/index.jsp">
+    <a class="navbar-brand" href="${pageContext.request.contextPath}/pages/includes/index.jsp">
       <span style="font-weight:bold; color:#000;">AUTO</span><span style="font-weight:bold; color:#01D28E;">RENTAL</span>
     </a>
     <button class="navbar-toggler text-dark" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav"
@@ -12,7 +12,7 @@
       <div class="collapse navbar-collapse" id="ftco-nav">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item"><a href="about.jsp" class="nav-link text-dark">About</a></li>
-          <li class="nav-item"><a href="my-trip.jsp" class="nav-link text-dark">My trips</a></li>
+          <li class="nav-item"><a href="${pageContext.request.contextPath}/pages/user/my-trip.jsp" class="nav-link text-dark">My trips</a></li>
         </ul>
         <div class="d-flex align-items-center ms-3 gap-3">
           <a href="#" class="nav-link p-0 text-dark"><i class="bi bi-bell text-dark" style="font-size: 1.2rem;"></i></a>
