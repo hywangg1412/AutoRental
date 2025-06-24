@@ -65,9 +65,9 @@
                     <div class="col-lg-8 ftco-animate">
                         <div class="text w-100 text-center mb-md-5 pb-md-5">
                             <h1 class="mb-4">Fast &amp; Easy Way To Rent A Car</h1>
-                            <p style="font-size: 18px;">A small river named Duden flows by their place and
-                                supplies it with the necessary regelialia. It is a paradisematic country, in
-                                which roasted parts</p>
+                            <p style="font-size: 18px;">
+                                Discover the best car rental experience with AutoRental. We offer a wide range of vehicles, affordable prices, and excellent customer service to make your journey comfortable and convenient.
+                            </p>
                             <a href="https://vimeo.com/45830194"
                                class="icon-wrap popup-vimeo d-flex align-items-center mt-4 justify-content-center">
                                 <div class="icon d-flex align-items-center justify-content-center">
