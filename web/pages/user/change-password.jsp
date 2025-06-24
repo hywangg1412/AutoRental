@@ -30,9 +30,9 @@
 </head>
 <body>
     <!-- Header -->
-    <jsp:include page="/pages/includes/userNav.jsp" />
+    <jsp:include page="/pages/includes/nav.jsp" />
     <div class="container">
-        <div class="row g-5 mt-4">
+        <div class="row g-5" style="margin-top: 100px;">
             <!-- Sidebar -->
             <div class="col-lg-3 col-md-4">
                 <div class="sidebar">
@@ -50,7 +50,7 @@
                                 <i class="bi bi-car-front text-dark"></i>
                                 My trips
                             </a></li>
-                            <li><a href="${pageContext.request.contextPath}/pages/user/change-password.jsp" class="nav-link text-dark border-top-custom">
+                            <li><a href="${pageContext.request.contextPath}/pages/user/change-password.jsp" class="nav-link active text-dark border-top-custom">
                                 <i class="bi bi-lock text-dark"></i>
                                 Change password
                             </a></li>

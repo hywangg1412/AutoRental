@@ -13,10 +13,8 @@
         <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800&display=swap" rel="stylesheet">
 
         <!-- ===== Include Styles ===== -->
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/userNav.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/nav.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/user/favorite-car.css">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/user/about.css">
 
         <!-- ===== Custom Styles ===== -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/open-iconic-bootstrap.min.css">
@@ -31,13 +29,14 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/flaticon.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/icomoon.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/user/about.css">
     </head>
     <body>
         <!-- Header -->
-        <jsp:include page="/pages/includes/userNav.jsp" />
+        <jsp:include page="/pages/includes/nav.jsp" />
 
         <div class="container">
-            <div class="row g-5 mt-4">
+            <div class="row g-5" style="margin-top: 100px">
                 <!-- Sidebar -->
                 <div class="col-lg-3 col-md-4">
                     <div class="sidebar">

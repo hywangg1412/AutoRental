@@ -5,32 +5,33 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     
+    <!-- ===== External CSS Libraries ===== -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800&display=swap" rel="stylesheet">
 
+    
+
+    <!-- ===== Page Styles ===== -->
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/about.css">
+
+    <!-- ===== Custom Styles (Theme/Plugins) ===== -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/open-iconic-bootstrap.min.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/animate.css">
-    
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/owl.carousel.min.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/owl.theme.default.min.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/magnific-popup.css">
-
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/aos.css">
-
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/ionicons.min.css">
-
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/bootstrap-datepicker.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/jquery.timepicker.css">
-
-    
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/flaticon.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/icomoon.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
-    
-    <!-- ===== Include Styles ===== -->
+
+    <!-- ===== NavBar Styles ===== -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/nav.css">
-    
-    <!-- ===== Custom Styles ===== -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/about.css">
   </head>
   <body>
     
