@@ -19,8 +19,6 @@ CREATE TABLE [Users] (
     [Username] NVARCHAR(100) NOT NULL, --UNIQUE
     [UserDOB] DATE NULL, --CHECK ([UserDOB] <= DATEADD(YEAR, -18, GETDATE())),
     [PhoneNumber] NVARCHAR(11) NULL,
-    [UserAddress] NVARCHAR(MAX) NULL,
-    [UserDescription] NVARCHAR(1000) NULL,
     [AvatarUrl] NVARCHAR(255) NULL,
     [Gender] NVARCHAR(10) NULL, --CHECK ([Gender] IN ('Male', 'Female', 'Other')),
     [FirstName] NVARCHAR(256) NULL,
