@@ -10,8 +10,18 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+        <!-- ===== External CSS Libraries ===== -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800&display=swap" rel="stylesheet">
 
+        
+
+        <!-- ===== Page Styles ===== -->
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/car.css">
+
+        <!-- ===== Custom Styles (Theme/Plugins) ===== -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/open-iconic-bootstrap.min.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/animate.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/owl.carousel.min.css">
@@ -24,8 +34,9 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/flaticon.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/icomoon.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
+
+        <!-- ===== NavBar Styles ===== -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/nav.css">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/car.css">
     </head>
     <body>
         <jsp:include page="includes/nav.jsp"/>
@@ -306,9 +317,6 @@
         <script src="${pageContext.request.contextPath}/assets/js/bootstrap-datepicker.js"></script>
         <script src="${pageContext.request.contextPath}/assets/js/jquery.timepicker.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets/js/scrollax.min.js"></script>
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
-        <script src="${pageContext.request.contextPath}/assets/js/google-map.js"></script>
         <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/js/car.js"></script>
     </body>
 </html>

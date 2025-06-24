@@ -20,7 +20,6 @@
         <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800&display=swap" rel="stylesheet">
 
         <!-- ===== Include Styles ===== -->
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/userNav.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/nav.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/user/user-profile.css">
 
@@ -67,10 +66,10 @@
             <% } %>
         </div>
         <!-- Header -->
-        <jsp:include page="/pages/includes/userNav.jsp" />
+        <jsp:include page="/pages/includes/nav.jsp" />
 
         <div class="container">
-            <div class="row g-5 mt-4">
+            <div class="row g-5" style="margin-top: 100px;">
                 <!-- Sidebar -->                
                 <div class="col-lg-3 col-md-4">
                     <div class="sidebar">

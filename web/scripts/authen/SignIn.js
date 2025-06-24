@@ -123,3 +123,13 @@ function hideError() {
         errorDiv.style.display = 'none';
     }
 }
+
+if (loginForm) {
+    loginForm.addEventListener('submit', function() {
+        if (loginBtn && loginSpinner && loginBtnText) {
+            loginBtn.disabled = true;
+            loginSpinner.classList.remove('d-none');
+            loginBtnText.textContent = 'Loading...';
+        }
+    });
+}

@@ -3,7 +3,7 @@ package Controller.Auth;
 import Model.Entity.OAuth.PasswordResetToken;
 import Model.Entity.User.User;
 import Service.Auth.PasswordResetTokenService;
-import Service.ResetPasswordService;
+import Service.MailService;
 import Service.User.UserService;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -18,13 +18,13 @@ import java.util.UUID;
 public class RequestPasswordServlet extends HttpServlet {
 
     private UserService userService;
-    private ResetPasswordService resetPasswordService;
+    private MailService resetPasswordService;
     private PasswordResetTokenService PRTService;
 
     @Override
     public void init() {
         userService = new UserService();
-        resetPasswordService = new ResetPasswordService();
+        resetPasswordService = new MailService();
         PRTService = new PasswordResetTokenService();
     }
 
