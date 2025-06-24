@@ -356,7 +356,6 @@
         <script src="${pageContext.request.contextPath}/assets/js/bootstrap-datepicker.js"></script>
         <script src="${pageContext.request.contextPath}/assets/js/jquery.timepicker.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets/js/scrollax.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/js/google-map.js"></script>
         <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
     </body>
 </html>
