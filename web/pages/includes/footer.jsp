@@ -30,7 +30,7 @@
               <ul class="list-unstyled">
                 <li><a href="../pages/contact.jsp" class="py-2 d-block">Contact Us</a></li>
                 <li><a href="../pages/pricing.jsp" class="py-2 d-block">Pricing</a></li>
-                <li><a href="../pages/car.jsp" class="py-2 d-block">Car</a></li>
+                <li><a href="../pages/car" class="py-2 d-block">Car</a></li>
                 <li><a href="../pages/blog.jsp" class="py-2 d-block">Blog</a></li>
               </ul>
             </div>
