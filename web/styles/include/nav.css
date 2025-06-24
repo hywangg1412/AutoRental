@@ -46,6 +46,47 @@
   height: 28px;
   align-self: center;
   opacity: 1;
-  margin-left: 32px !important;
-  margin-right: 32px !important;
+  margin-left: 20px !important;
+  margin-right: 20px !important;
 }
+
+.username-link {
+  display: flex;
+  align-items: center;
+  padding-left: 0;
+  padding-right: 0;
+  font-weight: 400;
+  color: #fff !important;
+  transition: color 0.2s, background 0.2s;
+}
+
+
+@media (max-width: 767.98px) {
+  .username-link span {
+    display: none !important;
+  }
+}
+
+.ftco-navbar-light.scrolled .bi-bell, .ftco-navbar-light.scrolled .bi-chat-dots, .ftco-navbar-light.scrolled .username-link {
+    color: #222 !important;
+}
+
+.ftco-navbar-light.scrolled .username-link:hover, .ftco-navbar-light.scrolled .username-link:focus {
+  color: #01D28E !important;
+}
+
+.ms-3{
+  margin-left: 0 !important;
+}
+
+.bi.bi-bell,
+.bi.bi-chat-dots {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+
+
+
+
+

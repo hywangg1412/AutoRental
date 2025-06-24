@@ -5,15 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Request Account Deletion - Auto Rental</title>
-    <!-- Bootstrap CSS -->
+    
+    <!-- ===== External CSS Libraries ===== -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800&display=swap" rel="stylesheet">
+    
     <!-- ===== Include Styles ===== -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/userNav.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/nav.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/user/request-delete.css">
+    
     <!-- ===== Custom Styles ===== -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/open-iconic-bootstrap.min.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/animate.css">
@@ -30,9 +32,9 @@
 </head>
 <body>
     <!-- Header -->
-    <jsp:include page="/pages/includes/userNav.jsp" />
+    <jsp:include page="/pages/includes/nav.jsp" />
     <div class="container">
-        <div class="row g-5 mt-4">
+        <div class="row g-5" style="margin-top: 100px;">
             <!-- Sidebar -->
             <div class="col-lg-3 col-md-4">
                 <div class="sidebar">
