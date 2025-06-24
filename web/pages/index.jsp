@@ -3,7 +3,6 @@
         <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
             <!DOCTYPE html>
             <html lang="en">
-
             <head>
                 <title>AutoRental</title>
                 <meta charset="utf-8">
@@ -54,7 +53,6 @@
             <body>
 
                 <jsp:include page="includes/nav.jsp" />
-
                 <!-- 1. Hero/Banner -->
                 <div class="hero-wrap ftco-degree-bg"
                     style="background-image: url('${pageContext.request.contextPath}/assets/images/bg_1.jpg');"
@@ -83,7 +81,6 @@
                     </div>
                 </div>
 
-                <!-- 2. Booking Form/Quick Search
                 <section class="ftco-section ftco-no-pt bg-light">
                     <div class="container">
                         <div class="row no-gutters">
@@ -167,7 +164,8 @@
                                 </div>
                             </div>
                         </div>
-                </section> -->
+                </section>
+
                
                 <!-- 3. Featured Vehicles -->
                 <section class="ftco-section ftco-no-pt bg-light">
