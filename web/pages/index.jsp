@@ -69,8 +69,7 @@
                                     <p style="font-size: 18px;">A small river named Duden flows by their place and
                                         supplies it with the necessary regelialia. It is a paradisematic country, in
                                         which roasted parts</p>
-                                    <a href="https://vimeo.com/45830194"
-                                        class="icon-wrap popup-vimeo d-flex align-items-center mt-4 justify-content-center">
+                                    <a href="#how-to-rent" class="icon-wrap d-flex align-items-center mt-4 justify-content-center">
                                         <div class="icon d-flex align-items-center justify-content-center">
                                             <span class="ion-ios-play"></span>
                                         </div>
@@ -84,7 +83,7 @@
                     </div>
                 </div>
 
-                <!-- 2. Booking Form/Quick Search -->
+                <!-- 2. Booking Form/Quick Search
                 <section class="ftco-section ftco-no-pt bg-light">
                     <div class="container">
                         <div class="row no-gutters">
@@ -168,7 +167,7 @@
                                 </div>
                             </div>
                         </div>
-                </section>
+                </section> -->
                
                 <!-- 3. Featured Vehicles -->
                 <section class="ftco-section ftco-no-pt bg-light">
@@ -246,7 +245,7 @@
                 </section>
                 
                 <!-- 4. How to Rent a Car -->
-                <section class="ftco-section">
+                <section class="ftco-section" id="how-to-rent">
                     <div class="container">
                         <div class="row justify-content-center mb-5">
                             <div class="col-md-7 text-center heading-section ftco-animate">
