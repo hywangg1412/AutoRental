@@ -88,7 +88,7 @@ public class GoogleLoginServlet extends HttpServlet {
             SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
             UserRole userRole = userRoleService.findByUserId(user.getUserId());
             Role actualRole = roleService.findById(userRole.getRoleId());
-            String redirectUrl = "/pages/index.jsp";
+            String redirectUrl = "/pages/home";
             if (actualRole.getRoleName().equals("Staff")) {
                 redirectUrl = "/pages/staff/staff-dashboard.jsp";
             } else if (actualRole.getRoleName().equals("Admin")) {

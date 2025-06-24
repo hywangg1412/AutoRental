@@ -86,7 +86,7 @@ public class FacebookLoginServlet extends HttpServlet {
             UserRole userRole = userRoleService.findByUserId(user.getUserId());
             Role actualRole = roleService.findById(userRole.getRoleId());
 
-            String redirectUrl = "/pages/index.jsp"; 
+            String redirectUrl = "/pages/home"; 
 
             if (actualRole.getRoleName().equals("Staff")) {
                 redirectUrl = "/pages/staff/staff-dashboard.jsp";
