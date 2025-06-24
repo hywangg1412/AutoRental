@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg bg-white" id="ftco-navbar" style="width:100%;margin:0;border-bottom:1px solid #e0e0e0;">
   <div class="container">
-    <a class="navbar-brand" href="${pageContext.request.contextPath}/pages/index.jsp">
+    <a class="navbar-brand" href="${pageContext.request.contextPath}/pages/includes/index.jsp">
       <span style="font-weight:bold; color:#000;">AUTO</span><span style="font-weight:bold; color:#01D28E;">RENTAL</span>
     </a>
     <button class="navbar-toggler text-dark" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav"

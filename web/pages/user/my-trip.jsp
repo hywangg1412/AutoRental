@@ -33,10 +33,10 @@
     </head>
     <body>
         <!-- Header -->
-        <jsp:include page="/pages/includes/userNav.jsp" />
+        <jsp:include page="/pages/includes/nav.jsp" />
 
         <div class="container">
-            <div class="row g-5 mt-4 mb-3">
+            <div class="row g-5" style="margin-top:100px">
                 <!-- Sidebar -->
                 <div class="col-lg-3 col-md-4">
                     <div class="sidebar">
