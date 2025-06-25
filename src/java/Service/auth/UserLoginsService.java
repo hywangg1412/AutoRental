@@ -150,4 +150,5 @@ public class UserLoginsService implements IUserLoginsService {
             throw new Exception("Error finding user login: " + e.getMessage());
         }
     }
+
 }
