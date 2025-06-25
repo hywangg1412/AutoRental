@@ -1,6 +1,7 @@
 package Controller.Auth;
 
 import Mapper.UserMapper;
+import Model.Constants.UserStatusConstants;
 import Model.Entity.OAuth.FacebookUser;
 import Model.Entity.User.User;
 import Service.User.UserService;

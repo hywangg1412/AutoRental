@@ -19,7 +19,7 @@ import Model.Entity.Role.Role;
 import Model.Entity.Role.UserRole;
 import Service.Role.RoleService;
 import Service.Role.UserRoleService;
-import Model.Entity.User.UserStatusConstants;
+import Model.Constants.UserStatusConstants;
 
 // googleLogin
 public class GoogleLoginServlet extends HttpServlet {
