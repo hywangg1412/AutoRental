@@ -169,4 +169,14 @@ public class UserService implements IUserService {
             return false;
         }
     }
+    
+    @Override
+    public boolean updateStatus(UUID userId, String status) {
+        try {
+            return userRepsitory.updateStatus(userId, status);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error updating user status for userId: " + userId, e);
+            return false;
+        }
+    }
 }

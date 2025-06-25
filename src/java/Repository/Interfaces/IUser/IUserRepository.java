@@ -17,4 +17,6 @@ public interface IUserRepository extends Repository<User, Integer>{
     boolean updateUserAvatar(UUID userId, String avatarUrl);
     
     boolean anonymize(UUID userId);
+
+    boolean updateStatus(UUID userId, String status);
 }
