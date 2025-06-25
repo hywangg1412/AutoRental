@@ -1,4 +1,4 @@
-package Service;
+package Service.External;
 
 import jakarta.mail.Authenticator;
 import jakarta.mail.PasswordAuthentication;

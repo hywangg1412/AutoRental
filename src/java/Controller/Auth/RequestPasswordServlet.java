@@ -3,7 +3,7 @@ package Controller.Auth;
 import Model.Entity.OAuth.PasswordResetToken;
 import Model.Entity.User.User;
 import Service.Auth.PasswordResetTokenService;
-import Service.MailService;
+import Service.External.MailService;
 import Service.User.UserService;
 import java.io.IOException;
 import java.io.PrintWriter;

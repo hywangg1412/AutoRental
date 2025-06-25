@@ -1,6 +1,6 @@
 package Controller.User.UserAccount;
 
-import Service.CloudinaryService;
+import Service.External.CloudinaryService;
 import Service.User.UserService;
 import java.io.IOException;
 import java.io.PrintWriter;
