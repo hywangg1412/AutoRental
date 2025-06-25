@@ -7,7 +7,6 @@ import Model.Entity.Role.Role;
 import Model.Entity.Role.UserRole;
 import Service.User.UserService;
 import Service.Auth.FacebookAuthService;
-import Service.Auth.EmailVerificationService;
 import Service.Role.RoleService;
 import Service.Role.UserRoleService;
 import java.io.IOException;
@@ -19,6 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import Utils.SessionUtil;
 import Model.Entity.OAuth.UserLogins;
+import Service.Auth.EmailOTPVerificationService;
 import Service.Auth.UserLoginsService;
 
 //facebookLogin
@@ -30,7 +30,7 @@ public class FacebookRegisterServlet extends HttpServlet {
     private UserLoginsService userLoginsService;
     private RoleService roleService;
     private UserRoleService userRoleService;
-    private EmailVerificationService emailVerificationService;
+    private EmailOTPVerificationService emailOTPVerificationService;
 
     @Override
     public void init() {
@@ -40,7 +40,6 @@ public class FacebookRegisterServlet extends HttpServlet {
         userLoginsService = new UserLoginsService();
         roleService = new RoleService();
         userRoleService = new UserRoleService();
-        emailVerificationService = new EmailVerificationService();
     }
 
     @Override
@@ -68,40 +67,18 @@ public class FacebookRegisterServlet extends HttpServlet {
                 return;
             }
             User newUser = userMapper.mapFacebookUserToUser(facebookUser);
-            User addedUser = userService.add(newUser);
-            if (addedUser != null) {
-                Role userRole = roleService.findByRoleName("User");
-                if (userRole != null) {
-                    UserRole newUserRole = new UserRole(addedUser.getUserId(), userRole.getRoleId());
-                    userRoleService.add(newUserRole);
-                }
+            UserLogins userLogins = new UserLogins();
+            userLogins.setLoginProvider("facebook");
+            userLogins.setProviderKey(facebookUser.getFacebookId());
 
-                UserLogins userLogins = new UserLogins();
-                userLogins.setUserId(addedUser.getUserId());
-                userLogins.setLoginProvider("facebook");
-                userLogins.setProviderKey(facebookUser.getFacebookId());
-                try {
-                    userLoginsService.add(userLogins);
-                    
-                    try {
-                        emailVerificationService.createVerificationToken(addedUser.getUserId());
-                        request.getSession().setAttribute("message", "Registration successful! Please check your email to verify your account.");
-                    } catch (Exception ex) {
-                        System.err.println("Error sending verification email: " + ex.getMessage());
-                        request.getSession().setAttribute("message", "Registration successful! However, there was an issue sending the verification email. Please contact support.");
-                    }
-                    
-                    request.getSession().setAttribute("userId", addedUser.getUserId().toString());
-                    request.getRequestDispatcher("/pages/authen/SetPassword.jsp").forward(request, response);
-                } catch (Exception ex) {
-                    userService.delete(addedUser.getUserId());
-                    request.setAttribute("error", "Register failed (user login): " + ex.getMessage());
-                    request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
-                }
-            } else {
-                request.setAttribute("error", "Register failed. Please try again.");
-                request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
-            }
+            // Lưu tạm vào session, KHÔNG add vào DB
+            request.getSession().setAttribute("pendingUserType", "facebook");
+            request.getSession().setAttribute("pendingUser", newUser);
+            request.getSession().setAttribute("pendingUserLogins", userLogins);
+            request.getSession().setAttribute("pendingUserRoleName", "User");
+
+            response.sendRedirect(request.getContextPath() + "/pages/authen/verify-otp");
+            return;
         } catch (Exception e) {
             request.setAttribute("error", "Facebook register failed - " + e.getMessage());
             request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);

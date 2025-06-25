@@ -3,7 +3,7 @@ package Controller.Auth;
 import Model.Entity.User.User;
 import Model.Entity.Role.Role;
 import Model.Entity.Role.UserRole;
-import Service.Auth.EmailVerificationService;
+//import Service.Auth.EmailVerificationService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -28,14 +28,14 @@ public class NormalRegisterServlet extends HttpServlet {
     private UserService userService;
     private RoleService roleService;
     private UserRoleService userRoleService;
-    private EmailVerificationService emailVerificationService;
+//    private EmailVerificationService emailVerificationService;
 
     @Override
     public void init() {
         userService = new UserService();
         roleService = new RoleService();
         userRoleService = new UserRoleService();
-        emailVerificationService = new EmailVerificationService();
+//        emailVerificationService = new EmailVerificationService();
     }
 
     @Override
@@ -113,27 +113,11 @@ public class NormalRegisterServlet extends HttpServlet {
             user.setLockoutEnabled(true);
             user.setAccessFailedCount(0);
 
-            User addedUser = userService.add(user);
-            if (addedUser != null) {
-                Role userRole = roleService.findByRoleName("User");
-                if (userRole != null) {
-                    UserRole newUserRole = new UserRole(addedUser.getUserId(), userRole.getRoleId());
-                    userRoleService.add(newUserRole);
-                }
-                
-                try {
-                    emailVerificationService.createVerificationToken(addedUser.getUserId());
-                    request.getSession().setAttribute("message", "Registration successful! Please check your email to verify your account.");
-                } catch (Exception e) {
-                    System.err.println("Error sending verification email: " + e.getMessage());
-                    request.getSession().setAttribute("message", "Registration successful! However, there was an issue sending the verification email.");
-                }
-                
-                response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp");
-            } else {
-                request.setAttribute("error", "Register failed. Please try again.");
-                request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
-            }
+            SessionUtil.setSessionAttribute(request, "pendingUserType", "normal");
+            SessionUtil.setSessionAttribute(request, "pendingUser", user);
+            SessionUtil.setSessionAttribute(request, "userId", user.getUserId().toString());
+            SessionUtil.setSessionAttribute(request, "username", user.getUsername());
+            response.sendRedirect(request.getContextPath() + "/pages/authen/verify-otp");
         } catch (Exception e) {
             String errorMessage;
             if (e instanceof SQLException) {
