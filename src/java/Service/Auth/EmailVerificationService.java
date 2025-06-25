@@ -9,7 +9,7 @@ import Model.Entity.User.User;
 import Repository.Auth.EmailVerificationrRepository;
 import Repository.User.UserRepository;
 import Service.Interfaces.IAuth.IEmailVerificationTokenService;
-import Service.MailService;
+import Service.External.MailService;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
