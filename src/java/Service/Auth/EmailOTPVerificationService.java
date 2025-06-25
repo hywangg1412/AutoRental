@@ -15,23 +15,23 @@ import java.util.List;
 import java.util.UUID;
 import Service.Interfaces.IAuth.IEmailOTPVerificationService;
 
-public class EmailVerificationService implements IEmailOTPVerificationService {
+public class EmailOTPVerificationService implements IEmailOTPVerificationService {
 
     private final EmailOTPVerificationRepository tokenRepository;
     private final UserRepository userRepository;
     private final MailService mailService;
     private final int TOKEN_EXPIRE_MINUTES = 10;
 
-    public EmailVerificationService() {
+    public EmailOTPVerificationService() {
         this.tokenRepository = new EmailOTPVerificationRepository();
         this.userRepository = new UserRepository();
         this.mailService = new MailService();
     }
 
     @Override
-    public EmailOTPVerification findByToken(String token) throws NotFoundException {
+    public EmailOTPVerification findByOtp(String otp) throws NotFoundException {
         try {
-            EmailOTPVerification verificationToken = tokenRepository.findByToken(token);
+            EmailOTPVerification verificationToken = tokenRepository.findByOTP(otp);
             if (verificationToken == null) {
                 throw new NotFoundException("Email verification token not found");
             }
@@ -59,8 +59,8 @@ public class EmailVerificationService implements IEmailOTPVerificationService {
             if (entry == null) {
                 throw new InvalidDataException("Email verification token cannot be null");
             }
-            if (entry.getToken() == null || entry.getToken().trim().isEmpty()) {
-                throw new InvalidDataException("Token cannot be empty");
+            if (entry.getOtp() == null || entry.getOtp().trim().isEmpty()) {
+                throw new InvalidDataException("OTP cannot be empty");
             }
             if (entry.getUserId() == null) {
                 throw new InvalidDataException("User ID cannot be null");
@@ -139,83 +139,42 @@ public class EmailVerificationService implements IEmailOTPVerificationService {
         return UUID.randomUUID().toString();
     }
 
-    public boolean sendVerificationEmail(String email, String token, String username) {
-        String verificationLink = "http://localhost:8080/autorental/verifyEmail?token=" + token;
-        return mailService.sendVerificationEmail(email, verificationLink, username);
-    }
-
-    public boolean verifyToken(String token) {
+    public boolean verifyOtp(UUID userId, String otp) {
+        if (userId == null || otp == null || otp.trim().isEmpty()) return false;
+        EmailOTPVerification verificationToken = null;
         try {
-            EmailOTPVerification verificationToken = findByToken(token);
-            
-            if (verificationToken.isIsUsed()) {
-                return false; 
-            }
-            
-            if (LocalDateTime.now().isAfter(verificationToken.getExpiryTime())) {
-                return false; 
-            }
-            
-            verificationToken.setIsUsed(true);
+            verificationToken = findByUserId(userId);
+        } catch (Exception e) {
+            System.err.println("Error finding OTP by userId: " + e.getMessage());
+            return false;
+        }
+        if (verificationToken == null) return false;
+        if (!otp.equals(verificationToken.getOtp())) return false;
+        if (verificationToken.isIsUsed()) return false;
+        if (LocalDateTime.now().isAfter(verificationToken.getExpiryTime())) return false;
+
+        verificationToken.setIsUsed(true);
+        try {
             update(verificationToken);
-            
-            User user = userRepository.findById(verificationToken.getUserId());
+        } catch (Exception e) {
+            System.err.println("Error updating OTP as used: " + e.getMessage());
+            return false;
+        }
+
+        try {
+            User user = userRepository.findById(userId);
             if (user != null) {
                 user.setEmailVerifed(true);
                 userRepository.update(user);
                 return true;
             }
-            
-            return false;
-        } catch (NotFoundException e) {
-            System.err.println("Token not found: " + e.getMessage());
-            return false;
         } catch (Exception e) {
-            System.err.println("Error verifying token: " + e.getMessage());
-            return false;
+            System.err.println("Error updating user email verified: " + e.getMessage());
         }
+        return false;
     }
 
-    public void createVerificationToken(UUID userId) {
-        try {
-            deleteByUserId(userId);
-            
-            String token = generateToken();
-            LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(TOKEN_EXPIRE_MINUTES);
-            
-            EmailOTPVerification verificationToken = new EmailOTPVerification(
-                UUID.randomUUID(),
-                token,
-                expiryTime,
-                false,
-                userId,
-                LocalDateTime.now()
-            );
-            
-            add(verificationToken);
-            
-            User user = userRepository.findById(userId);
-            if (user != null) {
-                sendVerificationEmail(user.getEmail(), token, user.getUsername());
-            }
-        } catch (Exception e) {
-            System.err.println("Error creating verification token: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    public void deleteExpiredTokens() {
-        try {
-            List<EmailOTPVerification> allTokens = tokenRepository.findAll();
-            LocalDateTime now = LocalDateTime.now();
-            
-            for (EmailOTPVerification token : allTokens) {
-                if (now.isAfter(token.getExpiryTime())) {
-                    delete(token.getId());
-                }
-            }
-        } catch (Exception e) {
-            System.err.println("Error deleting expired tokens: " + e.getMessage());
-        }
+    public String generateOtp() {
+        return String.format("%06d", new java.util.Random().nextInt(999999));
     }
 } 

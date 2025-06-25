@@ -82,17 +82,20 @@ CREATE TABLE [PasswordResetTokens] (
 );
 GO
 
-CREATE TABLE [EmailVerificationTokens] (
+CREATE TABLE [EmailOTPVerification] (
     [Id] UNIQUEIDENTIFIER NOT NULL,
-    [Token] NVARCHAR(255) NOT NULL,
+    [OTP] NVARCHAR(255) NOT NULL,
     [ExpiryTime] DATETIME NOT NULL,
-    [IsUsed] BIT NOT NULL DEFAULT 0,
+    [IsUsed] BIT NOT NULL,-- DEFAULT 0,
     [UserId] UNIQUEIDENTIFIER NOT NULL,
-    [CreatedAt] DATETIME NOT NULL DEFAULT GETDATE(),
-    CONSTRAINT [PK_EmailVerificationTokens] PRIMARY KEY ([Id]),
-    CONSTRAINT [FK_EmailVerificationTokens_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE
+    [CreatedAt] DATETIME NOT NULL, -- DEFAULT GETDATE(),
+    [ResendCount] INT NOT NULL, --DEFAULT 0,
+    [LastResendTime] DATETIME NULL,
+    [ResendBlockUntil] DATETIME NULL,
+    CONSTRAINT [PK_EmailOTPVerification] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_EmailOTPVerification_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE
 );
-GO
+GO 
 
 CREATE TABLE [UserLogins] (
     [LoginProvider] NVARCHAR(128) NOT NULL,
