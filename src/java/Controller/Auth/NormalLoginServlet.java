@@ -65,6 +65,7 @@ public class NormalLoginServlet extends HttpServlet {
                 request.getRequestDispatcher("pages/authen/SignIn.jsp").forward(request, response);
                 return;
             }
+            
             if (user.isLockoutEnabled() && user.getAccessFailedCount() >= 5) {
                 user.setStatus("Banned");
                 user.setAccessFailedCount(0);

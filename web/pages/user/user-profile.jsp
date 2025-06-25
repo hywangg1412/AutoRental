@@ -178,9 +178,9 @@
                                                     <div class="info-row d-flex align-items-center justify-content-between mb-1" style="font-size:0.97rem;">
                                                         <span class="text-muted">Email</span>
                                                         <span class="d-flex align-items-center gap-1">
-                                                            <span class="badge ${profile.email != null ? 'badge-verified' : 'badge-not-verified'}">
-                                                                <i class="bi ${profile.email != null ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill'} me-1"></i>
-                                                                ${profile.email != null ? 'Verified' : 'Not verified'}
+                                                            <span class="badge ${profile.emailVerified ? 'badge-verified' : 'badge-not-verified'}">
+                                                                <i class="bi ${profile.emailVerified ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill'} me-1"></i>
+                                                                ${profile.emailVerified ? 'Verified' : 'Not verified'}
                                                             </span>
                                                             <span class="fw-semibold" style="font-size:0.97rem;">${profile.email != null ? profile.email : 'Not added'}</span>
                                                             <a href="#" class="ms-1 text-muted d-flex align-items-center" style="font-size:1em;"><i class="bi bi-pencil"></i></a>

@@ -8,6 +8,7 @@ import Model.Entity.Role.Role;
 import Model.Entity.Role.UserRole;
 import Service.User.UserService;
 import Service.Auth.GoogleAuthService;
+import Service.Auth.EmailVerificationService;
 import Service.Auth.UserLoginsService;
 import Service.Role.RoleService;
 import Service.Role.UserRoleService;
@@ -28,6 +29,7 @@ public class GoogleRegisterServlet extends HttpServlet {
     private UserLoginsService userLoginsService;
     private RoleService roleService;
     private UserRoleService userRoleService;
+    private EmailVerificationService emailVerificationService;
 
     @Override
     public void init() {
@@ -37,6 +39,7 @@ public class GoogleRegisterServlet extends HttpServlet {
         userLoginsService = new UserLoginsService();
         roleService = new RoleService();
         userRoleService = new UserRoleService();
+        emailVerificationService = new EmailVerificationService();
     }
 
     @Override
@@ -79,6 +82,15 @@ public class GoogleRegisterServlet extends HttpServlet {
                 userLogins.setProviderKey(googleUser.getGoogleId());
                 try {
                     userLoginsService.add(userLogins);
+                    
+                    try {
+                        emailVerificationService.createVerificationToken(addedUser.getUserId());
+                        request.getSession().setAttribute("message", "Registration successful! Please check your email to verify your account.");
+                    } catch (Exception ex) {
+                        System.err.println("Error sending verification email: " + ex.getMessage());
+                        request.getSession().setAttribute("message", "Registration successful! However, there was an issue sending the verification email. Please contact support.");
+                    }
+                    
                     request.getSession().setAttribute("userId", addedUser.getUserId().toString());
                     request.getRequestDispatcher("/pages/authen/SetPassword.jsp").forward(request, response);
                 } catch (Exception ex) {

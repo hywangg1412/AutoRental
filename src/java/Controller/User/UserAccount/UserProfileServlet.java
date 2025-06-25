@@ -54,6 +54,7 @@ public class UserProfileServlet extends HttpServlet {
         profile.setGender(user.getGender());
         profile.setPhoneNumber(user.getPhoneNumber());
         profile.setEmail(user.getEmail());
+        profile.setEmailVerified(user.isEmailVerifed());
         profile.setAvatarUrl(user.getAvatarUrl());
         profile.setCreatedAt(user.getCreatedDate().format(formatter));
 
