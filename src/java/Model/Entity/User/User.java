@@ -10,8 +10,6 @@ public class User {
     private String username;
     private LocalDate userDOB;
     private String phoneNumber;
-    private String userAddress;
-    private String userDescription;
     private String avatarUrl;
     private String gender;
     private String firstName;
@@ -34,7 +32,7 @@ public class User {
     }
 
     public User(UUID userId, String username, LocalDate userDOB, String phoneNumber,
-            String userAddress, String userDescription, String avatarUrl, String gender,
+             String avatarUrl, String gender,
             String firstName, String lastName, String status, LocalDateTime createdDate,
             String normalizedUserName, String email, String normalizedEmail, boolean emailVerifed,
             String passwordHash, String securityStamp, String concurrencyStamp,
@@ -44,8 +42,6 @@ public class User {
         this.username = username;
         this.userDOB = userDOB;
         this.phoneNumber = phoneNumber;
-        this.userAddress = userAddress;
-        this.userDescription = userDescription;
         this.avatarUrl = avatarUrl;
         this.gender = gender;
         this.firstName = firstName;
@@ -100,22 +96,6 @@ public class User {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
-    }
-
-    public String getUserAddress() {
-        return userAddress;
-    }
-
-    public void setUserAddress(String userAddress) {
-        this.userAddress = userAddress;
-    }
-
-    public String getUserDescription() {
-        return userDescription;
-    }
-
-    public void setUserDescription(String userDescription) {
-        this.userDescription = userDescription;
     }
 
     public String getAvatarUrl() {
@@ -276,7 +256,6 @@ public class User {
                 ", fullName='" + getFullName() + '\'' +
                 ", userDOB=" + userDOB +
                 ", gender='" + gender + '\'' +
-                ", userAddress='" + userAddress + '\'' +
                 ", createdDate=" + createdDate +
                 ", status='" + status + '\'' +
                 '}';

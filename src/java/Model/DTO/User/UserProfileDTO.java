@@ -12,22 +12,22 @@ public class UserProfileDTO {
     private String email;
     private String avatarUrl;
     private String createdAt;
-    
+    private boolean emailVerified;
     private boolean hasFacebookLogin;
     private boolean hasGoogleLogin;
 
     public boolean isHasFacebookLogin() {
         return hasFacebookLogin;
     }
-    
+
     public void setHasFacebookLogin(boolean hasFacebookLogin) {
         this.hasFacebookLogin = hasFacebookLogin;
     }
-    
+
     public boolean isHasGoogleLogin() {
         return hasGoogleLogin;
     }
-    
+
     public void setHasGoogleLogin(boolean hasGoogleLogin) {
         this.hasGoogleLogin = hasGoogleLogin;
     }
@@ -88,9 +88,17 @@ public class UserProfileDTO {
         this.createdAt = createdAt;
     }
 
+    public boolean isEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setEmailVerified(boolean emailVerifed) {
+        this.emailVerified = emailVerifed;
+    }
+
     @Override
     public String toString() {
         return "UserProfileDTO{" + "username=" + username + ", userDOB=" + userDOB + ", gender=" + gender + ", phoneNumber=" + phoneNumber + ", email=" + email + ", avatarUrl=" + avatarUrl + ", createdAt=" + createdAt + ", hasFacebookLogin=" + hasFacebookLogin + ", hasGoogleLogin=" + hasGoogleLogin + '}';
     }
-    
+
 }

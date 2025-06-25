@@ -3,6 +3,7 @@ package Controller.Auth;
 import Model.Entity.User.User;
 import Model.Entity.Role.Role;
 import Model.Entity.Role.UserRole;
+import Service.Auth.EmailVerificationService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -27,12 +28,14 @@ public class NormalRegisterServlet extends HttpServlet {
     private UserService userService;
     private RoleService roleService;
     private UserRoleService userRoleService;
+    private EmailVerificationService emailVerificationService;
 
     @Override
     public void init() {
         userService = new UserService();
         roleService = new RoleService();
         userRoleService = new UserRoleService();
+        emailVerificationService = new EmailVerificationService();
     }
 
     @Override
@@ -118,7 +121,14 @@ public class NormalRegisterServlet extends HttpServlet {
                     userRoleService.add(newUserRole);
                 }
                 
-                request.getSession().setAttribute("message", "Registration successful! Please login to continue.");
+                try {
+                    emailVerificationService.createVerificationToken(addedUser.getUserId());
+                    request.getSession().setAttribute("message", "Registration successful! Please check your email to verify your account.");
+                } catch (Exception e) {
+                    System.err.println("Error sending verification email: " + e.getMessage());
+                    request.getSession().setAttribute("message", "Registration successful! However, there was an issue sending the verification email.");
+                }
+                
                 response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp");
             } else {
                 request.setAttribute("error", "Register failed. Please try again.");
