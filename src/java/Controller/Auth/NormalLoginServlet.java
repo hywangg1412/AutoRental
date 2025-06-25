@@ -17,6 +17,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
+import Service.External.MailService;
+import Service.Auth.EmailOTPVerificationService;
+import Model.Entity.OAuth.EmailOTPVerification;
 
 // /normalLogin
 public class NormalLoginServlet extends HttpServlet {
@@ -24,12 +27,16 @@ public class NormalLoginServlet extends HttpServlet {
     private UserService userService;
     private RoleService roleService;
     private UserRoleService userRoleService;
+    private MailService mailService;
+    private EmailOTPVerificationService emailOTPService;
 
     @Override
     public void init() {
         userService = new UserService();
         roleService = new RoleService();
         userRoleService = new UserRoleService();
+        mailService = new MailService();
+        emailOTPService = new EmailOTPVerificationService();
     }
 
     @Override
@@ -97,6 +104,16 @@ public class NormalLoginServlet extends HttpServlet {
             if (!user.isActive()) {
                 user.setStatus(UserStatusConstants.ACTIVE);
                 userService.update(user);
+            }
+
+            if (!user.isEmailVerifed()) {
+                EmailOTPVerification otp = emailOTPService.findByUserId(user.getUserId());
+                if (otp != null) {
+                    mailService.sendOtpEmail(user.getEmail(), otp.getOtp(), user.getUsername());
+                }
+                request.setAttribute("error", "Your email has not been verified. A new verification code has been sent to your email.");
+                request.getRequestDispatcher("pages/authen/SignIn.jsp").forward(request, response);
+                return;
             }
 
             UserRole userRole = userRoleService.findByUserId(user.getUserId());
