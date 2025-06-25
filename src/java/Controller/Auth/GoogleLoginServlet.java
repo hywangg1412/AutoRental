@@ -19,6 +19,7 @@ import Model.Entity.Role.Role;
 import Model.Entity.Role.UserRole;
 import Service.Role.RoleService;
 import Service.Role.UserRoleService;
+import Model.Entity.User.UserStatusConstants;
 
 // googleLogin
 public class GoogleLoginServlet extends HttpServlet {
@@ -80,6 +81,10 @@ public class GoogleLoginServlet extends HttpServlet {
             }
             if (user.getAccessFailedCount() > 0) {
                 user.setAccessFailedCount(0);
+                userService.update(user);
+            }
+            if (!user.isActive()) {
+                user.setStatus(UserStatusConstants.ACTIVE);
                 userService.update(user);
             }
             SessionUtil.removeSessionAttribute(request, "user");
