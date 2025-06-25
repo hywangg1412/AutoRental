@@ -1,6 +1,6 @@
 package Service.Auth;
 
-import Constant.OAuthConstants;
+import Model.Constants.OAuthConstants;
 import Model.Entity.OAuth.FacebookUser;
 import java.io.IOException;
 import java.io.InputStreamReader;

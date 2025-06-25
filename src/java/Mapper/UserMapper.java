@@ -17,7 +17,7 @@ public class UserMapper {
         user.setEmail(googleUser.getEmail());
         user.setFirstName(googleUser.getFirstName());
         user.setLastName(googleUser.getLastName());
-        user.setEmailVerifed(googleUser.isEmailVerified());
+        user.setEmailVerifed(false);
         user.setAvatarUrl(googleUser.getAvatarUrl());
         user.setStatus("Active");
 
@@ -30,8 +30,6 @@ public class UserMapper {
         user.setConcurrencyStamp(UUID.randomUUID().toString());
 
         user.setPhoneNumber(null);
-        user.setUserAddress(null);
-        user.setUserDescription(null);
         user.setGender(null);
         user.setUserDOB(null);
         user.setLockoutEnd(null);
@@ -66,8 +64,6 @@ public class UserMapper {
         user.setConcurrencyStamp(UUID.randomUUID().toString());
 
         user.setPhoneNumber(null);
-        user.setUserAddress(null);
-        user.setUserDescription(null);
         user.setGender(null);
         user.setUserDOB(null);
         user.setLockoutEnd(null);

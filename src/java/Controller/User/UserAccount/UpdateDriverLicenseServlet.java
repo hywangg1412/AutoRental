@@ -7,7 +7,7 @@ import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import Service.CloudinaryService;
+import Service.External.CloudinaryService;
 import Model.Entity.User.DriverLicense;
 import Service.User.DriverLicenseService;
 import Model.Entity.User.User;

@@ -1,6 +1,7 @@
 package Controller.Auth;
 
 import Mapper.UserMapper;
+import Model.Constants.UserStatusConstants;
 import Model.Entity.OAuth.FacebookUser;
 import Model.Entity.User.User;
 import Service.User.UserService;
@@ -20,6 +21,9 @@ import Service.Role.RoleService;
 import Service.Role.UserRoleService;
 import Service.Auth.UserLoginsService;
 import java.util.UUID;
+import Service.External.MailService;
+import Service.Auth.EmailOTPVerificationService;
+import Model.Entity.OAuth.EmailOTPVerification;
 
 // facebookLogin
 public class FacebookLoginServlet extends HttpServlet {
@@ -30,6 +34,8 @@ public class FacebookLoginServlet extends HttpServlet {
     private UserLoginsService userLoginsService;
     private RoleService roleService;
     private UserRoleService userRoleService;
+    private MailService mailService;
+    private EmailOTPVerificationService emailOTPService;
 
     @Override
     public void init() {
@@ -39,6 +45,8 @@ public class FacebookLoginServlet extends HttpServlet {
         userLoginsService = new UserLoginsService();
         roleService = new RoleService();
         userRoleService = new UserRoleService();
+        mailService = new MailService();
+        emailOTPService = new EmailOTPVerificationService();
     }
 
     @Override
@@ -76,6 +84,19 @@ public class FacebookLoginServlet extends HttpServlet {
             if (user.getAccessFailedCount() > 0) {
                 user.setAccessFailedCount(0);
                 userService.update(user);
+            }
+            if (!user.isActive()) {
+                user.setStatus(UserStatusConstants.ACTIVE);
+                userService.update(user);
+            }
+            if (!user.isEmailVerifed()) {
+                EmailOTPVerification otp = emailOTPService.findByUserId(user.getUserId());
+                if (otp != null) {
+                    mailService.sendOtpEmail(user.getEmail(), otp.getOtp(), user.getUsername());
+                }
+                request.setAttribute("error", "Your email has not been verified. A new verification code has been sent to your email.");
+                request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
+                return;
             }
 
             SessionUtil.removeSessionAttribute(request, "user");

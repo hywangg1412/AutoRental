@@ -1,13 +1,13 @@
 package Controller.Home;
 
-import Constant.OAuthConstants;
+import Model.Constants.OAuthConstants;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import Service.MailService;
+import Service.External.MailService;
 
 @WebServlet(name = "ContactServlet", urlPatterns = {"/contact"})
 public class ContactServlet extends HttpServlet {
