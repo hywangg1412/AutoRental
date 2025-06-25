@@ -77,6 +77,10 @@ public class FacebookLoginServlet extends HttpServlet {
                 user.setAccessFailedCount(0);
                 userService.update(user);
             }
+            if (!user.isActive()) {
+                user.setStatus(UserStatusConstants.ACTIVE);
+                userService.update(user);
+            }
 
             SessionUtil.removeSessionAttribute(request, "user");
             SessionUtil.setSessionAttribute(request, "user", user);

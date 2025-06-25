@@ -93,6 +93,11 @@ public class NormalLoginServlet extends HttpServlet {
                 userService.update(user);
             }
 
+            if (!user.isActive()) {
+                user.setStatus(UserStatusConstants.ACTIVE);
+                userService.update(user);
+            }
+
             UserRole userRole = userRoleService.findByUserId(user.getUserId());
             Role actualRole = roleService.findById(userRole.getRoleId());
             String redirectUrl = "/pages/home";
