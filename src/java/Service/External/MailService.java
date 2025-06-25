@@ -10,7 +10,7 @@ import jakarta.mail.internet.MimeMessage;
 import java.util.Properties;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import Constant.OAuthConstants;
+import Model.Constants.OAuthConstants;
 
 public class MailService {
 

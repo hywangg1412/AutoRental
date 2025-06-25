@@ -1,4 +1,4 @@
-package Constant;
+package Model.Constants;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
