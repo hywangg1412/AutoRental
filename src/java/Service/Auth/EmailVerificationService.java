@@ -4,34 +4,34 @@ import Exception.EmptyDataException;
 import Exception.EventException;
 import Exception.InvalidDataException;
 import Exception.NotFoundException;
-import Model.Entity.OAuth.EmailVerificationToken;
+import Model.Entity.OAuth.EmailOTPVerification;
 import Model.Entity.User.User;
-import Repository.Auth.EmailVerificationrRepository;
+import Repository.Auth.EmailOTPVerificationRepository;
 import Repository.User.UserRepository;
-import Service.Interfaces.IAuth.IEmailVerificationTokenService;
 import Service.External.MailService;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import Service.Interfaces.IAuth.IEmailOTPVerificationService;
 
-public class EmailVerificationService implements IEmailVerificationTokenService {
+public class EmailVerificationService implements IEmailOTPVerificationService {
 
-    private final EmailVerificationrRepository tokenRepository;
+    private final EmailOTPVerificationRepository tokenRepository;
     private final UserRepository userRepository;
     private final MailService mailService;
     private final int TOKEN_EXPIRE_MINUTES = 10;
 
     public EmailVerificationService() {
-        this.tokenRepository = new EmailVerificationrRepository();
+        this.tokenRepository = new EmailOTPVerificationRepository();
         this.userRepository = new UserRepository();
         this.mailService = new MailService();
     }
 
     @Override
-    public EmailVerificationToken findByToken(String token) throws NotFoundException {
+    public EmailOTPVerification findByToken(String token) throws NotFoundException {
         try {
-            EmailVerificationToken verificationToken = tokenRepository.findByToken(token);
+            EmailOTPVerification verificationToken = tokenRepository.findByToken(token);
             if (verificationToken == null) {
                 throw new NotFoundException("Email verification token not found");
             }
@@ -44,18 +44,17 @@ public class EmailVerificationService implements IEmailVerificationTokenService 
     @Override
     public void display() throws EmptyDataException, EventException {
         try {
-            List<EmailVerificationToken> tokens = tokenRepository.findAll();
+            List<EmailOTPVerification> tokens = tokenRepository.findAll();
             if (tokens.isEmpty()) {
                 throw new EmptyDataException("No email verification tokens found");
             }
-            // Display logic here if needed
         } catch (SQLException e) {
             throw new EventException("Error displaying email verification tokens: " + e.getMessage());
         }
     }
 
     @Override
-    public EmailVerificationToken add(EmailVerificationToken entry) throws EventException, InvalidDataException {
+    public EmailOTPVerification add(EmailOTPVerification entry) throws EventException, InvalidDataException {
         try {
             if (entry == null) {
                 throw new InvalidDataException("Email verification token cannot be null");
@@ -76,7 +75,7 @@ public class EmailVerificationService implements IEmailVerificationTokenService 
     @Override
     public boolean delete(UUID id) throws EventException, NotFoundException {
         try {
-            EmailVerificationToken token = tokenRepository.findById(id);
+            EmailOTPVerification token = tokenRepository.findById(id);
             if (token == null) {
                 throw new NotFoundException("Email verification token not found");
             }
@@ -87,13 +86,13 @@ public class EmailVerificationService implements IEmailVerificationTokenService 
     }
 
     @Override
-    public boolean update(EmailVerificationToken entry) throws EventException, NotFoundException {
+    public boolean update(EmailOTPVerification entry) throws EventException, NotFoundException {
         try {
             if (entry == null || entry.getId() == null) {
                 throw new NotFoundException("Email verification token not found");
             }
             
-            EmailVerificationToken existingToken = tokenRepository.findById(entry.getId());
+            EmailOTPVerification existingToken = tokenRepository.findById(entry.getId());
             if (existingToken == null) {
                 throw new NotFoundException("Email verification token not found");
             }
@@ -105,9 +104,9 @@ public class EmailVerificationService implements IEmailVerificationTokenService 
     }
 
     @Override
-    public EmailVerificationToken findById(UUID id) throws NotFoundException {
+    public EmailOTPVerification findById(UUID id) throws NotFoundException {
         try {
-            EmailVerificationToken token = tokenRepository.findById(id);
+            EmailOTPVerification token = tokenRepository.findById(id);
             if (token == null) {
                 throw new NotFoundException("Email verification token not found");
             }
@@ -118,7 +117,7 @@ public class EmailVerificationService implements IEmailVerificationTokenService 
     }
 
     @Override
-    public EmailVerificationToken findByUserId(UUID userId) {
+    public EmailOTPVerification findByUserId(UUID userId) {
         try {
             return tokenRepository.findByUserId(userId);
         } catch (Exception e) {
@@ -136,8 +135,6 @@ public class EmailVerificationService implements IEmailVerificationTokenService 
         }
     }
 
-    // Additional methods for email verification functionality
-    
     public String generateToken() {
         return UUID.randomUUID().toString();
     }
@@ -149,21 +146,19 @@ public class EmailVerificationService implements IEmailVerificationTokenService 
 
     public boolean verifyToken(String token) {
         try {
-            EmailVerificationToken verificationToken = findByToken(token);
+            EmailOTPVerification verificationToken = findByToken(token);
             
             if (verificationToken.isIsUsed()) {
-                return false; // Token đã được sử dụng
+                return false; 
             }
             
             if (LocalDateTime.now().isAfter(verificationToken.getExpiryTime())) {
-                return false; // Token đã hết hạn
+                return false; 
             }
             
-            // Cập nhật trạng thái token thành đã sử dụng
             verificationToken.setIsUsed(true);
             update(verificationToken);
             
-            // Cập nhật trạng thái email verified của user
             User user = userRepository.findById(verificationToken.getUserId());
             if (user != null) {
                 user.setEmailVerifed(true);
@@ -183,14 +178,12 @@ public class EmailVerificationService implements IEmailVerificationTokenService 
 
     public void createVerificationToken(UUID userId) {
         try {
-            // Xóa token cũ nếu có
             deleteByUserId(userId);
             
-            // Tạo token mới
             String token = generateToken();
             LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(TOKEN_EXPIRE_MINUTES);
             
-            EmailVerificationToken verificationToken = new EmailVerificationToken(
+            EmailOTPVerification verificationToken = new EmailOTPVerification(
                 UUID.randomUUID(),
                 token,
                 expiryTime,
@@ -201,7 +194,6 @@ public class EmailVerificationService implements IEmailVerificationTokenService 
             
             add(verificationToken);
             
-            // Gửi email xác thực
             User user = userRepository.findById(userId);
             if (user != null) {
                 sendVerificationEmail(user.getEmail(), token, user.getUsername());
@@ -214,10 +206,10 @@ public class EmailVerificationService implements IEmailVerificationTokenService 
 
     public void deleteExpiredTokens() {
         try {
-            List<EmailVerificationToken> allTokens = tokenRepository.findAll();
+            List<EmailOTPVerification> allTokens = tokenRepository.findAll();
             LocalDateTime now = LocalDateTime.now();
             
-            for (EmailVerificationToken token : allTokens) {
+            for (EmailOTPVerification token : allTokens) {
                 if (now.isAfter(token.getExpiryTime())) {
                     delete(token.getId());
                 }

@@ -3,7 +3,7 @@ package Model.Entity.OAuth;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class EmailVerificationToken {
+public class EmailOTPVerification {
     public UUID id;
     public String token;
     private LocalDateTime expiryTime;
@@ -11,10 +11,10 @@ public class EmailVerificationToken {
     private UUID userId;
     private LocalDateTime createdAt;
 
-    public EmailVerificationToken() {
+    public EmailOTPVerification() {
     }
 
-    public EmailVerificationToken(UUID id, String token, LocalDateTime expiryTime, boolean isUsed, UUID userId, LocalDateTime createdAt) {
+    public EmailOTPVerification(UUID id, String token, LocalDateTime expiryTime, boolean isUsed, UUID userId, LocalDateTime createdAt) {
         this.id = id;
         this.token = token;
         this.expiryTime = expiryTime;
@@ -70,9 +70,8 @@ public class EmailVerificationToken {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
-
     @Override
     public String toString() {
-        return "EmailVerificationToken{" + "id=" + id + ", token=" + token + ", expiryTime=" + expiryTime + ", isUsed=" + isUsed + ", userId=" + userId + ", createdAt=" + createdAt + '}';
+        return "EmailOTPVerification{" + "id=" + id + ", token=" + token + ", expiryTime=" + expiryTime + ", isUsed=" + isUsed + ", userId=" + userId + ", createdAt=" + createdAt + '}';
     }
 }
