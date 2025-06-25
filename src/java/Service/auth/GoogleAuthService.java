@@ -1,6 +1,6 @@
 package Service.Auth;
 
-import Constant.OAuthConstants;
+import Model.Constants.OAuthConstants;
 import Model.Entity.OAuth.GoogleUser;
 import Model.Entity.User.User;
 import com.google.api.client.auth.oauth2.TokenResponse;

@@ -1,4 +1,4 @@
-package Service;
+package Service.External;
 
 import jakarta.mail.Authenticator;
 import jakarta.mail.PasswordAuthentication;
@@ -10,7 +10,7 @@ import jakarta.mail.internet.MimeMessage;
 import java.util.Properties;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import Constant.OAuthConstants;
+import Model.Constants.OAuthConstants;
 
 public class MailService {
 
@@ -126,6 +126,110 @@ public class MailService {
             return true;
         } catch (Exception e) {
             System.out.println("Send error: " + e);
+            return false;
+        }
+    }
+
+    public boolean sendVerificationEmail(String to, String verificationLink, String username) {
+        Properties props = new Properties();
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+
+        Authenticator auth = new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(from, password);
+            }
+        };
+
+        Session session = Session.getInstance(props, auth);
+
+        try {
+            Message msg = new MimeMessage(session);
+            msg.addHeader("Content-type", "text/html; charset=UTF-8");
+            msg.setFrom(new InternetAddress(from));
+            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to, false));
+            msg.setSubject("Verify Your Email - AutoRental");
+            String content = ""
+                    + "<div style=\"font-family: 'Montserrat', Arial, sans-serif; background: #f7faff; padding: 32px; border-radius: 12px; max-width: 480px; margin: auto;\">"
+                    + "  <h2 style=\"color: #2176ff; text-align: center; margin-bottom: 8px;\">AutoRental</h2>"
+                    + "  <h3 style=\"color: #181f32; text-align: center; margin-top: 0;\">Email Verification</h3>"
+                    + "  <p>Hi <b>" + username + "</b>,</p>"
+                    + "  <p>Welcome to <b>AutoRental</b>! Please verify your email address to complete your registration.</p>"
+                    + "  <p style=\"text-align: center; margin: 32px 0;\">"
+                    + "    <a href=\"" + verificationLink + "\" style=\"background: #2176ff; color: #fff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 1.1rem;\">"
+                    + "      Verify Email"
+                    + "    </a>"
+                    + "  </p>"
+                    + "  <p>If you did not create an account with AutoRental, please ignore this email.</p>"
+                    + "  <p><strong>This verification link will expire in 10 minutes for your security.</strong></p>"
+                    + "  <hr style=\"border: none; border-top: 1px solid #e0e7ef; margin: 24px 0;\">"
+                    + "  <p style=\"font-size: 0.95rem; color: #6b7280;\">"
+                    + "    Need help? Contact <a href=\"mailto:support@autorental.com\" style=\"color: #2176ff;\">support@autorental.com</a><br>"
+                    + "    &copy; " + java.time.Year.now() + " AutoRental. All rights reserved."
+                    + "  </p>"
+                    + "</div>";
+            msg.setContent(content, "text/html; charset=UTF-8");
+            Transport.send(msg);
+            System.out.println("Verification email sent successfully to: " + to);
+            return true;
+        } catch (Exception e) {
+            System.out.println("Failed to send verification email to: " + to);
+            System.out.println("Error: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean sendOtpEmail(String to, String otp, String username) {
+        String subject = "Your OTP Code - AutoRental";
+        String content = ""
+            + "<div style=\"font-family: 'Montserrat', Arial, sans-serif; background: #f7faff; padding: 32px; border-radius: 12px; max-width: 480px; margin: auto;\">"
+            + "  <h2 style=\"color: #2176ff; text-align: center; margin-bottom: 8px;\">AutoRental</h2>"
+            + "  <h3 style=\"color: #181f32; text-align: center; margin-top: 0;\">Email Verification - OTP</h3>"
+            + "  <p>Hi <b>" + username + "</b>,</p>"
+            + "  <p>Thank you for registering with <b>AutoRental</b>!</p>"
+            + "  <p style=\"font-size: 1.1rem; text-align: center; margin: 32px 0;\">"
+            + "    <span style=\"display: inline-block; background: #2176ff; color: #fff; padding: 14px 32px; border-radius: 8px; font-weight: bold; font-size: 1.5rem; letter-spacing: 4px;\">" + otp + "</span>"
+            + "  </p>"
+            + "  <p style=\"text-align: center;\">Enter this OTP code on the website to verify your email address.</p>"
+            + "  <p><strong>This OTP will expire in 10 minutes for your security.</strong></p>"
+            + "  <hr style=\"border: none; border-top: 1px solid #e0e7ef; margin: 24px 0;\">"
+            + "  <p style=\"font-size: 0.95rem; color: #6b7280;\">"
+            + "    Need help? Contact <a href=\"mailto:support@autorental.com\" style=\"color: #2176ff;\">support@autorental.com</a><br>"
+            + "    &copy; " + java.time.Year.now() + " AutoRental. All rights reserved."
+            + "  </p>"
+            + "</div>";
+
+        try {
+            Properties props = new Properties();
+            props.put("mail.smtp.host", "smtp.gmail.com");
+            props.put("mail.smtp.port", "587");
+            props.put("mail.smtp.auth", "true");
+            props.put("mail.smtp.starttls.enable", "true");
+
+            Authenticator auth = new Authenticator() {
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(from, password);
+                }
+            };
+
+            Session session = Session.getInstance(props, auth);
+
+            Message msg = new MimeMessage(session);
+            msg.addHeader("Content-type", "text/html; charset=UTF-8");
+            msg.setFrom(new InternetAddress(from));
+            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to, false));
+            msg.setSubject(subject);
+            msg.setContent(content, "text/html; charset=UTF-8");
+            Transport.send(msg);
+            System.out.println("OTP email sent successfully to: " + to);
+            return true;
+        } catch (Exception e) {
+            System.out.println("Failed to send OTP email to: " + to);
+            System.out.println("Error: " + e.getMessage());
             return false;
         }
     }

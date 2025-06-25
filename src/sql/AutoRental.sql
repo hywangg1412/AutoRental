@@ -19,8 +19,6 @@ CREATE TABLE [Users] (
     [Username] NVARCHAR(100) NOT NULL, --UNIQUE
     [UserDOB] DATE NULL, --CHECK ([UserDOB] <= DATEADD(YEAR, -18, GETDATE())),
     [PhoneNumber] NVARCHAR(11) NULL,
-    [UserAddress] NVARCHAR(MAX) NULL,
-    [UserDescription] NVARCHAR(1000) NULL,
     [AvatarUrl] NVARCHAR(255) NULL,
     [Gender] NVARCHAR(10) NULL, --CHECK ([Gender] IN ('Male', 'Female', 'Other')),
     [FirstName] NVARCHAR(256) NULL,
@@ -83,6 +81,21 @@ CREATE TABLE [PasswordResetTokens] (
     CONSTRAINT [FK_PasswordResetTokens_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE
 );
 GO
+
+CREATE TABLE [EmailOTPVerification] (
+    [Id] UNIQUEIDENTIFIER NOT NULL,
+    [OTP] NVARCHAR(255) NOT NULL,
+    [ExpiryTime] DATETIME NOT NULL,
+    [IsUsed] BIT NOT NULL,-- DEFAULT 0,
+    [UserId] UNIQUEIDENTIFIER NOT NULL,
+    [CreatedAt] DATETIME NOT NULL, -- DEFAULT GETDATE(),
+    [ResendCount] INT NOT NULL, --DEFAULT 0,
+    [LastResendTime] DATETIME NULL,
+    [ResendBlockUntil] DATETIME NULL,
+    CONSTRAINT [PK_EmailOTPVerification] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_EmailOTPVerification_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE
+);
+GO 
 
 CREATE TABLE [UserLogins] (
     [LoginProvider] NVARCHAR(128) NOT NULL,
