@@ -118,14 +118,15 @@ public class NormalLoginServlet extends HttpServlet {
 
             UserRole userRole = userRoleService.findByUserId(user.getUserId());
             Role actualRole = roleService.findById(userRole.getRoleId());
-            String redirectUrl = "/pages/home";
+            String redirectUrl = "/pages/index.jsp";
             if (actualRole.getRoleName().equals("Staff")) {
-                redirectUrl = "/pages/staff/staff-dashboard.jsp";
+                redirectUrl = "/staff/dashboard"; 
             } else if (actualRole.getRoleName().equals("Admin")) {
-                redirectUrl = "/pages/admin/admin-dashboard.jsp";
+                redirectUrl = "/admin/dashboard"; 
             }
 
             SessionUtil.setSessionAttribute(request, "user", user);
+            SessionUtil.setSessionAttribute(request, "userId", user.getUserId());
             SessionUtil.setSessionAttribute(request, "isLoggedIn", true);
             SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
             response.sendRedirect(request.getContextPath() + redirectUrl);
@@ -135,3 +136,4 @@ public class NormalLoginServlet extends HttpServlet {
         }
     }
 }
+
