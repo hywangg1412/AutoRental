@@ -99,15 +99,23 @@ public class EmailOTPVerificationServlet extends HttpServlet {
                     userLoginsService.add(pendingUserLogins);
                 }
 
+                // Lấy pendingUserType trước khi xóa session
+                String pendingUserType = (String) session.getAttribute("pendingUserType");
                 session.removeAttribute("pendingUser");
                 session.removeAttribute("pendingUserLogins");
                 session.removeAttribute("pendingUserRoleName");
                 session.removeAttribute("pendingUserType");
                 SessionUtil.setSessionAttribute(request, "userId", addedUser.getUserId().toString());
 
-                request.setAttribute("success", "Email verified successfully! Please set your password.");
-                request.getRequestDispatcher("/setPassword").forward(request, response);
-                return;
+                if ("normal".equals(pendingUserType)) {
+                    session.setAttribute("message", "Email verified successfully! Please sign in.");
+                    response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp");
+                    return;
+                } else {
+                    request.setAttribute("success", "Email verified successfully! Please set your password.");
+                    request.getRequestDispatcher("/setPassword").forward(request, response);
+                    return;
+                }
             } else {
                 request.setAttribute("error", "OTP verification failed. The code may be expired or invalid.");
                 request.setAttribute("message", "Please try again or request a new OTP.");
