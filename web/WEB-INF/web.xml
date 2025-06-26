@@ -43,14 +43,14 @@
         <servlet-name>ResetPasswordServlet</servlet-name>
         <servlet-class>Controller.Auth.ResetPasswordServlet</servlet-class>
     </servlet>
-    <servlet>
+<!--    <servlet>
         <servlet-name>BookingApprovalListServlet</servlet-name>
         <servlet-class>Controller.Booking.BookingApprovalListServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>BookingApprovalServlet</servlet-name>
         <servlet-class>Controller.Booking.BookingApprovalServlet</servlet-class>
-    </servlet>
+    </servlet>-->
     <servlet>
         <servlet-name>SetPasswordServlet</servlet-name>
         <servlet-class>Controller.Auth.SetPasswordServlet</servlet-class>
@@ -91,14 +91,14 @@
         <servlet-name>ResetPasswordServlet</servlet-name>
         <url-pattern>/resetPassword</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
+<!--    <servlet-mapping>
         <servlet-name>BookingApprovalListServlet</servlet-name>
         <url-pattern>/staff/booking-approval-list</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>BookingApprovalServlet</servlet-name>
         <url-pattern>/staff/booking-approval</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping>-->
     <servlet-mapping>
         <servlet-name>SetPasswordServlet</servlet-name>
         <url-pattern>/setPassword</url-pattern>
