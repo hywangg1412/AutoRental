@@ -280,4 +280,37 @@ public class UserRepository implements IUserRepository {
         }
         return false;
     }
+
+    @Override
+    public User findByUsername(String username) {
+        String sql = "SELECT * FROM Users WHERE NormalizedUserName = ?";
+        try (Connection conn = dbContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, username.toUpperCase());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return mapResultSetToUser(rs);
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error finding user by username: " + username, e);
+        }
+        return null;
+    }
+
+    /**
+     * Lấy tất cả username bắt đầu bằng baseUsername (không phân biệt hoa thường)
+     */
+    public List<String> findAllUsernamesLike(String baseUsername) {
+        List<String> usernames = new ArrayList<>();
+        String sql = "SELECT Username FROM Users WHERE LOWER(Username) LIKE ?";
+        try (Connection conn = dbContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, baseUsername.toLowerCase() + "%");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                usernames.add(rs.getString("Username"));
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error finding usernames like: " + baseUsername, e);
+        }
+        return usernames;
+    }
 }

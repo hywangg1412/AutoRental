@@ -2,6 +2,7 @@ package Repository.Interfaces.IUser;
 
 import Model.Entity.User.User;
 import Repository.Interfaces.Repository;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -19,4 +20,8 @@ public interface IUserRepository extends Repository<User, Integer>{
     boolean anonymize(UUID userId);
 
     boolean updateStatus(UUID userId, String status);
+    
+    User findByUsername(String username);
+
+    List<String> findAllUsernamesLike(String baseUsername);
 }

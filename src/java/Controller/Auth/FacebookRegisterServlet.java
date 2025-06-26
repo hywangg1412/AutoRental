@@ -66,7 +66,7 @@ public class FacebookRegisterServlet extends HttpServlet {
                 request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
                 return;
             }
-            User newUser = userMapper.mapFacebookUserToUser(facebookUser);
+            User newUser = userMapper.mapFacebookUserToUser(facebookUser,userService);
             UserLogins userLogins = new UserLogins();
             userLogins.setLoginProvider("facebook");
             userLogins.setProviderKey(facebookUser.getFacebookId());
