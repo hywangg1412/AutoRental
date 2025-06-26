@@ -41,6 +41,12 @@ public class EmailOTPVerificationServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
+        Object pendingUserLogins = session.getAttribute("pendingUserLogins");
+        Object pendingUserType = session.getAttribute("pendingUserType");
+        if (pendingUserLogins != null && "normal".equals(pendingUserType)) {
+            response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp");
+            return;
+        }
         String userIdStr = (String) SessionUtil.getSessionAttribute(request, "userId");
         if (userIdStr == null) {
             response.sendRedirect(request.getContextPath() + "/login");

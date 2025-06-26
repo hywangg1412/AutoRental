@@ -1,6 +1,6 @@
 <%-- Document : booking-form-header Created on : Jun 15, 2025, 9:25:22 AM Author
 : admin --%> <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ page import="Model.Entity.User" %> <% User user = (User)
+<%@ page import="Model.Entity.User.User" %> <% User user = (User)
 session.getAttribute("user"); String username = user != null ?
 user.getUsername() : "Account"; %>
 <header class="header">

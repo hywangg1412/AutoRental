@@ -1,159 +1,114 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>AutoRental - Staff</title>
-        
-        <!-- ===== External CSS Libraries ===== -->
+        <title>CarRental Pro - Booking Requests</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
-        
-        <!-- ===== Custom Styles ===== -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/staff/staff-booking.css">
     </head>
-<body>
-    <div class="dashboard-container">
+    <body>
         <!-- Sidebar -->
         <div class="sidebar">
-            <div class="sidebar-header">
-                <div class="brand-logo">
-                    <i class="fas fa-car"></i>
-                </div>
-                <div class="brand-info">
-                    <h5 class="brand-title">AutoRental</h5>
-                    <small class="brand-subtitle">Staff Dashboard</small>
+            <div class="p-4 border-bottom">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="bg-primary text-white rounded d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                        <i class="fas fa-car fa-sm"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-0">AutoRental</h5>
+                        <small class="text-muted">Staff Dashboard</small>
+                    </div>
                 </div>
             </div>
-            
-            <div class="sidebar-content">
-                <h6 class="nav-heading">Navigation</h6>
-                <nav class="sidebar-nav">
-                    <a href="staff-dashboard.jsp" class="nav-item">
-                        <i class="fas fa-home"></i>
-                        <span>Dashboard</span>
-                    </a>
-                    <a href="booking-approval-list" class="nav-item active">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>Booking Requests</span>
-                    </a>
-                    <a href="car-condition.jsp" class="nav-item">
-                        <i class="fas fa-car"></i>
-                        <span>Car Condition</span>
-                    </a>
-                    <a href="car-availability.jsp" class="nav-item">
-                        <i class="fas fa-clipboard-list"></i>
-                        <span>Car Availability</span>
-                    </a>
-                    <a href="#" class="nav-item">
-                        <i class="fas fa-shield-alt"></i>
-                        <span>Damage Reports</span>
-                    </a>
-                    <a href="customer-support.jsp" class="nav-item">
-                        <i class="fas fa-comment"></i>
-                        <span>Customer Feedback</span>
-                    </a>
-                    <a href="#" class="nav-item">
-                        <i class="fas fa-users"></i>
-                        <span>Support Users</span>
-                    </a>
-                </nav>
-                
-                <div class="sidebar-footer">
-                    <a href="#" class="nav-item logout">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span>Logout</span>
-                    </a>
-                </div>
+            <div class="p-3">
+                <h6 class="px-3 mb-2 text-muted">Navigation</h6>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="staff-dashboard.jsp">
+                            <i class="fas fa-home"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="${pageContext.request.contextPath}/staff/booking-approval-list">
+                            <i class="fas fa-calendar"></i> Booking Requests
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="staff-car-condition.jsp">
+                            <i class="fas fa-car"></i> Car Condition
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="staff-car-availability.jsp">
+                            <i class="fas fa-clipboard-list"></i> Car Availability
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-shield-alt"></i> Damage Reports
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="staff-customer-support.jsp">
+                            <i class="fas fa-comment"></i> Customer Feedback
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-users"></i> Support Users
+                        </a>
+                    </li>
+                </ul>
+                <hr>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link text-danger" href="#">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
 
         <!-- Main Content -->
         <div class="main-content">
-            <div class="content-header">
-                <div class="header-left">
-                    <h1 class="page-title">Booking Requests</h1>
-                    <p class="page-subtitle">Manage incoming rental requests and bookings</p>
-                </div>
-                <div class="header-right">
-                    <button class="btn btn-outline-secondary btn-sm me-2">
-                        <i class="fas fa-bell"></i>
-                        Notifications
-                    </button>
-                    <div class="user-profile">
-                        <div class="user-avatar">JS</div>
-                        <span class="user-name">John Staff</span>
+            <!-- Updated Header Design -->
+            <header class="header bg-white border-bottom shadow-sm">
+                <div class="container-fluid px-4 py-3">
+                    <div class="row align-items-center">
+                        <!-- Left: Page Title -->
+                        <div class="col text-start">
+                            <h4 class="mb-0 fw-bold">Booking Requests</h4>
+                            <small class="text-muted">Manage incoming rental requests and bookings</small>
+                        </div>
+
+                        <!-- Right: Notifications and User -->
+                        <div class="col-auto">
+                            <div class="d-flex align-items-center gap-3">
+                                <button class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2">
+                                    <i class="fas fa-bell"></i>
+                                    <span>Notifications</span>
+                                </button>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 32px; height: 32px; font-size: 0.875rem;">
+                                        JS
+                                    </div>
+                                    <span class="fw-medium">John Staff</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </header>
 
             <!-- Booking Requests Section -->
             <section id="booking-requests" class="section">
-                <div class="row g-4 mb-4">
-                    <div class="col-md-6 col-lg-2">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <h6 class="card-title mb-0">Total Requests</h6>
-                                    <i class="fas fa-calendar text-muted"></i>
-                                </div>
-                                <h3 class="card-text">24</h3>
-                                <small class="text-muted">Today</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-2">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <h6 class="card-title mb-0">Accepted</h6>
-                                    <i class="fas fa-check-circle text-success"></i>
-                                </div>
-                                <h3 class="card-text text-success">18</h3>
-                                <small class="text-muted">Confirmed</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-2">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <h6 class="card-title mb-0">Pending</h6>
-                                    <i class="fas fa-clock text-warning"></i>
-                                </div>
-                                <h3 class="card-text text-warning">6</h3>
-                                <small class="text-muted">Awaiting</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-2">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <h6 class="card-title mb-0">Rejected</h6>
-                                    <i class="fas fa-times-circle text-danger"></i>
-                                </div>
-                                <h3 class="card-text text-danger">2</h3>
-                                <small class="text-muted">Declined</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-2">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <h6 class="card-title mb-0">Revenue</h6>
-                                    <i class="fas fa-dollar-sign text-muted"></i>
-                                </div>
-                                <h3 class="card-text">$4250</h3>
-                                <small class="text-muted">Today</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+                <!-- Your static stats cards here -->
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title mb-0">Booking Requests</h5>
@@ -187,194 +142,254 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <c:if test="${not empty error}">
-                                        <tr>
-                                            <td colspan="8" class="text-center text-danger">
-                                                ${error}
-                                            </td>
-                                        </tr>
-                                    </c:if>
-                                    <c:forEach var="booking" items="${requestScope.pendingBookings}">
-                                        <c:if test="${booking.approvalStatus == 'Pending'}">
-                                            <tr>
-                                                <td>${booking.bookingCode}</td>
-                                                <td>
-                                                    <div>${booking.customerName}</div>
-                                                    <small class="text-muted">${booking.customerEmail}</small>
-                                                </td>
-                                                <td>
-                                                    <div>${booking.carModel}</div>
-                                                    <small class="text-muted">${booking.licensePlate}</small>
-                                                </td>
-                                                <td>${booking.pickupDateTime}</td>
-                                                <td>${booking.returnDateTime}</td>
-                                                <td><span class="badge badge-pending"><i class="fas fa-clock me-1"></i>pending</span></td>
-                                                <td>${booking.totalAmount}</td>
-                                                <td>
-                                                    <div class="d-flex gap-2">
-                                                        <form action="booking-approval" method="post" style="display:inline;">
-                                                            <input type="hidden" name="bookingId" value="${booking.bookingId}" />
-                                                            <input type="hidden" name="action" value="accept" />
-                                                            <button class="btn btn-success btn-sm" type="submit">
-                                                                <i class="fas fa-check"></i> Accept
-                                                            </button>
-                                                        </form>
-                                                        <form action="booking-approval" method="post" style="display:inline;">
-                                                            <input type="hidden" name="bookingId" value="${booking.bookingId}" />
-                                                            <input type="hidden" name="action" value="decline" />
-                                                            <button class="btn btn-outline-danger btn-sm" type="submit">
-                                                                <i class="fas fa-times"></i> Decline
-                                                            </button>
-                                                        </form>
+                                    <c:choose>
+                                        <c:when test="${not empty bookingRequests}">
+                                            <c:forEach items="${bookingRequests}" var="booking">
+                                                <tr>
+                                                    <!-- =================== MODAL CHI TIẾT BOOKING =================== -->
+                                            <div class="modal fade" id="modal-${booking.bookingId}" tabindex="-1" aria-labelledby="modalLabel-${booking.bookingId}" aria-hidden="true">
+                                                <div class="modal-dialog modal-lg">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="modalLabel-${booking.bookingId}">Booking Details - ${booking.bookingCode}</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <!-- Customer Info -->
+                                                            <h6 class="mb-3"><i class="fas fa-user me-2"></i>Customer Information</h6>
+                                                            <div class="row g-3 mb-4">
+                                                                <div class="col-md-6">
+                                                                    <label class="form-label">Name</label>
+                                                                    <p>${booking.customerName}</p>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <label class="form-label">Phone</label>
+                                                                    <p>${booking.customerPhone}</p>
+                                                                </div>
+                                                                <div class="col-12">
+                                                                    <label class="form-label">Email</label>
+                                                                    <p>${booking.customerEmail}</p>
+                                                                </div>
+                                                            </div>
+                                                            <!-- Car Info -->
+                                                            <h6 class="mb-3"><i class="fas fa-car me-2"></i>Car Information</h6>
+                                                            <div class="row g-3 mb-4">
+                                                                <div class="col-md-6">
+                                                                    <label class="form-label">Model</label>
+                                                                    <p>${booking.carModel}</p>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <label class="form-label">License Plate</label>
+                                                                    <p>${booking.carLicensePlate}</p>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <label class="form-label">Car Status</label>
+                                                                    <span class="badge badge-available">${booking.carStatus}</span>
+                                                                </div>
+                                                            </div>
+                                                            <!-- Rental Details -->
+                                                            <h6 class="mb-3"><i class="fas fa-calendar me-2"></i>Rental Details</h6>
+                                                            <div class="row g-3 mb-4">
+                                                                <div class="col-md-6">
+                                                                    <label class="form-label">Pick-up Date</label>
+                                                                    <p>${booking.pickupDateTime}</p>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <label class="form-label">Return Date</label>
+                                                                    <p>${booking.returnDateTime}</p>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <label class="form-label">Duration</label>
+                                                                    <p>${booking.duration} days</p>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <label class="form-label">Total Amount</label>
+                                                                    <p class="fw-bold">${booking.totalAmount}.000 VND</p>
+                                                                </div>
+                                                            </div>
+                                                            <!-- Payment Info -->
+                                                            <h6 class="mb-3"><i class="fas fa-dollar-sign me-2"></i>Payment Information</h6>
+                                                            <div class="mb-4">
+                                                                <label class="form-label">Deposit Status</label>
+                                                                <span class="badge badge-paid">${booking.depositStatus}</span>
+                                                            </div>
+                                                            <!-- Documents -->
+                                                            <h6 class="mb-3"><i class="fas fa-file-alt me-2"></i>Documents</h6>
+                                                            <div class="mb-4">
+                                                                <label class="form-label">Driver License</label>
+                                                                <c:choose>
+                                                                    <c:when test="${not empty booking.driverLicenseImageUrl}">
+                                                                        <img src="${booking.driverLicenseImageUrl}" alt="Driver License" class="img-fluid rounded border" style="max-height: 200px;">
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        <p>No driver license image</p>
+                                                                    </c:otherwise>
+                                                                </c:choose>
+                                                            </div>
+                                                            <div>
+                                                                <label class="form-label">Contract Status</label>
+                                                                <div class="d-flex align-items-center gap-2">
+                                                                    <span class="badge badge-pending">${booking.contractStatus}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- ======= Modal Footer: Nút Accept/Reject/Close ======= -->
+                                                        <div class="modal-footer">
+                                                            <c:choose>
+                                                                <c:when test="${booking.status eq 'Pending'}">
+                                                                    <!-- Nút Reject: mở popup nhập lý do từ chối -->
+                                                                    <button id="btnDecline-${booking.bookingId}" type="button" class="btn btn-outline-danger"
+                                                                            data-bs-toggle="modal"
+                                                                            data-bs-target="#declineModal-${booking.bookingId}"
+                                                                            data-booking-id="${booking.bookingId}">
+                                                                        <i class="fas fa-times me-1"></i>Reject
+                                                                    </button>
+                                                                    <!-- Nút Accept: gọi hàm acceptBooking đã có sẵn -->
+                                                                    <button id="btnAccept-${booking.bookingId}" type="button" class="btn btn-success"
+                                                                            onclick="acceptBooking('${booking.bookingId}')">
+                                                                        <i class="fas fa-check me-1"></i>Accept
+                                                                    </button>
+                                                                </c:when>
+                                                            </c:choose>
+                                                            <!-- Nút Close luôn hiển thị -->
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        </div>
                                                     </div>
-                                                </td>
+                                                </div>
+                                            </div>
+                                            <!-- =================== END MODAL CHI TIẾT BOOKING =================== -->
+                                            <td>${booking.bookingCode}</td>
+                                            <td>
+                                                <div>${booking.customerName}</div>
+                                                <small class="text-muted">${booking.customerEmail}</small>
+                                            </td>
+                                            <td>
+                                                <div>${booking.carModel}</div>
+                                                <small class="text-muted">${booking.carLicensePlate}</small>
+                                            </td>
+                                            <td>
+                                                ${booking.formattedPickupDateTime}
+                                            </td>
+                                            <td>
+                                                ${booking.formattedReturnDateTime}
+                                            </td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${booking.status == 'Pending'}">
+                                                        <span class="badge badge-pending">
+                                                            <i class="fas fa-clock me-1"></i>Pending
+                                                        </span>
+                                                    </c:when>
+                                                    <c:when test="${booking.status == 'Confirmed'}">
+                                                        <span class="badge badge-accepted">
+                                                            <i class="fas fa-check-circle me-1"></i>Confirmed
+                                                        </span>
+                                                    </c:when>
+                                                    <c:when test="${booking.status == 'Rejected'}">
+                                                        <span class="badge badge-rejected">
+                                                            <i class="fas fa-times-circle me-1"></i>Rejected
+                                                        </span>
+                                                    </c:when>
+                                                    <c:when test="${booking.status == 'Completed'}">
+                                                        <span class="badge badge-completed">
+                                                            <i class="fas fa-flag-checkered me-1"></i>Completed
+                                                        </span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span class="badge bg-secondary">${booking.status}</span>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td>
+                                                <fmt:formatNumber value="${booking.totalAmount}" type="currency" currencySymbol=".000 VND" />
+                                            </td>
+                                            <td>
+                                                <div class="d-flex gap-2">
+                                                    <!-- Nút View mở modal riêng cho từng booking -->
+                                                    <button class="btn btn-outline-secondary btn-sm" 
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#modal-${booking.bookingId}">
+                                                        <i class="fas fa-eye"></i> View
+                                                    </button>
+                                                    <c:if test="${booking.status == 'Pending'}">
+                                                        <form action="${pageContext.request.contextPath}/staff/approve-booking" method="POST" style="display: inline;">
+                                                            <input type="hidden" name="bookingId" value="${booking.bookingId}">
+                                                            <input type="hidden" name="action" value="approve">
+                                                            <button type="submit" class="btn btn-success btn-sm" title="Approve">
+                                                                <i class="fas fa-check"></i>
+                                                            </button>
+                                                        </form>
+                                                        <!-- Nút Reject: mở popup nhập lý do từ chối -->
+                                                        <button type="button" class="btn btn-danger btn-sm" title="Reject"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#declineModal-${booking.bookingId}">
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                    </c:if>
+                                                </div>
+                                            </td>
                                             </tr>
-                                        </c:if>
-                                    </c:forEach>
-                                    <c:if test="${empty requestScope.pendingBookings}">
+                                        </c:forEach>
+                                    </c:when>
+                                    <c:otherwise>
                                         <tr>
-                                            <td colspan="8" class="text-center text-muted">No pending booking requests.</td>
+                                            <td colspan="8" class="text-center">No booking requests found.</td>
                                         </tr>
-                                    </c:if>
+                                    </c:otherwise>
+                                </c:choose>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-            </section>
         </div>
-    </div>
+    </section>
 
-     <!-- Booking Details Modal -->
-     <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="bookingModalLabel">Booking Details - BK001</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <h6 class="mb-3"><i class="fas fa-user me-2"></i>Customer Information</h6>
-            <div class="row g-3 mb-4">
-              <div class="col-md-6">
-                <label class="form-label">Name</label>
-                <p>John Smith</p>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Phone</label>
-                <p><i class="fas fa-phone me-1"></i>+1 (555) 123-4567</p>
-              </div>
-              <div class="col-12">
-                <label class="form-label">Email</label>
-                <p><i class="fas fa-envelope me-1"></i>john.smith@email.com</p>
-              </div>
+    <!-- =================== DECLINE MODAL CHO TỪNG BOOKING (COPY TỪ MẪU staff-booking1.jsp) =================== -->
+    <c:forEach items="${bookingRequests}" var="booking">
+        <div class="modal fade" id="declineModal-${booking.bookingId}" tabindex="-1" aria-labelledby="declineModalLabel-${booking.bookingId}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form id="declineForm-${booking.bookingId}" method="post" action="${pageContext.request.contextPath}/staff/approve-booking">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="declineModalLabel-${booking.bookingId}">Decline Booking Request</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure you want to decline this booking request? This action cannot be undone.</p>
+                            <div class="mb-3">
+                                <label for="decline-reason-${booking.bookingId}" class="form-label">Reason <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="decline-reason-${booking.bookingId}" name="declineReason" rows="4" required placeholder="Provide a reason for declining this request..."></textarea>
+                            </div>
+                            <input type="hidden" name="bookingId" value="${booking.bookingId}">
+                            <input type="hidden" name="action" value="reject">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-danger">Decline Request</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <h6 class="mb-3"><i class="fas fa-car me-2"></i>Vehicle Information</h6>
-            <div class="row g-3 mb-4">
-              <div class="col-md-6">
-                <label class="form-label">Model</label>
-                <p>Toyota Camry</p>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">License Plate</label>
-                <p>ABC-123</p>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Current Status</label>
-                <span class="badge badge-available">available</span>
-              </div>
-            </div>
-            <h6 class="mb-3"><i class="fas fa-calendar me-2"></i>Rental Details</h6>
-            <div class="row g-3 mb-4">
-              <div class="col-md-6">
-                <label class="form-label">Pick-up Date</label>
-                <p>Nov 20, 2025</p>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Return Date</label>
-                <p>Nov 25, 2025</p>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Duration</label>
-                <p>5 days</p>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Total Amount</label>
-                <p class="fw-bold">$250</p>
-              </div>
-            </div>
-            <h6 class="mb-3"><i class="fas fa-dollar-sign me-2"></i>Payment Information</h6>
-            <div class="mb-4">
-              <label class="form-label">Deposit Status</label>
-              <span class="badge badge-paid">paid</span>
-            </div>
-            <h6 class="mb-3"><i class="fas fa-file-alt me-2"></i>Documents</h6>
-            <div class="mb-4">
-              <label class="form-label">Driving License</label>
-              <img src="/placeholder.svg?height=200&width=300" alt="Driving License" class="img-fluid rounded border" style="max-height: 192px;">
-            </div>
-            <div>
-              <label class="form-label">Contract Status</label>
-              <div class="d-flex align-items-center gap-2">
-                <span class="badge badge-pending">pending</span>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#declineModal"><i class="fas fa-times me-1"></i>Decline</button>
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#acceptModal"><i class="fas fa-check me-1"></i>Accept</button>
-          </div>
         </div>
-      </div>
-    </div>
+    </c:forEach>
+    <!-- =================== END DECLINE MODAL =================== -->
 
-    <!-- Accept Modal -->
-    <div class="modal fade" id="acceptModal" tabindex="-1" aria-labelledby="acceptModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="acceptModalLabel">Accept Booking Request</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            Are you sure you want to accept this booking request? This will confirm the rental and generate a contract.
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-success">Accept & Generate Contract</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- ========== PHÂN TRANG ========== -->
+    <c:if test="${totalPages > 1}">
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <c:forEach begin="1" end="${totalPages}" var="i">
+                    <li class="page-item ${i == currentPage ? 'active' : ''}">
+                        <a class="page-link" href="?page=${i}">${i}</a>
+                    </li>
+                </c:forEach>
+            </ul>
+        </nav>
+    </c:if>
+    <!-- ========== END PHÂN TRANG ========== -->
 
-    <!-- Decline Modal -->
-    <div class="modal fade" id="declineModal" tabindex="-1" aria-labelledby="declineModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="declineModalLabel">Decline Booking Request</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <p>Are you sure you want to decline this booking request? This action cannot be undone.</p>
-            <div class="mb-3">
-              <label for="decline-reason" class="form-label">Reason (Optional)</label>
-              <textarea class="form-control" id="decline-reason" rows="4" placeholder="Provide a reason for declining this request..."></textarea>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-danger">Decline Request</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-    <!-- ===== External JavaScript Libraries ===== -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- ===== Custom JavaScript ===== -->
-    <script src="${pageContext.request.contextPath}/scripts/staff/staff-booking.js"></script>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

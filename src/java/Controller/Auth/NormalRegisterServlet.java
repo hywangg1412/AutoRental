@@ -21,6 +21,9 @@ import Service.Role.RoleService;
 import Service.Role.UserRoleService;
 import java.util.UUID;
 import java.sql.SQLException;
+import Service.Auth.EmailOTPVerificationService;
+import Model.Entity.OAuth.EmailOTPVerification;
+import Service.External.MailService;
 
 // /normalRegister
 public class NormalRegisterServlet extends HttpServlet {
@@ -82,6 +85,12 @@ public class NormalRegisterServlet extends HttpServlet {
         }
 
         try {
+            User existingUserByUsername = userService.findByUsername(username);
+            if (existingUserByUsername != null) {
+                request.setAttribute("error", "Username is already taken!");
+                request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
+                return;
+            }
             User existingUser = userService.findByEmail(email);
             if (existingUser != null) {
                 String errorMsg;
@@ -112,6 +121,24 @@ public class NormalRegisterServlet extends HttpServlet {
             user.setTwoFactorEnabled(false);
             user.setLockoutEnabled(true);
             user.setAccessFailedCount(0);
+
+            userService.add(user);
+
+            EmailOTPVerificationService emailOTPService = new EmailOTPVerificationService();
+            String otp = emailOTPService.generateOtp();
+            EmailOTPVerification otpEntity = new EmailOTPVerification();
+            otpEntity.setId(UUID.randomUUID());
+            otpEntity.setOtp(otp);
+            otpEntity.setUserId(user.getUserId());
+            otpEntity.setCreatedAt(LocalDateTime.now());
+            otpEntity.setExpiryTime(LocalDateTime.now().plusMinutes(10));
+            otpEntity.setIsUsed(false);
+            otpEntity.setResendCount(0);
+            otpEntity.setLastResendTime(null);
+            otpEntity.setResendBlockUntil(null);
+            emailOTPService.add(otpEntity);
+            MailService mailService = new MailService();
+            mailService.sendOtpEmail(user.getEmail(), otp, user.getUsername());
 
             SessionUtil.setSessionAttribute(request, "pendingUserType", "normal");
             SessionUtil.setSessionAttribute(request, "pendingUser", user);
