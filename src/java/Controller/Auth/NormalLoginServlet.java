@@ -21,7 +21,7 @@ import Service.External.MailService;
 import Service.Auth.EmailOTPVerificationService;
 import Model.Entity.OAuth.EmailOTPVerification;
 
-// /normalLogin
+
 public class NormalLoginServlet extends HttpServlet {
 
     private UserService userService;
