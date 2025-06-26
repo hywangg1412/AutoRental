@@ -1,7 +1,7 @@
-CREATE DATABASE [AutoRental];
+CREATE DATABASE [AutoRental3];
 GO
 
-USE [AutoRental];
+USE [AutoRental3];
 GO
 
 -- Users Permission Table
@@ -259,6 +259,12 @@ CREATE TABLE [Booking] (
     [CancelReason] NVARCHAR(255) NULL,
     [BookingCode] NVARCHAR(20) NULL, --UNIQUE
     [ExpectedPaymentMethod] NVARCHAR(50) NULL,
+    -- Thông tin khách hàng được "đóng băng" tại thời điểm booking
+    [CustomerName] NVARCHAR(255) NULL, -- Tên khách hàng tại thời điểm booking
+    [CustomerPhone] NVARCHAR(20) NULL, -- Số điện thoại khách hàng tại thời điểm booking
+    [CustomerAddress] NVARCHAR(500) NULL, -- Địa chỉ khách hàng tại thời điểm booking
+    [CustomerEmail] NVARCHAR(255) NULL, -- Email khách hàng tại thời điểm booking
+    [DriverLicenseImageUrl] NVARCHAR(500) NULL, -- Ảnh bằng lái xe tại thời điểm booking
     CONSTRAINT [PK_Booking] PRIMARY KEY ([BookingId]),
     CONSTRAINT [FK_Booking_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE,
     CONSTRAINT [FK_Booking_CarId] FOREIGN KEY ([CarId]) REFERENCES [Car]([CarId]) ON DELETE SET NULL,
