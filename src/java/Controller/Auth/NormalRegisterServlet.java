@@ -82,6 +82,12 @@ public class NormalRegisterServlet extends HttpServlet {
         }
 
         try {
+            User existingUserByUsername = userService.findByUsername(username);
+            if (existingUserByUsername != null) {
+                request.setAttribute("error", "Username is already taken!");
+                request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
+                return;
+            }
             User existingUser = userService.findByEmail(email);
             if (existingUser != null) {
                 String errorMsg;

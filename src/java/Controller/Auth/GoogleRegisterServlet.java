@@ -73,7 +73,7 @@ public class GoogleRegisterServlet extends HttpServlet {
                 return;
             }
 
-            User newUser = userMapper.mapGoogleUserToUser(googleUser);
+            User newUser = userMapper.mapGoogleUserToUser(googleUser,userService);
             userService.add(newUser);
             request.getSession().setAttribute("userId", newUser.getUserId().toString());
             UserLogins userLogins = new UserLogins();
