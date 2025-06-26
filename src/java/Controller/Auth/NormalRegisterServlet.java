@@ -144,6 +144,7 @@ public class NormalRegisterServlet extends HttpServlet {
             SessionUtil.setSessionAttribute(request, "pendingUser", user);
             SessionUtil.setSessionAttribute(request, "userId", user.getUserId().toString());
             SessionUtil.setSessionAttribute(request, "username", user.getUsername());
+            SessionUtil.setSessionAttribute(request, "pendingUserRoleName", "User");
             response.sendRedirect(request.getContextPath() + "/verify-otp");
         } catch (Exception e) {
             String errorMessage;
