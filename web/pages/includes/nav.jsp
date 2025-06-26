@@ -28,16 +28,30 @@
               <a href="#" class="nav-link p-0 text-dark"><i class="bi bi-bell" style="font-size: 1.2rem !important; color: white;"></i></a>
               <a href="#" class="nav-link p-0 text-dark"><i class="bi bi-chat-dots" style="font-size: 1.2rem !important; color: white;"></i></a>
               <a href="${pageContext.request.contextPath}/user/profile" class="user-avatar">
-                <img src="${not empty user.avatarUrl ? user.avatarUrl : pageContext.request.contextPath.concat('/assets/images/default-avatar.png')}" 
+                <img src="${not empty sessionScope.user.avatarUrl ? sessionScope.user.avatarUrl : pageContext.request.contextPath.concat('/assets/images/default-avatar.png')}" 
                      alt="User Avatar" 
                      width="32" 
                      height="32" 
                      class="rounded-circle"
                      onerror="this.onerror=null;this.src='${pageContext.request.contextPath}/assets/images/default-avatar.png';">
               </a>
-              <a href="${pageContext.request.contextPath}/user/profile" class="nav-link username-link text-dark d-flex align-items-center">
+              <a href="${pageContext.request.contextPath}/user/profile" class="nav-link username-link text-dark d-flex align-items-center" style="padding: 0 !important;" >
                 <span class="d-none d-md-inline">${sessionScope.user.username}</span>
               </a>
+              <div class="dropdown">
+                <button class="btn btn-link nav-link p-0 text-dark dropdown-toggle" type="button" id="userDropdown" aria-expanded="false">
+                  <i class="bi bi-three-dots-vertical" style="font-size: 1.2rem !important; color: white;"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                  <li><a class="dropdown-item" href="${pageContext.request.contextPath}/user/profile">Profile</a></li>
+                  <li><a class="dropdown-item" href="${pageContext.request.contextPath}/user/my-trip">My Trips</a></li>
+                  <li><a class="dropdown-item" href="${pageContext.request.contextPath}/user/favorite-car">Favorite Cars</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/logout">Logout</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </c:when>
         <c:otherwise>
           <a href="${pageContext.request.contextPath}/pages/authen/SignIn.jsp" class="btn custom-login-btn px-4 me-0">Login</a>
@@ -48,3 +62,6 @@
   </div>
 </nav>
 <!-- END nav -->
+
+<!-- Include dropdown JavaScript -->
+<script src="${pageContext.request.contextPath}/scripts/common/nav-dropdown.js"></script>
