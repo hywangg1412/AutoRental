@@ -14,6 +14,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.List;
 
 public class UserService implements IUserService {
 
@@ -178,5 +179,35 @@ public class UserService implements IUserService {
             LOGGER.log(Level.SEVERE, "Error updating user status for userId: " + userId, e);
             return false;
         }
+    }
+
+    @Override
+    public User findByUsername(String username) {
+        try {
+            return userRepsitory.findByUsername(username);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error finding user by username: " + username, e);
+            return null;
+        }
+    }
+
+    @Override
+    public String generateUniqueUsername(String baseUsername) {
+        List<String> existingUsernames = userRepsitory.findAllUsernamesLike(baseUsername);
+        String username = baseUsername;
+        int count = 1;
+        boolean exists;
+        do {
+            exists = false;
+            for (String u : existingUsernames) {
+                if (u.equalsIgnoreCase(username)) {
+                    exists = true;
+                    username = baseUsername + count;
+                    count++;
+                    break;
+                }
+            }
+        } while (exists);
+        return username;
     }
 }

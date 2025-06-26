@@ -3,6 +3,7 @@ package Mapper;
 import Model.Entity.OAuth.FacebookUser;
 import Model.Entity.OAuth.GoogleUser;
 import Model.Entity.User.User;
+import Service.User.UserService;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
@@ -10,7 +11,7 @@ import java.util.UUID;
 
 public class UserMapper {
 
-    public User mapGoogleUserToUser(GoogleUser googleUser) {
+    public User mapGoogleUserToUser(GoogleUser googleUser, UserService userService) {
         User user = new User();
 
         user.setUserId(UUID.randomUUID());
@@ -35,15 +36,16 @@ public class UserMapper {
         user.setLockoutEnd(null);
 
         String email = googleUser.getEmail();
-        String username = email.substring(0, email.indexOf('@'));
-        user.setUsername(username);
-        user.setNormalizedUserName(username.toLowerCase());
+        String baseUsername = email.substring(0, email.indexOf('@'));
+        String uniqueUsername = userService.generateUniqueUsername(baseUsername);
+        user.setUsername(uniqueUsername);
+        user.setNormalizedUserName(uniqueUsername.toUpperCase());
         user.setNormalizedEmail(email.toLowerCase());
 
         return user;
     }
 
-    public User mapFacebookUserToUser(FacebookUser facebookUser) {
+    public User mapFacebookUserToUser(FacebookUser facebookUser, UserService userService) {
         User user = new User();
         String[] nameParts = splitName(facebookUser.getFullName());
 
@@ -69,9 +71,10 @@ public class UserMapper {
         user.setLockoutEnd(null);
 
         String email = facebookUser.getEmail();
-        String username = email.substring(0, email.indexOf('@'));
-        user.setUsername(username);
-        user.setNormalizedUserName(username.toLowerCase());
+        String baseUsername = email.substring(0, email.indexOf('@'));
+        String uniqueUsername = userService.generateUniqueUsername(baseUsername);
+        user.setUsername(uniqueUsername);
+        user.setNormalizedUserName(uniqueUsername.toUpperCase());
         user.setNormalizedEmail(email.toLowerCase());
 
         return user;

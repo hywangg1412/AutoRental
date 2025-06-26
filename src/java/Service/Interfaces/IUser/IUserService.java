@@ -17,4 +17,8 @@ public interface IUserService extends Service<User> {
     boolean updateUserAvatar(UUID userId, String avatarUrl);
 
     boolean updateStatus(UUID userId, String status) throws Exception;
+    
+    User findByUsername(String username);
+
+    String generateUniqueUsername(String baseUsername);
 }

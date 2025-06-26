@@ -1,5 +1,12 @@
 package Service.Booking;
 
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import Exception.EmptyDataException;
 import Exception.EventException;
 import Exception.InvalidDataException;
@@ -7,12 +14,6 @@ import Exception.NotFoundException;
 import Model.Entity.Booking.Booking;
 import Repository.Booking.BookingRepository;
 import Service.Interfaces.IBooking.IBookingService;
-import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class BookingService implements IBookingService {
     private static final Logger LOGGER = Logger.getLogger(BookingService.class.getName());
@@ -100,6 +101,10 @@ public class BookingService implements IBookingService {
         return bookingRepository.findByStatus(status);
     }
 
+    public List<Booking> findByUserId(UUID userId) throws SQLException {
+        return bookingRepository.findByUserId(userId);
+    }
+
     private void validateBooking(Booking booking) throws InvalidDataException {
         if (booking == null) {
             throw new InvalidDataException("Booking cannot be null");
@@ -163,10 +168,36 @@ public class BookingService implements IBookingService {
     }
 
     private void prepareNewBooking(Booking booking) {
+        LOGGER.info("Preparing new booking with ID: " + booking.getBookingId());
+        
         booking.setCreatedDate(LocalDateTime.now());
         if (booking.getStatus() == null || booking.getStatus().isEmpty()) {
             booking.setStatus(DEFAULT_STATUS);
         }
+        
+        // Tự động tạo booking code nếu chưa có
+        if (booking.getBookingCode() == null || booking.getBookingCode().trim().isEmpty()) {
+            String generatedCode = Repository.Booking.BookingRepository.generateBookingCode();
+            booking.setBookingCode(generatedCode);
+            LOGGER.info("Generated booking code: " + generatedCode);
+        } else {
+            LOGGER.info("Using existing booking code: " + booking.getBookingCode());
+        }
+        
+        // Đảm bảo booking code không bao giờ null
+        if (booking.getBookingCode() == null || booking.getBookingCode().trim().isEmpty()) {
+            String generatedCode = Repository.Booking.BookingRepository.generateBookingCode();
+            booking.setBookingCode(generatedCode);
+            LOGGER.warning("Booking code was null/empty, generated new code: " + generatedCode);
+        }
+        
+        LOGGER.info("Final booking code: " + booking.getBookingCode());
+        
+        // Log thông tin đóng băng để debug
+        LOGGER.info("Frozen customer info - Name: " + booking.getCustomerName() + 
+                   ", Phone: " + booking.getCustomerPhone() + 
+                   ", Email: " + booking.getCustomerEmail() + 
+                   ", Address: " + booking.getCustomerAddress());
     }
 }
 

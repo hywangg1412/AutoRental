@@ -47,7 +47,7 @@ public class UpdateInfoServlet extends HttpServlet {
         try {
             User freshUser = userService.findById(user.getUserId());
             if (freshUser.isBanned() || freshUser.isDeleted()) {
-                request.getSession().invalidate(); // Log them out
+                request.getSession().invalidate();
                 response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp?error=Your+account+is+no+longer+active.");
                 return;
             }
@@ -72,6 +72,10 @@ public class UpdateInfoServlet extends HttpServlet {
             }
             if (!username.matches("^[\\p{L}0-9 ]+$")) {
                 errors.put("usernameError", "Username must not contain special characters.");
+            }
+            User userWithSameUsername = userService.findByUsername(username);
+            if (userWithSameUsername != null && !userWithSameUsername.getUserId().equals(userId)) {
+                errors.put("usernameError", "Username is already taken by another user.");
             }
         }
 

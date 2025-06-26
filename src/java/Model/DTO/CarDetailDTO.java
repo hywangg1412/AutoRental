@@ -23,15 +23,25 @@ public class CarDetailDTO {
     private List<String> imageUrls;
     private Date createdDate;
     private List<String> allFeatureNames;
-    
+    private Integer yearManufactured;
 
     // Getters + Setters
     public UUID getCarId() {
         return carId;
     }
 
+   
+
     public void setCarId(UUID carId) {
         this.carId = carId;
+    }
+    
+     public Integer getYearManufactured() {
+        return yearManufactured;
+    }
+
+    public void setYearManufactured(Integer yearManufactured) {
+        this.yearManufactured = yearManufactured;
     }
 
     public String getCarModel() {
