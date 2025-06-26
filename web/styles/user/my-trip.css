@@ -316,3 +316,13 @@ nav.ftco-navbar-light .nav-link {
 .bi-bell, .bi-chat-dots {
     color: #222 !important;
 }
+
+.bi-three-dots-vertical,
+.dropdown-toggle[aria-labelledby="userDropdown"],
+#userDropdown,
+.dropdown,
+.dropdown-menu,
+.dropdown-toggle {
+  display: none !important;
+  visibility: hidden !important;
+}
