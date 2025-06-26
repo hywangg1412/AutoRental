@@ -189,19 +189,31 @@
                                                     <div class="info-row d-flex align-items-center justify-content-between mb-1" style="font-size:0.97rem;">
                                                         <span class="text-muted">Facebook</span>
                                                         <span class="d-flex align-items-center gap-1">
-                                                            ${profile.hasFacebookLogin ? 
-                                                                '<span class="badge badge-verified"><i class="bi bi-check-circle-fill me-1"></i>Connected</span>' : 
-                                                                '<a href="#" class="add-link" style="font-size:0.97em;">Add link</a>'}
-                                                            <a href="#" class="ms-1 text-muted d-flex align-items-center" style="font-size:1em;"><i class="bi bi-link-45deg"></i></a>
+                                                            <c:choose>
+                                                                <c:when test="${profile.hasFacebookLogin}">
+                                                                    <span class="badge badge-verified"><i class="bi bi-check-circle-fill me-1"></i>Connected</span>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <a href="${pageContext.request.contextPath}/facebook-link" class="add-link d-flex align-items-center" style="font-size:0.97em;">
+                                                                        <i class="bi bi-link-45deg me-1"></i>Add link
+                                                                    </a>
+                                                                </c:otherwise>
+                                                            </c:choose>
                                                         </span>
                                                     </div>
                                                     <div class="info-row d-flex align-items-center justify-content-between" style="font-size:0.97rem;">
                                                         <span class="text-muted">Google</span>
                                                         <span class="d-flex align-items-center gap-1">
-                                                            ${profile.hasGoogleLogin ? 
-                                                                '<span class="badge badge-verified"><i class="bi bi-check-circle-fill me-1"></i>Connected</span>' : 
-                                                                '<a href="#" class="add-link" style="font-size:0.97em;">Add link</a>'}
-                                                            <a href="#" class="ms-1 text-muted d-flex align-items-center" style="font-size:1em;"><i class="bi bi-link-45deg"></i></a>
+                                                            <c:choose>
+                                                                <c:when test="${profile.hasGoogleLogin}">
+                                                                    <span class="badge badge-verified"><i class="bi bi-check-circle-fill me-1"></i>Connected</span>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <a href="${pageContext.request.contextPath}/google-link" class="add-link d-flex align-items-center" style="font-size:0.97em;">
+                                                                        <i class="bi bi-link-45deg me-1"></i>Add link
+                                                                    </a>
+                                                                </c:otherwise>
+                                                            </c:choose>
                                                         </span>
                                                     </div>
                                                 </div>
