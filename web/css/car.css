@@ -1,37 +1,40 @@
 .btn-book-now {
-    background-color: #007bff; /* Màu xanh dương cho Book now */
-    color: white;
-    border-color: #007bff;
+    background-color: #22c55e;
+    color: #fff;
+    border: none;
+    font-weight: 600;
+    transition: background 0.2s;
 }
 
 .btn-book-now:hover {
-    background-color: #0056b3; /* Màu khi hover */
-    border-color: #0056b3;
+    background-color: #16a34a;
+    color: #fff;
 }
 
 .btn-details {
-    background-color: #28a745; /* Màu xanh lá nhạt cho Details */
-    color: white;
-    border-color: #28a745;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background-color: #64748b;
+    color: #fff;
+    border: none;
+    font-weight: 600;
+    transition: background 0.2s;
 }
 
 .btn-details:hover {
-    background-color: #218838; /* Màu khi hover */
-    border-color: #218838;
+    background-color: #334155;
+    color: #fff;
 }
 
 .btn-add-to-cart {
-    background-color: #ffc107; /* Màu vàng cho Add to Cart */
-    color: black;
-    border-color: #ffc107;
+    background-color: #fbbf24;
+    color: #222;
+    border: none;
+    font-weight: 600;
+    transition: background 0.2s;
 }
 
 .btn-add-to-cart:hover {
-    background-color: #e0a800; /* Màu khi hover */
-    border-color: #e0a800;
+    background-color: #f59e42;
+    color: #fff;
 }
 
 /* Đảm bảo các nút có kích thước đồng đều */
@@ -159,9 +162,22 @@
 #filterForm .form-check { margin-bottom: 0.25rem; }
 #filterForm .form-check-label { font-size: 0.95rem; }
 #filterForm input[type='number'] { width: 45%; }
-#filterForm { background: #fff; border-radius: 12px; box-shadow: 0 2px 8px #eee; }
+#filterForm { background: #fff; border-radius: 12px; box-shadow: 0 2px 8px #eee; padding-left: 32px; }
 
+/* Override btn-primary for search button in car.jsp */
+.d-flex .btn.btn-primary {
+    background-color: #2563eb !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 0 8px 8px 0 !important;
+}
+.d-flex .btn.btn-primary:hover, .d-flex .btn.btn-primary:focus {
+    background-color: #1d4ed8 !important;
+}
 
+.input-group .form-control {
+    border-radius: 8px 0 0 8px !important;
+}
 
 .status-available { background: #28a745; color: #fff; }
 .status-rented { background: #ffc107; color: #222; }
@@ -182,4 +198,560 @@
     font-size: 0.85rem;
     padding: 0.4em 0.8em;
     border-radius: 12px;
+}
+
+/* Đảm bảo sidebar filter sát trái, không bị đẩy vào giữa */
+#filterForm {
+    min-width: 200px;
+    max-width: 260px;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    font-family: 'Poppins', Arial, sans-serif;
+}
+
+@media (max-width: 991.98px) {
+    #filterForm {
+        max-width: 100vw;
+        min-width: 0;
+    }
+}
+
+/* Range slider style cho filter */
+input[type=range].form-range {
+    width: 100%;
+    accent-color: #22c55e;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+}
+input[type=range].form-range:focus {
+    outline: none;
+}
+input[type=range].form-range::-webkit-slider-thumb {
+    background: #22c55e;
+    border: 2px solid #16a34a;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(34,197,94,0.15);
+}
+input[type=range].form-range::-moz-range-thumb {
+    background: #22c55e;
+    border: 2px solid #16a34a;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+input[type=range].form-range::-ms-thumb {
+    background: #22c55e;
+    border: 2px solid #16a34a;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+input[type=range].form-range::-webkit-slider-runnable-track {
+    height: 6px;
+    background: #e5e5e5;
+    border-radius: 3px;
+}
+input[type=range].form-range::-ms-fill-lower {
+    background: #e5e5e5;
+}
+input[type=range].form-range::-ms-fill-upper {
+    background: #e5e5e5;
+}
+input[type=range].form-range:focus::-webkit-slider-thumb {
+    box-shadow: 0 0 0 3px #bbf7d0;
+}
+
+/* Card xe đồng đều chiều cao */
+.card.car-card, .car-wrap {
+    min-height: 420px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.card.car-card .card-body, .car-wrap .text {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Đảm bảo ảnh xe không bị méo */
+.card-img-top, .car-wrap .img {
+    object-fit: cover;
+    width: 100%;
+    height: 180px;
+    border-radius: 12px 12px 0 0;
+}
+
+/* Đảm bảo button không bị lỗi màu, font giữ nguyên */
+.btn, .btn-book-now, .btn-details, .btn-add-to-cart {
+    font-family: 'Poppins', Arial, sans-serif;
+    font-weight: 500;
+}
+
+/* noUiSlider style tuỳ chỉnh nhẹ cho đồng bộ giao diện */
+.noUi-target, .noUi-connect {
+    background: #fff !important;
+    border: 1px solid #e5e5e5 !important;
+}
+.noUi-horizontal .noUi-handle {
+    width: 6px;
+    height: 28px;
+    border-radius: 3px;
+    background: #64748b;
+    border: none;
+    top: -12px;
+    box-shadow: none;
+    cursor: pointer;
+    transition: none;
+}
+.noUi-horizontal .noUi-handle:hover {
+    background: #222;
+}
+.noUi-handle:after, .noUi-handle:before {
+    display: none;
+}
+.noUi-tooltip {
+    display: none;
+}
+
+/* ==== Layout tổng thể ==== */
+body, #filterForm, .car-wrap, .card {
+    background: #f8f9fa;
+    font-family: 'Poppins', Arial, sans-serif;
+    color: #222;
+}
+#filterForm {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px #eee;
+    padding-left: 2rem;
+    min-width: 200px;
+    max-width: 260px;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+/* ==== Filter title, label ==== */
+#filterForm h5, #filterForm h6 {
+    color: #222;
+    font-weight: 700;
+}
+#filterForm .form-check-label {
+    color: #444;
+    font-size: 0.97rem;
+}
+
+/* ==== noUiSlider custom ==== */
+.noUi-target, .noUi-connect {
+    background: #fff !important;
+    border: 1px solid #e5e5e5 !important;
+}
+.noUi-horizontal .noUi-handle {
+    width: 6px;
+    height: 28px;
+    border-radius: 3px;
+    background: #64748b;
+    border: none;
+    top: -12px;
+    box-shadow: none;
+    cursor: pointer;
+    transition: none;
+}
+.noUi-horizontal .noUi-handle:hover {
+    background: #222;
+}
+.noUi-handle:after, .noUi-handle:before {
+    display: none;
+}
+.noUi-tooltip {
+    display: none;
+}
+/* Đảm bảo min/max không bị xuống dòng */
+.slider-label-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    color: #222;
+    font-weight: 600;
+    gap: 2.5rem;
+}
+.slider-label-row span {
+    white-space: nowrap;
+    text-align: center;
+    min-width: 80px;
+}
+
+/* ==== Card xe ==== */
+.car-wrap {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px #e5e5e5;
+    background: #fff;
+    margin-bottom: 24px;
+    min-height: 420px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-bottom: 1rem;
+}
+.car-wrap .img {
+    border-radius: 12px 12px 0 0;
+    height: 180px;
+    object-fit: cover;
+}
+.car-wrap .text {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1rem 1.2rem 0.5rem 1.2rem;
+}
+.car-wrap .car-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+.car-wrap .car-title-row h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+    color: #222;
+}
+.car-wrap .car-status-inline {
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    float: right;
+    background: #e5e5e5;
+    color: #222;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 12px;
+    padding: 0.4em 1.2em;
+    position: relative;
+    right: 0;
+}
+.status-available {
+    background: #22c55e !important;
+    color: #fff !important;
+}
+.status-rented {
+    background: #fbbf24 !important;
+    color: #fff !important;
+}
+.status-unavailable {
+    background: #ef4444 !important;
+    color: #fff !important;
+}
+
+.car-wrap .cat {
+    color: #888;
+    font-size: 1rem;
+    font-weight: 500;
+}
+.car-wrap .price {
+    color: #222;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-left: auto;
+    margin-bottom: 0;
+}
+.car-wrap .price span {
+    color: #aaa;
+    font-size: 0.95rem;
+    font-weight: 400;
+}
+
+/* ==== Button trong card xe ==== */
+.btn, .btn-book-now, .btn-details, .btn-add-to-cart {
+    border-radius: 8px;
+    font-size: 1rem;
+    padding: 0.5rem 1.1rem;
+    margin: 0 0.2rem;
+    box-shadow: none;
+    display: grid;
+    place-items: center;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.2;
+    height: 56px;
+    width: 100%;
+    white-space: normal;
+}
+.btn-book-now:hover {
+    background-color: #16a34a !important;
+    background-color: #64748b;
+    color: #fff;
+    border: none;
+    background-color: #64748b !important;
+    color: #fff !important;
+    background-color: #334155;
+    color: #fff;
+}
+.btn-details:hover {
+    background-color: #334155 !important;
+    background-color: #fbbf24;
+    color: #222;
+    border: none;
+    background-color: #fbbf24 !important;
+    color: #222 !important;
+    background-color: #f59e42;
+    color: #fff;
+}
+.btn-add-to-cart:hover {
+    background-color: #f59e42 !important;
+    color: #fff !important;
+}
+
+/* ==== Responsive ==== */
+@media (max-width: 991.98px) {
+    #filterForm {
+        max-width: 100vw;
+        min-width: 0;
+        padding-left: 1rem;
+    }
+    .car-wrap .text {
+        padding: 1rem 0.5rem 0.5rem 0.5rem;
+    }
+}
+
+.btn, .btn-primary, .btn-success, .btn-outline-primary, .btn-outline-success, .btn-outline-warning, .btn-outline-info, .btn-outline-danger {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    font-weight: 600;
+    border-radius: 8px;
+    font-size: 1rem;
+    min-height: 48px;
+    padding: 0.5rem 1.1rem;
+    box-shadow: none;
+    white-space: normal;
+    width: 100%;
+    height: auto;
+}
+
+.btn-primary {
+    background-color: #2563eb !important;
+    color: #fff !important;
+    border: none !important;
+}
+.btn-primary:hover, .btn-primary:focus {
+    background-color: #1d4ed8 !important;
+    color: #fff !important;
+}
+
+.btn-success {
+    background-color: #22c55e;
+    color: #fff;
+    border: none;
+}
+.btn-success:hover, .btn-success:focus {
+    background-color: #16a34a;
+    color: #fff;
+}
+
+.btn-outline-primary {
+    border: 2px solid #2563eb !important;
+    color: #2563eb !important;
+    background: #fff !important;
+}
+.btn-outline-primary:hover, .btn-outline-primary:focus {
+    background: #2563eb !important;
+    color: #fff !important;
+}
+
+.btn-outline-success {
+    background: #fff;
+    color: #22c55e;
+    border: 2px solid #22c55e;
+}
+.btn-outline-success:hover, .btn-outline-success:focus {
+    background: #22c55e;
+    color: #fff;
+}
+
+.btn-outline-warning {
+    background: #fff;
+    color: #fbbf24;
+    border: 2px solid #fbbf24;
+}
+.btn-outline-warning:hover, .btn-outline-warning:focus {
+    background: #fbbf24;
+    color: #222;
+}
+
+.btn-outline-info {
+    background: #fff;
+    color: #0ea5e9;
+    border: 2px solid #0ea5e9;
+}
+.btn-outline-info:hover, .btn-outline-info:focus {
+    background: #0ea5e9;
+    color: #fff;
+}
+
+.btn-outline-danger {
+    background: #fff;
+    color: #ef4444;
+    border: 2px solid #ef4444;
+}
+.btn-outline-danger:hover, .btn-outline-danger:focus {
+    background: #ef4444;
+    color: #fff;
+}
+
+/* =================================================================
+   FINAL CSS OVERRIDES - 2023-10-27
+   Adding specific rules to fix layout and color issues definitively.
+   ================================================================= */
+
+/* --- Search Bar Fix --- */
+/* This ensures the search button stays on the same line as the input. */
+.input-group > .btn.btn-primary {
+    width: auto !important;
+    flex-shrink: 0 !important;
+    background-color: #2563eb !important;
+    border-radius: 0 8px 8px 0 !important;
+}
+
+/* --- Car Card Buttons Fix --- */
+/* This ensures the buttons in the car cards have the correct colors and text alignment. */
+.car-wrap .btn-book-now,
+.car-wrap .btn-details,
+.car-wrap .btn-add-to-cart {
+    width: 100% !important;
+    display: grid !important;
+    place-items: center !important;
+    height: 56px;
+    padding: 0.5rem;
+    color: #fff !important; /* Default text color */
+}
+
+.car-wrap .btn-book-now {
+    background-color: #22c55e !important;
+}
+.car-wrap .btn-book-now:hover {
+    background-color: #16a34a !important;
+}
+
+.car-wrap .btn-details {
+    background-color: #64748b !important;
+}
+.car-wrap .btn-details:hover {
+    background-color: #334155 !important;
+}
+
+.car-wrap .btn-add-to-cart {
+    background-color: #fbbf24 !important;
+    color: #222 !important; /* Dark text for yellow button */
+}
+.car-wrap .btn-add-to-cart:hover {
+    background-color: #f59e42 !important;
+    color: #fff !important;
+}
+
+/* --- Search & Sort Bar Styling --- */
+.input-group > .form-control {
+    border: 2px solid #e5e5e5 !important;
+    box-shadow: none !important;
+    transition: border-color 0.2s;
+}
+.input-group > .form-control:focus {
+    border-color: #2563eb !important;
+}
+
+#sortForm .form-control {
+    border: 2px solid #e5e5e5 !important;
+    box-shadow: none !important;
+    font-weight: 600;
+    color: #444;
+}
+#sortForm .form-control:focus {
+    border-color: #2563eb !important;
+}
+#sortForm .form-label {
+    color: #222;
+}
+
+.favorite-btn {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    z-index: 2;
+    background: rgba(255,255,255,0.85);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: background 0.2s, color 0.2s;
+    color: #888;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+.favorite-btn .bi-heart,
+.favorite-btn .fa-heart {
+    transition: color 0.2s, fill 0.2s;
+    color: #888;
+    fill: none;
+}
+.favorite-btn:hover .bi-heart,
+.favorite-btn.active .bi-heart,
+.favorite-btn:hover .fa-heart,
+.favorite-btn.active .fa-heart,
+.favorite-btn:hover .bi-heart-fill,
+.favorite-btn.active .bi-heart-fill {
+    color: #e11d48;
+    fill: #e11d48;
+}
+.favorite-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #e11d48;
+}
+
+/* Toast notification */
+#favorite-toast {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    background: #fff;
+    color: #16a34a;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    border-left: 6px solid #16a34a;
+    min-width: 260px;
+    max-width: 90vw;
+    justify-content: center;
+    animation: fadeInScale 0.3s;
+}
+#favorite-toast.remove {
+    color: #e11d48;
+    border-left: 6px solid #e11d48;
+}
+@keyframes fadeInScale {
+  from { opacity: 0; transform: translate(-50%, -60%) scale(0.95); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }

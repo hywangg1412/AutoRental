@@ -188,12 +188,11 @@
                                              style="background-image: url('${pageContext.request.contextPath}${car.mainImageUrl}');">
                                         </div>
                                         <div class="text">
-                                            <div class="d-flex align-items-center mb-2">
+                                            <div class="car-title-row">
                                                 <h2 class="mb-0" style="font-size: 1.25rem;">
                                                     <a href="car-single.jsp?id=${car.carId}">${car.carModel}</a>
                                                 </h2>
-                                                <span class="car-status-inline ${car.statusCssClass}"
-                                                      style="margin-left:10px;">${car.statusDisplay}</span>
+                                                <span class="car-status-inline ${car.statusCssClass}">${car.statusDisplay}</span>
                                             </div>
                                             <div class="d-flex mb-3">
                                                 <span class="cat">${car.brandName}</span>
