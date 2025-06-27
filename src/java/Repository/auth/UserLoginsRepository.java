@@ -115,6 +115,32 @@ public class UserLoginsRepository implements IUserLoginsRepository {
         return userLogins;
     }
 
+    @Override
+    public UserLogins findByUserIdAndProvider(UUID userId, String provider) throws SQLException {
+        String sql = "SELECT * FROM UserLogins WHERE UserId = ? AND LoginProvider = ?";
+        try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setString(1, userId.toString());
+            st.setString(2, provider);
+            try (ResultSet rs = st.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToUserLogin(rs);
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public boolean deleteByProviderAndKey(String provider, String key) throws SQLException {
+        String sql = "DELETE FROM UserLogins WHERE LoginProvider = ? AND ProviderKey = ?";
+        try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setString(1, provider);
+            st.setString(2, key);
+            int affectedRows = st.executeUpdate();
+            return affectedRows > 0;
+        }
+    }
+
     private UserLogins mapResultSetToUserLogin(ResultSet rs) throws SQLException {
         UserLogins userLogin = new UserLogins();
         userLogin.setLoginProvider(rs.getString("LoginProvider"));
