@@ -1,11 +1,9 @@
 package Controller.Auth;
 
-import Model.Entity.OAuth.UserLogins;
 import Model.Entity.Role.Role;
 import Model.Entity.Role.UserRole;
 import Model.Entity.User.User;
 import Service.Auth.EmailOTPVerificationService;
-import Service.Auth.UserLoginsService;
 import Service.Role.RoleService;
 import Service.Role.UserRoleService;
 import Service.User.UserService;
@@ -30,7 +28,6 @@ public class EmailOTPVerificationServlet extends HttpServlet {
     private UserService userService;
     private RoleService roleService;
     private UserRoleService userRoleService;
-    private UserLoginsService userLoginsService;
 
     @Override
     public void init() throws ServletException {
@@ -39,21 +36,11 @@ public class EmailOTPVerificationServlet extends HttpServlet {
         this.userService = new UserService();
         this.roleService = new RoleService();
         this.userRoleService = new UserRoleService();
-        this.userLoginsService = new UserLoginsService();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        
-        Object pendingUserLogins = session.getAttribute("pendingUserLogins");
-        Object pendingUserType = session.getAttribute("pendingUserType");
-        if (pendingUserLogins != null && "normal".equals(pendingUserType)) {
-            response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp");
-            return;
-        }
-        
         String userIdStr = (String) SessionUtil.getSessionAttribute(request, "userId");
         if (userIdStr == null) {
             response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp");
@@ -66,6 +53,19 @@ public class EmailOTPVerificationServlet extends HttpServlet {
             LOGGER.log(Level.WARNING, "Invalid UUID format in session: " + userIdStr);
             response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp");
             return;
+        }
+        
+        String successMessage = (String) SessionUtil.getSessionAttribute(request, "success");
+        String errorMessage = (String) SessionUtil.getSessionAttribute(request, "error");
+        
+        if (successMessage != null) {
+            request.setAttribute("success", successMessage);
+            SessionUtil.removeSessionAttribute(request, "success");
+        }
+        
+        if (errorMessage != null) {
+            request.setAttribute("error", errorMessage);
+            SessionUtil.removeSessionAttribute(request, "error");
         }
         
         request.getRequestDispatcher("pages/authen/verify-otp.jsp").forward(request, response);
@@ -117,16 +117,10 @@ public class EmailOTPVerificationServlet extends HttpServlet {
                 return;
             }
 
-            // Process user login info (for OAuth users)
-            UserLogins pendingUserLogins = (UserLogins) session.getAttribute("pendingUserLogins");
-            if (pendingUserLogins != null) {
-                pendingUserLogins.setUserId(addedUser.getUserId());
-                userLoginsService.add(pendingUserLogins);
-            }
-
-            SessionUtil.setSessionAttribute(request, "userId", addedUser.getUserId().toString());
-
-            clearPendingSessionAttributes(session);
+            // Clear session attributes
+            SessionUtil.removeSessionAttribute(request, "userId");
+            SessionUtil.removeSessionAttribute(request, "email");
+            SessionUtil.removeSessionAttribute(request, "username");
 
             forwardWithSuccess(request, response, 
                 "Email verified successfully! Please sign in.", 
@@ -136,14 +130,6 @@ public class EmailOTPVerificationServlet extends HttpServlet {
             LOGGER.log(Level.SEVERE, "Error processing successful verification", e);
             forwardWithError(request, response, "Verification successful but there was an error processing your account. Please contact support.");
         }
-    }
-
-    private void clearPendingSessionAttributes(HttpSession session) {
-        session.removeAttribute("pendingUser");
-        session.removeAttribute("pendingUserLogins");
-        session.removeAttribute("pendingUserType");
-        session.removeAttribute("email");
-        session.removeAttribute("username");
     }
 
     private void forwardWithError(HttpServletRequest request, HttpServletResponse response, String errorMsg) 

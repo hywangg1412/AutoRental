@@ -27,12 +27,16 @@ public class NormalRegisterServlet extends HttpServlet {
     private UserService userService;
     private RoleService roleService;
     private UserRoleService userRoleService;
+    private EmailOTPVerificationService emailOTPService;
+    private MailService mailService;
 
     @Override
     public void init() {
         userService = new UserService();
         roleService = new RoleService();
         userRoleService = new UserRoleService();
+        emailOTPService = new EmailOTPVerificationService();
+        mailService = new MailService();
     }
 
     @Override
@@ -118,7 +122,6 @@ public class NormalRegisterServlet extends HttpServlet {
             }
 
             // Generate and send OTP
-            EmailOTPVerificationService emailOTPService = new EmailOTPVerificationService();
             String otp = emailOTPService.generateOtp();
             EmailOTPVerification otpEntity = new EmailOTPVerification();
             otpEntity.setId(UUID.randomUUID());
@@ -132,7 +135,7 @@ public class NormalRegisterServlet extends HttpServlet {
             otpEntity.setResendBlockUntil(null);
             emailOTPService.add(otpEntity);
             
-            new MailService().sendOtpEmail(user.getEmail(), otp, user.getUsername());
+            mailService.sendOtpEmail(user.getEmail(), otp, user.getUsername());
 
             SessionUtil.setSessionAttribute(request, "userId", user.getUserId().toString());
             SessionUtil.setSessionAttribute(request, "email", user.getEmail());
