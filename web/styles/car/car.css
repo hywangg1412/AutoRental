@@ -3,7 +3,6 @@
     background: #fff !important;
     background-color: #fff !important;
     box-shadow: 0 2px 8px rgba(0,0,0,0.07) !important;
-    /* top: 0 !important; */
 }
 
 .ftco-navbar-light .navbar-nav > .nav-item > .nav-link{
@@ -90,4 +89,201 @@ nav.ftco-navbar-light .nav-link {
 }
 #advancedFilterModal input[type=number] {
   -moz-appearance: textfield;
+}
+
+/* Thanh filter tổng */
+.filter-bar {
+    background: #fff;
+    border-radius: 28px;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.07);
+    padding: 36px 32px 28px 32px;
+    margin-bottom: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    overflow-x: auto;
+}
+
+/* Nhóm filter */
+.filter-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: flex-start;
+    overflow-x: unset;
+    padding-bottom: 0;
+}
+
+/* Button filter nhỏ hơn */
+.filter-btn, .filter-btn-adv {
+    border: 2px solid #2563eb;
+    background: #fff;
+    color: #2563eb;
+    border-radius: 9px;
+    padding: 4px 10px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    font-size: 0.92rem;
+    min-width: 70px;
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all 0.2s;
+    box-shadow: none;
+}
+
+.filter-btn-adv {
+    font-weight: 700;
+}
+
+.filter-btn:hover, .filter-btn-adv:hover, .filter-btn:focus {
+    background: #2563eb;
+    color: #fff;
+}
+
+/* Cải thiện bố cục search row */
+.filter-search-row {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Reset button riêng biệt */
+.reset-filter-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    border: 2px solid #ef4444;
+    background: #fff;
+    color: #ef4444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.1);
+    flex-shrink: 0;
+}
+
+.reset-filter-btn:hover {
+    background: #ef4444;
+    color: #fff;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+}
+
+.reset-filter-btn:active {
+    transform: scale(0.98);
+}
+
+/* Search input group */
+.search-input-group {
+    display: flex;
+    max-width: 400px;
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
+}
+
+.search-input-group .form-control {
+    height: 48px;
+    font-size: 1.1rem;
+    border: 2px solid #2563eb;
+    border-right: none;
+    box-shadow: none;
+    flex: 1;
+}
+
+.search-input-group .form-control:focus {
+    border-color: #1d4ed8;
+    box-shadow: none;
+}
+
+.search-input-group .btn-search {
+    height: 48px;
+    width: 48px;
+    border: 2px solid #2563eb;
+    border-left: none;
+    background: #2563eb;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.search-input-group .btn-search:hover {
+    background: #1d4ed8;
+    border-color: #1d4ed8;
+}
+
+/* Sort select */
+.sort-select {
+    border-radius: 12px;
+    border: 2px solid #e5e7eb;
+    min-width: 140px;
+    max-width: 160px;
+    height: 48px;
+    font-weight: 600;
+    font-size: 1.05rem;
+    background: #fff;
+    color: #374151;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.sort-select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .filter-search-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-input-group {
+        max-width: 100%;
+        order: 2;
+    }
+    
+    .reset-filter-btn {
+        align-self: flex-start;
+        order: 1;
+        margin-bottom: 8px;
+    }
+    
+    .sort-select {
+        order: 3;
+        margin-top: 8px;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .filter-bar {
+        padding: 24px 20px 20px 20px;
+        border-radius: 20px;
+    }
+    
+    .filter-group {
+        gap: 8px;
+    }
+    
+    .filter-btn, .filter-btn-adv {
+        font-size: 0.85rem;
+        padding: 3px 8px;
+        min-width: 60px;
+    }
 }

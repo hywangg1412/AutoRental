@@ -47,133 +47,134 @@
         <section class="ftco-section bg-light">
             <div class="container" style="max-width: 1140px; margin-top: 50px;">
                 <div class="mb-4">
-                    <div class="bg-white rounded-4 shadow-sm p-4">
+                    <div class="filter-bar">
                         <form method="get" action="car" id="filterBarForm">
-                            <div class="row align-items-center g-3">
-                                <!-- Filter group bên trái -->
-                                <div class="col-xl-8 col-lg-7">
-                                    <div class="d-flex flex-wrap align-items-center gap-2">
-                                        <!-- Hãng xe -->
-                                        <div class="dropdown">
-                                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <i class="bi bi-globe"></i> Hãng xe
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <c:forEach var="brand" items="${brandList}">
-                                                    <li>
-                                                        <label class="dropdown-item">
-                                                            <input type="checkbox" name="brandId" value="${brand.brandId}" <c:if test="${paramValues.brandId != null && fn:contains(paramValues.brandId, brand.brandId)}">checked</c:if>>
-                                                            ${brand.brandName}
-                                                        </label>
-                                                    </li>
-                                                </c:forEach>
-                                            </ul>
-                                        </div>
-                                        <!-- Loại xe -->
-                                        <div class="dropdown">
-                                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <i class="bi bi-car-front"></i> Loại xe
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <c:forEach var="cat" items="${categoryList}">
-                                                    <li>
-                                                        <label class="dropdown-item">
-                                                            <input type="checkbox" name="categoryId" value="${cat.categoryId}" <c:if test="${paramValues.categoryId != null && fn:contains(paramValues.categoryId, cat.categoryId)}">checked</c:if>>
-                                                            ${cat.categoryName}
-                                                        </label>
-                                                    </li>
-                                                </c:forEach>
-                                            </ul>
-                                        </div>
-                                        <!-- Hộp số -->
-                                        <div class="dropdown">
-                                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <i class="bi bi-gear"></i> Hộp số
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <c:forEach var="trans" items="${transmissionTypeList}">
-                                                    <li>
-                                                        <label class="dropdown-item">
-                                                            <input type="checkbox" name="transmissionTypeId" value="${trans.transmissionTypeId}" <c:if test="${paramValues.transmissionTypeId != null && fn:contains(paramValues.transmissionTypeId, trans.transmissionTypeId)}">checked</c:if>>
-                                                            ${trans.transmissionName}
-                                                        </label>
-                                                    </li>
-                                                </c:forEach>
-                                            </ul>
-                                        </div>
-                                        <!-- Nhiên liệu -->
-                                        <div class="dropdown">
-                                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <i class="bi bi-fuel-pump"></i> Nhiên liệu
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <c:forEach var="fuel" items="${fuelTypeList}">
-                                                    <li>
-                                                        <label class="dropdown-item">
-                                                            <input type="checkbox" name="fuelTypeId" value="${fuel.fuelTypeId}" <c:if test="${paramValues.fuelTypeId != null && fn:contains(paramValues.fuelTypeId, fuel.fuelTypeId)}">checked</c:if>>
-                                                            ${fuel.fuelName}
-                                                        </label>
-                                                    </li>
-                                                </c:forEach>
-                                            </ul>
-                                        </div>
-                                        <!-- Trạng thái -->
-                                        <div class="dropdown">
-                                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <i class="bi bi-info-circle"></i> Trạng thái
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <c:forEach var="status" items="${statusList}">
-                                                    <li>
-                                                        <label class="dropdown-item">
-                                                            <input type="checkbox" name="status" value="${status.value}" <c:if test="${paramValues.status != null && fn:contains(paramValues.status, status.value)}">checked</c:if>>
-                                                            ${status.display}
-                                                        </label>
-                                                    </li>
-                                                </c:forEach>
-                                            </ul>
-                                        </div>
-                                        <!-- Tính năng -->
-                                        <div class="dropdown">
-                                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <i class="bi bi-stars"></i> Tính năng
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <c:forEach var="feature" items="${featureList}">
-                                                    <li>
-                                                        <label class="dropdown-item">
-                                                            <input type="checkbox" name="featureId" value="${feature.featureId}" <c:if test="${paramValues.featureId != null && fn:contains(paramValues.featureId, feature.featureId)}">checked</c:if>>
-                                                            ${feature.featureName}
-                                                        </label>
-                                                    </li>
-                                                </c:forEach>
-                                            </ul>
-                                        </div>
-                                        <!-- Bộ lọc nâng cao (modal) -->
-                                        <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#advancedFilterModal">
-                                            <i class="bi bi-sliders"></i> Bộ lọc nâng cao
-                                        </button>
-                                    </div>
+                            <div class="filter-group mb-3">
+                                <!-- Brand -->
+                                <div class="dropdown">
+                                    <button type="button" class="filter-btn" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-globe"></i> Brand
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <c:forEach var="brand" items="${brandList}">
+                                            <li>
+                                                <label class="dropdown-item">
+                                                    <input type="checkbox" name="brandId" value="${brand.brandId}" <c:if test="${paramValues.brandId != null && fn:contains(paramValues.brandId, brand.brandId)}">checked</c:if>>
+                                                    ${brand.brandName}
+                                                </label>
+                                            </li>
+                                        </c:forEach>
+                                    </ul>
                                 </div>
-                                <!-- Search + Sort bên phải -->
-                                <div class="col-xl-4 col-lg-5">
-                                    <div class="d-flex align-items-center gap-2 justify-content-lg-end">
-                                        <div class="input-group flex-grow-1" style="max-width: 250px;">
-                                            <input type="text" name="keyword" class="form-control" placeholder="Tìm xe, hãng xe..." value="${param.keyword}">
-                                            <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
-                                        </div>
-                                        <select name="sort" id="sortSelect" class="form-select" style="min-width:120px; max-width: 150px;" onchange="this.form.submit()">
-                                            <option value="" ${empty param.sort ? 'selected' : ''}>Default</option>
-                                            <option value="priceAsc" ${param.sort == 'priceAsc' ? 'selected' : ''}>Price ↑</option>
-                                            <option value="priceDesc" ${param.sort == 'priceDesc' ? 'selected' : ''}>Price ↓</option>
-                                            <option value="nameAsc" ${param.sort == 'nameAsc' ? 'selected' : ''}>A-Z</option>
-                                            <option value="nameDesc" ${param.sort == 'nameDesc' ? 'selected' : ''}>Z-A</option>
-                                            <option value="yearDesc" ${param.sort == 'yearDesc' ? 'selected' : ''}>Year ↓</option>
-                                            <option value="yearAsc" ${param.sort == 'yearAsc' ? 'selected' : ''}>Year ↑</option>
-                                        </select>
-                                    </div>
+                                <!-- Type -->
+                                <div class="dropdown">
+                                    <button type="button" class="filter-btn" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-car-front"></i> Type
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <c:forEach var="cat" items="${categoryList}">
+                                            <li>
+                                                <label class="dropdown-item">
+                                                    <input type="checkbox" name="categoryId" value="${cat.categoryId}" <c:if test="${paramValues.categoryId != null && fn:contains(paramValues.categoryId, cat.categoryId)}">checked</c:if>>
+                                                    ${cat.categoryName}
+                                                </label>
+                                            </li>
+                                        </c:forEach>
+                                    </ul>
                                 </div>
-                                <c:if test="${not empty param.sort}"><input type="hidden" name="sort" value="${param.sort}"/></c:if>
+                                <!-- Transmission -->
+                                <div class="dropdown">
+                                    <button type="button" class="filter-btn" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-gear"></i> Transmission
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <c:forEach var="trans" items="${transmissionTypeList}">
+                                            <li>
+                                                <label class="dropdown-item">
+                                                    <input type="checkbox" name="transmissionTypeId" value="${trans.transmissionTypeId}" <c:if test="${paramValues.transmissionTypeId != null && fn:contains(paramValues.transmissionTypeId, trans.transmissionTypeId)}">checked</c:if>>
+                                                    ${trans.transmissionName}
+                                                </label>
+                                            </li>
+                                        </c:forEach>
+                                    </ul>
+                                </div>
+                                <!-- Fuel -->
+                                <div class="dropdown">
+                                    <button type="button" class="filter-btn" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-fuel-pump"></i> Fuel
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <c:forEach var="fuel" items="${fuelTypeList}">
+                                            <li>
+                                                <label class="dropdown-item">
+                                                    <input type="checkbox" name="fuelTypeId" value="${fuel.fuelTypeId}" <c:if test="${paramValues.fuelTypeId != null && fn:contains(paramValues.fuelTypeId, fuel.fuelTypeId)}">checked</c:if>>
+                                                    ${fuel.fuelName}
+                                                </label>
+                                            </li>
+                                        </c:forEach>
+                                    </ul>
+                                </div>
+                                <!-- Status -->
+                                <div class="dropdown">
+                                    <button type="button" class="filter-btn" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-info-circle"></i> Status
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <c:forEach var="status" items="${statusList}">
+                                            <li>
+                                                <label class="dropdown-item">
+                                                    <input type="checkbox" name="status" value="${status.value}" <c:if test="${paramValues.status != null && fn:contains(paramValues.status, status.value)}">checked</c:if>>
+                                                    ${status.display}
+                                                </label>
+                                            </li>
+                                        </c:forEach>
+                                    </ul>
+                                </div>
+                                <!-- Feature -->
+                                <div class="dropdown">
+                                    <button type="button" class="filter-btn" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-stars"></i> Feature
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <c:forEach var="feature" items="${featureList}">
+                                            <li>
+                                                <label class="dropdown-item">
+                                                    <input type="checkbox" name="featureId" value="${feature.featureId}" <c:if test="${paramValues.featureId != null && fn:contains(paramValues.featureId, feature.featureId)}">checked</c:if>>
+                                                    ${feature.featureName}
+                                                </label>
+                                            </li>
+                                        </c:forEach>
+                                    </ul>
+                                </div>
+                                <!-- Advanced Filter -->
+                                <button type="button" class="filter-btn-adv" data-bs-toggle="modal" data-bs-target="#advancedFilterModal">
+                                    <i class="bi bi-sliders"></i> <b>Advanced Filter</b>
+                                </button>
+                            </div>
+                            <div class="filter-search-row">
+                                <!-- Reset button riêng biệt -->
+                                <button class="reset-filter-btn" type="button" id="resetFilterBtn" title="Reset filters">
+                                    <i class="bi bi-arrow-clockwise"></i>
+                                </button>
+                                
+                                <!-- Search input group -->
+                                <div class="search-input-group">
+                                    <input type="text" name="keyword" class="form-control" placeholder="Search car, brand..." value="${param.keyword}">
+                                    <button class="btn-search" type="submit" title="Search">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+                                </div>
+                                
+                                <!-- Sort select -->
+                                <select name="sort" id="sortSelect" class="sort-select" onchange="this.form.submit()">
+                                    <option value="" ${empty param.sort ? 'selected' : ''}>Default</option>
+                                    <option value="priceAsc" ${param.sort == 'priceAsc' ? 'selected' : ''}>Price ↑</option>
+                                    <option value="priceDesc" ${param.sort == 'priceDesc' ? 'selected' : ''}>Price ↓</option>
+                                    <option value="nameAsc" ${param.sort == 'nameAsc' ? 'selected' : ''}>A-Z</option>
+                                    <option value="nameDesc" ${param.sort == 'nameDesc' ? 'selected' : ''}>Z-A</option>
+                                    <option value="yearDesc" ${param.sort == 'yearDesc' ? 'selected' : ''}>Year ↓</option>
+                                    <option value="yearAsc" ${param.sort == 'yearAsc' ? 'selected' : ''}>Year ↑</option>
+                                </select>
                             </div>
                         </form>
                     </div>
@@ -185,31 +186,31 @@
                         <div class="modal-content">
                             <form method="get" action="car">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="advancedFilterModalLabel">Bộ lọc nâng cao</h5>
+                                    <h5 class="modal-title" id="advancedFilterModalLabel">Advanced Filter</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                     <div class="row g-3">
                                         <div class="col-md-6">
-                                            <label class="form-label fw-bold">Khoảng giá (VND/giờ)</label>
+                                            <label class="form-label fw-bold">Price range (VND/hour)</label>
                                             <div class="d-flex align-items-center gap-2">
-                                                <input type="number" class="form-control" name="minPrice" placeholder="Từ" value="${param.minPrice != null ? param.minPrice : ''}">
+                                                <input type="number" class="form-control" name="minPrice" placeholder="From" value="${param.minPrice != null ? param.minPrice : ''}">
                                                 <span>-</span>
-                                                <input type="number" class="form-control" name="maxPrice" placeholder="Đến" value="${param.maxPrice != null ? param.maxPrice : ''}">
+                                                <input type="number" class="form-control" name="maxPrice" placeholder="To" value="${param.maxPrice != null ? param.maxPrice : ''}">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="form-label fw-bold">Năm sản xuất</label>
+                                            <label class="form-label fw-bold">Manufacture year</label>
                                             <div class="d-flex align-items-center gap-2">
-                                                <input type="number" class="form-control" name="minYear" placeholder="Từ" value="${param.minYear != null ? param.minYear : ''}">
+                                                <input type="number" class="form-control" name="minYear" placeholder="From" value="${param.minYear != null ? param.minYear : ''}">
                                                 <span>-</span>
-                                                <input type="number" class="form-control" name="maxYear" placeholder="Đến" value="${param.maxYear != null ? param.maxYear : ''}">
+                                                <input type="number" class="form-control" name="maxYear" placeholder="To" value="${param.maxYear != null ? param.maxYear : ''}">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="submit" class="btn btn-success w-100">Áp dụng bộ lọc</button>
+                                    <button type="submit" class="btn btn-success w-100">Apply filter</button>
                                 </div>
                             </form>
                         </div>
@@ -266,7 +267,7 @@
                                 <div class="col-12 text-center">
                                     <div class="alert alert-info">
                                         <i class="bi bi-info-circle me-2"></i>
-                                        Không tìm thấy xe phù hợp với tiêu chí tìm kiếm!
+                                        No cars found matching your search criteria!
                                     </div>
                                 </div>
                             </c:if>
@@ -328,5 +329,10 @@
         <script src="${pageContext.request.contextPath}/assets/js/car.js"></script>
         <!-- Toast notification -->
         <div id="favorite-toast"></div>
+        <script>
+            document.getElementById('resetFilterBtn').onclick = function() {
+                window.location.href = 'car';
+            };
+        </script>
     </body>
 </html>
