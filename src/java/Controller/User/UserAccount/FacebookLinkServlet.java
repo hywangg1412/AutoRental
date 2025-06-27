@@ -35,31 +35,33 @@ public class FacebookLinkServlet extends HttpServlet {
         }
         String code = request.getParameter("code");
         if (code == null) {
-            response.sendRedirect(facebookAuthService.getAuthorizationUrl());
+            response.sendRedirect(facebookAuthService.getAuthorizationLinkUrl());
             return;
         }
         try {
-            FacebookUser fbUser = facebookAuthService.getUserInfo(code);
+            FacebookUser fbUser = facebookAuthService.getLinkUserInfo(code);
             if (fbUser.getFacebookId() == null) {
-                request.setAttribute("error", "Cannot retrieve Facebook user information.");
-                request.getRequestDispatcher("/pages/user/user-profile.jsp").forward(request, response);
+                SessionUtil.setSessionAttribute(request, "error", "Cannot retrieve Facebook user information.");
+                response.sendRedirect(request.getContextPath() + "/user/profile");
                 return;
             }
             UserLogins existing = userLoginsService.findByProviderAndKey("facebook", fbUser.getFacebookId());
             if (existing != null && !existing.getUserId().equals(currentUser.getUserId())) {
-                request.setAttribute("error", "This Facebook account has been linked to another account.");
-                request.getRequestDispatcher("/pages/user/user-profile.jsp").forward(request, response);
+                SessionUtil.setSessionAttribute(request, "error", "This Facebook account has been linked to another account.");
+                response.sendRedirect(request.getContextPath() + "/user/profile");
                 return;
             }
             if (existing == null) {
+                String displayName = fbUser.getFullName();
                 UserLogins newLogin = new UserLogins("facebook", fbUser.getFacebookId(), "Facebook", currentUser.getUserId());
+                newLogin.setProviderDisplayName(displayName);
                 userLoginsService.add(newLogin);
             }
             SessionUtil.setSessionAttribute(request, "success", "Facebook link successful!");
             response.sendRedirect(request.getContextPath() + "/user/profile");
         } catch (Exception e) {
-            request.setAttribute("error", "Facebook link failed: " + e.getMessage());
-            request.getRequestDispatcher("/pages/user/user-profile.jsp").forward(request, response);
+            SessionUtil.setSessionAttribute(request, "error", "Facebook link failed: " + e.getMessage());
+            response.sendRedirect(request.getContextPath() + "/user/profile");
         }
     }
 
