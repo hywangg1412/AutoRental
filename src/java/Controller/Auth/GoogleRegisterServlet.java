@@ -74,38 +74,13 @@ public class GoogleRegisterServlet extends HttpServlet {
             }
 
             User newUser = userMapper.mapGoogleUserToUser(googleUser,userService);
+            newUser.setEmailVerifed(true);
             userService.add(newUser);
             request.getSession().setAttribute("userId", newUser.getUserId().toString());
-            UserLogins userLogins = new UserLogins();
-            userLogins.setLoginProvider("google");
-            userLogins.setProviderKey(googleUser.getGoogleId());
+            UserLogins userLogins = userMapper.mapGoogleUserToUserLogins(googleUser, newUser);
+            userLoginsService.add(userLogins);
 
-            String otp = emailOTP.generateOtp();
-            UUID otpId = UUID.randomUUID();
-            LocalDateTime now = LocalDateTime.now();
-            LocalDateTime expiry = now.plusMinutes(10);
-
-            EmailOTPVerification otpEntity = new EmailOTPVerification();
-            otpEntity.setId(otpId);
-            otpEntity.setOtp(otp);
-            otpEntity.setUserId(newUser.getUserId());
-            otpEntity.setExpiryTime(expiry);
-            otpEntity.setIsUsed(false);
-            otpEntity.setCreatedAt(now);
-            otpEntity.setResendCount(0);
-            otpEntity.setLastResendTime(null);
-            otpEntity.setResendBlockUntil(null);
-
-            emailOTP.add(otpEntity);
-
-            mailService.sendOtpEmail(newUser.getEmail(), otp, newUser.getUsername());
-
-            request.getSession().setAttribute("pendingUserType", "google");
-            request.getSession().setAttribute("pendingUser", newUser);
-            request.getSession().setAttribute("pendingUserLogins", userLogins);
-            request.getSession().setAttribute("pendingUserRoleName", "User");
-
-            response.sendRedirect(request.getContextPath() + "/verify-otp");
+            response.sendRedirect(request.getContextPath() + "/setPassword");
             return;
         } catch (Exception e) {
             request.setAttribute("error", "Google register failed - " + e.getMessage());

@@ -35,31 +35,33 @@ public class GoogleLinkServlet extends HttpServlet {
         }
         String code = request.getParameter("code");
         if (code == null) {
-            response.sendRedirect(googleAuthService.getAuthorizationUrl());
+            response.sendRedirect(googleAuthService.getAuthorizationLinkUrl());
             return;
         }
         try {
-            GoogleUser googleUser = googleAuthService.getUserInfo(code);
+            GoogleUser googleUser = googleAuthService.getUserInfoLink(code);
             if (googleUser.getGoogleId() == null) {
-                request.setAttribute("error", "Cannot retrieve Google user information.");
-                request.getRequestDispatcher("/pages/user/user-profile.jsp").forward(request, response);
+                SessionUtil.setSessionAttribute(request, "error", "Cannot retrieve Google user information.");
+                response.sendRedirect(request.getContextPath() + "/user/profile");
                 return;
             }
             UserLogins existing = userLoginsService.findByProviderAndKey("google", googleUser.getGoogleId());
             if (existing != null && !existing.getUserId().equals(currentUser.getUserId())) {
-                request.setAttribute("error", "This Google account has been linked to another account.");
-                request.getRequestDispatcher("/pages/user/user-profile.jsp").forward(request, response);
+                SessionUtil.setSessionAttribute(request, "error", "This Google account has been linked to another account.");
+                response.sendRedirect(request.getContextPath() + "/user/profile");
                 return;
             }
             if (existing == null) {
+                String displayName = googleUser.getFirstName() + " " + googleUser.getLastName();
                 UserLogins newLogin = new UserLogins("google", googleUser.getGoogleId(), "Google", currentUser.getUserId());
+                newLogin.setProviderDisplayName(displayName);
                 userLoginsService.add(newLogin);
             }
             SessionUtil.setSessionAttribute(request, "success", "Google link successful!");
             response.sendRedirect(request.getContextPath() + "/user/profile");
         } catch (Exception e) {
-            request.setAttribute("error", "Google link failed: " + e.getMessage());
-            request.getRequestDispatcher("/pages/user/user-profile.jsp").forward(request, response);
+            SessionUtil.setSessionAttribute(request, "error", "Google link failed: " + e.getMessage());
+            response.sendRedirect(request.getContextPath() + "/user/profile");
         }
     }
 

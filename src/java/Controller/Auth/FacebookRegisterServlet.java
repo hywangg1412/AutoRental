@@ -40,6 +40,7 @@ public class FacebookRegisterServlet extends HttpServlet {
         userLoginsService = new UserLoginsService();
         roleService = new RoleService();
         userRoleService = new UserRoleService();
+        emailOTPVerificationService = new EmailOTPVerificationService();
     }
 
     @Override
@@ -66,18 +67,13 @@ public class FacebookRegisterServlet extends HttpServlet {
                 request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
                 return;
             }
-            User newUser = userMapper.mapFacebookUserToUser(facebookUser,userService);
-            UserLogins userLogins = new UserLogins();
-            userLogins.setLoginProvider("facebook");
-            userLogins.setProviderKey(facebookUser.getFacebookId());
+            User newUser = userMapper.mapFacebookUserToUser(facebookUser, userService);
+            newUser.setEmailVerifed(true);
+            userService.add(newUser);
+            UserLogins userLogins = userMapper.mapFacebookUserToUserLogins(facebookUser, newUser);
+            userLoginsService.add(userLogins);
 
-            // Lưu tạm vào session, KHÔNG add vào DB
-            request.getSession().setAttribute("pendingUserType", "facebook");
-            request.getSession().setAttribute("pendingUser", newUser);
-            request.getSession().setAttribute("pendingUserLogins", userLogins);
-            request.getSession().setAttribute("pendingUserRoleName", "User");
-
-            response.sendRedirect(request.getContextPath() + "/pages/authen/verify-otp");
+            response.sendRedirect(request.getContextPath() + "/setPassword");
             return;
         } catch (Exception e) {
             request.setAttribute("error", "Facebook register failed - " + e.getMessage());
