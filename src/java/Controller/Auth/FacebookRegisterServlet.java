@@ -40,6 +40,7 @@ public class FacebookRegisterServlet extends HttpServlet {
         userLoginsService = new UserLoginsService();
         roleService = new RoleService();
         userRoleService = new UserRoleService();
+        emailOTPVerificationService = new EmailOTPVerificationService();
     }
 
     @Override

@@ -117,21 +117,20 @@ public class EmailOTPVerificationService implements IEmailOTPVerificationService
     }
 
     @Override
-    public EmailOTPVerification findByUserId(UUID userId) {
+    public EmailOTPVerification findByUserId(UUID userId) throws EventException {
         try {
             return tokenRepository.findByUserId(userId);
         } catch (Exception e) {
-            System.err.println("Error finding email verification token by user ID: " + e.getMessage());
-            return null;
+            throw new EventException("Error finding email verification token by user ID: " + e.getMessage());
         }
     }
 
     @Override
-    public void deleteByUserId(UUID userId) {
+    public void deleteByUserId(UUID userId) throws EventException {
         try {
             tokenRepository.deleteByUserId(userId);
         } catch (Exception e) {
-            System.err.println("Error deleting email verification tokens by user ID: " + e.getMessage());
+            throw new EventException("Error deleting email verification tokens by user ID: " + e.getMessage());
         }
     }
 
@@ -139,26 +138,24 @@ public class EmailOTPVerificationService implements IEmailOTPVerificationService
         return UUID.randomUUID().toString();
     }
 
-    public boolean verifyOtp(UUID userId, String otp) {
+    public boolean verifyOtp(UUID userId, String otp) throws EventException {
         if (userId == null || otp == null || otp.trim().isEmpty()) return false;
         EmailOTPVerification verificationToken = null;
         try {
             verificationToken = findByUserId(userId);
         } catch (Exception e) {
-            System.err.println("Error finding OTP by userId: " + e.getMessage());
-            return false;
+            throw new EventException("Error finding OTP by userId: " + e.getMessage());
         }
         if (verificationToken == null) return false;
         if (!otp.equals(verificationToken.getOtp())) return false;
         if (verificationToken.isIsUsed()) return false;
         if (LocalDateTime.now().isAfter(verificationToken.getExpiryTime())) return false;
 
-        verificationToken.setIsUsed(true);
         try {
-            update(verificationToken);
+            // Delete the OTP after successful verification
+            delete(verificationToken.getId());
         } catch (Exception e) {
-            System.err.println("Error updating OTP as used: " + e.getMessage());
-            return false;
+            throw new EventException("Error deleting OTP after verification: " + e.getMessage());
         }
 
         try {
@@ -169,7 +166,7 @@ public class EmailOTPVerificationService implements IEmailOTPVerificationService
                 return true;
             }
         } catch (Exception e) {
-            System.err.println("Error updating user email verified: " + e.getMessage());
+            throw new EventException("Error updating user email verified: " + e.getMessage());
         }
         return false;
     }
