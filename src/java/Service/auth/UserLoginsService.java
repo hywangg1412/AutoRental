@@ -151,4 +151,22 @@ public class UserLoginsService implements IUserLoginsService {
         }
     }
 
+    @Override
+    public UserLogins findByUserIdAndProvider(UUID userId, String provider) throws Exception {
+        try {
+            return userLoginsRepository.findByUserIdAndProvider(userId, provider);
+        } catch (SQLException e) {
+            throw new Exception("Error finding user login: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public boolean deleteByProviderAndKey(String provider, String key) throws Exception {
+        try {
+            return userLoginsRepository.deleteByProviderAndKey(provider, key);
+        } catch (SQLException e) {
+            throw new Exception("Error deleting user login: " + e.getMessage());
+        }
+    }
+
 }
