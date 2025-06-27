@@ -197,8 +197,14 @@
                                                                             ${not empty profile.facebookAccountName ? profile.facebookAccountName : 'Connected'}
                                                                         </span>
                                                                         <form action="${pageContext.request.contextPath}/facebook-unlink" method="post" style="display: inline;" onsubmit="return confirm('Are you sure you want to unlink your Facebook account?')">
-                                                                            <button type="submit" class="btn btn-sm btn-outline-danger" style="font-size:0.8em; padding: 2px 6px;">
-                                                                                <i class="bi bi-unlink"></i> Unlink
+                                                                            <button type="submit"
+                                                                                    class="btn btn-outline-danger btn-unlink-social d-flex align-items-center gap-1 px-3 py-1"
+                                                                                    style="font-size:0.95em; border-radius: 20px; border-width: 2px; font-weight: 500;"
+                                                                                    data-bs-toggle="tooltip"
+                                                                                    data-bs-placement="top"
+                                                                                    title="Unlink this social account">
+                                                                                <i class="bi bi-unlink" style="font-size:1.1em;"></i>
+                                                                                Unlink
                                                                             </button>
                                                                         </form>
                                                                     </div>
@@ -222,8 +228,14 @@
                                                                             ${not empty profile.googleAccountName ? profile.googleAccountName : 'Connected'}
                                                                         </span>
                                                                         <form action="${pageContext.request.contextPath}/google-unlink" method="post" style="display: inline;" onsubmit="return confirm('Are you sure you want to unlink your Google account?')">
-                                                                            <button type="submit" class="btn btn-sm btn-outline-danger" style="font-size:0.8em; padding: 2px 6px;">
-                                                                                <i class="bi bi-unlink"></i> Unlink
+                                                                            <button type="submit"
+                                                                                    class="btn btn-outline-danger btn-unlink-social d-flex align-items-center gap-1 px-3 py-1"
+                                                                                    style="font-size:0.95em; border-radius: 20px; border-width: 2px; font-weight: 500;"
+                                                                                    data-bs-toggle="tooltip"
+                                                                                    data-bs-placement="top"
+                                                                                    title="Unlink this social account">
+                                                                                <i class="bi bi-unlink" style="font-size:1.1em;"></i>
+                                                                                Unlink
                                                                             </button>
                                                                         </form>
                                                                     </div>
