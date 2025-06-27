@@ -2,6 +2,7 @@ package Mapper;
 
 import Model.Entity.OAuth.FacebookUser;
 import Model.Entity.OAuth.GoogleUser;
+import Model.Entity.OAuth.UserLogins;
 import Model.Entity.User.User;
 import Service.User.UserService;
 import java.time.LocalDateTime;
@@ -78,6 +79,38 @@ public class UserMapper {
         user.setNormalizedEmail(email.toLowerCase());
 
         return user;
+    }
+
+    public UserLogins mapFacebookUserToUserLogins(FacebookUser facebookUser, User user) {
+        UserLogins login = new UserLogins("facebook", facebookUser.getFacebookId(), "Facebook", user.getUserId());
+        
+        String fullName = facebookUser.getFullName();
+        String displayName = (fullName != null && !fullName.trim().isEmpty()) ? fullName.trim() : "Facebook User";
+        
+        login.setProviderDisplayName(displayName);
+        return login;
+    }
+
+    public UserLogins mapGoogleUserToUserLogins(GoogleUser googleUser, User user) {
+        UserLogins login = new UserLogins("google", googleUser.getGoogleId(), "Google", user.getUserId());
+        
+        // Handle null firstName and lastName
+        String firstName = googleUser.getFirstName() != null ? googleUser.getFirstName().trim() : "";
+        String lastName = googleUser.getLastName() != null ? googleUser.getLastName().trim() : "";
+        
+        String displayName;
+        if (!firstName.isEmpty() && !lastName.isEmpty()) {
+            displayName = firstName + " " + lastName;
+        } else if (!firstName.isEmpty()) {
+            displayName = firstName;
+        } else if (!lastName.isEmpty()) {
+            displayName = lastName;
+        } else {
+            displayName = "Google User"; 
+        }
+        
+        login.setProviderDisplayName(displayName);
+        return login;
     }
 
     private String[] splitName(String fullname) {
