@@ -191,7 +191,10 @@
                                                         <span class="d-flex align-items-center gap-1">
                                                             <c:choose>
                                                                 <c:when test="${profile.hasFacebookLogin}">
-                                                                    <span class="badge badge-verified"><i class="bi bi-check-circle-fill me-1"></i>Connected</span>
+                                                                    <span class="badge badge-verified">
+                                                                        <i class="bi bi-check-circle-fill me-1"></i>
+                                                                        ${not empty profile.facebookAccountName ? profile.facebookAccountName : 'Connected'}
+                                                                    </span>
                                                                 </c:when>
                                                                 <c:otherwise>
                                                                     <a href="${pageContext.request.contextPath}/facebook-link" class="add-link d-flex align-items-center" style="font-size:0.97em;">
@@ -206,7 +209,10 @@
                                                         <span class="d-flex align-items-center gap-1">
                                                             <c:choose>
                                                                 <c:when test="${profile.hasGoogleLogin}">
-                                                                    <span class="badge badge-verified"><i class="bi bi-check-circle-fill me-1"></i>Connected</span>
+                                                                    <span class="badge badge-verified">
+                                                                        <i class="bi bi-check-circle-fill me-1"></i>
+                                                                        ${not empty profile.googleAccountName ? profile.googleAccountName : 'Connected'}
+                                                                    </span>
                                                                 </c:when>
                                                                 <c:otherwise>
                                                                     <a href="${pageContext.request.contextPath}/google-link" class="add-link d-flex align-items-center" style="font-size:0.97em;">

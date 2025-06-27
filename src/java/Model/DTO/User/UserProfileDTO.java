@@ -15,6 +15,24 @@ public class UserProfileDTO {
     private boolean emailVerified;
     private boolean hasFacebookLogin;
     private boolean hasGoogleLogin;
+    private String facebookAccountName;
+    private String googleAccountName;
+
+    public String getFacebookAccountName() {
+        return facebookAccountName;
+    }
+
+    public void setFacebookAccountName(String facebookAccountName) {
+        this.facebookAccountName = facebookAccountName;
+    }
+
+    public String getGoogleAccountName() {
+        return googleAccountName;
+    }
+
+    public void setGoogleAccountName(String googleAccountName) {
+        this.googleAccountName = googleAccountName;
+    }
 
     public boolean isHasFacebookLogin() {
         return hasFacebookLogin;
@@ -98,7 +116,7 @@ public class UserProfileDTO {
 
     @Override
     public String toString() {
-        return "UserProfileDTO{" + "username=" + username + ", userDOB=" + userDOB + ", gender=" + gender + ", phoneNumber=" + phoneNumber + ", email=" + email + ", avatarUrl=" + avatarUrl + ", createdAt=" + createdAt + ", hasFacebookLogin=" + hasFacebookLogin + ", hasGoogleLogin=" + hasGoogleLogin + '}';
+        return "UserProfileDTO{" + "username=" + username + ", userDOB=" + userDOB + ", gender=" + gender + ", phoneNumber=" + phoneNumber + ", email=" + email + ", avatarUrl=" + avatarUrl + ", createdAt=" + createdAt + ", hasFacebookLogin=" + hasFacebookLogin + ", hasGoogleLogin=" + hasGoogleLogin + ", facebookAccountName=" + facebookAccountName + ", googleAccountName=" + googleAccountName + '}';
     }
 
 }

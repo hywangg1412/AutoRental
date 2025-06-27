@@ -3,9 +3,7 @@ package Controller.Auth;
 import Model.Entity.User.User;
 import Model.Entity.Role.Role;
 import Model.Entity.Role.UserRole;
-//import Service.Auth.EmailVerificationService;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,30 +13,26 @@ import jakarta.servlet.http.HttpSession;
 import Utils.SessionUtil;
 import Utils.ObjectUtils;
 import java.time.LocalDateTime;
-import java.util.Date;
 import Service.User.UserService;
 import Service.Role.RoleService;
 import Service.Role.UserRoleService;
 import java.util.UUID;
-import java.sql.SQLException;
 import Service.Auth.EmailOTPVerificationService;
 import Model.Entity.OAuth.EmailOTPVerification;
 import Service.External.MailService;
 
-// /normalRegister
+@WebServlet("/normalRegister")
 public class NormalRegisterServlet extends HttpServlet {
 
     private UserService userService;
     private RoleService roleService;
     private UserRoleService userRoleService;
-//    private EmailVerificationService emailVerificationService;
 
     @Override
     public void init() {
         userService = new UserService();
         roleService = new RoleService();
         userRoleService = new UserRoleService();
-//        emailVerificationService = new EmailVerificationService();
     }
 
     @Override
@@ -56,53 +50,40 @@ public class NormalRegisterServlet extends HttpServlet {
         String repassword = request.getParameter("repassword");
 
         // Validate input
-        if (username == null || username.trim().isEmpty()
-                || email == null || email.trim().isEmpty()
-                || password == null || password.trim().isEmpty()) {
-            request.setAttribute("error", "All fields are required!");
-            request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
+        if (username == null || username.trim().isEmpty() ||
+            email == null || email.trim().isEmpty() ||
+            password == null || password.trim().isEmpty()) {
+            forwardWithError(request, response, "All fields are required!");
             return;
         }
         if (username.trim().length() < 3) {
-            request.setAttribute("error", "Username must be at least 3 characters long!");
-            request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
+            forwardWithError(request, response, "Username must be at least 3 characters long!");
             return;
         }
         if (!email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")) {
-            request.setAttribute("error", "Invalid email format!");
-            request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
+            forwardWithError(request, response, "Invalid email format!");
             return;
         }
         if (!password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,100}$")) {
-            request.setAttribute("error", "Password must be between 8 and 100 characters long and contain uppercase, lowercase, and numbers!");
-            request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
+            forwardWithError(request, response, "Password must be between 8 and 100 characters long and contain uppercase, lowercase, and numbers!");
             return;
         }
         if (!password.equals(repassword)) {
-            request.setAttribute("error", "Passwords do not match!");
-            request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
+            forwardWithError(request, response, "Passwords do not match!");
             return;
         }
 
         try {
-            User existingUserByUsername = userService.findByUsername(username);
-            if (existingUserByUsername != null) {
-                request.setAttribute("error", "Username is already taken!");
-                request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
+            if (userService.findByUsername(username) != null) {
+                forwardWithError(request, response, "Username is already taken!");
                 return;
             }
             User existingUser = userService.findByEmail(email);
             if (existingUser != null) {
-                String errorMsg;
-                if (existingUser.isDeleted()) {
-                    errorMsg = "This email is associated with a deleted account and cannot be reused.";
-                } else if (existingUser.isBanned()) {
-                    errorMsg = "This email is associated with a banned account. Please contact support.";
-                } else {
-                    errorMsg = "An account with this email already exists.";
-                }
-                request.setAttribute("error", errorMsg);
-                request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
+                String errorMsg = existingUser.isDeleted() ? "This email is associated with a deleted account and cannot be reused."
+                        : existingUser.isBanned() ? "This email is associated with a banned account. Please contact support."
+                        : "An account with this email already exists.";
+                forwardWithError(request, response, errorMsg);
                 return;
             }
 
@@ -124,6 +105,19 @@ public class NormalRegisterServlet extends HttpServlet {
 
             userService.add(user);
 
+            // Assign default "User" role
+            try {
+                Role userRole = roleService.findByRoleName("User");
+                if (userRole != null) {
+                    UserRole newUserRole = new UserRole(user.getUserId(), userRole.getRoleId());
+                    userRoleService.add(newUserRole);
+                }
+            } catch (Exception e) {
+                // Log error but don't fail registration
+                System.err.println("Error assigning default role to user: " + e.getMessage());
+            }
+
+            // Generate and send OTP
             EmailOTPVerificationService emailOTPService = new EmailOTPVerificationService();
             String otp = emailOTPService.generateOtp();
             EmailOTPVerification otpEntity = new EmailOTPVerification();
@@ -137,26 +131,22 @@ public class NormalRegisterServlet extends HttpServlet {
             otpEntity.setLastResendTime(null);
             otpEntity.setResendBlockUntil(null);
             emailOTPService.add(otpEntity);
-            MailService mailService = new MailService();
-            mailService.sendOtpEmail(user.getEmail(), otp, user.getUsername());
+            
+            new MailService().sendOtpEmail(user.getEmail(), otp, user.getUsername());
 
-            SessionUtil.setSessionAttribute(request, "pendingUserType", "normal");
-            SessionUtil.setSessionAttribute(request, "pendingUser", user);
             SessionUtil.setSessionAttribute(request, "userId", user.getUserId().toString());
+            SessionUtil.setSessionAttribute(request, "email", user.getEmail());
             SessionUtil.setSessionAttribute(request, "username", user.getUsername());
-            SessionUtil.setSessionAttribute(request, "pendingUserRoleName", "User");
+            
             response.sendRedirect(request.getContextPath() + "/verify-otp");
+            
         } catch (Exception e) {
-            String errorMessage;
-            if (e instanceof SQLException) {
-                errorMessage = "Database error occurred. Please try again later.";
-            } else if (e instanceof IllegalArgumentException) {
-                errorMessage = "Invalid input data. Please check your information.";
-            } else {
-                errorMessage = "An unexpected error occurred. Please try again later.";
-            }
-            request.setAttribute("error", errorMessage);
-            request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
+            forwardWithError(request, response, "An unexpected error occurred. Please try again later.");
         }
+    }
+
+    private void forwardWithError(HttpServletRequest request, HttpServletResponse response, String errorMsg) throws ServletException, IOException {
+        request.setAttribute("error", errorMsg);
+        request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
     }
 }
