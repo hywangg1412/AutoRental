@@ -197,14 +197,9 @@
                                     </button>
                                     <form method="get" action="car" class="flex-grow-1 d-flex align-items-center gap-3"
                                         style="max-width: 700px;">
-                                        <div class="search-input-group flex-grow-1 d-flex align-items-center"
-                                            style="background: #fff; border-radius: 24px; border: 1.5px solid #ddd; padding: 0 8px;">
-                                            <input type="text" name="keyword"
-                                                class="form-control border-0 bg-transparent"
-                                                placeholder="Search car, brand..." value="${param.keyword}"
-                                                style="box-shadow: none;">
-                                            <button class="btn-search" type="submit" title="Search"
-                                                style="background: #007bff; color: #fff; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: none;">
+                                        <div class="search-bar flex-grow-1">
+                                            <input type="text" name="keyword" class="form-control" placeholder="Search car, brand..." value="${param.keyword}">
+                                            <button class="btn-search" type="submit" title="Search">
                                                 <i class="bi bi-search"></i>
                                             </button>
                                         </div>
