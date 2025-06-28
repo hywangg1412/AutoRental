@@ -1,8 +1,9 @@
-/* Card xe */
+Card xe
 .ftco-navbar-light {
     background: #fff !important;
     background-color: #fff !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.07) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    top: 0 !important;
 }
 
 .ftco-navbar-light .navbar-nav > .nav-item > .nav-link{
@@ -22,6 +23,10 @@ nav.ftco-navbar-light .nav-link {
 }
 
 .bi-bell, .bi-chat-dots {
+    color: #222 !important;
+}
+
+.bi, .bi-three-dots-vertical {
     color: #222 !important;
 }
 
@@ -91,17 +96,45 @@ nav.ftco-navbar-light .nav-link {
   -moz-appearance: textfield;
 }
 
-/* Thanh filter tổng */
+/* Đặt filter-bar sát navbar, full width */
 .filter-bar {
-    background: #fff;
-    border-radius: 28px;
-    box-shadow: 0 4px 32px rgba(0,0,0,0.07);
-    padding: 36px 32px 28px 32px;
-    margin-bottom: 32px;
+    background: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding: 12px 0 0 0 !important;
+    border-bottom: none !important;
     display: flex;
-    flex-direction: column;
-    gap: 18px;
-    overflow-x: auto;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Các nút filter nhỏ gọn */
+.filter-btn, .filter-btn-adv, .reset-filter-btn, .search-input-group, .sort-select {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 3px 12px;
+    margin: 0 3px 6px 0;
+    font-size: 13px;
+    min-width: 70px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    box-shadow: none;
+    transition: border 0.2s;
+}
+.filter-btn:hover, .filter-btn-adv:hover, .reset-filter-btn:hover {
+    border: 1.5px solid #00c896;
+    background: #f6fffa;
+}
+
+/* Ẩn background container nếu có */
+.ftco-section.bg-light {
+    background: none !important;
+    box-shadow: none !important;
+    padding-top: 0 !important;
 }
 
 /* Nhóm filter */
@@ -115,34 +148,8 @@ nav.ftco-navbar-light .nav-link {
 }
 
 /* Button filter nhỏ hơn */
-.filter-btn, .filter-btn-adv {
-    border: 2px solid #2563eb;
-    background: #fff;
-    color: #2563eb;
-    border-radius: 9px;
-    padding: 4px 10px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    font-size: 0.92rem;
-    min-width: 70px;
-    max-width: 150px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    transition: all 0.2s;
-    box-shadow: none;
-}
-
 .filter-btn-adv {
     font-weight: 700;
-}
-
-.filter-btn:hover, .filter-btn-adv:hover, .filter-btn:focus {
-    background: #2563eb;
-    color: #fff;
 }
 
 /* Cải thiện bố cục search row */
@@ -155,43 +162,11 @@ nav.ftco-navbar-light .nav-link {
 }
 
 /* Reset button riêng biệt */
-.reset-filter-btn {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    border: 2px solid #ef4444;
-    background: #fff;
-    color: #ef4444;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.1);
-    flex-shrink: 0;
-}
-
-.reset-filter-btn:hover {
-    background: #ef4444;
-    color: #fff;
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
-}
-
 .reset-filter-btn:active {
     transform: scale(0.98);
 }
 
 /* Search input group */
-.search-input-group {
-    display: flex;
-    max-width: 400px;
-    width: 100%;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
-}
-
 .search-input-group .form-control {
     height: 48px;
     font-size: 1.1rem;
@@ -228,13 +203,13 @@ nav.ftco-navbar-light .nav-link {
 
 /* Sort select */
 .sort-select {
-    border-radius: 12px;
+    border-radius: 10px;
     border: 2px solid #e5e7eb;
-    min-width: 140px;
-    max-width: 160px;
-    height: 48px;
+    min-width: 90px;
+    max-width: 120px;
+    height: 38px;
     font-weight: 600;
-    font-size: 1.05rem;
+    font-size: 0.95rem;
     background: #fff;
     color: #374151;
     transition: all 0.2s;
@@ -282,8 +257,206 @@ nav.ftco-navbar-light .nav-link {
     }
     
     .filter-btn, .filter-btn-adv {
+        font-size: 0.75rem;
+        padding: 4px 5px;
+        min-width: 45px;
+    }
+    .sort-select {
         font-size: 0.85rem;
-        padding: 3px 8px;
-        min-width: 60px;
+        min-width: 70px;
+        height: 38px;
+    }
+}
+
+.filter-group-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.filter-group-right {
+    display: flex;
+    align-items: center;
+}
+@media (max-width: 991px) {
+    .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .filter-group-right {
+        justify-content: flex-end;
+        margin-top: 8px;
+    }
+}
+
+.car-page .bi-three-dots-vertical {
+    color: #222 !important;
+}
+
+/* Nút reload đồng bộ, vừa vặn với search và sort */
+.search-input-group .btn-reload {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 18px;
+    padding: 0 12px;
+    margin: 0 8px 0 0;
+    font-size: 15px;
+    min-width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: none;
+    transition: border 0.2s;
+    color: #222;
+}
+.search-input-group .btn-reload:hover {
+    border: 1.5px solid #00c896;
+    background: #f6fffa;
+}
+
+/* Ô tìm kiếm đồng bộ, vừa vặn với reload và sort */
+.search-input-group .form-control {
+    height: 38px;
+    font-size: 15px;
+    border: 1px solid #ddd;
+    border-radius: 18px 0 0 18px;
+    box-shadow: none;
+    flex: 1;
+    /* padding: 0 16px; */
+}
+
+.search-input-group .form-control:focus {
+    border-color: #00c896;
+    box-shadow: none;
+}
+
+/* Nút search đồng bộ, vừa vặn với reload và sort */
+.search-input-group .btn-search {
+    height: 38px;
+    width: 38px;
+    border-radius: 50%;
+    border: none;
+    background: #1890ff;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    margin-left: 4px;
+}
+
+.search-input-group .btn-search:hover {
+    background: #1765ad;
+}
+
+/* Ô sort đồng bộ, vừa vặn với search và reload */
+.sort-select {
+    border-radius: 18px;
+    border: 1px solid #ddd;
+    min-width: 110px;
+    max-width: 140px;
+    height: 38px;
+    font-weight: 600;
+    font-size: 15px;
+    background: #fff;
+    color: #222;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    margin: 0 3px 6px 0;
+    padding: 0 16px;
+}
+
+/* Nút reload (reset filter) trong thanh search */
+.reset-filter-btn {
+    height: 38px;
+    width: 38px;
+    /* border-radius: 50%; */
+    border: 1.5px solid #ddd;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: none;
+    transition: border 0.2s, background 0.2s;
+    font-size: 1.1rem;
+    margin-right: 8px;
+    color: #222;
+    padding: 0;
+}
+.reset-filter-btn:hover {
+    border: 1.5px solid #00c896;
+    background: #f6fffa;
+    color: #00c896;
+}
+.reset-filter-btn i {
+    font-size: 1.2rem;
+}
+
+/* Search bar gọn gàng, hiện đại */
+.search-input-group {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 24px;
+    border: 1.5px solid #ddd;
+    padding: 0 8px;
+    width: 100%;
+    gap: 0;
+}
+
+.search-input-group .form-control {
+    height: 40px;
+    font-size: 15px;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 24px 0 0 24px;
+    padding: 0 16px;
+    flex: 1;
+}
+
+.search-input-group .form-control:focus {
+    outline: none;
+    box-shadow: none;
+    background: transparent;
+}
+
+.search-input-group .btn-search {
+    height: 36px;
+    width: 36px;
+    border-radius: 50%;
+    border: none;
+    background: #2563eb;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    margin-left: 4px;
+    transition: background 0.2s;
+}
+
+.search-input-group .btn-search:hover {
+    background: #1d4ed8;
+}
+
+@media (max-width: 767px) {
+    .search-input-group {
+        max-width: 100%;
+        order: 2;
+    }
+    
+    .reset-filter-btn {
+        align-self: flex-start;
+        order: 1;
+        margin-bottom: 8px;
+    }
+    
+    .sort-select {
+        order: 3;
+        margin-top: 8px;
+        max-width: 100%;
     }
 }
