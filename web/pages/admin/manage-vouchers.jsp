@@ -8,7 +8,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Voucher Management - AutoRental</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-style.css">
+   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -37,6 +37,12 @@
                     </svg>
                     Users
                 </a>
+                <a href="manage-cars.jsp" class="nav-item">
+                    <svg class="nav-item-icon" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99z"/>
+                    </svg>
+                    Cars
+                </a>
                 <a href="manage-staff.jsp" class="nav-item">
                     <svg class="nav-item-icon" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
@@ -48,6 +54,12 @@
                         <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/>
                     </svg>
                     Reports
+                </a>
+                <a href="contract-details.jsp" class="nav-item">
+                    <svg class="nav-item-icon" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                    </svg>
+                    Contract Details
                 </a>
                 <a href="manage-vouchers.jsp" class="nav-item active">
                     <svg class="nav-item-icon" fill="currentColor" viewBox="0 0 24 24">
