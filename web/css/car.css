@@ -156,6 +156,7 @@ body, #filterForm, .car-wrap, .card {
     gap: 0;
     box-shadow: 0 2px 8px rgba(37,99,235,0.07);
     vertical-align: middle;
+    position: relative;
 }
 
 .search-bar .form-control, .search-input-group .form-control {
@@ -167,6 +168,7 @@ body, #filterForm, .car-wrap, .card {
     border-radius: 28px 0 0 28px;
     padding: 0 18px;
     flex: 1;
+    outline: none;
 }
 
 .search-bar .form-control:focus, .search-input-group .form-control:focus {
@@ -180,40 +182,87 @@ body, #filterForm, .car-wrap, .card {
     height: 40px;
     width: 40px;
     border-radius: 50%;
-    border: none;
-    background: #2563eb;
-    color: #fff;
+    border: 2.5px solid #2563eb;
+    background: #fff;
+    color: #2563eb;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.3rem;
     margin-left: 6px;
-    transition: background 0.2s, box-shadow 0.2s;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
     box-shadow: 0 2px 8px rgba(37,99,235,0.10);
+    flex-shrink: 0;
 }
 
 .search-bar .btn-primary:hover, .search-input-group .btn-search:hover {
-    background: #1d4ed8;
+    background: #2563eb;
+    color: #fff;
     box-shadow: 0 4px 12px rgba(37,99,235,0.18);
+}
+
+.search-bar .btn-primary svg, .search-input-group .btn-search svg {
+    color: inherit;
+    fill: none;
+    width: 1.2em;
+    height: 1.2em;
+    vertical-align: middle;
 }
 
 /* Input group overrides */
 .input-group > .btn.btn-primary {
-    width: auto !important;
+    width: 40px !important;
     flex-shrink: 0 !important;
     background-color: #2563eb !important;
-    border-radius: 0 8px 8px 0 !important;
+    border-radius: 0 28px 28px 0 !important;
+    height: 40px !important;
+    border: none !important;
 }
 
 .input-group > .form-control {
-    border: 2px solid #e5e5e5 !important;
+    border: 2.5px solid #2563eb !important;
     box-shadow: none !important;
     transition: border-color 0.2s;
-    border-radius: 8px 0 0 8px !important;
+    border-radius: 28px 0 0 28px !important;
+    height: 44px !important;
+    padding: 0 18px !important;
 }
 
 .input-group > .form-control:focus {
-    border-color: #2563eb !important;
+    border-color: #1d4ed8 !important;
+    box-shadow: 0 0 0 2px #2563eb33 !important;
+}
+
+/* Ensure consistent styling for all search variations */
+.search-input-group .input-group {
+    height: 48px;
+    border-radius: 28px;
+    border: 2.5px solid #2563eb;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.07);
+    overflow: hidden;
+}
+
+.search-input-group .input-group .form-control {
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    height: 44px !important;
+    padding: 0 18px !important;
+}
+
+.search-input-group .input-group .form-control:focus {
+    box-shadow: none !important;
+    border: none !important;
+}
+
+.search-input-group .input-group .btn {
+    border: none !important;
+    border-radius: 0 !important;
+    height: 40px !important;
+    width: 40px !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 /* =========================== SORT SELECT =========================== */
@@ -859,4 +908,51 @@ input[type=range].form-range:focus::-webkit-slider-thumb {
         min-width: 70px;
         height: 38px;
     }
+}
+
+/* === CUSTOM SEARCH BAR STYLE (USER REQUEST) === */
+.search-bar {
+    display: flex;
+    align-items: center;
+    border: 2.5px solid #2563eb;
+    border-radius: 28px;
+    background: #fff;
+    padding: 4px 6px 4px 18px;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.07);
+    width: 100%;
+    max-width: 500px;
+    height: 48px;
+}
+
+.search-bar input.form-control {
+    border: none;
+    outline: none;
+    background: transparent;
+    flex-grow: 1;
+    font-size: 16px;
+    height: 100%;
+    padding: 0;
+}
+
+.search-bar .btn-search {
+    background: #2563eb;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin-left: 6px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.search-bar .btn-search:hover {
+    background: #1d4ed8;
+    transform: scale(1.05);
+}
+
+.search-bar .btn-search i {
+    font-size: 1.1rem;
 }
