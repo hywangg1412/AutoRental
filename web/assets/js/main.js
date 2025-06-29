@@ -324,3 +324,6 @@
 
 })(jQuery);
 
+// Đưa contentWayPoint ra phạm vi global để có thể gọi lại sau khi AJAX render
+window.contentWayPoint = contentWayPoint;
+
