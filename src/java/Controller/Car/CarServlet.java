@@ -21,7 +21,7 @@ import Service.Car.CarFeatureService;
 import Model.DTO.StatusOption;
 import Service.Car.TransmissionTypeService;
 
-@WebServlet("/pages/car")
+@WebServlet(urlPatterns = {"/pages/car", "/pages/car-list-fragment"})
 public class CarServlet extends HttpServlet {
 
     private CarListService carListService;
@@ -56,14 +56,17 @@ public class CarServlet extends HttpServlet {
             String[] transmissionTypeIds = request.getParameterValues("transmissionTypeId");
             String sort = request.getParameter("sort");
             String keyword = request.getParameter("keyword");
+            
 
             int page = 1, limit = 6;
             if (request.getParameter("page") != null) page = Integer.parseInt(request.getParameter("page"));
             int offset = (page - 1) * limit;
 
+  
             List<CarListItemDTO> carList = carListService.filterCars(brandIds, fuelTypeIds, seats, categoryIds, statuses, featureIds, transmissionTypeIds, sort, keyword, offset, limit);
             int totalCars = carListService.countFilteredCars(brandIds, fuelTypeIds, seats, categoryIds, statuses, featureIds, transmissionTypeIds, keyword);
             int totalPages = (int) Math.ceil((double) totalCars / limit);
+
 
             request.setAttribute("carList", carList);
             request.setAttribute("currentPage", page);
@@ -85,7 +88,12 @@ public class CarServlet extends HttpServlet {
             request.setAttribute("paramNames", request.getParameterMap().keySet());
             request.setAttribute("paramValues", request.getParameterMap());
 
-            request.getRequestDispatcher("/pages/car.jsp").forward(request, response);
+            String requestURI = request.getRequestURI();
+            if (requestURI.contains("car-list-fragment")) {
+                request.getRequestDispatcher("/pages/car/car-list-fragment.jsp").forward(request, response);
+            } else {
+                request.getRequestDispatcher("/pages/car/car.jsp").forward(request, response);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while processing your request.");
