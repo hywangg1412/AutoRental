@@ -98,20 +98,23 @@ INSERT INTO CarImages (ImageId, CarId, ImageUrl, IsMain) VALUES
 
 INSERT INTO CarFeature (FeatureId, FeatureName) VALUES
 ('11111111-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Map'),
-('22222222-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Child Seat'),
-('33333333-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'GPS'),
-('44444444-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Luggage'),
-('55555555-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Music'),
-('66666666-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Seat Belt'),
-('77777777-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Sleeping Bed'),
-('88888888-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Water'),
-('99999999-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Bluetooth'),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Onboard computer'),
-('bbbbbbbb-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Audio input'),
-('cccccccc-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Long Term Trips'),
-('dddddddd-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Car Kit'),
-('eeeeeeee-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Remote central locking'),
-('ffffffff-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Climate control');
+('22222222-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Bluetooth'),
+('33333333-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'360 Camera'),
+('44444444-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Side Camera'),
+('55555555-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Dash Cam'),
+('66666666-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Rearview Camera'),
+('77777777-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Tire Pressure Sensor'),
+('88888888-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Collision Sensor'),
+('99999999-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Speed Warning'),
+('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Sunroof'),
+('bbbbbbbb-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'GPS Navigation'),
+('cccccccc-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'ETC'),
+('dddddddd-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Child Seat'),
+('eeeeeeee-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'USB Port'),
+('ffffffff-aaaa-aaaa-aaaa-aaaaaaaaaaaa', N'Spare Tire'),
+('11111111-bbbb-bbbb-bbbb-bbbbbbbbbbbb', N'DVD Screen'),
+('22222222-bbbb-bbbb-bbbb-bbbbbbbbbbbb', N'Pickup Truck Bed Cover'),
+('33333333-bbbb-bbbb-bbbb-bbbbbbbbbbbb', N'Airbag');
 
 -- Xe 1: Toyota Vios
 INSERT INTO CarFeaturesMapping (CarId, FeatureId) VALUES

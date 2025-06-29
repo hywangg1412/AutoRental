@@ -9,8 +9,7 @@
             <div class="car-wrap rounded ftco-animate h-100 w-100">
                 <div class="img rounded d-flex align-items-end"
                     style="background-image: url('${pageContext.request.contextPath}${car.mainImageUrl}'); position: relative; height: 220px; background-size: cover; background-position: center;">
-                    <button class="favorite-btn" type="button" title="Yêu thích"
-                        style="position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                    <button class="favorite-btn" type="button" title="Yêu thích">
                         <i class="bi bi-heart"></i>
                     </button>
                 </div>
