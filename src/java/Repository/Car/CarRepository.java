@@ -270,7 +270,13 @@ public class CarRepository implements ICarRepository {
     @Override
     public List<Car> filterCars(
         String[] brandIds, String[] fuelTypeIds, String[] seats, String[] categoryIds,
-        String[] statuses, String[] featureIds, String[] transmissionTypeIds, String sort, String keyword, int offset, int limit
+        String[] statuses, String[] featureIds, String[] transmissionTypeIds, String sort, String keyword,
+        Integer minPricePerHour, Integer maxPricePerHour,
+        Integer minSeats, Integer maxSeats,
+        Integer minYear, Integer maxYear,
+        Integer minOdometer, Integer maxOdometer,
+        Integer minDistance, Integer maxDistance,
+        int offset, int limit
     ) throws SQLException {
         StringBuilder sql = new StringBuilder("SELECT DISTINCT c.* FROM Car c ");
         List<Object> params = new ArrayList<>();
@@ -278,6 +284,8 @@ public class CarRepository implements ICarRepository {
             sql.append("JOIN CarFeaturesMapping fm ON c.CarId = fm.CarId ");
         }
         sql.append("WHERE 1=1 ");
+        
+        // Existing filters
         if (brandIds != null && brandIds.length > 0) {
             sql.append("AND c.BrandId IN (").append(String.join(",", Collections.nCopies(brandIds.length, "?"))).append(") ");
             Collections.addAll(params, brandIds);
@@ -311,6 +319,53 @@ public class CarRepository implements ICarRepository {
             params.add("%" + keyword + "%");
             params.add("%" + keyword + "%");
         }
+        
+        // New range filters
+        if (minPricePerHour != null) {
+            sql.append("AND c.PricePerHour >= ? ");
+            params.add(minPricePerHour);
+        }
+        if (maxPricePerHour != null) {
+            sql.append("AND c.PricePerHour <= ? ");
+            params.add(maxPricePerHour);
+        }
+        if (minSeats != null) {
+            sql.append("AND c.Seats >= ? ");
+            params.add(minSeats);
+        }
+        if (maxSeats != null) {
+            sql.append("AND c.Seats <= ? ");
+            params.add(maxSeats);
+        }
+        if (minYear != null) {
+            sql.append("AND c.YearManufactured >= ? ");
+            params.add(minYear);
+        }
+        if (maxYear != null) {
+            sql.append("AND c.YearManufactured <= ? ");
+            params.add(maxYear);
+        }
+        if (minOdometer != null) {
+            sql.append("AND c.Odometer >= ? ");
+            params.add(minOdometer);
+        }
+        if (maxOdometer != null) {
+            sql.append("AND c.Odometer <= ? ");
+            params.add(maxOdometer);
+        }
+        if (minDistance != null) {
+            // Note: This would need location data to implement properly
+            // For now, we'll skip this filter or implement it later
+            // sql.append("AND distance >= ? ");
+            // params.add(minDistance);
+        }
+        if (maxDistance != null) {
+            // Note: This would need location data to implement properly
+            // For now, we'll skip this filter or implement it later
+            // sql.append("AND distance <= ? ");
+            // params.add(maxDistance);
+        }
+        
         // Sort
         if (sort != null) {
             switch (sort) {
@@ -347,7 +402,12 @@ public class CarRepository implements ICarRepository {
     @Override
     public int countFilteredCars(
         String[] brandIds, String[] fuelTypeIds, String[] seats, String[] categoryIds,
-        String[] statuses, String[] featureIds, String[] transmissionTypeIds, String keyword
+        String[] statuses, String[] featureIds, String[] transmissionTypeIds, String keyword,
+        Integer minPrice, Integer maxPrice,
+        Integer minSeats, Integer maxSeats,
+        Integer minYear, Integer maxYear,
+        Integer minOdometer, Integer maxOdometer,
+        Integer minDistance, Integer maxDistance
     ) throws SQLException {
         StringBuilder sql = new StringBuilder("SELECT COUNT(DISTINCT c.CarId) FROM Car c ");
         List<Object> params = new ArrayList<>();
@@ -355,6 +415,8 @@ public class CarRepository implements ICarRepository {
             sql.append("JOIN CarFeaturesMapping fm ON c.CarId = fm.CarId ");
         }
         sql.append("WHERE 1=1 ");
+        
+        // Existing filters
         if (brandIds != null && brandIds.length > 0) {
             sql.append("AND c.BrandId IN (").append(String.join(",", Collections.nCopies(brandIds.length, "?"))).append(") ");
             Collections.addAll(params, brandIds);
@@ -388,6 +450,53 @@ public class CarRepository implements ICarRepository {
             params.add("%" + keyword + "%");
             params.add("%" + keyword + "%");
         }
+        
+        // New range filters
+        if (minPrice != null) {
+            sql.append("AND c.PricePerHour >= ? ");
+            params.add(minPrice);
+        }
+        if (maxPrice != null) {
+            sql.append("AND c.PricePerHour <= ? ");
+            params.add(maxPrice);
+        }
+        if (minSeats != null) {
+            sql.append("AND c.Seats >= ? ");
+            params.add(minSeats);
+        }
+        if (maxSeats != null) {
+            sql.append("AND c.Seats <= ? ");
+            params.add(maxSeats);
+        }
+        if (minYear != null) {
+            sql.append("AND c.YearManufactured >= ? ");
+            params.add(minYear);
+        }
+        if (maxYear != null) {
+            sql.append("AND c.YearManufactured <= ? ");
+            params.add(maxYear);
+        }
+        if (minOdometer != null) {
+            sql.append("AND c.Odometer >= ? ");
+            params.add(minOdometer);
+        }
+        if (maxOdometer != null) {
+            sql.append("AND c.Odometer <= ? ");
+            params.add(maxOdometer);
+        }
+        if (minDistance != null) {
+            // Note: This would need location data to implement properly
+            // For now, we'll skip this filter or implement it later
+            // sql.append("AND distance >= ? ");
+            // params.add(minDistance);
+        }
+        if (maxDistance != null) {
+            // Note: This would need location data to implement properly
+            // For now, we'll skip this filter or implement it later
+            // sql.append("AND distance <= ? ");
+            // params.add(maxDistance);
+        }
+        
         try (var conn = dbContext.getConnection();
              var ps = conn.prepareStatement(sql.toString())) {
             for (int i = 0; i < params.size(); i++) {

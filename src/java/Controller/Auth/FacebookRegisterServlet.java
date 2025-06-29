@@ -5,6 +5,7 @@ import Model.Entity.OAuth.FacebookUser;
 import Model.Entity.User.User;
 import Model.Entity.Role.Role;
 import Model.Entity.Role.UserRole;
+import Model.Constants.RoleConstants;
 import Service.User.UserService;
 import Service.Auth.FacebookAuthService;
 import Service.Role.RoleService;
@@ -70,6 +71,17 @@ public class FacebookRegisterServlet extends HttpServlet {
             User newUser = userMapper.mapFacebookUserToUser(facebookUser, userService);
             newUser.setEmailVerifed(true);
             userService.add(newUser);
+            
+            try {
+                Role userRole = roleService.findByRoleName(RoleConstants.USER);
+                if (userRole != null) {
+                    UserRole newUserRole = new UserRole(newUser.getUserId(), userRole.getRoleId());
+                    userRoleService.add(newUserRole);
+                }
+            } catch (Exception e) {
+                System.err.println("Error assigning default role to user: " + e.getMessage());
+            }
+            
             UserLogins userLogins = userMapper.mapFacebookUserToUserLogins(facebookUser, newUser);
             userLoginsService.add(userLogins);
 
