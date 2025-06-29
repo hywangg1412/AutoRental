@@ -57,16 +57,51 @@ public class CarServlet extends HttpServlet {
             String sort = request.getParameter("sort");
             String keyword = request.getParameter("keyword");
             
+            // New range filter parameters
+            Integer minPricePerHour = null, maxPricePerHour = null;
+            Integer minSeats = null, maxSeats = null;
+            Integer minYear = null, maxYear = null;
+            Integer minOdometer = null, maxOdometer = null;
+            Integer minDistance = null, maxDistance = null;
+            
+            if (request.getParameter("minPricePerHour") != null && !request.getParameter("minPricePerHour").isEmpty()) {
+                minPricePerHour = Integer.parseInt(request.getParameter("minPricePerHour"));
+            }
+            if (request.getParameter("maxPricePerHour") != null && !request.getParameter("maxPricePerHour").isEmpty()) {
+                maxPricePerHour = Integer.parseInt(request.getParameter("maxPricePerHour"));
+            }
+            if (request.getParameter("minSeats") != null && !request.getParameter("minSeats").isEmpty()) {
+                minSeats = Integer.parseInt(request.getParameter("minSeats"));
+            }
+            if (request.getParameter("maxSeats") != null && !request.getParameter("maxSeats").isEmpty()) {
+                maxSeats = Integer.parseInt(request.getParameter("maxSeats"));
+            }
+            if (request.getParameter("minYear") != null && !request.getParameter("minYear").isEmpty()) {
+                minYear = Integer.parseInt(request.getParameter("minYear"));
+            }
+            if (request.getParameter("maxYear") != null && !request.getParameter("maxYear").isEmpty()) {
+                maxYear = Integer.parseInt(request.getParameter("maxYear"));
+            }
+            if (request.getParameter("minOdometer") != null && !request.getParameter("minOdometer").isEmpty()) {
+                minOdometer = Integer.parseInt(request.getParameter("minOdometer"));
+            }
+            if (request.getParameter("maxOdometer") != null && !request.getParameter("maxOdometer").isEmpty()) {
+                maxOdometer = Integer.parseInt(request.getParameter("maxOdometer"));
+            }
+            if (request.getParameter("minDistance") != null && !request.getParameter("minDistance").isEmpty()) {
+                minDistance = Integer.parseInt(request.getParameter("minDistance"));
+            }
+            if (request.getParameter("maxDistance") != null && !request.getParameter("maxDistance").isEmpty()) {
+                maxDistance = Integer.parseInt(request.getParameter("maxDistance"));
+            }
 
             int page = 1, limit = 6;
             if (request.getParameter("page") != null) page = Integer.parseInt(request.getParameter("page"));
             int offset = (page - 1) * limit;
 
-  
-            List<CarListItemDTO> carList = carListService.filterCars(brandIds, fuelTypeIds, seats, categoryIds, statuses, featureIds, transmissionTypeIds, sort, keyword, offset, limit);
-            int totalCars = carListService.countFilteredCars(brandIds, fuelTypeIds, seats, categoryIds, statuses, featureIds, transmissionTypeIds, keyword);
+            List<CarListItemDTO> carList = carListService.filterCars(brandIds, fuelTypeIds, seats, categoryIds, statuses, featureIds, transmissionTypeIds, sort, keyword, minPricePerHour, maxPricePerHour, minSeats, maxSeats, minYear, maxYear, minOdometer, maxOdometer, minDistance, maxDistance, offset, limit);
+            int totalCars = carListService.countFilteredCars(brandIds, fuelTypeIds, seats, categoryIds, statuses, featureIds, transmissionTypeIds, keyword, minPricePerHour, maxPricePerHour, minSeats, maxSeats, minYear, maxYear, minOdometer, maxOdometer, minDistance, maxDistance);
             int totalPages = (int) Math.ceil((double) totalCars / limit);
-
 
             request.setAttribute("carList", carList);
             request.setAttribute("currentPage", page);

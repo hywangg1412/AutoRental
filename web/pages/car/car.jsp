@@ -25,7 +25,7 @@
         <!-- ===== Page Styles ===== -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
 
-                        <!-- <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/car/car.css"> -->
+                        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/car/car.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/car.css">
 
         <!-- ===== Custom Styles (Theme/Plugins) ===== -->
@@ -70,118 +70,29 @@
                                 <i class="bi bi-arrow-clockwise"></i>
                             </button>
                             <div class="dropdown">
-                                <button type="button" class="filter-btn" data-bs-toggle="dropdown"
-                                        aria-expanded="false">
+                                <button type="button" class="filter-btn" data-bs-toggle="modal" data-bs-target="#brandFilterModal">
                                     <i class="bi bi-globe"></i> Brand
                                 </button>
-                                <ul class="dropdown-menu">
-                                    <c:forEach var="brand" items="${brandList}">
-                                        <li>
-                                            <label class="dropdown-item">
-                                                <input type="checkbox" name="brandId"
-                                                       value="${brand.brandId}" <c:if
-                                                           test="${paramValues.brandId != null && fn:contains(paramValues.brandId, brand.brandId)}">checked
-                                                       </c:if>>
-                                                ${brand.brandName}
-                                            </label>
-                                        </li>
-                                    </c:forEach>
-                                </ul>
                             </div>
                             <div class="dropdown">
-                                <button type="button" class="filter-btn" data-bs-toggle="dropdown"
-                                        aria-expanded="false">
+                                <button type="button" class="filter-btn" data-bs-toggle="modal" data-bs-target="#categoryFilterModal">
                                     <i class="bi bi-car-front"></i> Type
                                 </button>
-                                <ul class="dropdown-menu">
-                                    <c:forEach var="cat" items="${categoryList}">
-                                        <li>
-                                            <label class="dropdown-item">
-                                                <input type="checkbox" name="categoryId"
-                                                       value="${cat.categoryId}" <c:if
-                                                           test="${paramValues.categoryId != null && fn:contains(paramValues.categoryId, cat.categoryId)}">checked
-                                                       </c:if>>
-                                                ${cat.categoryName}
-                                            </label>
-                                        </li>
-                                    </c:forEach>
-                                </ul>
                             </div>
                             <div class="dropdown">
-                                <button type="button" class="filter-btn" data-bs-toggle="dropdown"
-                                        aria-expanded="false">
+                                <button type="button" class="filter-btn" data-bs-toggle="modal" data-bs-target="#transmissionFilterModal">
                                     <i class="bi bi-gear"></i> Transmission
                                 </button>
-                                <ul class="dropdown-menu">
-                                    <c:forEach var="trans" items="${transmissionTypeList}">
-                                        <li>
-                                            <label class="dropdown-item">
-                                                <input type="checkbox" name="transmissionTypeId"
-                                                       value="${trans.transmissionTypeId}" <c:if
-                                                           test="${paramValues.transmissionTypeId != null && fn:contains(paramValues.transmissionTypeId, trans.transmissionTypeId)}">checked
-                                                       </c:if>>
-                                                ${trans.transmissionName}
-                                            </label>
-                                        </li>
-                                    </c:forEach>
-                                </ul>
                             </div>
                             <div class="dropdown">
-                                <button type="button" class="filter-btn" data-bs-toggle="dropdown"
-                                        aria-expanded="false">
+                                <button type="button" class="filter-btn" data-bs-toggle="modal" data-bs-target="#fuelFilterModal">
                                     <i class="bi bi-fuel-pump"></i> Fuel
                                 </button>
-                                <ul class="dropdown-menu">
-                                    <c:forEach var="fuel" items="${fuelTypeList}">
-                                        <li>
-                                            <label class="dropdown-item">
-                                                <input type="checkbox" name="fuelTypeId"
-                                                       value="${fuel.fuelTypeId}" <c:if
-                                                           test="${paramValues.fuelTypeId != null && fn:contains(paramValues.fuelTypeId, fuel.fuelTypeId)}">checked
-                                                       </c:if>>
-                                                ${fuel.fuelName}
-                                            </label>
-                                        </li>
-                                    </c:forEach>
-                                </ul>
                             </div>
                             <div class="dropdown">
-                                <button type="button" class="filter-btn" data-bs-toggle="dropdown"
-                                        aria-expanded="false">
+                                <button type="button" class="filter-btn" data-bs-toggle="modal" data-bs-target="#statusFilterModal">
                                     <i class="bi bi-info-circle"></i> Status
                                 </button>
-                                <ul class="dropdown-menu">
-                                    <c:forEach var="status" items="${statusList}">
-                                        <li>
-                                            <label class="dropdown-item">
-                                                <input type="checkbox" name="status"
-                                                       value="${status.value}" <c:if
-                                                           test="${paramValues.status != null && fn:contains(paramValues.status, status.value)}">checked
-                                                       </c:if>>
-                                                ${status.display}
-                                            </label>
-                                        </li>
-                                    </c:forEach>
-                                </ul>
-                            </div>
-                            <div class="dropdown">
-                                <button type="button" class="filter-btn" data-bs-toggle="dropdown"
-                                        aria-expanded="false">
-                                    <i class="bi bi-stars"></i> Feature
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <c:forEach var="feature" items="${featureList}">
-                                        <li>
-                                            <label class="dropdown-item">
-                                                <input type="checkbox" name="featureId"
-                                                       value="${feature.featureId}" <c:if
-                                                           test="${paramValues.featureId != null && fn:contains(paramValues.featureId, feature.featureId)}">checked
-                                                       </c:if>>
-                                                ${feature.featureName}
-                                            </label>
-                                        </li>
-                                    </c:forEach>
-                                </ul>
                             </div>
 
                         </div>
@@ -213,49 +124,166 @@
                 </form>
 
                 <!-- MODAL BỘ LỌC NÂNG CAO (khoảng giá, năm sản xuất) -->
-                <div class="modal fade" id="advancedFilterModal" tabindex="-1"
-                     aria-labelledby="advancedFilterModalLabel" aria-hidden="true">
+                <div class="modal fade" id="advancedFilterModal" tabindex="-1" aria-labelledby="advancedFilterModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <form method="get" action="${pageContext.request.contextPath}/pages/car">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="advancedFilterModalLabel">Advanced
-                                        Filter</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
+                                <div class="modal-header border-0 pb-0">
+                                    <h2 class="modal-title fw-bold fs-2" id="advancedFilterModalLabel">Advanced Filter</h2>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
-                                <div class="modal-body">
-                                    <div class="row g-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label fw-bold">Price range
-                                                (VND/hour)</label>
-                                            <div class="d-flex align-items-center gap-2">
-                                                <input type="number" class="form-control"
-                                                       name="minPrice" placeholder="From"
-                                                       value="${param.minPrice != null ? param.minPrice : ''}">
-                                                <span>-</span>
-                                                <input type="number" class="form-control"
-                                                       name="maxPrice" placeholder="To"
-                                                       value="${param.maxPrice != null ? param.maxPrice : ''}">
+                                <div class="modal-body pt-2 pb-0">
+                                    <!-- Sort -->
+                                    <div class="mb-4">
+                                        <label class="fw-bold mb-2 d-block">Sort</label>
+                                        <select class="form-select w-100" name="sort">
+                                            <option value="">Optimal</option>
+                                            <option value="priceAsc" ${param.sort=='priceAsc' ? 'selected' : '' }>Price ↑</option>
+                                            <option value="priceDesc" ${param.sort=='priceDesc' ? 'selected' : '' }>Price ↓</option>
+                                            <option value="nameAsc" ${param.sort=='nameAsc' ? 'selected' : '' }>A-Z</option>
+                                            <option value="nameDesc" ${param.sort=='nameDesc' ? 'selected' : '' }>Z-A</option>
+                                            <option value="yearDesc" ${param.sort=='yearDesc' ? 'selected' : '' }>Year ↓</option>
+                                            <option value="yearAsc" ${param.sort=='yearAsc' ? 'selected' : '' }>Year ↑</option>
+                                        </select>
+                                    </div>
+                                    <!-- Price (VND/hour) -->
+                                    <div class="mb-4">
+                                        <label class="fw-bold mb-2 d-block">Price (VND/hour)</label>
+                                        <div class="dual-range-container">
+                                            <div class="range-background"></div>
+                                            <div class="range-track" id="priceTrack"></div>
+                                            <input type="range" class="dual-range-slider" min="0" max="500" step="10" 
+                                                   id="priceHourMinSlider" value="${param.minPricePerHour != null ? param.minPricePerHour : 0}">
+                                            <input type="range" class="dual-range-slider" min="0" max="500" step="10" 
+                                                   id="priceHourMaxSlider" value="${param.maxPricePerHour != null ? param.maxPricePerHour : 500}">
+                                        </div>
+                                        <!-- <div class="d-flex justify-content-between mt-2">
+                                            <span id="priceHourMinValue">0K</span>
+                                            <span id="priceHourMaxValue">500K</span>
+                                        </div> -->
+                                        <div class="d-flex justify-content-start mt-2">
+                                            <div id="priceHourRangeDisplay" style="border:1px solid #e0e0e0; border-radius:8px; padding:4px 16px; background:#fff; font-weight:500; min-width:120px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.03);">
+                                                0K - 500K
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label fw-bold">Manufacture year</label>
-                                            <div class="d-flex align-items-center gap-2">
-                                                <input type="number" class="form-control" name="minYear"
-                                                       placeholder="From"
-                                                       value="${param.minYear != null ? param.minYear : ''}">
-                                                <span>-</span>
-                                                <input type="number" class="form-control" name="maxYear"
-                                                       placeholder="To"
-                                                       value="${param.maxYear != null ? param.maxYear : ''}">
+                                        <input type="hidden" name="minPricePerHour" id="minPricePerHourInput" value="${param.minPricePerHour}">
+                                        <input type="hidden" name="maxPricePerHour" id="maxPricePerHourInput" value="${param.maxPricePerHour}">
+                                    </div>
+                                    <!-- Transmission -->
+                                    <div class="mb-4">
+                                        <label class="fw-bold mb-2 d-block">Transmission</label>
+                                        <div class="filter-radio-group">
+                                            <label class="form-check-label d-flex align-items-center gap-2">
+                                                <input type="radio" class="form-check-input" name="transmissionTypeId" value="" <c:if test="${empty paramValues.transmissionTypeId}">checked</c:if>> All
+                                            </label>
+                                            <c:forEach var="trans" items="${transmissionTypeList}">
+                                                <label class="form-check-label d-flex align-items-center gap-2">
+                                                    <input type="radio" class="form-check-input" name="transmissionTypeId" value="${trans.transmissionTypeId}" <c:if test="${paramValues.transmissionTypeId != null && fn:contains(paramValues.transmissionTypeId, trans.transmissionTypeId)}">checked</c:if>> ${trans.transmissionName}
+                                                </label>
+                                            </c:forEach>
+                                        </div>
+                                    </div>
+                                    <!-- Mileage -->
+                                    <div class="mb-4">
+                                        <label class="fw-bold mb-2 d-block">Mileage (km)</label>
+                                        <div class="dual-range-container">
+                                            <div class="range-background"></div>
+                                            <div class="range-track" id="mileageTrack"></div>
+                                            <input type="range" class="dual-range-slider" min="0" max="100000" step="1000" id="mileageMinSlider" value="${param.minOdometer != null ? param.minOdometer : 0}">
+                                            <input type="range" class="dual-range-slider" min="0" max="100000" step="1000" id="mileageMaxSlider" value="${param.maxOdometer != null ? param.maxOdometer : 100000}">
+                                        </div>
+                                        <div class="d-flex justify-content-start mt-2">
+                                            <div id="mileageRangeDisplay" style="border:1px solid #e0e0e0; border-radius:8px; padding:4px 16px; background:#fff; font-weight:500; min-width:140px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.03);">
+                                                0 - 100,000 km
                                             </div>
+                                        </div>
+                                        <input type="hidden" name="minOdometer" id="minOdometerInput" value="${param.minOdometer}">
+                                        <input type="hidden" name="maxOdometer" id="maxOdometerInput" value="${param.maxOdometer}">
+                                    </div>
+                                    <!-- Distance -->
+                                    <div class="mb-4">
+                                        <label class="fw-bold mb-2 d-block">Distance (km)</label>
+                                        <div class="dual-range-container">
+                                            <div class="range-background"></div>
+                                            <div class="range-track" id="distanceTrack"></div>
+                                            <input type="range" class="dual-range-slider" min="0" max="100" step="1" id="distanceMinSlider" value="${param.minDistance != null ? param.minDistance : 0}">
+                                            <input type="range" class="dual-range-slider" min="0" max="100" step="1" id="distanceMaxSlider" value="${param.maxDistance != null ? param.maxDistance : 100}">
+                                        </div>
+                                        <div class="d-flex justify-content-start mt-2">
+                                            <div id="distanceRangeDisplay" style="border:1px solid #e0e0e0; border-radius:8px; padding:4px 16px; background:#fff; font-weight:500; min-width:100px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.03);">
+                                                0 - 100 km
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="minDistance" id="minDistanceInput" value="${param.minDistance}">
+                                        <input type="hidden" name="maxDistance" id="maxDistanceInput" value="${param.maxDistance}">
+                                    </div>
+                                    <!-- Seats -->
+                                    <div class="mb-4">
+                                        <label class="fw-bold mb-2 d-block">Seats</label>
+                                        <div class="dual-range-container">
+                                            <div class="range-background"></div>
+                                            <div class="range-track" id="seatsTrack"></div>
+                                            <input type="range" class="dual-range-slider" min="2" max="16" step="1" id="seatsMinSlider" value="${param.minSeats != null ? param.minSeats : 2}">
+                                            <input type="range" class="dual-range-slider" min="2" max="16" step="1" id="seatsMaxSlider" value="${param.maxSeats != null ? param.maxSeats : 16}">
+                                        </div>
+                                        <div class="d-flex justify-content-start mt-2">
+                                            <div id="seatsRangeDisplay" style="border:1px solid #e0e0e0; border-radius:8px; padding:4px 16px; background:#fff; font-weight:500; min-width:80px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.03);">
+                                                2 - 16 seats
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="minSeats" id="minSeatsInput" value="${param.minSeats}">
+                                        <input type="hidden" name="maxSeats" id="maxSeatsInput" value="${param.maxSeats}">
+                                    </div>
+                                    <!-- Year -->
+                                    <div class="mb-4">
+                                        <label class="fw-bold mb-2 d-block">Year</label>
+                                        <div class="dual-range-container">
+                                            <div class="range-background"></div>
+                                            <div class="range-track" id="yearTrack"></div>
+                                            <input type="range" class="dual-range-slider" min="2000" max="2024" step="1" id="yearMinSlider" value="${param.minYear != null ? param.minYear : 2000}">
+                                            <input type="range" class="dual-range-slider" min="2000" max="2024" step="1" id="yearMaxSlider" value="${param.maxYear != null ? param.maxYear : 2024}">
+                                        </div>
+                                        <div class="d-flex justify-content-start mt-2">
+                                            <div id="yearRangeDisplay" style="border:1px solid #e0e0e0; border-radius:8px; padding:4px 16px; background:#fff; font-weight:500; min-width:100px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.03);">
+                                                2000 - 2024
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="minYear" id="minYearInput" value="${param.minYear}">
+                                        <input type="hidden" name="maxYear" id="maxYearInput" value="${param.maxYear}">
+                                    </div>
+                                    <!-- Fuel type radio -->
+                                    <div class="mb-4">
+                                        <label class="fw-bold mb-2 d-block">Fuel Type</label>
+                                        <div class="filter-radio-group">
+                                            <label class="form-check-label d-flex align-items-center gap-2">
+                                                <input type="radio" class="form-check-input" name="fuelTypeId" value="" <c:if test="${empty paramValues.fuelTypeId}">checked</c:if>> All
+                                            </label>
+                                            <c:forEach var="fuel" items="${fuelTypeList}">
+                                                <label class="form-check-label d-flex align-items-center gap-2">
+                                                    <input type="radio" class="form-check-input" name="fuelTypeId" value="${fuel.fuelTypeId}" <c:if test="${paramValues.fuelTypeId != null && fn:contains(paramValues.fuelTypeId, fuel.fuelTypeId)}">checked</c:if>> ${fuel.fuelName}
+                                                </label>
+                                            </c:forEach>
+                                        </div>
+                                    </div>
+                                    <!-- Feature grid -->
+                                    <div class="mb-2">
+                                        <label class="fw-bold mb-2 d-block">Features</label>
+                                        <div class="feature-checkbox-grid">
+                                            <c:forEach var="feature" items="${featureList}">
+                                                <label class="form-check-label">
+                                                    <input type="checkbox" class="form-check-input" name="featureId"
+                                                           value="${feature.featureId}" <c:if
+                                                               test="${paramValues.featureId != null && fn:contains(paramValues.featureId, feature.featureId)}">checked
+                                                               </c:if>>
+                                                    <span>${feature.featureName}</span>
+                                                </label>
+                                            </c:forEach>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="submit" class="btn btn-success w-100">Apply
-                                        filter</button>
+                                <div class="modal-footer border-0 pt-4 pb-4 d-flex flex-column flex-md-row justify-content-between gap-3">
+                                    <button type="reset" class="btn btn-outline-secondary px-4 py-2 fw-bold w-100">Reset Filter</button>
+                                    <button type="submit" class="btn btn-success px-5 py-2 fw-bold w-100">Apply Filter</button>
                                 </div>
                             </form>
                         </div>
@@ -294,11 +322,381 @@
         <script src="${pageContext.request.contextPath}/assets/js/jquery.timepicker.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets/js/scrollax.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
+        
+        <!-- Bootstrap 5 Bundle for Modal support -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        
         <script src="${pageContext.request.contextPath}/scripts/car/car.js"></script>
         <!-- Toast notification -->
         <div id="favorite-toast"></div>
         <script>
           var contextPath = '${pageContext.request.contextPath}';
+        </script>
+
+        
+        <!-- Modal: Brand Filter -->
+        <div class="modal fade" id="brandFilterModal" tabindex="-1" aria-labelledby="brandFilterModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title fs-4" id="brandFilterModalLabel">Select Brands</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="get" action="${pageContext.request.contextPath}/pages/car">
+                        <!-- Preserve other filter parameters -->
+                        <c:forEach var="param" items="${paramValues}">
+                            <c:if test="${param.key != 'brandId'}">
+                                <c:forEach var="value" items="${param.value}">
+                                    <input type="hidden" name="${param.key}" value="${value}">
+                                </c:forEach>
+                            </c:if>
+                        </c:forEach>
+                        
+                        <div class="modal-body">
+                            <div class="row">
+                                <c:forEach var="brand" items="${brandList}" varStatus="status">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-check-label d-flex align-items-center p-3 border rounded" style="cursor: pointer; transition: all 0.2s;">
+                                            <input type="checkbox" class="form-check-input me-3" name="brandId" 
+                                                   value="${brand.brandId}" 
+                                                   <c:if test="${paramValues.brandId != null && fn:contains(paramValues.brandId, brand.brandId)}">checked</c:if>>
+                                            <span class="fw-medium">${brand.brandName}</span>
+                                        </label>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Apply Filter</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Category Filter -->
+        <div class="modal fade" id="categoryFilterModal" tabindex="-1" aria-labelledby="categoryFilterModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title fs-4" id="categoryFilterModalLabel">Select Car Types</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="get" action="${pageContext.request.contextPath}/pages/car">
+                        <!-- Preserve other filter parameters -->
+                        <c:forEach var="param" items="${paramValues}">
+                            <c:if test="${param.key != 'categoryId'}">
+                                <c:forEach var="value" items="${param.value}">
+                                    <input type="hidden" name="${param.key}" value="${value}">
+                                </c:forEach>
+                            </c:if>
+                        </c:forEach>
+                        
+                        <div class="modal-body">
+                            <div class="row">
+                                <c:forEach var="cat" items="${categoryList}" varStatus="status">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-check-label d-flex align-items-center p-3 border rounded" style="cursor: pointer; transition: all 0.2s;">
+                                            <input type="checkbox" class="form-check-input me-3" name="categoryId" 
+                                                   value="${cat.categoryId}" 
+                                                   <c:if test="${paramValues.categoryId != null && fn:contains(paramValues.categoryId, cat.categoryId)}">checked</c:if>>
+                                            
+                                            <span class="fw-medium">${cat.categoryName}</span>
+                                        </label>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Apply Filter</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Transmission Filter -->
+        <div class="modal fade" id="transmissionFilterModal" tabindex="-1" aria-labelledby="transmissionFilterModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title fs-4" id="transmissionFilterModalLabel">Select Transmission</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="get" action="${pageContext.request.contextPath}/pages/car">
+                        <!-- Preserve other filter parameters -->
+                        <c:forEach var="param" items="${paramValues}">
+                            <c:if test="${param.key != 'transmissionTypeId'}">
+                                <c:forEach var="value" items="${param.value}">
+                                    <input type="hidden" name="${param.key}" value="${value}">
+                                </c:forEach>
+                            </c:if>
+                        </c:forEach>
+                        <div class="modal-body">
+                            <div class="row">
+                                <c:forEach var="trans" items="${transmissionTypeList}">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-check-label d-flex align-items-center p-3 border rounded" style="cursor: pointer; transition: all 0.2s; width:100%;">
+                                            <input type="checkbox" class="form-check-input me-3" name="transmissionTypeId"
+                                                   value="${trans.transmissionTypeId}" <c:if
+                                                       test="${paramValues.transmissionTypeId != null && fn:contains(paramValues.transmissionTypeId, trans.transmissionTypeId)}">checked
+                                                   </c:if>>
+                                            <span class="fw-medium">${trans.transmissionName}</span>
+                                        </label>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Apply Filter</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Fuel Filter -->
+        <div class="modal fade" id="fuelFilterModal" tabindex="-1" aria-labelledby="fuelFilterModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title fs-4" id="fuelFilterModalLabel">Select Fuel Type</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="get" action="${pageContext.request.contextPath}/pages/car">
+                        <!-- Preserve other filter parameters -->
+                        <c:forEach var="param" items="${paramValues}">
+                            <c:if test="${param.key != 'fuelTypeId'}">
+                                <c:forEach var="value" items="${param.value}">
+                                    <input type="hidden" name="${param.key}" value="${value}">
+                                </c:forEach>
+                            </c:if>
+                        </c:forEach>
+                        <div class="modal-body">
+                            <div class="row">
+                                <c:forEach var="fuel" items="${fuelTypeList}">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-check-label d-flex align-items-center p-3 border rounded" style="cursor: pointer; transition: all 0.2s; width:100%;">
+                                            <input type="checkbox" class="form-check-input me-3" name="fuelTypeId"
+                                                   value="${fuel.fuelTypeId}" <c:if
+                                                       test="${paramValues.fuelTypeId != null && fn:contains(paramValues.fuelTypeId, fuel.fuelTypeId)}">checked
+                                                   </c:if>>
+                                            <span class="fw-medium">${fuel.fuelName}</span>
+                                        </label>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Apply Filter</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Status Filter -->
+        <div class="modal fade" id="statusFilterModal" tabindex="-1" aria-labelledby="statusFilterModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title fs-4" id="statusFilterModalLabel">Select Status</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="get" action="${pageContext.request.contextPath}/pages/car">
+                        <!-- Preserve other filter parameters -->
+                        <c:forEach var="param" items="${paramValues}">
+                            <c:if test="${param.key != 'status'}">
+                                <c:forEach var="value" items="${param.value}">
+                                    <input type="hidden" name="${param.key}" value="${value}">
+                                </c:forEach>
+                            </c:if>
+                        </c:forEach>
+                        <div class="modal-body">
+                            <div class="row">
+                                <c:forEach var="status" items="${statusList}">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-check-label d-flex align-items-center p-3 border rounded" style="cursor: pointer; transition: all 0.2s; width:100%;">
+                                            <input type="checkbox" class="form-check-input me-3" name="status"
+                                                   value="${status.value}" <c:if
+                                                       test="${paramValues.status != null && fn:contains(paramValues.status, status.value)}">checked
+                                                   </c:if>>
+                                            <span class="fw-medium">${status.display}</span>
+                                        </label>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Apply Filter</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Script to open modal -->
+        <script>
+            function openBrandModal() {
+                console.log('Opening brand modal...');
+                const modal = new bootstrap.Modal(document.getElementById('brandFilterModal'));
+                modal.show();
+            }
+            
+            // Debug script
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('Page loaded');
+                console.log('Modal element:', document.getElementById('brandFilterModal'));
+                
+                // Test if Bootstrap 5 is loaded
+                if (typeof bootstrap !== 'undefined') {
+                    console.log('Bootstrap 5 is loaded');
+                } else {
+                    console.log('Bootstrap 5 is not loaded');
+                }
+            });
+        </script>
+        <script>
+            // Hiển thị giá trị dual range slider
+            document.addEventListener('DOMContentLoaded', function() {
+                function bindDualSlider(minSliderId, maxSliderId, minValueId, maxValueId, minInputId, maxInputId, unit, isThousand) {
+                    var minSlider = document.getElementById(minSliderId);
+                    var maxSlider = document.getElementById(maxSliderId);
+                    var minValue = document.getElementById(minValueId);
+                    var maxValue = document.getElementById(maxValueId);
+                    var minInput = document.getElementById(minInputId);
+                    var maxInput = document.getElementById(maxInputId);
+                    
+                    if(minSlider && maxSlider && minValue && maxValue && minInput && maxInput) {
+                        // Update display and hidden inputs
+                        function updateDisplay() {
+                            minValue.textContent = minSlider.value + (unit || '');
+                            maxValue.textContent = maxSlider.value + (unit || '');
+                            minInput.value = minSlider.value;
+                            maxInput.value = maxSlider.value;
+                        }
+                        
+                        // Ensure min doesn't exceed max
+                        minSlider.addEventListener('input', function() {
+                            if (parseInt(minSlider.value) > parseInt(maxSlider.value)) {
+                                maxSlider.value = minSlider.value;
+                            }
+                            updateDisplay();
+                        });
+                        
+                        // Ensure max doesn't go below min
+                        maxSlider.addEventListener('input', function() {
+                            if (parseInt(maxSlider.value) < parseInt(minSlider.value)) {
+                                minSlider.value = maxSlider.value;
+                            }
+                            updateDisplay();
+                        });
+                        
+                        // Initial display
+                        updateDisplay();
+                    }
+                }
+                
+                bindDualSlider('priceHourMinSlider', 'priceHourMaxSlider', 'priceHourMinValue', 'priceHourMaxValue', 'minPricePerHourInput', 'maxPricePerHourInput', ' VND/hour', true);
+                bindDualSlider('mileageMinSlider', 'mileageMaxSlider', 'mileageMinValue', 'mileageMaxValue', 'minOdometerInput', 'maxOdometerInput', ' km');
+                bindDualSlider('distanceMinSlider', 'distanceMaxSlider', 'distanceMinValue', 'distanceMaxValue', 'minDistanceInput', 'maxDistanceInput', ' km');
+                bindDualSlider('seatsMinSlider', 'seatsMaxSlider', 'seatsMinValue', 'seatsMaxValue', 'minSeatsInput', 'maxSeatsInput', '');
+                bindDualSlider('yearMinSlider', 'yearMaxSlider', 'yearMinValue', 'yearMaxValue', 'minYearInput', 'maxYearInput', '');
+            });
+        </script>
+        <script>
+            // Dual range slider logic for all filters
+            function formatNumberWithCommas(x) {
+                return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+            function updateDualSlider(minSlider, maxSlider, track, min, max) {
+                const minVal = parseInt(minSlider.value);
+                const maxVal = parseInt(maxSlider.value);
+                const percentMin = ((minVal - min) / (max - min)) * 100;
+                const percentMax = ((maxVal - min) / (max - min)) * 100;
+                track.style.left = percentMin + "%";
+                track.style.width = (percentMax - percentMin) + "%";
+            }
+            function bindDualSliderV2(minSliderId, maxSliderId, trackId, displayId, minInputId, maxInputId, options) {
+                var minSlider = document.getElementById(minSliderId);
+                var maxSlider = document.getElementById(maxSliderId);
+                var track = document.getElementById(trackId);
+                var display = document.getElementById(displayId);
+                var minInput = document.getElementById(minInputId);
+                var maxInput = document.getElementById(maxInputId);
+                if (!minSlider || !maxSlider || !track || !display || !minInput || !maxInput) return;
+                var min = parseInt(minSlider.min);
+                var max = parseInt(maxSlider.max);
+                function updateDisplay() {
+                    let minVal = parseInt(minSlider.value);
+                    let maxVal = parseInt(maxSlider.value);
+                    if (minVal > maxVal) minVal = maxVal;
+                    if (maxVal < minVal) maxVal = minVal;
+                    minSlider.value = minVal;
+                    maxSlider.value = maxVal;
+                    minInput.value = minVal;
+                    maxInput.value = maxVal;
+                    // Format display
+                    let text = '';
+                    if (options && options.format) {
+                        text = options.format(minVal, maxVal);
+                    } else {
+                        text = minVal + ' - ' + maxVal;
+                    }
+                    display.textContent = text;
+                    updateDualSlider(minSlider, maxSlider, track, min, max);
+                }
+                minSlider.addEventListener('input', function() {
+                    if (parseInt(minSlider.value) > parseInt(maxSlider.value)) {
+                        maxSlider.value = minSlider.value;
+                    }
+                    updateDisplay();
+                });
+                maxSlider.addEventListener('input', function() {
+                    if (parseInt(maxSlider.value) < parseInt(minSlider.value)) {
+                        minSlider.value = maxSlider.value;
+                    }
+                    updateDisplay();
+                });
+                updateDisplay();
+            }
+            document.addEventListener('DOMContentLoaded', function() {
+                // Price
+                bindDualSliderV2('priceHourMinSlider', 'priceHourMaxSlider', 'priceTrack', 'priceHourRangeDisplay', 'minPricePerHourInput', 'maxPricePerHourInput', {
+                    format: function(min, max) {
+                        return (min === max) ? (min*1000).toLocaleString('vi-VN') + ' VND' : (min*1000).toLocaleString('vi-VN') + 'K - ' + (max*1000).toLocaleString('vi-VN') + 'K';
+                    }
+                });
+                // Mileage
+                bindDualSliderV2('mileageMinSlider', 'mileageMaxSlider', 'mileageTrack', 'mileageRangeDisplay', 'minOdometerInput', 'maxOdometerInput', {
+                    format: function(min, max) {
+                        return formatNumberWithCommas(min) + ' - ' + formatNumberWithCommas(max) + ' km';
+                    }
+                });
+                // Distance
+                bindDualSliderV2('distanceMinSlider', 'distanceMaxSlider', 'distanceTrack', 'distanceRangeDisplay', 'minDistanceInput', 'maxDistanceInput', {
+                    format: function(min, max) {
+                        return min + ' - ' + max + ' km';
+                    }
+                });
+                // Seats
+                bindDualSliderV2('seatsMinSlider', 'seatsMaxSlider', 'seatsTrack', 'seatsRangeDisplay', 'minSeatsInput', 'maxSeatsInput', {
+                    format: function(min, max) {
+                        return min + ' - ' + max + ' seats';
+                    }
+                });
+                // Year
+                bindDualSliderV2('yearMinSlider', 'yearMaxSlider', 'yearTrack', 'yearRangeDisplay', 'minYearInput', 'maxYearInput', {
+                    format: function(min, max) {
+                        return min + ' - ' + max;
+                    }
+                });
+            });
         </script>
     </body>
 
