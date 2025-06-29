@@ -194,7 +194,7 @@
                     </div>
                 </div>
 
-                <form method="get" action="${pageContext.request.contextPath}/pages/car-list-fragment" style="width:100%;">
+                <form method="get" action="${pageContext.request.contextPath}/pages/car" style="width:100%;">
                     <div class="search-sort-bar d-flex align-items-center" style="max-width: 520px; margin: 0 auto 24px auto;">
                         <input type="text" name="keyword" class="search-input flex-grow-1" placeholder="Search car, brand..." value="${param.keyword}" style="border:none; outline:none; background:transparent; font-size:1rem; height:44px; padding-left:18px; border-radius:24px 0 0 24px;">
                         <button class="search-btn" type="submit" title="Search" style="border-radius:0; border-left:1.5px solid #e0e7ef; min-width:44px; height:44px;">
@@ -217,7 +217,7 @@
                      aria-labelledby="advancedFilterModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
-                            <form method="get" action="${pageContext.request.contextPath}/pages/car-list-fragment">
+                            <form method="get" action="${pageContext.request.contextPath}/pages/car">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="advancedFilterModalLabel">Advanced
                                         Filter</h5>
@@ -263,9 +263,7 @@
                 </div>
 
                 <!-- Danh sách xe -->
-                <div id="car-list-container">
-                    <jsp:include page="car-list-fragment.jsp" />
-                </div>
+                <jsp:include page="car-list-fragment.jsp" />
             </div>
         </section>
 
