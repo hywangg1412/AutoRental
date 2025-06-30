@@ -46,7 +46,7 @@
                                 <i class="bi bi-heart text-dark"></i>
                                 Favorite cars
                             </a></li>
-                        <li><a href="${pageContext.request.contextPath}/pages/user/my-trip.jsp" class="nav-link text-dark">
+                        <li><a href="${pageContext.request.contextPath}/user/my-trip" class="nav-link text-dark">
                                 <i class="bi bi-car-front text-dark"></i>
                                 My trips
                             </a></li>

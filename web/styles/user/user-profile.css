@@ -886,6 +886,21 @@ nav.ftco-navbar-light .nav-link {
   visibility: hidden !important;
 }
 
+.btn-unlink-social {
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.btn-unlink-social:hover, .btn-unlink-social:focus {
+    background: #ffeaea;
+    color: #c82333;
+    border-color: #c82333;
+}
+.btn-unlink-social i {
+    transition: color 0.2s;
+}
+.btn-unlink-social:hover i {
+    color: #c82333;
+}
+
 
 
 

@@ -4,6 +4,7 @@
  */
 
 // Global variables
+let carPriceData = {};
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
@@ -12,9 +13,9 @@ document.addEventListener('DOMContentLoaded', function() {
         window.localStorage.clear();
     }
     initializeForm();
+    loadCarPriceData();
     setupLicenseUpload();
     setupFormValidation();
-    calculateAndDisplayPrice();
 });
 
 // Initialize form
@@ -29,12 +30,24 @@ function initializeForm() {
     if(endDateInput) endDateInput.min = today;
 
     // Add event listeners for price calculation
-    document.getElementById("rentalType")?.addEventListener("change", calculateAndDisplayPrice);
+    document.getElementById("rentalType")?.addEventListener("change", calculatePrice);
     document.getElementById("startDate")?.addEventListener("change", function() {
         if(endDateInput) endDateInput.min = this.value;
-        calculateAndDisplayPrice();
+        calculatePrice();
     });
-    document.getElementById("endDate")?.addEventListener("change", calculateAndDisplayPrice);
+    document.getElementById("endDate")?.addEventListener("change", calculatePrice);
+}
+
+// Load car price data from HTML
+function loadCarPriceData() {
+    const priceDataElement = document.getElementById("carPriceData");
+    if (priceDataElement) {
+        carPriceData = {
+            hourly: parseFloat(priceDataElement.dataset.hourly) || 0,
+            daily: parseFloat(priceDataElement.dataset.daily) || 0,
+            monthly: parseFloat(priceDataElement.dataset.monthly) || 0
+        };
+    }
 }
 
 // Setup license upload functionality
@@ -126,6 +139,72 @@ function validateAndSubmitForm(e) {
     
     // Form will submit normally if validation passes
     return true;
+}
+
+// Price calculation functionality
+function calculatePrice() {
+    const rentalType = document.getElementById("rentalType")?.value;
+    const startDate = new Date(document.getElementById("startDate")?.value);
+    const endDate = new Date(document.getElementById("endDate")?.value);
+
+    if (!rentalType || !startDate.getTime() || !endDate.getTime() || startDate >= endDate) {
+        updatePriceDisplay(0, 0, "0 days");
+        return;
+    }
+
+    let duration = 0,
+        unitPrice = 0,
+        totalPrice = 0,
+        durationText = "";
+
+    const timeDiff = endDate.getTime() - startDate.getTime();
+
+    switch (rentalType) {
+        case "hourly":
+            duration = Math.ceil(timeDiff / (1000 * 60 * 60));
+            unitPrice = carPriceData.hourly || 0;
+            durationText = `${duration} hour(s)`;
+            break;
+        case "daily":
+            duration = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+            unitPrice = carPriceData.daily || 0;
+            durationText = `${duration} day(s)`;
+            break;
+        case "monthly":
+            // A more accurate month calculation might be needed
+            duration = Math.ceil(timeDiff / (1000 * 60 * 60 * 24 * 30)); 
+            unitPrice = carPriceData.monthly || 0;
+            durationText = `${duration} month(s)`;
+            break;
+        default:
+            durationText = "0 days";
+    }
+
+    totalPrice = duration * unitPrice;
+    
+    // Update the display for the user
+    updatePriceDisplay(unitPrice, totalPrice, durationText);
+
+    // IMPORTANT: Update the hidden input fields for form submission
+    const hiddenTotalAmount = document.getElementById("hiddenTotalAmount");
+    const hiddenRentalType = document.getElementById("hiddenRentalType");
+    
+    if (hiddenTotalAmount) {
+        hiddenTotalAmount.value = totalPrice;
+    }
+    if (hiddenRentalType) {
+        hiddenRentalType.value = rentalType;
+    }
+}
+
+function updatePriceDisplay(unitPrice, totalPrice, duration) {
+    const totalDurationElement = document.getElementById("totalDuration");
+    const unitPriceElement = document.getElementById("unitPrice");
+    const totalPriceElement = document.getElementById("totalPrice");
+    
+    if (totalDurationElement) totalDurationElement.textContent = duration;
+    if (unitPriceElement) unitPriceElement.textContent = `${unitPrice.toLocaleString()}K`;
+    if (totalPriceElement) totalPriceElement.textContent = `${totalPrice.toLocaleString()}K`;
 }
 
 // Form validation
@@ -263,60 +342,3 @@ function validatePhone(phone) {
     const phonePattern = /^[0-9]{10,11}$/;
     return phonePattern.test(phone.replace(/\s/g, ''));
 }
-
-// Thêm lại logic tính tổng tiền động trên form booking
-
-document.addEventListener('DOMContentLoaded', function() {
-    const rentalTypeInput = document.getElementById("rentalType");
-    const startDateInput = document.getElementById("startDate");
-    const endDateInput = document.getElementById("endDate");
-
-    function getPricePerUnit(type) {
-        switch (type) {
-            case "hourly":
-                return parseFloat(document.getElementById("carHourlyPrice").value) || 0;
-            case "daily":
-                return parseFloat(document.getElementById("carDailyPrice").value) || 0;
-            case "monthly":
-                return parseFloat(document.getElementById("carMonthlyPrice").value) || 0;
-            default:
-                return 0;
-        }
-    }
-
-    function calculateAndDisplayPrice() {
-        const rentalType = rentalTypeInput.value;
-        const start = new Date(startDateInput.value);
-        const end = new Date(endDateInput.value);
-        let duration = 0;
-        let unitPrice = getPricePerUnit(rentalType);
-        let total = 0;
-        let durationText = "";
-
-        if (rentalType && start && end && end > start) {
-            const diffMs = end - start;
-            if (rentalType === "hourly") {
-                duration = Math.ceil(diffMs / (1000 * 60 * 60));
-                durationText = `${duration} hour(s)`;
-            } else if (rentalType === "daily") {
-                duration = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-                durationText = `${duration} day(s)`;
-            } else if (rentalType === "monthly") {
-                duration = Math.ceil(diffMs / (1000 * 60 * 60 * 24 * 30));
-                durationText = `${duration} month(s)`;
-            }
-            total = duration * unitPrice;
-        }
-
-        document.getElementById("totalDuration").textContent = durationText || "0";
-        document.getElementById("unitPrice").textContent = unitPrice + "K";
-        document.getElementById("totalPrice").textContent = total + "K";
-        document.getElementById("hiddenTotalAmount").value = total;
-    }
-
-    if (rentalTypeInput && startDateInput && endDateInput) {
-        rentalTypeInput.addEventListener("change", calculateAndDisplayPrice);
-        startDateInput.addEventListener("change", calculateAndDisplayPrice);
-        endDateInput.addEventListener("change", calculateAndDisplayPrice);
-    }
-});

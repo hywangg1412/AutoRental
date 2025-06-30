@@ -65,12 +65,21 @@ public class GoogleLoginServlet extends HttpServlet {
                 return;
             }
             UserLogins userLogin = userLoginsService.findByProviderAndKey("google", googleUser.getGoogleId());
+            User user = null;
             if (userLogin == null) {
-                request.setAttribute("error", "This Google account has not been registered.");
-                request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
-                return;
+                user = userService.findByEmail(email);
+                if (user != null) {
+                    request.setAttribute("error", "This email is already registered. Please log in with your email and link your Google account from your profile.");
+                    request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
+                    return;
+                } else {
+                    request.setAttribute("error", "This Google account has not been registered.");
+                    request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
+                    return;
+                }
+            } else {
+                user = userService.findById(userLogin.getUserId());
             }
-            User user = userService.findById(userLogin.getUserId());
             if (user == null) {
                 request.setAttribute("error", "This account does not exist.");
                 request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);

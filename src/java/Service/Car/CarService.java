@@ -123,17 +123,28 @@ public class CarService implements ICarService {
     @Override
     public List<Car> filterCars(
         String[] brandIds, String[] fuelTypeIds, String[] seats, String[] categoryIds,
-        String[] statuses, String[] featureIds, String[] transmissionTypeIds, String sort, String keyword, int offset, int limit
+        String[] statuses, String[] featureIds, String[] transmissionTypeIds, String sort, String keyword,
+        Integer minPricePerHour, Integer maxPricePerHour,
+        Integer minSeats, Integer maxSeats,
+        Integer minYear, Integer maxYear,
+        Integer minOdometer, Integer maxOdometer,
+        Integer minDistance, Integer maxDistance,
+        int offset, int limit
     ) throws SQLException {
-        return carRepository.filterCars(brandIds, fuelTypeIds, seats, categoryIds, statuses, featureIds, transmissionTypeIds, sort, keyword, offset, limit);
+        return carRepository.filterCars(brandIds, fuelTypeIds, seats, categoryIds, statuses, featureIds, transmissionTypeIds, sort, keyword, minPricePerHour, maxPricePerHour, minSeats, maxSeats, minYear, maxYear, minOdometer, maxOdometer, minDistance, maxDistance, offset, limit);
     }
 
     @Override
     public int countFilteredCars(
         String[] brandIds, String[] fuelTypeIds, String[] seats, String[] categoryIds,
-        String[] statuses, String[] featureIds, String[] transmissionTypeIds, String keyword
+        String[] statuses, String[] featureIds, String[] transmissionTypeIds, String keyword,
+        Integer minPricePerHour, Integer maxPricePerHour,
+        Integer minSeats, Integer maxSeats,
+        Integer minYear, Integer maxYear,
+        Integer minOdometer, Integer maxOdometer,
+        Integer minDistance, Integer maxDistance
     ) throws SQLException {
-        return carRepository.countFilteredCars(brandIds, fuelTypeIds, seats, categoryIds, statuses, featureIds, transmissionTypeIds, keyword);
+        return carRepository.countFilteredCars(brandIds, fuelTypeIds, seats, categoryIds, statuses, featureIds, transmissionTypeIds, keyword, minPricePerHour, maxPricePerHour, minSeats, maxSeats, minYear, maxYear, minOdometer, maxOdometer, minDistance, maxDistance);
     }
 
     public List<Integer> getAllSeatNumbers() {

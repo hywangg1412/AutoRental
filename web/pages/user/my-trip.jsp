@@ -1,4 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -50,7 +51,7 @@
                                     <i class="bi bi-heart text-dark"></i>
                                     Favorite cars
                                 </a></li>
-                            <li><a href="${pageContext.request.contextPath}/pages/user/my-trip.jsp" class="nav-link active text-dark">
+                            <li><a href="${pageContext.request.contextPath}/user/my-trip" class="nav-link active text-dark">
                                     <i class="bi bi-car-front text-dark"></i>
                                     My trips
                                 </a></li>
@@ -113,10 +114,91 @@
 
                                         <!-- Trip History Tab -->
                                         <div class="tab-pane fade" id="trip-history" role="tabpanel">
-                                            <div class="empty-state">
-                                                <i class="bi bi-clock-history" style="font-size: 3rem; color: var(--text-gray); margin-bottom: 1rem;"></i>
-                                                <h5 class="mb-3">You have no trip yet</h5>
-                                                <p class="text-muted">Your completed trips will appear here.</p>
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Booking code</th>
+                                                            <th>Car</th>
+                                                            <th>Pick-up date</th>
+                                                            <th>Return date</th>
+                                                            <th>Status</th>
+                                                            <th>Amount</th>
+                                                            <th>Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <c:choose>
+                                                        <c:when test="${not empty bookingRequests}">
+                                                            <c:forEach items="${bookingRequests}" var="booking">
+                                                                <tr>
+                                                                    <!-- Booking detail modal (like staff) -->
+                                                                    <div class="modal fade" id="modal-${booking.bookingId}" tabindex="-1" aria-labelledby="modalLabel-${booking.bookingId}" aria-hidden="true">
+                                                                        <div class="modal-dialog modal-lg">
+                                                                            <div class="modal-content">
+                                                                                <div class="modal-header">
+                                                                                    <h5 class="modal-title" id="modalLabel-${booking.bookingId}">Booking details - ${booking.bookingCode}</h5>
+                                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                                </div>
+                                                                                <div class="modal-body">
+                                                                                    <!-- Booking details, like staff -->
+                                                                                    <h6>Car information</h6>
+                                                                                    <p>Model: ${booking.carModel}</p>
+                                                                                    <p>License plate: ${booking.carLicensePlate}</p>
+                                                                                    <h6>Rental period</h6>
+                                                                                    <p>Pick-up: ${booking.formattedPickupDateTime}</p>
+                                                                                    <p>Return: ${booking.formattedReturnDateTime}</p>
+                                                                                    <h6>Customer</h6>
+                                                                                    <p>${booking.customerName} - ${booking.customerPhone}</p>
+                                                                                    <p>Email: ${booking.customerEmail}</p>
+                                                                                    <h6>Status: ${booking.status}</h6>
+                                                                                    <h6>Amount: ${booking.totalAmount}.000 VND</h6>
+                                                                                </div>
+                                                                                <div class="modal-footer">
+                                                                                    <c:choose>
+                                                                                        <c:when test="${booking.status eq 'Pending'}">
+                                                                                            <button class="btn btn-danger">Cancel Booking</button>
+                                                                                        </c:when>
+                                                                                        <c:when test="${booking.status eq 'Confirmed' || booking.status eq 'Đang thuê'}">
+                                                                                            <button class="btn btn-primary">Return Car</button>
+                                                                                        </c:when>
+                                                                                    </c:choose>
+                                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <!-- Table row -->
+                                                                    <td>${booking.bookingCode}</td>
+                                                                    <td>${booking.carModel} <br><small>${booking.carLicensePlate}</small></td>
+                                                                    <td>${booking.formattedPickupDateTime}</td>
+                                                                    <td>${booking.formattedReturnDateTime}</td>
+                                                                    <td>
+                                                                        <span class="badge">${booking.status}</span>
+                                                                    </td>
+                                                                    <td>${booking.totalAmount}.000 VND</td>
+                                                                    <td>
+                                                                        <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-${booking.bookingId}">
+                                                                            <i class="fas fa-eye"></i> View
+                                                                        </button>
+                                                                        <c:if test="${booking.status eq 'Pending'}">
+                                                                            <button class="btn btn-danger btn-sm">Cancel Booking</button>
+                                                                        </c:if>
+                                                                        <c:if test="${booking.status eq 'Confirmed' || booking.status eq 'Đang thuê'}">
+                                                                            <button class="btn btn-primary btn-sm">Return Car</button>
+                                                                        </c:if>
+                                                                    </td>
+                                                                </tr>
+                                                            </c:forEach>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <tr>
+                                                                <td colspan="7" class="text-center">You have no booking history.</td>
+                                                            </tr>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         </div>
                                     </div>

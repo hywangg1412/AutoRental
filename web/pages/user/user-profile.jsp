@@ -83,7 +83,7 @@
                                     <i class="bi bi-heart text-dark"></i>
                                     Favorite cars
                                 </a></li>
-                            <li><a href="${pageContext.request.contextPath}/pages/user/my-trip.jsp" class="nav-link text-dark">
+                            <li><a href="${pageContext.request.contextPath}/user/my-trip" class="nav-link text-dark">
                                     <i class="bi bi-car-front text-dark"></i>
                                     My trips
                                 </a></li>
@@ -191,7 +191,23 @@
                                                         <span class="d-flex align-items-center gap-1">
                                                             <c:choose>
                                                                 <c:when test="${profile.hasFacebookLogin}">
-                                                                    <span class="badge badge-verified"><i class="bi bi-check-circle-fill me-1"></i>Connected</span>
+                                                                    <div class="d-flex align-items-center gap-2">
+                                                                        <span class="badge badge-verified">
+                                                                            <i class="bi bi-check-circle-fill me-1"></i>
+                                                                            ${not empty profile.facebookAccountName ? profile.facebookAccountName : 'Connected'}
+                                                                        </span>
+                                                                        <form action="${pageContext.request.contextPath}/facebook-unlink" method="post" style="display: inline;" onsubmit="return confirm('Are you sure you want to unlink your Facebook account?')">
+                                                                            <button type="submit"
+                                                                                    class="btn btn-outline-danger btn-unlink-social d-flex align-items-center gap-1 px-3 py-1"
+                                                                                    style="font-size:0.95em; border-radius: 20px; border-width: 2px; font-weight: 500;"
+                                                                                    data-bs-toggle="tooltip"
+                                                                                    data-bs-placement="top"
+                                                                                    title="Unlink this social account">
+                                                                                <i class="bi bi-unlink" style="font-size:1.1em;"></i>
+                                                                                Unlink
+                                                                            </button>
+                                                                        </form>
+                                                                    </div>
                                                                 </c:when>
                                                                 <c:otherwise>
                                                                     <a href="${pageContext.request.contextPath}/facebook-link" class="add-link d-flex align-items-center" style="font-size:0.97em;">
@@ -206,7 +222,23 @@
                                                         <span class="d-flex align-items-center gap-1">
                                                             <c:choose>
                                                                 <c:when test="${profile.hasGoogleLogin}">
-                                                                    <span class="badge badge-verified"><i class="bi bi-check-circle-fill me-1"></i>Connected</span>
+                                                                    <div class="d-flex align-items-center gap-2">
+                                                                        <span class="badge badge-verified">
+                                                                            <i class="bi bi-check-circle-fill me-1"></i>
+                                                                            ${not empty profile.googleAccountName ? profile.googleAccountName : 'Connected'}
+                                                                        </span>
+                                                                        <form action="${pageContext.request.contextPath}/google-unlink" method="post" style="display: inline;" onsubmit="return confirm('Are you sure you want to unlink your Google account?')">
+                                                                            <button type="submit"
+                                                                                    class="btn btn-outline-danger btn-unlink-social d-flex align-items-center gap-1 px-3 py-1"
+                                                                                    style="font-size:0.95em; border-radius: 20px; border-width: 2px; font-weight: 500;"
+                                                                                    data-bs-toggle="tooltip"
+                                                                                    data-bs-placement="top"
+                                                                                    title="Unlink this social account">
+                                                                                <i class="bi bi-unlink" style="font-size:1.1em;"></i>
+                                                                                Unlink
+                                                                            </button>
+                                                                        </form>
+                                                                    </div>
                                                                 </c:when>
                                                                 <c:otherwise>
                                                                     <a href="${pageContext.request.contextPath}/google-link" class="add-link d-flex align-items-center" style="font-size:0.97em;">

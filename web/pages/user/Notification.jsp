@@ -331,7 +331,7 @@
                             <i class="bi bi-heart"></i>
                             Favorite cars
                         </a></li>
-                        <li><a href="MyTrip.jsp" class="nav-link">
+                        <li><a href="${pageContext.request.contextPath}/user/my-trip" class="nav-link">
                             <i class="bi bi-car-front"></i>
                             My trips
                         </a></li>

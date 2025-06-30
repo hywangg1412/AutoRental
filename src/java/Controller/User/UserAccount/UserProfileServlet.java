@@ -59,10 +59,19 @@ public class UserProfileServlet extends HttpServlet {
         profile.setCreatedAt(user.getCreatedDate().format(formatter));
 
         Set<String> providers = new HashSet<>();
-        userLogins.forEach(login -> providers.add(login.getLoginProvider().toLowerCase()));
-
-        profile.setHasFacebookLogin(providers.contains("facebook"));
-        profile.setHasGoogleLogin(providers.contains("google"));
+        for (UserLogins login : userLogins) {
+            String provider = login.getLoginProvider().toLowerCase();
+            providers.add(provider);
+            
+            // Set provider account names
+            if ("facebook".equals(provider)) {
+                profile.setHasFacebookLogin(true);
+                profile.setFacebookAccountName(login.getProviderDisplayName());
+            } else if ("google".equals(provider)) {
+                profile.setHasGoogleLogin(true);
+                profile.setGoogleAccountName(login.getProviderDisplayName());
+            }
+        }
 
         return profile;
     }
@@ -88,7 +97,6 @@ public class UserProfileServlet extends HttpServlet {
             try {
                 driverLicense = driverLicenseService.findByUserId(user.getUserId());
             } catch (NotFoundException e) {
-                // User doesn't have a driver license yet, create a new one
                 LOGGER.log(Level.INFO, "User {0} doesn't have a driver license yet, creating new one", user.getUserId());
                 try {
                     driverLicense = driverLicenseService.createDefaultForUser(user.getUserId());
@@ -101,6 +109,20 @@ public class UserProfileServlet extends HttpServlet {
                 driverLicense = null;
             }
             request.setAttribute("driverLicense", driverLicense);
+
+            // Read session messages and clear them
+            String successMessage = (String) SessionUtil.getSessionAttribute(request, "success");
+            String errorMessage = (String) SessionUtil.getSessionAttribute(request, "error");
+            
+            if (successMessage != null) {
+                request.setAttribute("success", successMessage);
+                SessionUtil.removeSessionAttribute(request, "success");
+            }
+            
+            if (errorMessage != null) {
+                request.setAttribute("error", errorMessage);
+                SessionUtil.removeSessionAttribute(request, "error");
+            }
 
             request.getRequestDispatcher("/pages/user/user-profile.jsp").forward(request, response);
 

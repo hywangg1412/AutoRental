@@ -18,6 +18,8 @@ public class OAuthConstants {
     public static final String GOOGLE_CLIENT_SECRET = getenv("GOOGLE_CLIENT_SECRET", "");
     public static final String GOOGLE_REDIRECT_URI = getenv("GOOGLE_REDIRECT_URI", "");
     public static final String GOOGLE_REDIRECT_URI_REGISTER = getenv("GOOGLE_REDIRECT_URI_REGISTER", "");
+        public static final String GOOGLE_REDIRECT_URI_LINK = getenv("GOOGLE_REDIRECT_URI_LINK", "");
+
     public static final String GOOGLE_EMAIL_SCOPE = getenv("GOOGLE_EMAIL_SCOPE", "https://www.googleapis.com/auth/userinfo.email");
     public static final String GOOGLE_PROFILE_SCOPE = getenv("GOOGLE_PROFILE_SCOPE", "https://www.googleapis.com/auth/userinfo.profile");
 
@@ -29,25 +31,24 @@ public class OAuthConstants {
     public static final String FACEBOOK_CLIENT_SECRET = getenv("FACEBOOK_CLIENT_SECRET", "");
     public static final String FACEBOOK_REDIRECT_URI = getenv("FACEBOOK_REDIRECT_URI", "");
     public static final String FACEBOOK_REDIRECT_URI_REGISTER = getenv("FACEBOOK_REDIRECT_URI_REGISTER", "");
+    public static final String FACEBOOK_REDIRECT_URI_LINK = getenv("FACEBOOK_REDIRECT_URI_LINK", "");
+
     public static final String FACEBOOK_GRANT_TYPE = getenv("FACEBOOK_GRANT_TYPE", "authorization_code");
     public static final String FACEBOOK_SCOPE = getenv("FACEBOOK_SCOPE", "email,public_profile");
     public static final String FACEBOOK_STATE = getenv("FACEBOOK_STATE", "some_random_string");
 
     // Email
-    public static final String SENDER_EMAIL= getenv("SENDER_EMAIL", "");
+    public static final String SENDER_EMAIL = getenv("SENDER_EMAIL", "");
     public static final String SENDER_EMAIL_PASSWORD = getenv("SENDER_EMAIL_PASSWORD", "");
 
     // Debug info
-    static {
-        System.out.println("Working dir: " + System.getProperty("user.dir"));
-        System.out.println("Env file GOOGLE_CLIENT_ID: " + dotenv.get("GOOGLE_CLIENT_ID"));
-        System.out.println("SENDER_EMAIL: " + SENDER_EMAIL);
-        System.out.println("SENDER_EMAIL_PASSWORD: " + SENDER_EMAIL_PASSWORD);
-    }
+//    static {
+//        System.out.println("Working dir: " + System.getProperty("user.dir"));
+//        System.out.println("Env file GOOGLE_CLIENT_ID: " + dotenv.get("GOOGLE_CLIENT_ID"));
+//        System.out.println("SENDER_EMAIL: " + SENDER_EMAIL);
+//        System.out.println("SENDER_EMAIL_PASSWORD: " + SENDER_EMAIL_PASSWORD);
+//    }
 
-    /**
-     * Get environment variable or fallback to .env or default value.
-     */
     private static String getenv(String key, String defaultValue) {
         String value = System.getenv(key);
         if (value != null && !value.isEmpty()) {

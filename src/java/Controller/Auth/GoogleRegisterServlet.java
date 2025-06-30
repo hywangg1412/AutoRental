@@ -7,6 +7,7 @@ import Model.Entity.User.User;
 import Model.Entity.OAuth.UserLogins;
 import Model.Entity.Role.Role;
 import Model.Entity.Role.UserRole;
+import Model.Constants.RoleConstants;
 import Service.Auth.EmailOTPVerificationService;
 import Service.User.UserService;
 import Service.Auth.GoogleAuthService;
@@ -74,38 +75,24 @@ public class GoogleRegisterServlet extends HttpServlet {
             }
 
             User newUser = userMapper.mapGoogleUserToUser(googleUser,userService);
+            newUser.setEmailVerifed(true);
             userService.add(newUser);
+            
+            try {
+                Role userRole = roleService.findByRoleName(RoleConstants.USER);
+                if (userRole != null) {
+                    UserRole newUserRole = new UserRole(newUser.getUserId(), userRole.getRoleId());
+                    userRoleService.add(newUserRole);
+                }
+            } catch (Exception e) {
+                System.err.println("Error assigning default role to user: " + e.getMessage());
+            }
+            
             request.getSession().setAttribute("userId", newUser.getUserId().toString());
-            UserLogins userLogins = new UserLogins();
-            userLogins.setLoginProvider("google");
-            userLogins.setProviderKey(googleUser.getGoogleId());
+            UserLogins userLogins = userMapper.mapGoogleUserToUserLogins(googleUser, newUser);
+            userLoginsService.add(userLogins);
 
-            String otp = emailOTP.generateOtp();
-            UUID otpId = UUID.randomUUID();
-            LocalDateTime now = LocalDateTime.now();
-            LocalDateTime expiry = now.plusMinutes(10);
-
-            EmailOTPVerification otpEntity = new EmailOTPVerification();
-            otpEntity.setId(otpId);
-            otpEntity.setOtp(otp);
-            otpEntity.setUserId(newUser.getUserId());
-            otpEntity.setExpiryTime(expiry);
-            otpEntity.setIsUsed(false);
-            otpEntity.setCreatedAt(now);
-            otpEntity.setResendCount(0);
-            otpEntity.setLastResendTime(null);
-            otpEntity.setResendBlockUntil(null);
-
-            emailOTP.add(otpEntity);
-
-            mailService.sendOtpEmail(newUser.getEmail(), otp, newUser.getUsername());
-
-            request.getSession().setAttribute("pendingUserType", "google");
-            request.getSession().setAttribute("pendingUser", newUser);
-            request.getSession().setAttribute("pendingUserLogins", userLogins);
-            request.getSession().setAttribute("pendingUserRoleName", "User");
-
-            response.sendRedirect(request.getContextPath() + "/verify-otp");
+            response.sendRedirect(request.getContextPath() + "/setPassword");
             return;
         } catch (Exception e) {
             request.setAttribute("error", "Google register failed - " + e.getMessage());

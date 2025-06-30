@@ -96,4 +96,36 @@ public class GoogleAuthService extends OAuthConstants {
                 userInfo.getVerifiedEmail()
         );
     }
+
+    public String getAuthorizationLinkUrl() {
+        return flow.newAuthorizationUrl()
+                .setRedirectUri(GOOGLE_REDIRECT_URI_LINK)
+                .build();
+    }
+
+    public GoogleUser getUserInfoLink(String code) throws IOException {
+        TokenResponse tokenResponse = flow.newTokenRequest(code)
+                .setRedirectUri(GOOGLE_REDIRECT_URI_LINK)
+                .execute();
+
+        GoogleCredential credential = new GoogleCredential()
+                .setAccessToken(tokenResponse.getAccessToken());
+
+        Oauth2 oauth2 = new Oauth2.Builder(
+                new NetHttpTransport(),
+                GsonFactory.getDefaultInstance(),
+                credential)
+                .build();
+
+        Userinfo userInfo = oauth2.userinfo().get().execute();
+
+        return new GoogleUser(
+                userInfo.getId(),
+                userInfo.getEmail(),
+                userInfo.getFamilyName(),
+                userInfo.getGivenName(),
+                userInfo.getPicture(),
+                userInfo.getVerifiedEmail()
+        );
+    }
 }
