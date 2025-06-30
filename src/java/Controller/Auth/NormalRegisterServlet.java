@@ -3,13 +3,13 @@ package Controller.Auth;
 import Model.Entity.User.User;
 import Model.Entity.Role.Role;
 import Model.Entity.Role.UserRole;
+import Model.Constants.RoleConstants;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import Utils.SessionUtil;
 import Utils.ObjectUtils;
 import java.time.LocalDateTime;
@@ -109,15 +109,15 @@ public class NormalRegisterServlet extends HttpServlet {
 
             userService.add(user);
 
-            // Assign default "User" role
             try {
-                Role userRole = roleService.findByRoleName("User");
+                Role userRole = roleService.findByRoleName(RoleConstants.USER);
+
                 if (userRole != null) {
                     UserRole newUserRole = new UserRole(user.getUserId(), userRole.getRoleId());
                     userRoleService.add(newUserRole);
                 }
             } catch (Exception e) {
-                // Log error but don't fail registration
+
                 System.err.println("Error assigning default role to user: " + e.getMessage());
             }
 

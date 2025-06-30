@@ -32,9 +32,10 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/icomoon.css">
 
         <!-- 3. Global/Shared CSS -->
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/nav.css">
+
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/car.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
 
         <!-- 4. Page-specific CSS -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/index.css">

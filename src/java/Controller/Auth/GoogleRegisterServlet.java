@@ -7,6 +7,7 @@ import Model.Entity.User.User;
 import Model.Entity.OAuth.UserLogins;
 import Model.Entity.Role.Role;
 import Model.Entity.Role.UserRole;
+import Model.Constants.RoleConstants;
 import Service.Auth.EmailOTPVerificationService;
 import Service.User.UserService;
 import Service.Auth.GoogleAuthService;
@@ -76,6 +77,17 @@ public class GoogleRegisterServlet extends HttpServlet {
             User newUser = userMapper.mapGoogleUserToUser(googleUser,userService);
             newUser.setEmailVerifed(true);
             userService.add(newUser);
+            
+            try {
+                Role userRole = roleService.findByRoleName(RoleConstants.USER);
+                if (userRole != null) {
+                    UserRole newUserRole = new UserRole(newUser.getUserId(), userRole.getRoleId());
+                    userRoleService.add(newUserRole);
+                }
+            } catch (Exception e) {
+                System.err.println("Error assigning default role to user: " + e.getMessage());
+            }
+            
             request.getSession().setAttribute("userId", newUser.getUserId().toString());
             UserLogins userLogins = userMapper.mapGoogleUserToUserLogins(googleUser, newUser);
             userLoginsService.add(userLogins);
