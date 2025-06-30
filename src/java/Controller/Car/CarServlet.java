@@ -99,6 +99,24 @@ public class CarServlet extends HttpServlet {
             if (request.getParameter("page") != null) page = Integer.parseInt(request.getParameter("page"));
             int offset = (page - 1) * limit;
 
+            List<?> allBrands = carBrandService.getAll();
+            List<?> allCategories = carCategoriesService.getAll();
+
+            brandIds = (brandIds != null) ? Arrays.stream(brandIds).filter(s -> s != null && !s.isEmpty()).toArray(String[]::new) : null;
+            fuelTypeIds = (fuelTypeIds != null) ? Arrays.stream(fuelTypeIds).filter(s -> s != null && !s.isEmpty()).toArray(String[]::new) : null;
+            transmissionTypeIds = (transmissionTypeIds != null) ? Arrays.stream(transmissionTypeIds).filter(s -> s != null && !s.isEmpty()).toArray(String[]::new) : null;
+            categoryIds = (categoryIds != null) ? Arrays.stream(categoryIds).filter(s -> s != null && !s.isEmpty()).toArray(String[]::new) : null;
+            featureIds = (featureIds != null) ? Arrays.stream(featureIds).filter(s -> s != null && !s.isEmpty()).toArray(String[]::new) : null;
+            statuses = (statuses != null) ? Arrays.stream(statuses).filter(s -> s != null && !s.isEmpty()).toArray(String[]::new) : null;
+            seats = (seats != null) ? Arrays.stream(seats).filter(s -> s != null && !s.isEmpty()).toArray(String[]::new) : null;
+
+            if (brandIds != null && allBrands != null && brandIds.length == allBrands.size()) {
+                brandIds = null;
+            }
+            if (categoryIds != null && allCategories != null && categoryIds.length == allCategories.size()) {
+                categoryIds = null;
+            }
+
             List<CarListItemDTO> carList = carListService.filterCars(brandIds, fuelTypeIds, seats, categoryIds, statuses, featureIds, transmissionTypeIds, sort, keyword, minPricePerHour, maxPricePerHour, minSeats, maxSeats, minYear, maxYear, minOdometer, maxOdometer, minDistance, maxDistance, offset, limit);
             int totalCars = carListService.countFilteredCars(brandIds, fuelTypeIds, seats, categoryIds, statuses, featureIds, transmissionTypeIds, keyword, minPricePerHour, maxPricePerHour, minSeats, maxSeats, minYear, maxYear, minOdometer, maxOdometer, minDistance, maxDistance);
             int totalPages = (int) Math.ceil((double) totalCars / limit);
@@ -108,7 +126,6 @@ public class CarServlet extends HttpServlet {
             request.setAttribute("totalPages", totalPages);
             request.setAttribute("keyword", keyword);
 
-            // Truyền các list filter sang JSP
             request.setAttribute("brandList", carBrandService.getAll());
             request.setAttribute("fuelTypeList", fuelTypeService.getAll());
             request.setAttribute("seatList", carService.getAllSeatNumbers());
