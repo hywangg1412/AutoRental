@@ -24,9 +24,8 @@
 
         <!-- ===== Page Styles ===== -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
-
-                        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/car/car.css">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/car.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/car/car.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/car.css">
 
         <!-- ===== Custom Styles (Theme/Plugins) ===== -->
         <link rel="stylesheet"
@@ -347,9 +346,9 @@
         <!-- Bootstrap 5 Bundle for Modal support -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         
-        <script src="${pageContext.request.contextPath}/scripts/car/car.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/car.js"></script>
         <!-- Toast notification -->
-        <div id="favorite-toast"></div>
+        <div id="favorite-toast" style="display: none;"></div>
         <script>
           var contextPath = '${pageContext.request.contextPath}';
         </script>
