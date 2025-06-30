@@ -1303,3 +1303,17 @@ body, #filterForm, .car-wrap, .card {
     left: 0;
     right: 0;
 }
+
+#advancedFilterModal .dual-range-slider::-webkit-slider-thumb {
+    background: #22c55e;
+}
+#advancedFilterModal .dual-range-slider::-moz-range-thumb {
+    background: #22c55e;
+}
+#advancedFilterModal .dual-range-slider::-ms-thumb {
+    background: #22c55e;
+}
+
+#advancedFilterModal .range-track {
+    background: #22c55e !important;
+}
