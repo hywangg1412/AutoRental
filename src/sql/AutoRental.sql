@@ -392,6 +392,7 @@ CREATE TABLE [Notification] (
     [UserId] UNIQUEIDENTIFIER NOT NULL,
     [Message] NVARCHAR(MAX) NOT NULL,
     [CreatedDate] DATETIME2 NOT NULL, --DEFAULT GETDATE(),
+[IsRead] BIT NOT NULL DEFAULT 0;
     CONSTRAINT [PK_Notification] PRIMARY KEY ([NotificationId]),
     CONSTRAINT [FK_Notification_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE
 );
