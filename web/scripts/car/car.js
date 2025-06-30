@@ -378,7 +378,6 @@ $(document).on('change', '.transmission-checkbox', function() {
     updateSelectAllBtn('transmission');
 });
 
-// Fuel
 $(document).on('click', '#selectAllFuel', function() {
     const $btn = $(this);
     const $checkboxes = $('.fuel-checkbox');
@@ -394,7 +393,6 @@ $(document).on('change', '.fuel-checkbox', function() {
     updateSelectAllBtn('fuel');
 });
 
-// Status
 $(document).on('click', '#selectAllStatus', function() {
     const $btn = $(this);
     const $checkboxes = $('.status-checkbox');
@@ -414,7 +412,6 @@ $('#transmissionFilterModal').on('shown.bs.modal', function() { updateSelectAllB
 $('#fuelFilterModal').on('shown.bs.modal', function() { updateSelectAllBtn('fuel'); });
 $('#statusFilterModal').on('shown.bs.modal', function() { updateSelectAllBtn('status'); });
 
-// Select All / Clear All for Brand
 $(document).on('click', '#selectAllBrand', function() {
     const $btn = $(this);
     const $checkboxes = $('.form-check-input[name="brandId"]');

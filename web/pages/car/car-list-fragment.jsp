@@ -9,9 +9,16 @@
             <div class="car-wrap rounded ftco-animate h-100 w-100">
                 <div class="img rounded d-flex align-items-end"
                     style="background-image: url('${pageContext.request.contextPath}${car.mainImageUrl}'); position: relative; height: 220px; background-size: cover; background-position: center;">
-                    <button class="favorite-btn" type="button" title="Yêu thích">
-                        <i class="bi bi-heart"></i>
-                    </button>
+                    <c:set var="isFavorite" value="${favoriteCarIds.contains(car.carId.toString())}" />
+                    <form method="post" action="${pageContext.request.contextPath}/user/favorite-car" 
+                          style="position: absolute; top: 10px; right: 10px;"
+                          enctype="application/x-www-form-urlencoded">
+                        <input type="hidden" name="action" value="${isFavorite ? 'remove' : 'add'}">
+                        <input type="hidden" name="carId" value="${car.carId}">
+                        <button class="favorite-btn" type="submit" title="${isFavorite ? 'Bỏ yêu thích' : 'Yêu thích'}">
+                            <i class="bi ${isFavorite ? 'bi-heart-fill text-success' : 'bi-heart'}"></i>
+                        </button>
+                    </form>
                 </div>
                 <div class="text p-3">
                     <div class="car-title-row d-flex align-items-center justify-content-between mb-2">
