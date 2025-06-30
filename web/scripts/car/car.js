@@ -82,11 +82,17 @@ document.addEventListener('DOMContentLoaded', function() {
         const maxPrice = document.querySelector('input[name="maxPrice"]');
         const minYear = document.querySelector('input[name="minYear"]');
         const maxYear = document.querySelector('input[name="maxYear"]');
+        const minSeats = document.querySelector('input[name="minSeats"]');
+        const maxSeats = document.querySelector('input[name="maxSeats"]');
+        const minOdometer = document.querySelector('input[name="minOdometer"]');
+        const maxOdometer = document.querySelector('input[name="maxOdometer"]');
+        const minDistance = document.querySelector('input[name="minDistance"]');
+        const maxDistance = document.querySelector('input[name="maxDistance"]');
         
         if (minPrice && minPrice.value) {
             const field = document.createElement('input');
             field.type = 'hidden';
-            field.name = 'minPrice';
+            field.name = 'minPricePerHour';
             field.value = minPrice.value;
             form.appendChild(field);
         }
@@ -94,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (maxPrice && maxPrice.value) {
             const field = document.createElement('input');
             field.type = 'hidden';
-            field.name = 'maxPrice';
+            field.name = 'maxPricePerHour';
             field.value = maxPrice.value;
             form.appendChild(field);
         }
@@ -112,6 +118,54 @@ document.addEventListener('DOMContentLoaded', function() {
             field.type = 'hidden';
             field.name = 'maxYear';
             field.value = maxYear.value;
+            form.appendChild(field);
+        }
+        
+        if (minSeats && minSeats.value) {
+            const field = document.createElement('input');
+            field.type = 'hidden';
+            field.name = 'minSeats';
+            field.value = minSeats.value;
+            form.appendChild(field);
+        }
+        
+        if (maxSeats && maxSeats.value) {
+            const field = document.createElement('input');
+            field.type = 'hidden';
+            field.name = 'maxSeats';
+            field.value = maxSeats.value;
+            form.appendChild(field);
+        }
+        
+        if (minOdometer && minOdometer.value) {
+            const field = document.createElement('input');
+            field.type = 'hidden';
+            field.name = 'minOdometer';
+            field.value = minOdometer.value;
+            form.appendChild(field);
+        }
+        
+        if (maxOdometer && maxOdometer.value) {
+            const field = document.createElement('input');
+            field.type = 'hidden';
+            field.name = 'maxOdometer';
+            field.value = maxOdometer.value;
+            form.appendChild(field);
+        }
+        
+        if (minDistance && minDistance.value) {
+            const field = document.createElement('input');
+            field.type = 'hidden';
+            field.name = 'minDistance';
+            field.value = minDistance.value;
+            form.appendChild(field);
+        }
+        
+        if (maxDistance && maxDistance.value) {
+            const field = document.createElement('input');
+            field.type = 'hidden';
+            field.name = 'maxDistance';
+            field.value = maxDistance.value;
             form.appendChild(field);
         }
         
@@ -207,6 +261,9 @@ document.addEventListener('DOMContentLoaded', function() {
             checkboxes.forEach(checkbox => {
                 originalCheckboxStates[checkbox.value] = checkbox.checked;
             });
+            
+            // Khi mở modal
+            document.body.classList.add('modal-open');
         });
         
         // Khi modal đóng mà không apply
@@ -223,6 +280,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
             }
+            
+            // Khi đóng modal
+            document.body.classList.remove('modal-open');
         });
         
         // Xử lý nút Cancel
@@ -337,6 +397,9 @@ document.addEventListener('DOMContentLoaded', function() {
             checkboxes.forEach(checkbox => {
                 originalCategoryCheckboxStates[checkbox.value] = checkbox.checked;
             });
+            
+            // Khi mở modal
+            document.body.classList.add('modal-open');
         });
         
         // Khi modal đóng mà không apply
@@ -353,6 +416,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
             }
+            
+            // Khi đóng modal
+            document.body.classList.remove('modal-open');
         });
         
         // Xử lý nút Cancel
@@ -450,6 +516,18 @@ document.addEventListener('DOMContentLoaded', function() {
         updateCategorySelectAllButtonText();
     }
     
+    // =========================== ADVANCED FILTER MODAL ===========================
+    // Xử lý modal Advanced Filter
+    const advancedFilterModal = document.getElementById('advancedFilterModal');
+    if (advancedFilterModal) {
+        advancedFilterModal.addEventListener('show.bs.modal', function() {
+            document.body.classList.add('modal-open');
+        });
+        advancedFilterModal.addEventListener('hidden.bs.modal', function() {
+            document.body.classList.remove('modal-open');
+        });
+    }
+    
     console.log('Car page JavaScript initialized successfully');
 });
 
@@ -507,3 +585,24 @@ window.addEventListener('DOMContentLoaded', function() {
         'minPricePerHourInput', 'maxPricePerHourInput', 'K'
     );
 });
+
+// Giảm z-index nav bar khi mở modal, trả lại khi đóng modal
+(function() {
+    document.addEventListener('DOMContentLoaded', function() {
+        var modals = document.querySelectorAll('.modal');
+        var navbar = document.querySelector('.ftco-navbar-light');
+        var originalZ = navbar ? navbar.style.zIndex : '';
+        modals.forEach(function(modal) {
+            modal.addEventListener('show.bs.modal', function() {
+                if (navbar) {
+                    navbar.style.zIndex = '100'; // nhỏ hơn modal
+                }
+            });
+            modal.addEventListener('hidden.bs.modal', function() {
+                if (navbar) {
+                    navbar.style.zIndex = originalZ; // trả lại như cũ
+                }
+            });
+        });
+    });
+})();

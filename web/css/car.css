@@ -18,6 +18,26 @@ body, #filterForm, .car-wrap, .card {
     padding-top: 0 !important;
 }
 
+html, body {
+    height: 100%;
+    min-height: 100%;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+.ftco-section.bg-light {
+    flex: 1 0 auto;
+}
+footer, .site-footer, #footer {
+    flex-shrink: 0;
+}
+
+.ftco-footer{
+    padding: 5em !important;
+}
+
 /* =========================== FILTER BAR =========================== */
 .filter-bar {
     background: none !important;
@@ -1317,3 +1337,86 @@ body, #filterForm, .car-wrap, .card {
 #advancedFilterModal .range-track {
     background: #22c55e !important;
 }
+
+#advancedFilterModal .modal-content {
+    max-width: 800px;         /* tăng chiều rộng modal */
+    width: 100%;
+    max-height: 90vh;         /* không vượt quá 90% chiều cao màn hình */
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+#advancedFilterModal .modal-header {
+    position: sticky;
+    top: 0;
+    background: #fff;
+    z-index: 10;
+    border-radius: 20px 20px 0 0;
+}
+
+#advancedFilterModal .modal-body {
+    overflow-y: auto;
+    flex: 1 1 auto;
+    min-height: 0;
+    background: #fff;
+}
+
+#advancedFilterModal .modal-footer {
+    position: sticky;
+    bottom: 0;
+    background: #fff;
+    z-index: 10;
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.03);
+}
+
+#advancedFilterModal {
+    /* align-items: center; */
+    /* justify-content: center; */
+    position: fixed;
+    inset: 0;
+    z-index: 1050;
+    background: rgba(0,0,0,0.18);
+}
+#advancedFilterModal.show {
+    /* display: flex; */
+    align-items: center;
+    justify-content: center;
+}
+
+#advancedFilterModal .modal-dialog {
+    display: flex;
+    align-items: center;
+}
+
+#advancedFilterModal .modal-content {
+    margin: auto;
+}
+
+body.modal-open {
+    overflow: hidden !important;
+    position: fixed !important;
+    width: 100vw !important;
+}
+body.modal-open::-webkit-scrollbar {
+    display: none !important; /* Chrome, Safari */
+}
+
+#advancedFilterModal .filter-radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    align-items: center;
+}
+
+#advancedFilterModal .filter-radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    align-items: center;
+}
+
+

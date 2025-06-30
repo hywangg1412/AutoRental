@@ -124,168 +124,184 @@
                 </form>
 
                 <!-- MODAL BỘ LỌC NÂNG CAO (khoảng giá, năm sản xuất) -->
-                <div class="modal fade" id="advancedFilterModal" tabindex="-1" aria-labelledby="advancedFilterModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
+                <div id="advancedFilterModal" class="modal fade" tabindex="-1">
+                    <div class="modal-dialog">
                         <div class="modal-content">
-                            <form method="get" action="${pageContext.request.contextPath}/pages/car">
-                                <div class="modal-header border-0 pb-0">
-                                    <h2 class="modal-title fw-bold fs-2" id="advancedFilterModalLabel">Advanced Filter</h2>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body pt-2 pb-0">
-                                    <!-- Sort -->
-                                    <div class="mb-4">
-                                        <label class="fw-bold mb-2 d-block">Sort</label>
-                                        <select class="form-select w-100" name="sort">
-                                            <option value="">Optimal</option>
-                                            <option value="priceAsc" ${param.sort=='priceAsc' ? 'selected' : '' }>Price ↑</option>
-                                            <option value="priceDesc" ${param.sort=='priceDesc' ? 'selected' : '' }>Price ↓</option>
-                                            <option value="nameAsc" ${param.sort=='nameAsc' ? 'selected' : '' }>A-Z</option>
-                                            <option value="nameDesc" ${param.sort=='nameDesc' ? 'selected' : '' }>Z-A</option>
-                                            <option value="yearDesc" ${param.sort=='yearDesc' ? 'selected' : '' }>Year ↓</option>
-                                            <option value="yearAsc" ${param.sort=='yearAsc' ? 'selected' : '' }>Year ↑</option>
-                                        </select>
-                                    </div>
-                                    <!-- Price (VND/hour) -->
-                                    <div class="mb-4">
-                                        <label class="fw-bold mb-2 d-block">Price (VND/hour)</label>
-                                        <div class="dual-range-container">
-                                            <div class="range-background"></div>
-                                            <div class="range-track" id="priceTrack"></div>
-                                            <input type="range" class="dual-range-slider" min="0" max="500" step="10" 
-                                                   id="priceHourMinSlider" value="${param.minPricePerHour != null ? param.minPricePerHour : 0}">
-                                            <input type="range" class="dual-range-slider" min="0" max="500" step="10" 
-                                                   id="priceHourMaxSlider" value="${param.maxPricePerHour != null ? param.maxPricePerHour : 500}">
+                            <div class="modal-header">
+                                <h2 class="modal-title fs-4" id="advancedFilterModalLabel">Advanced Filter</h2>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="get" action="${pageContext.request.contextPath}/pages/car">
+                                    <div class="modal-body pt-2 pb-0">
+                                        <!-- Sort -->
+                                        <div class="mb-4">
+                                            <label class="fw-medium mb-2 d-block">Sort</label>
+                                            <select class="form-select w-100" name="sort">
+                                                <option value="">Optimal</option>
+                                                <option value="priceAsc" ${param.sort=='priceAsc' ? 'selected' : '' }>Price ↑</option>
+                                                <option value="priceDesc" ${param.sort=='priceDesc' ? 'selected' : '' }>Price ↓</option>
+                                                <option value="nameAsc" ${param.sort=='nameAsc' ? 'selected' : '' }>A-Z</option>
+                                                <option value="nameDesc" ${param.sort=='nameDesc' ? 'selected' : '' }>Z-A</option>
+                                                <option value="yearDesc" ${param.sort=='yearDesc' ? 'selected' : '' }>Year ↓</option>
+                                                <option value="yearAsc" ${param.sort=='yearAsc' ? 'selected' : '' }>Year ↑</option>
+                                            </select>
                                         </div>
-                                        <!-- <div class="d-flex justify-content-between mt-2">
-                                            <span id="priceHourMinValue">0K</span>
-                                            <span id="priceHourMaxValue">500K</span>
-                                        </div> -->
-                                        <div class="d-flex justify-content-start mt-2">
-                                            <div id="priceHourRangeDisplay" style="border:1px solid #e0e0e0; border-radius:8px; padding:4px 16px; background:#fff; font-weight:500; min-width:120px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.03);">
-                                                0K - 500K
+                                        <!-- Price (VND/hour) -->
+                                        <div class="mb-4">
+                                            <label class="fw-medium mb-2 d-block">Price (VND/hour)</label>
+                                            <div class="dual-range-container">
+                                                <div class="range-background"></div>
+                                                <div class="range-track" id="priceTrack"></div>
+                                                <input type="range" class="dual-range-slider" min="0" max="500" step="10" 
+                                                       id="priceHourMinSlider" value="${param.minPricePerHour != null ? param.minPricePerHour : 0}">
+                                                <input type="range" class="dual-range-slider" min="0" max="500" step="10" 
+                                                       id="priceHourMaxSlider" value="${param.maxPricePerHour != null ? param.maxPricePerHour : 500}">
                                             </div>
+                                            <div class="d-flex justify-content-start mt-2">
+                                                <div id="priceHourRangeDisplay" style="border:1px solid #e0e0e0; border-radius:8px; padding:4px 16px; background:#fff; font-weight:500; min-width:120px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.03);">
+                                                    0K - 500K
+                                                </div>
+                                            </div>
+                                            <input type="hidden" name="minPricePerHour" id="minPricePerHourInput" value="${param.minPricePerHour}">
+                                            <input type="hidden" name="maxPricePerHour" id="maxPricePerHourInput" value="${param.maxPricePerHour}">
                                         </div>
-                                        <input type="hidden" name="minPricePerHour" id="minPricePerHourInput" value="${param.minPricePerHour}">
-                                        <input type="hidden" name="maxPricePerHour" id="maxPricePerHourInput" value="${param.maxPricePerHour}">
-                                    </div>
-                                    <!-- Transmission -->
-                                    <div class="mb-4">
-                                        <label class="fw-bold mb-2 d-block">Transmission</label>
-                                        <div class="filter-radio-group">
-                                            <label class="form-check-label d-flex align-items-center gap-2">
-                                                <input type="radio" class="form-check-input" name="transmissionTypeId" value="" <c:if test="${empty paramValues.transmissionTypeId}">checked</c:if>> All
-                                            </label>
-                                            <c:forEach var="trans" items="${transmissionTypeList}">
+                                        <!-- Transmission -->
+                                        <div class="mb-4">
+                                            <label class="fw-medium mb-2 d-block">Transmission</label>
+                                            <div class="filter-radio-group">
                                                 <label class="form-check-label d-flex align-items-center gap-2">
-                                                    <input type="radio" class="form-check-input" name="transmissionTypeId" value="${trans.transmissionTypeId}" <c:if test="${paramValues.transmissionTypeId != null && fn:contains(paramValues.transmissionTypeId, trans.transmissionTypeId)}">checked</c:if>> ${trans.transmissionName}
+                                                    <input type="radio" class="form-check-input" name="transmissionTypeId" value=""
+                                                        <c:if test="${empty paramValues.transmissionTypeId 
+                                                            || (paramValues.transmissionTypeId.length == 1 && paramValues.transmissionTypeId[0] == '')}">
+                                                            checked
+                                                        </c:if>
+                                                    > All
                                                 </label>
-                                            </c:forEach>
-                                        </div>
-                                    </div>
-                                    <!-- Mileage -->
-                                    <div class="mb-4">
-                                        <label class="fw-bold mb-2 d-block">Mileage (km)</label>
-                                        <div class="dual-range-container">
-                                            <div class="range-background"></div>
-                                            <div class="range-track" id="mileageTrack"></div>
-                                            <input type="range" class="dual-range-slider" min="0" max="100000" step="1000" id="mileageMinSlider" value="${param.minOdometer != null ? param.minOdometer : 0}">
-                                            <input type="range" class="dual-range-slider" min="0" max="100000" step="1000" id="mileageMaxSlider" value="${param.maxOdometer != null ? param.maxOdometer : 100000}">
-                                        </div>
-                                        <div class="d-flex justify-content-start mt-2">
-                                            <div id="mileageRangeDisplay" style="border:1px solid #e0e0e0; border-radius:8px; padding:4px 16px; background:#fff; font-weight:500; min-width:140px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.03);">
-                                                0 - 100,000 km
+                                                <c:forEach var="trans" items="${transmissionTypeList}">
+                                                    <label class="form-check-label d-flex align-items-center gap-2">
+                                                        <input type="radio" class="form-check-input" name="transmissionTypeId" value="${trans.transmissionTypeId}"
+                                                            <c:if test="${paramValues.transmissionTypeId != null 
+                                                                && fn:indexOf(paramValues.transmissionTypeId, trans.transmissionTypeId) != -1
+                                                                && !(paramValues.transmissionTypeId.length == 1 && paramValues.transmissionTypeId[0] == '')}">
+                                                            checked
+                                                        </c:if>
+                                                    > ${trans.transmissionName}
+                                                    </label>
+                                                </c:forEach>
                                             </div>
                                         </div>
-                                        <input type="hidden" name="minOdometer" id="minOdometerInput" value="${param.minOdometer}">
-                                        <input type="hidden" name="maxOdometer" id="maxOdometerInput" value="${param.maxOdometer}">
-                                    </div>
-                                    <!-- Distance -->
-                                    <div class="mb-4">
-                                        <label class="fw-bold mb-2 d-block">Distance (km)</label>
-                                        <div class="dual-range-container">
-                                            <div class="range-background"></div>
-                                            <div class="range-track" id="distanceTrack"></div>
-                                            <input type="range" class="dual-range-slider" min="0" max="100" step="1" id="distanceMinSlider" value="${param.minDistance != null ? param.minDistance : 0}">
-                                            <input type="range" class="dual-range-slider" min="0" max="100" step="1" id="distanceMaxSlider" value="${param.maxDistance != null ? param.maxDistance : 100}">
-                                        </div>
-                                        <div class="d-flex justify-content-start mt-2">
-                                            <div id="distanceRangeDisplay" style="border:1px solid #e0e0e0; border-radius:8px; padding:4px 16px; background:#fff; font-weight:500; min-width:100px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.03);">
-                                                0 - 100 km
+                                        <!-- Mileage -->
+                                        <div class="mb-4">
+                                            <label class="fw-medium mb-2 d-block">Mileage (km)</label>
+                                            <div class="dual-range-container">
+                                                <div class="range-background"></div>
+                                                <div class="range-track" id="mileageTrack"></div>
+                                                <input type="range" class="dual-range-slider" min="0" max="100000" step="1000" id="mileageMinSlider" value="${param.minOdometer != null ? param.minOdometer : 0}">
+                                                <input type="range" class="dual-range-slider" min="0" max="100000" step="1000" id="mileageMaxSlider" value="${param.maxOdometer != null ? param.maxOdometer : 100000}">
                                             </div>
-                                        </div>
-                                        <input type="hidden" name="minDistance" id="minDistanceInput" value="${param.minDistance}">
-                                        <input type="hidden" name="maxDistance" id="maxDistanceInput" value="${param.maxDistance}">
-                                    </div>
-                                    <!-- Seats -->
-                                    <div class="mb-4">
-                                        <label class="fw-bold mb-2 d-block">Seats</label>
-                                        <div class="dual-range-container">
-                                            <div class="range-background"></div>
-                                            <div class="range-track" id="seatsTrack"></div>
-                                            <input type="range" class="dual-range-slider" min="2" max="16" step="1" id="seatsMinSlider" value="${param.minSeats != null ? param.minSeats : 2}">
-                                            <input type="range" class="dual-range-slider" min="2" max="16" step="1" id="seatsMaxSlider" value="${param.maxSeats != null ? param.maxSeats : 16}">
-                                        </div>
-                                        <div class="d-flex justify-content-start mt-2">
-                                            <div id="seatsRangeDisplay" style="border:1px solid #e0e0e0; border-radius:8px; padding:4px 16px; background:#fff; font-weight:500; min-width:80px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.03);">
-                                                2 - 16 seats
+                                            <div class="d-flex justify-content-start mt-2">
+                                                <div id="mileageRangeDisplay" style="border:1px solid #e0e0e0; border-radius:8px; padding:4px 16px; background:#fff; font-weight:500; min-width:140px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.03);">
+                                                    0 - 100,000 km
+                                                </div>
                                             </div>
+                                            <input type="hidden" name="minOdometer" id="minOdometerInput" value="${param.minOdometer}">
+                                            <input type="hidden" name="maxOdometer" id="maxOdometerInput" value="${param.maxOdometer}">
                                         </div>
-                                        <input type="hidden" name="minSeats" id="minSeatsInput" value="${param.minSeats}">
-                                        <input type="hidden" name="maxSeats" id="maxSeatsInput" value="${param.maxSeats}">
-                                    </div>
-                                    <!-- Year -->
-                                    <div class="mb-4">
-                                        <label class="fw-bold mb-2 d-block">Year</label>
-                                        <div class="dual-range-container">
-                                            <div class="range-background"></div>
-                                            <div class="range-track" id="yearTrack"></div>
-                                            <input type="range" class="dual-range-slider" min="2000" max="2024" step="1" id="yearMinSlider" value="${param.minYear != null ? param.minYear : 2000}">
-                                            <input type="range" class="dual-range-slider" min="2000" max="2024" step="1" id="yearMaxSlider" value="${param.maxYear != null ? param.maxYear : 2024}">
-                                        </div>
-                                        <div class="d-flex justify-content-start mt-2">
-                                            <div id="yearRangeDisplay" style="border:1px solid #e0e0e0; border-radius:8px; padding:4px 16px; background:#fff; font-weight:500; min-width:100px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.03);">
-                                                2000 - 2024
+                                        <!-- Distance -->
+                                        <div class="mb-4">
+                                            <label class="fw-medium mb-2 d-block">Distance (km)</label>
+                                            <div class="dual-range-container">
+                                                <div class="range-background"></div>
+                                                <div class="range-track" id="distanceTrack"></div>
+                                                <input type="range" class="dual-range-slider" min="0" max="100" step="1" id="distanceMinSlider" value="${param.minDistance != null ? param.minDistance : 0}">
+                                                <input type="range" class="dual-range-slider" min="0" max="100" step="1" id="distanceMaxSlider" value="${param.maxDistance != null ? param.maxDistance : 100}">
                                             </div>
+                                            <div class="d-flex justify-content-start mt-2">
+                                                <div id="distanceRangeDisplay" style="border:1px solid #e0e0e0; border-radius:8px; padding:4px 16px; background:#fff; font-weight:500; min-width:100px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.03);">
+                                                    0 - 100 km
+                                                </div>
+                                            </div>
+                                            <input type="hidden" name="minDistance" id="minDistanceInput" value="${param.minDistance}">
+                                            <input type="hidden" name="maxDistance" id="maxDistanceInput" value="${param.maxDistance}">
                                         </div>
-                                        <input type="hidden" name="minYear" id="minYearInput" value="${param.minYear}">
-                                        <input type="hidden" name="maxYear" id="maxYearInput" value="${param.maxYear}">
-                                    </div>
-                                    <!-- Fuel type radio -->
-                                    <div class="mb-4">
-                                        <label class="fw-bold mb-2 d-block">Fuel Type</label>
-                                        <div class="filter-radio-group">
-                                            <label class="form-check-label d-flex align-items-center gap-2">
-                                                <input type="radio" class="form-check-input" name="fuelTypeId" value="" <c:if test="${empty paramValues.fuelTypeId}">checked</c:if>> All
-                                            </label>
-                                            <c:forEach var="fuel" items="${fuelTypeList}">
+                                        <!-- Seats -->
+                                        <div class="mb-4">
+                                            <label class="fw-medium mb-2 d-block">Seats</label>
+                                            <div class="dual-range-container">
+                                                <div class="range-background"></div>
+                                                <div class="range-track" id="seatsTrack"></div>
+                                                <input type="range" class="dual-range-slider" min="2" max="16" step="1" id="seatsMinSlider" value="${param.minSeats != null ? param.minSeats : 2}">
+                                                <input type="range" class="dual-range-slider" min="2" max="16" step="1" id="seatsMaxSlider" value="${param.maxSeats != null ? param.maxSeats : 16}">
+                                            </div>
+                                            <div class="d-flex justify-content-start mt-2">
+                                                <div id="seatsRangeDisplay" style="border:1px solid #e0e0e0; border-radius:8px; padding:4px 16px; background:#fff; font-weight:500; min-width:80px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.03);">
+                                                    2 - 16 seats
+                                                </div>
+                                            </div>
+                                            <input type="hidden" name="minSeats" id="minSeatsInput" value="${param.minSeats}">
+                                            <input type="hidden" name="maxSeats" id="maxSeatsInput" value="${param.maxSeats}">
+                                        </div>
+                                        <!-- Year -->
+                                        <div class="mb-4">
+                                            <label class="fw-medium mb-2 d-block">Year</label>
+                                            <div class="dual-range-container">
+                                                <div class="range-background"></div>
+                                                <div class="range-track" id="yearTrack"></div>
+                                                <input type="range" class="dual-range-slider" min="2000" max="2024" step="1" id="yearMinSlider" value="${param.minYear != null ? param.minYear : 2000}">
+                                                <input type="range" class="dual-range-slider" min="2000" max="2024" step="1" id="yearMaxSlider" value="${param.maxYear != null ? param.maxYear : 2024}">
+                                            </div>
+                                            <div class="d-flex justify-content-start mt-2">
+                                                <div id="yearRangeDisplay" style="border:1px solid #e0e0e0; border-radius:8px; padding:4px 16px; background:#fff; font-weight:500; min-width:100px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.03);">
+                                                    2000 - 2024
+                                                </div>
+                                            </div>
+                                            <input type="hidden" name="minYear" id="minYearInput" value="${param.minYear}">
+                                            <input type="hidden" name="maxYear" id="maxYearInput" value="${param.maxYear}">
+                                        </div>
+                                        <!-- Fuel type radio -->
+                                        <div class="mb-4">
+                                            <label class="fw-medium mb-2 d-block">Fuel Type</label>
+                                            <div class="filter-radio-group">
                                                 <label class="form-check-label d-flex align-items-center gap-2">
-                                                    <input type="radio" class="form-check-input" name="fuelTypeId" value="${fuel.fuelTypeId}" <c:if test="${paramValues.fuelTypeId != null && fn:contains(paramValues.fuelTypeId, fuel.fuelTypeId)}">checked</c:if>> ${fuel.fuelName}
+                                                    <input type="radio" class="form-check-input" name="fuelTypeId" value=""
+                                                        <c:choose>
+                                                            <c:when test="${empty paramValues.fuelTypeId}">checked</c:when>
+                                                            <c:when test="${paramValues.fuelTypeId[0] == ''}">checked</c:when>
+                                                        </c:choose>
+                                                    > All
                                                 </label>
-                                            </c:forEach>
+                                                <c:forEach var="fuel" items="${fuelTypeList}">
+                                                    <label class="form-check-label d-flex align-items-center gap-2">
+                                                        <input type="radio" class="form-check-input" name="fuelTypeId" value="${fuel.fuelTypeId}"
+                                                            <c:if test="${paramValues.fuelTypeId != null && fn:contains(paramValues.fuelTypeId, fuel.fuelTypeId)}">checked</c:if>
+                                                        > ${fuel.fuelName}
+                                                    </label>
+                                                </c:forEach>
+                                            </div>
+                                        </div>
+                                        <!-- Feature grid -->
+                                        <div class="mb-2">
+                                            <label class="fw-medium mb-2 d-block">Features</label>
+                                            <div class="feature-checkbox-grid">
+                                                <c:forEach var="feature" items="${featureList}">
+                                                    <label class="form-check-label">
+                                                        <input type="checkbox" class="form-check-input" name="featureId"
+                                                               value="${feature.featureId}" <c:if
+                                                                   test="${paramValues.featureId != null && fn:contains(paramValues.featureId, feature.featureId)}">checked
+                                                                   </c:if>>
+                                                        <span>${feature.featureName}</span>
+                                                    </label>
+                                                </c:forEach>
+                                            </div>
                                         </div>
                                     </div>
-                                    <!-- Feature grid -->
-                                    <div class="mb-2">
-                                        <label class="fw-bold mb-2 d-block">Features</label>
-                                        <div class="feature-checkbox-grid">
-                                            <c:forEach var="feature" items="${featureList}">
-                                                <label class="form-check-label">
-                                                    <input type="checkbox" class="form-check-input" name="featureId"
-                                                           value="${feature.featureId}" <c:if
-                                                               test="${paramValues.featureId != null && fn:contains(paramValues.featureId, feature.featureId)}">checked
-                                                               </c:if>>
-                                                    <span>${feature.featureName}</span>
-                                                </label>
-                                            </c:forEach>
-                                        </div>
+                                    <div class="modal-footer border-0 pt-4 pb-4 d-flex flex-column flex-md-row justify-content-between gap-3">
+                                        <button type="reset" class="btn btn-outline-secondary px-4 py-2 fw-medium w-100">Reset Filter</button>
+                                        <button type="submit" class="btn btn-primary px-5 py-2 fw-medium w-100">Apply Filter</button>
                                     </div>
-                                </div>
-                                <div class="modal-footer border-0 pt-4 pb-4 d-flex flex-column flex-md-row justify-content-between gap-3">
-                                    <button type="reset" class="btn btn-outline-secondary px-4 py-2 fw-bold w-100">Reset Filter</button>
-                                    <button type="submit" class="btn btn-success px-5 py-2 fw-bold w-100">Apply Filter</button>
-                                </div>
-                            </form>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
