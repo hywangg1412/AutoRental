@@ -82,11 +82,17 @@ document.addEventListener('DOMContentLoaded', function() {
         const maxPrice = document.querySelector('input[name="maxPrice"]');
         const minYear = document.querySelector('input[name="minYear"]');
         const maxYear = document.querySelector('input[name="maxYear"]');
+        const minSeats = document.querySelector('input[name="minSeats"]');
+        const maxSeats = document.querySelector('input[name="maxSeats"]');
+        const minOdometer = document.querySelector('input[name="minOdometer"]');
+        const maxOdometer = document.querySelector('input[name="maxOdometer"]');
+        const minDistance = document.querySelector('input[name="minDistance"]');
+        const maxDistance = document.querySelector('input[name="maxDistance"]');
         
         if (minPrice && minPrice.value) {
             const field = document.createElement('input');
             field.type = 'hidden';
-            field.name = 'minPrice';
+            field.name = 'minPricePerHour';
             field.value = minPrice.value;
             form.appendChild(field);
         }
@@ -94,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (maxPrice && maxPrice.value) {
             const field = document.createElement('input');
             field.type = 'hidden';
-            field.name = 'maxPrice';
+            field.name = 'maxPricePerHour';
             field.value = maxPrice.value;
             form.appendChild(field);
         }
@@ -112,6 +118,54 @@ document.addEventListener('DOMContentLoaded', function() {
             field.type = 'hidden';
             field.name = 'maxYear';
             field.value = maxYear.value;
+            form.appendChild(field);
+        }
+        
+        if (minSeats && minSeats.value) {
+            const field = document.createElement('input');
+            field.type = 'hidden';
+            field.name = 'minSeats';
+            field.value = minSeats.value;
+            form.appendChild(field);
+        }
+        
+        if (maxSeats && maxSeats.value) {
+            const field = document.createElement('input');
+            field.type = 'hidden';
+            field.name = 'maxSeats';
+            field.value = maxSeats.value;
+            form.appendChild(field);
+        }
+        
+        if (minOdometer && minOdometer.value) {
+            const field = document.createElement('input');
+            field.type = 'hidden';
+            field.name = 'minOdometer';
+            field.value = minOdometer.value;
+            form.appendChild(field);
+        }
+        
+        if (maxOdometer && maxOdometer.value) {
+            const field = document.createElement('input');
+            field.type = 'hidden';
+            field.name = 'maxOdometer';
+            field.value = maxOdometer.value;
+            form.appendChild(field);
+        }
+        
+        if (minDistance && minDistance.value) {
+            const field = document.createElement('input');
+            field.type = 'hidden';
+            field.name = 'minDistance';
+            field.value = minDistance.value;
+            form.appendChild(field);
+        }
+        
+        if (maxDistance && maxDistance.value) {
+            const field = document.createElement('input');
+            field.type = 'hidden';
+            field.name = 'maxDistance';
+            field.value = maxDistance.value;
             form.appendChild(field);
         }
         
@@ -195,129 +249,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Xử lý modal Brand filter
     const brandFilterModal = document.getElementById('brandFilterModal');
     if (brandFilterModal) {
-        // Lưu trạng thái checkbox khi modal mở
-        let originalCheckboxStates = {};
-        
         // Khi modal mở
         brandFilterModal.addEventListener('show.bs.modal', function() {
-            console.log('Brand filter modal opening');
-            
-            // Lưu trạng thái hiện tại của các checkbox
-            const checkboxes = brandFilterModal.querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach(checkbox => {
-                originalCheckboxStates[checkbox.value] = checkbox.checked;
-            });
+            document.body.classList.add('modal-open');
         });
-        
-        // Khi modal đóng mà không apply
-        brandFilterModal.addEventListener('hidden.bs.modal', function(event) {
-            // Nếu modal đóng do click Cancel hoặc click outside
-            if (!event.target.classList.contains('btn-primary')) {
-                console.log('Brand filter modal closed without applying');
-                
-                // Khôi phục trạng thái checkbox ban đầu
-                const checkboxes = brandFilterModal.querySelectorAll('input[type="checkbox"]');
-                checkboxes.forEach(checkbox => {
-                    if (originalCheckboxStates.hasOwnProperty(checkbox.value)) {
-                        checkbox.checked = originalCheckboxStates[checkbox.value];
-                    }
-                });
-            }
+        // Khi modal đóng
+        brandFilterModal.addEventListener('hidden.bs.modal', function() {
+            document.body.classList.remove('modal-open');
         });
-        
-        // Xử lý nút Cancel
-        const cancelBtn = brandFilterModal.querySelector('.btn-secondary');
-        if (cancelBtn) {
-            cancelBtn.addEventListener('click', function() {
-                console.log('Cancel button clicked');
-                
-                // Khôi phục trạng thái checkbox ban đầu
-                const checkboxes = brandFilterModal.querySelectorAll('input[type="checkbox"]');
-                checkboxes.forEach(checkbox => {
-                    if (originalCheckboxStates.hasOwnProperty(checkbox.value)) {
-                        checkbox.checked = originalCheckboxStates[checkbox.value];
-                    }
-                });
-            });
-        }
-        
-        // Xử lý hover effect cho checkbox labels
-        const checkboxLabels = brandFilterModal.querySelectorAll('.form-check-label');
-        checkboxLabels.forEach(label => {
-            label.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-2px)';
-                this.style.boxShadow = '0 4px 12px rgba(34, 197, 94, 0.15)';
-            });
-            
-            label.addEventListener('mouseleave', function() {
-                this.style.transform = '';
-                this.style.boxShadow = '';
-            });
-        });
-        
-        // Xử lý select all/none functionality (tùy chọn)
-        const selectAllBtn = document.createElement('button');
-        selectAllBtn.type = 'button';
-        selectAllBtn.className = 'btn btn-outline-secondary btn-sm mb-3';
-        selectAllBtn.innerHTML = '<i class="bi bi-check-all me-1"></i>Select All';
-        
-        const selectNoneBtn = document.createElement('button');
-        selectNoneBtn.type = 'button';
-        selectNoneBtn.className = 'btn btn-outline-secondary btn-sm mb-3 ms-2';
-        selectNoneBtn.innerHTML = '<i class="bi bi-x-circle me-1"></i>Clear All';
-        
-        // Thêm buttons vào modal header
-        const modalBody = brandFilterModal.querySelector('.modal-body');
-        if (modalBody) {
-            const buttonContainer = document.createElement('div');
-            buttonContainer.className = 'd-flex justify-content-between align-items-center mb-3';
-            buttonContainer.appendChild(selectAllBtn);
-            buttonContainer.appendChild(selectNoneBtn);
-            
-            // Insert buttons vào đầu modal body
-            modalBody.insertBefore(buttonContainer, modalBody.firstChild);
-        }
-        
-        // Xử lý select all
-        selectAllBtn.addEventListener('click', function() {
-            const checkboxes = brandFilterModal.querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = true;
-            });
-            updateSelectAllButtonText();
-        });
-        
-        // Xử lý select none
-        selectNoneBtn.addEventListener('click', function() {
-            const checkboxes = brandFilterModal.querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = false;
-            });
-            updateSelectAllButtonText();
-        });
-        
-        // Cập nhật text của select all button
-        function updateSelectAllButtonText() {
-            const checkboxes = brandFilterModal.querySelectorAll('input[type="checkbox"]');
-            const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
-            
-            if (checkedCount === 0) {
-                selectAllBtn.innerHTML = '<i class="bi bi-check-all me-1"></i>Select All';
-            } else if (checkedCount === checkboxes.length) {
-                selectAllBtn.innerHTML = '<i class="bi bi-check-all me-1"></i>All Selected';
-            } else {
-                selectAllBtn.innerHTML = `<i class="bi bi-check-all me-1"></i>${checkedCount} Selected`;
-            }
-        }
-        
-        // Cập nhật text khi checkbox thay đổi
-        const checkboxes = brandFilterModal.querySelectorAll('input[type="checkbox"]');
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', updateSelectAllButtonText);
-        });
-        
-        // Khởi tạo text ban đầu
-        updateSelectAllButtonText();
     }
     
     // =========================== CATEGORY FILTER MODAL ===========================
@@ -325,129 +264,24 @@ document.addEventListener('DOMContentLoaded', function() {
     // Xử lý modal Category filter
     const categoryFilterModal = document.getElementById('categoryFilterModal');
     if (categoryFilterModal) {
-        // Lưu trạng thái checkbox khi modal mở
-        let originalCategoryCheckboxStates = {};
-        
-        // Khi modal mở
         categoryFilterModal.addEventListener('show.bs.modal', function() {
-            console.log('Category filter modal opening');
-            
-            // Lưu trạng thái hiện tại của các checkbox
-            const checkboxes = categoryFilterModal.querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach(checkbox => {
-                originalCategoryCheckboxStates[checkbox.value] = checkbox.checked;
-            });
+            document.body.classList.add('modal-open');
         });
-        
-        // Khi modal đóng mà không apply
-        categoryFilterModal.addEventListener('hidden.bs.modal', function(event) {
-            // Nếu modal đóng do click Cancel hoặc click outside
-            if (!event.target.classList.contains('btn-primary')) {
-                console.log('Category filter modal closed without applying');
-                
-                // Khôi phục trạng thái checkbox ban đầu
-                const checkboxes = categoryFilterModal.querySelectorAll('input[type="checkbox"]');
-                checkboxes.forEach(checkbox => {
-                    if (originalCategoryCheckboxStates.hasOwnProperty(checkbox.value)) {
-                        checkbox.checked = originalCategoryCheckboxStates[checkbox.value];
-                    }
-                });
-            }
+        categoryFilterModal.addEventListener('hidden.bs.modal', function() {
+            document.body.classList.remove('modal-open');
         });
-        
-        // Xử lý nút Cancel
-        const cancelBtn = categoryFilterModal.querySelector('.btn-secondary');
-        if (cancelBtn) {
-            cancelBtn.addEventListener('click', function() {
-                console.log('Category cancel button clicked');
-                
-                // Khôi phục trạng thái checkbox ban đầu
-                const checkboxes = categoryFilterModal.querySelectorAll('input[type="checkbox"]');
-                checkboxes.forEach(checkbox => {
-                    if (originalCategoryCheckboxStates.hasOwnProperty(checkbox.value)) {
-                        checkbox.checked = originalCategoryCheckboxStates[checkbox.value];
-                    }
-                });
-            });
-        }
-        
-        // Xử lý hover effect cho checkbox labels
-        const categoryCheckboxLabels = categoryFilterModal.querySelectorAll('.form-check-label');
-        categoryCheckboxLabels.forEach(label => {
-            label.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-2px)';
-                this.style.boxShadow = '0 4px 12px rgba(34, 197, 94, 0.15)';
-            });
-            
-            label.addEventListener('mouseleave', function() {
-                this.style.transform = '';
-                this.style.boxShadow = '';
-            });
+    }
+    
+    // =========================== ADVANCED FILTER MODAL ===========================
+    // Xử lý modal Advanced Filter
+    const advancedFilterModal = document.getElementById('advancedFilterModal');
+    if (advancedFilterModal) {
+        advancedFilterModal.addEventListener('show.bs.modal', function() {
+            document.body.classList.add('modal-open');
         });
-        
-        // Xử lý select all/none functionality
-        const categorySelectAllBtn = document.createElement('button');
-        categorySelectAllBtn.type = 'button';
-        categorySelectAllBtn.className = 'btn btn-outline-secondary btn-sm mb-3';
-        categorySelectAllBtn.innerHTML = '<i class="bi bi-check-all me-1"></i>Select All';
-        
-        const categorySelectNoneBtn = document.createElement('button');
-        categorySelectNoneBtn.type = 'button';
-        categorySelectNoneBtn.className = 'btn btn-outline-secondary btn-sm mb-3 ms-2';
-        categorySelectNoneBtn.innerHTML = '<i class="bi bi-x-circle me-1"></i>Clear All';
-        
-        // Thêm buttons vào modal header
-        const categoryModalBody = categoryFilterModal.querySelector('.modal-body');
-        if (categoryModalBody) {
-            const categoryButtonContainer = document.createElement('div');
-            categoryButtonContainer.className = 'd-flex justify-content-between align-items-center mb-3';
-            categoryButtonContainer.appendChild(categorySelectAllBtn);
-            categoryButtonContainer.appendChild(categorySelectNoneBtn);
-            
-            // Insert buttons vào đầu modal body
-            categoryModalBody.insertBefore(categoryButtonContainer, categoryModalBody.firstChild);
-        }
-        
-        // Xử lý select all
-        categorySelectAllBtn.addEventListener('click', function() {
-            const checkboxes = categoryFilterModal.querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = true;
-            });
-            updateCategorySelectAllButtonText();
+        advancedFilterModal.addEventListener('hidden.bs.modal', function() {
+            document.body.classList.remove('modal-open');
         });
-        
-        // Xử lý select none
-        categorySelectNoneBtn.addEventListener('click', function() {
-            const checkboxes = categoryFilterModal.querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = false;
-            });
-            updateCategorySelectAllButtonText();
-        });
-        
-        // Cập nhật text của select all button
-        function updateCategorySelectAllButtonText() {
-            const checkboxes = categoryFilterModal.querySelectorAll('input[type="checkbox"]');
-            const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
-            
-            if (checkedCount === 0) {
-                categorySelectAllBtn.innerHTML = '<i class="bi bi-check-all me-1"></i>Select All';
-            } else if (checkedCount === checkboxes.length) {
-                categorySelectAllBtn.innerHTML = '<i class="bi bi-check-all me-1"></i>All Selected';
-            } else {
-                categorySelectAllBtn.innerHTML = `<i class="bi bi-check-all me-1"></i>${checkedCount} Selected`;
-            }
-        }
-        
-        // Cập nhật text khi checkbox thay đổi
-        const categoryCheckboxes = categoryFilterModal.querySelectorAll('input[type="checkbox"]');
-        categoryCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', updateCategorySelectAllButtonText);
-        });
-        
-        // Khởi tạo text ban đầu
-        updateCategorySelectAllButtonText();
     }
     
     console.log('Car page JavaScript initialized successfully');
@@ -507,3 +341,148 @@ window.addEventListener('DOMContentLoaded', function() {
         'minPricePerHourInput', 'maxPricePerHourInput', 'K'
     );
 });
+
+// Giảm z-index nav bar khi mở modal, trả lại khi đóng modal
+(function() {
+    document.addEventListener('DOMContentLoaded', function() {
+        var modals = document.querySelectorAll('.modal');
+        var navbar = document.querySelector('.ftco-navbar-light');
+        var originalZ = navbar ? navbar.style.zIndex : '';
+        modals.forEach(function(modal) {
+            modal.addEventListener('show.bs.modal', function() {
+                if (navbar) {
+                    navbar.style.zIndex = '100'; // nhỏ hơn modal
+                }
+            });
+            modal.addEventListener('hidden.bs.modal', function() {
+                if (navbar) {
+                    navbar.style.zIndex = originalZ; // trả lại như cũ
+                }
+            });
+        });
+    });
+})();
+
+$(document).on('click', '#selectAllTransmission', function() {
+    const $btn = $(this);
+    const $checkboxes = $('.transmission-checkbox');
+    if ($checkboxes.filter(':checked').length === $checkboxes.length) return;
+    $checkboxes.prop('checked', true);
+    updateSelectAllBtn('transmission');
+});
+$(document).on('click', '#clearAllTransmission', function() {
+    $('.transmission-checkbox').prop('checked', false);
+    updateSelectAllBtn('transmission');
+});
+$(document).on('change', '.transmission-checkbox', function() {
+    updateSelectAllBtn('transmission');
+});
+
+// Fuel
+$(document).on('click', '#selectAllFuel', function() {
+    const $btn = $(this);
+    const $checkboxes = $('.fuel-checkbox');
+    if ($checkboxes.filter(':checked').length === $checkboxes.length) return;
+    $checkboxes.prop('checked', true);
+    updateSelectAllBtn('fuel');
+});
+$(document).on('click', '#clearAllFuel', function() {
+    $('.fuel-checkbox').prop('checked', false);
+    updateSelectAllBtn('fuel');
+});
+$(document).on('change', '.fuel-checkbox', function() {
+    updateSelectAllBtn('fuel');
+});
+
+// Status
+$(document).on('click', '#selectAllStatus', function() {
+    const $btn = $(this);
+    const $checkboxes = $('.status-checkbox');
+    if ($checkboxes.filter(':checked').length === $checkboxes.length) return;
+    $checkboxes.prop('checked', true);
+    updateSelectAllBtn('status');
+});
+$(document).on('click', '#clearAllStatus', function() {
+    $('.status-checkbox').prop('checked', false);
+    updateSelectAllBtn('status');
+});
+$(document).on('change', '.status-checkbox', function() {
+    updateSelectAllBtn('status');
+});
+
+$('#transmissionFilterModal').on('shown.bs.modal', function() { updateSelectAllBtn('transmission'); });
+$('#fuelFilterModal').on('shown.bs.modal', function() { updateSelectAllBtn('fuel'); });
+$('#statusFilterModal').on('shown.bs.modal', function() { updateSelectAllBtn('status'); });
+
+// Select All / Clear All for Brand
+$(document).on('click', '#selectAllBrand', function() {
+    const $btn = $(this);
+    const $checkboxes = $('.form-check-input[name="brandId"]');
+    if ($checkboxes.filter(':checked').length === $checkboxes.length) return;
+    $checkboxes.prop('checked', true);
+    updateSelectAllBtn('brand');
+});
+$(document).on('click', '#clearAllBrand', function() {
+    $('.form-check-input[name="brandId"]').prop('checked', false);
+    updateSelectAllBtn('brand');
+});
+$(document).on('change', '.form-check-input[name="brandId"]', function() {
+    updateSelectAllBtn('brand');
+});
+
+// Select All / Clear All for Category
+$(document).on('click', '#selectAllCategory', function() {
+    const $btn = $(this);
+    const $checkboxes = $('.form-check-input[name="categoryId"]');
+    if ($checkboxes.filter(':checked').length === $checkboxes.length) return;
+    $checkboxes.prop('checked', true);
+    updateSelectAllBtn('category');
+});
+$(document).on('click', '#clearAllCategory', function() {
+    $('.form-check-input[name="categoryId"]').prop('checked', false);
+    updateSelectAllBtn('category');
+});
+$(document).on('change', '.form-check-input[name="categoryId"]', function() {
+    updateSelectAllBtn('category');
+});
+
+$('#brandFilterModal').on('shown.bs.modal', function() { updateSelectAllBtn('brand'); });
+$('#categoryFilterModal').on('shown.bs.modal', function() { updateSelectAllBtn('category'); });
+
+function updateSelectAllBtn(type) {
+    let checkboxClass = '';
+    let btnId = '';
+    if (type === 'transmission') {
+        checkboxClass = '.transmission-checkbox';
+        btnId = '#selectAllTransmission';
+    } else if (type === 'fuel') {
+        checkboxClass = '.fuel-checkbox';
+        btnId = '#selectAllFuel';
+    } else if (type === 'status') {
+        checkboxClass = '.status-checkbox';
+        btnId = '#selectAllStatus';
+    } else if (type === 'brand') {
+        checkboxClass = '.form-check-input[name="brandId"]';
+        btnId = '#selectAllBrand';
+    } else if (type === 'category') {
+        checkboxClass = '.form-check-input[name="categoryId"]';
+        btnId = '#selectAllCategory';
+    }
+    const $btn = $(btnId);
+    const $checkboxes = $(checkboxClass);
+    const $text = $btn.find('.select-all-text');
+    const $icon = $btn.find('i');
+    if ($checkboxes.length && $checkboxes.filter(':checked').length === $checkboxes.length) {
+        $btn.removeClass('btn-outline-success btn-outline-secondary').addClass('btn-success');
+        $text.text('All Selected');
+        $icon.removeClass().addClass('bi bi-check2-circle me-2');
+    } else if ($checkboxes.filter(':checked').length > 0) {
+        $btn.removeClass('btn-success btn-outline-success').addClass('btn-outline-secondary');
+        $text.text($checkboxes.filter(':checked').length + ' Selected');
+        $icon.removeClass().addClass('bi bi-check2 me-2');
+    } else {
+        $btn.removeClass('btn-success btn-outline-secondary').addClass('btn-outline-success');
+        $text.text('Select All');
+        $icon.removeClass().addClass('bi bi-check2-circle me-2');
+    }
+}
