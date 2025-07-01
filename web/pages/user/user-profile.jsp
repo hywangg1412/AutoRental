@@ -69,7 +69,7 @@
         <jsp:include page="/pages/includes/nav.jsp" />
 
         <div class="container">
-            <div class="row g-5" style="margin-top: 100px;">
+            <div class="row g-5" style="margin-top: 80px;">
                 <!-- Sidebar -->                
                 <div class="col-lg-3 col-md-4">
                     <div class="sidebar">
@@ -79,7 +79,7 @@
                                     <i class="bi bi-person text-dark"></i>
                                     My account
                                 </a></li>
-                            <li><a href="${pageContext.request.contextPath}/pages/user/favorite-car.jsp" class="nav-link text-dark">
+                            <li><a href="${pageContext.request.contextPath}/user/favorite-car-page" class="nav-link text-dark">
                                     <i class="bi bi-heart text-dark"></i>
                                     Favorite cars
                                 </a></li>
