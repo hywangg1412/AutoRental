@@ -12,6 +12,11 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import Config.DBContext;
 
 public class UserFavoriteCarService implements IUserFavoriteCarService {
 
@@ -30,7 +35,6 @@ public class UserFavoriteCarService implements IUserFavoriteCarService {
     @Override
     public UserFavoriteCar add(UserFavoriteCar entry) throws EventException, InvalidDataException {
         try {
-            // Kiểm tra xem đã yêu thích chưa
             List<UserFavoriteCar> existingFavorites = repository.findByUserId(entry.getUserId());
             boolean alreadyExists = existingFavorites.stream()
                 .anyMatch(fav -> fav.getCarId().equals(entry.getCarId()));
@@ -85,4 +89,13 @@ public class UserFavoriteCarService implements IUserFavoriteCarService {
         }
     }
     
+    public List<Model.DTO.User.FavoriteCarDTO> getFavoriteCarDetailsByUserId(UUID userId) throws SQLException {
+        try {
+            List<Model.DTO.User.FavoriteCarDTO> favoriteCars = repository.findFavoriteCarDetailsByUserId(userId);
+            return favoriteCars;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error getting favorite car details by userId", e);
+            throw e;
+        }
+    }
 }

@@ -12,6 +12,7 @@ import java.util.UUID;
 import Config.DBContext;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.math.BigDecimal;
 
 public class UserFavoriteCarRepository implements IUserFavoriteCarRepository{
 
@@ -107,4 +108,61 @@ public class UserFavoriteCarRepository implements IUserFavoriteCarRepository{
         return list;
     }
     
+    public List<Model.DTO.User.FavoriteCarDTO> findFavoriteCarDetailsByUserId(UUID userId) throws SQLException {
+        List<Model.DTO.User.FavoriteCarDTO> list = new ArrayList<>();
+        String sql = """
+            SELECT 
+                c.CarId,
+                c.CarModel,
+                cb.BrandName,
+                ci.ImageUrl as MainImageUrl,
+                tt.TransmissionName,
+                c.Seats,
+                ft.FuelName,
+                c.PricePerHour,
+                c.Status,
+                CASE 
+                    WHEN c.Status = 'Available' THEN 'Available'
+                    WHEN c.Status = 'Rented' THEN 'Rented'
+                    WHEN c.Status = 'Unavailable' THEN 'Unavailable'
+                    ELSE 'Unknown'
+                END as StatusDisplay
+            FROM UserFavoriteCars ufc
+            INNER JOIN Car c ON ufc.CarId = c.CarId
+            INNER JOIN CarBrand cb ON c.BrandId = cb.BrandId
+            INNER JOIN TransmissionType tt ON c.TransmissionTypeId = tt.TransmissionTypeId
+            INNER JOIN FuelType ft ON c.FuelTypeId = ft.FuelTypeId
+            LEFT JOIN (
+                SELECT CarId, ImageUrl, ROW_NUMBER() OVER (PARTITION BY CarId ORDER BY IsMain DESC, ImageId) as rn
+                FROM CarImages
+            ) ci ON c.CarId = ci.CarId AND ci.rn = 1
+            WHERE ufc.UserId = ?
+            ORDER BY c.CreatedDate DESC
+        """;
+        
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, userId.toString());
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new Model.DTO.User.FavoriteCarDTO(
+                        UUID.fromString(rs.getString("CarId")),
+                        rs.getString("CarModel"),
+                        rs.getString("BrandName"),
+                        rs.getString("MainImageUrl"),
+                        rs.getString("TransmissionName"),
+                        rs.getInt("Seats"),
+                        rs.getString("FuelName"),
+                        rs.getBigDecimal("PricePerHour"),
+                        rs.getString("Status"),
+                        rs.getString("StatusDisplay")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error fetching favorite car details by userId", e);
+            throw e;
+        }
+        return list;
+    }
 }

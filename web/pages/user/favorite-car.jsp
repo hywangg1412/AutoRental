@@ -1,4 +1,27 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page import="java.util.*, java.util.UUID, Model.Entity.User.User, Model.DTO.User.FavoriteCarDTO, Service.User.UserFavoriteCarService" %>
+<%
+    // Lấy user từ session
+    User user = (User) session.getAttribute("user");
+    List<FavoriteCarDTO> favoriteCars = new ArrayList<>();
+    
+    if (user == null) {
+        response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp");
+        return;
+    }
+    
+    try {
+        UserFavoriteCarService favoriteCarService = new UserFavoriteCarService();
+        favoriteCars = favoriteCarService.getFavoriteCarDetailsByUserId(user.getUserId());
+    } catch (Exception e) {
+        e.printStackTrace();
+        request.setAttribute("errorMessage", "Có lỗi xảy ra khi tải danh sách xe yêu thích.");
+    }
+    
+    request.setAttribute("favoriteCars", favoriteCars);
+%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -30,6 +53,11 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/icomoon.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/user/about.css">
+        <style>
+        .shadow-car-img {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.10), 0 1.5px 4px rgba(0,0,0,0.08);
+        }
+        </style>
     </head>
     <body>
         <!-- Header -->
@@ -81,142 +109,66 @@
                                         <h1 class="h5 fw-semibold mb-0 text-dark">My Favorite Cars</h1>
                                     </div>
 
+                                    <!-- Error Message -->
+                                    <c:if test="${not empty errorMessage}">
+                                        <div class="alert alert-danger" role="alert">
+                                            <i class="bi bi-exclamation-triangle me-2"></i>
+                                            ${errorMessage}
+                                        </div>
+                                    </c:if>
+
                                     <!-- Car Cards -->
                                     <div class="car-cards">
-                                        <!-- Car Card 1 -->
-                                        <div class="car-card bg-white rounded shadow-sm p-4 mb-4">
-                                            <div class="row align-items-center">
-                                                <div class="col-md-3">
-                                                    <div class="car-image rounded" style="height: 150px; background-color: #f8f9fa;"></div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <h3 class="car-title h5 fw-semibold mb-2">KIA SEDONA PREMIUM 2017</h3>
-                                                    <div class="car-specs d-flex gap-3 mb-2">
-                                                        <span class="car-spec text-muted">
-                                                            <i class="bi bi-gear me-1"></i>
-                                                            Automatic transmission
-                                                        </span>
-                                                        <span class="car-spec text-muted">
-                                                            <i class="bi bi-people me-1"></i>
-                                                            7 seats
-                                                        </span>
-                                                        <span class="car-spec text-muted">
-                                                            <i class="bi bi-fuel-pump me-1"></i>
-                                                            Gas
-                                                        </span>
-                                                    </div>
-                                                    <div class="car-location text-muted mb-2">
-                                                        <i class="bi bi-geo-alt me-1"></i>
-                                                        <span>Quận Thanh Khê, Đà Nẵng</span>
-                                                    </div>
-                                                    <div class="car-rating d-flex align-items-center gap-2">
-                                                        <div class="stars d-flex align-items-center">
-                                                            <i class="bi bi-star-fill text-warning me-1"></i>
-                                                            <span class="fw-medium">5.0</span>
+                                        <c:choose>
+                                            <c:when test="${not empty favoriteCars}">
+                                                <c:forEach var="car" items="${favoriteCars}">
+                                                    <div class="favorite-car-card d-flex align-items-center p-4 mb-5 rounded shadow-sm bg-white">
+                                                        <div class="car-img-wrapper">
+                                                            <img src="${pageContext.request.contextPath}${car.mainImageUrl}" class="car-img" alt="Car image">
                                                         </div>
-                                                        <span class="rating-text text-muted">35 trip</span>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3 text-end">
-                                                    <div class="car-pricing mb-3">
-                                                        <span class="original-price text-decoration-line-through text-muted me-2">1,421K</span>
-                                                        <span class="current-price fw-semibold">1,301K/day</span>
-                                                    </div>
-                                                    <button class="btn btn-outline-danger btn-sm mb-2">Unlike</button>
-                                                    <a href="#" class="text-decoration-none d-block">View details</a>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Car Card 2 -->
-                                        <div class="car-card bg-white rounded shadow-sm p-4 mb-4">
-                                            <div class="row align-items-center">
-                                                <div class="col-md-3">
-                                                    <div class="car-image rounded" style="height: 150px; background-color: #f8f9fa;"></div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <h3 class="car-title h5 fw-semibold mb-2">KIA SEDONA PREMIUM 2017</h3>
-                                                    <div class="car-specs d-flex gap-3 mb-2">
-                                                        <span class="car-spec text-muted">
-                                                            <i class="bi bi-gear me-1"></i>
-                                                            Automatic transmission
-                                                        </span>
-                                                        <span class="car-spec text-muted">
-                                                            <i class="bi bi-people me-1"></i>
-                                                            7 seats
-                                                        </span>
-                                                        <span class="car-spec text-muted">
-                                                            <i class="bi bi-fuel-pump me-1"></i>
-                                                            Gas
-                                                        </span>
-                                                    </div>
-                                                    <div class="car-location text-muted mb-2">
-                                                        <i class="bi bi-geo-alt me-1"></i>
-                                                        <span>Quận Thanh Khê, Đà Nẵng</span>
-                                                    </div>
-                                                    <div class="car-rating d-flex align-items-center gap-2">
-                                                        <div class="stars d-flex align-items-center">
-                                                            <i class="bi bi-star-fill text-warning me-1"></i>
-                                                            <span class="fw-medium">5.0</span>
+                                                        <div class="flex-grow-1 ps-3 pe-4">
+                                                            <div class="d-flex align-items-center mb-2">
+                                                                <h5 class="mb-0 fw-bold">${car.carModel}</h5>
+                                                                <span class="badge ms-3 ${car.statusDisplay == 'Available' ? 'bg-success' : car.statusDisplay == 'Rented' ? 'bg-warning' : 'bg-danger'}">
+                                                                    ${car.statusDisplay}
+                                                                </span>
+                                                            </div>
+                                                            <div class="mb-3 text-muted small d-flex align-items-center car-info-inline">
+                                                                <span class="me-4"><i class="bi bi-gear me-1"></i>${car.transmissionName}</span>
+                                                                <span class="me-4"><i class="bi bi-people me-1"></i>${car.seats} seats</span>
+                                                                <span><i class="bi bi-fuel-pump me-1"></i>${car.fuelTypeName}</span>
+                                                            </div>
+                                                            <div class="d-flex align-items-center mb-2">
+                                                                <span class="price-new fw-bold fs-6 text-success me-3">
+                                                                    <fmt:formatNumber value="${car.pricePerDay}" type="number" pattern="#.###" /> VND/day
+                                                                </span>
+                                                                <span class="price-old text-muted text-decoration-line-through me-2" style="font-size: 1rem;">
+                                                                    <!-- Show old price here if available -->
+                                                                </span>
+                                                            </div>
                                                         </div>
-                                                        <span class="rating-text text-muted">35 trip</span>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3 text-end">
-                                                    <div class="car-pricing mb-3">
-                                                        <span class="original-price text-decoration-line-through text-muted me-2">1,421K</span>
-                                                        <span class="current-price fw-semibold">1,301K/day</span>
-                                                    </div>
-                                                    <button class="btn btn-outline-danger btn-sm mb-2">Unlike</button>
-                                                    <a href="#" class="text-decoration-none d-block">View details</a>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Car Card 3 -->
-                                        <div class="car-card bg-white rounded shadow-sm p-4 mb-4">
-                                            <div class="row align-items-center">
-                                                <div class="col-md-3">
-                                                    <div class="car-image rounded" style="height: 150px; background-color: #f8f9fa;"></div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <h3 class="car-title h5 fw-semibold mb-2">KIA SEDONA PREMIUM 2017</h3>
-                                                    <div class="car-specs d-flex gap-3 mb-2">
-                                                        <span class="car-spec text-muted">
-                                                            <i class="bi bi-gear me-1"></i>
-                                                            Automatic transmission
-                                                        </span>
-                                                        <span class="car-spec text-muted">
-                                                            <i class="bi bi-people me-1"></i>
-                                                            7 seats
-                                                        </span>
-                                                        <span class="car-spec text-muted">
-                                                            <i class="bi bi-fuel-pump me-1"></i>
-                                                            Gas
-                                                        </span>
-                                                    </div>
-                                                    <div class="car-location text-muted mb-2">
-                                                        <i class="bi bi-geo-alt me-1"></i>
-                                                        <span>Quận Thanh Khê, Đà Nẵng</span>
-                                                    </div>
-                                                    <div class="car-rating d-flex align-items-center gap-2">
-                                                        <div class="stars d-flex align-items-center">
-                                                            <i class="bi bi-star-fill text-warning me-1"></i>
-                                                            <span class="fw-medium">5.0</span>
+                                                        <div class="d-flex flex-column align-items-end ms-4">
+                                                            <form method="post" action="${pageContext.request.contextPath}/user/favorite-car">
+                                                                <input type="hidden" name="action" value="remove">
+                                                                <input type="hidden" name="carId" value="${car.carId}">
+                                                                <button type="submit" class="btn btn-success btn-lg mb-3 px-4 py-2">Unlike</button>
+                                                            </form>
+                                                            <a href="${pageContext.request.contextPath}/pages/car-single?id=${car.carId}" class="btn btn-outline-primary btn-sm">View details</a>
                                                         </div>
-                                                        <span class="rating-text text-muted">35 trip</span>
                                                     </div>
+                                                </c:forEach>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <div class="text-center py-5">
+                                                    <i class="bi bi-heart text-muted" style="font-size: 3rem;"></i>
+                                                    <h4 class="text-muted mt-3">No favorite cars yet</h4>
+                                                    <p class="text-muted">Start adding cars to your favorites to see them here!</p>
+                                                    <a href="${pageContext.request.contextPath}/pages/car" class="btn btn-primary">
+                                                        <i class="bi bi-car-front me-2"></i>Browse Cars
+                                                    </a>
                                                 </div>
-                                                <div class="col-md-3 text-end">
-                                                    <div class="car-pricing mb-3">
-                                                        <span class="original-price text-decoration-line-through text-muted me-2">1,421K</span>
-                                                        <span class="current-price fw-semibold">1,301K/day</span>
-                                                    </div>
-                                                    <button class="btn btn-outline-danger btn-sm mb-2">Unlike</button>
-                                                    <a href="#" class="text-decoration-none d-block">View details</a>
-                                                </div>
-                                            </div>
-                                        </div>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </div>
                                 </div>
                             </div>
@@ -251,21 +203,5 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         <script src="${pageContext.request.contextPath}/scripts/user/UserAboutSidebar.js"></script>
-
-        <script>
-            // Unlike button functionality
-            document.querySelectorAll('.btn-unlike').forEach(button => {
-                button.addEventListener('click', function () {
-                    const card = this.closest('.car-card');
-                    card.style.transition = 'all 0.3s ease';
-                    card.style.opacity = '0.5';
-                    card.style.transform = 'scale(0.95)';
-
-                    setTimeout(() => {
-                        card.remove();
-                    }, 300);
-                });
-            });
-        </script>
     </body>
 </html>
