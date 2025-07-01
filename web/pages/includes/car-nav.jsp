@@ -46,7 +46,7 @@
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                   <li><a class="dropdown-item" href="${pageContext.request.contextPath}/user/profile">Profile</a></li>
                   <li><a class="dropdown-item" href="${pageContext.request.contextPath}/user/my-trip">My Trips</a></li>
-                  <li><a class="dropdown-item" href="${pageContext.request.contextPath}/user/favorite-car">Favorite Cars</a></li>
+                  <li><a class="dropdown-item" href="${pageContext.request.contextPath}/pages/user/favorite-car.jsp">Favorite Cars</a></li>
                   <li><hr class="dropdown-divider"></li>
                   <li><a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/logout">Logout</a></li>
                 </ul>
