@@ -10,7 +10,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import Utils.SessionUtil;
 import Utils.ObjectUtils;
 import java.time.LocalDateTime;
@@ -112,11 +111,13 @@ public class NormalRegisterServlet extends HttpServlet {
 
             try {
                 Role userRole = roleService.findByRoleName(RoleConstants.USER);
+
                 if (userRole != null) {
                     UserRole newUserRole = new UserRole(user.getUserId(), userRole.getRoleId());
                     userRoleService.add(newUserRole);
                 }
             } catch (Exception e) {
+
                 System.err.println("Error assigning default role to user: " + e.getMessage());
             }
 

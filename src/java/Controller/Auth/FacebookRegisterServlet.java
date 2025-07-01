@@ -82,6 +82,7 @@ public class FacebookRegisterServlet extends HttpServlet {
                 System.err.println("Error assigning default role to user: " + e.getMessage());
             }
             
+
             UserLogins userLogins = userMapper.mapFacebookUserToUserLogins(facebookUser, newUser);
             userLoginsService.add(userLogins);
 

@@ -422,4 +422,13 @@ CREATE TABLE [AccountDeletionLogs] (
     CONSTRAINT [PK_AccountDeletionLogs] PRIMARY KEY ([LogId]),
     CONSTRAINT [FK_AccountDeletionLogs_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE
 );
+GO
+
+CREATE TABLE [UserFavoriteCars] (
+    [UserId] UNIQUEIDENTIFIER NOT NULL,
+    [CarId] UNIQUEIDENTIFIER NOT NULL,
+    CONSTRAINT [PK_UserFavoriteCars] PRIMARY KEY ([UserId], [CarId]),
+    CONSTRAINT [FK_UserFavoriteCars_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE,
+    CONSTRAINT [FK_UserFavoriteCars_CarId] FOREIGN KEY ([CarId]) REFERENCES [Car]([CarId]) ON DELETE CASCADE
+);
 GO 
