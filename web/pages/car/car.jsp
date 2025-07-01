@@ -346,7 +346,7 @@
         <!-- Bootstrap 5 Bundle for Modal support -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         
-        <script src="${pageContext.request.contextPath}/assets/js/car.js"></script>
+        <script src="${pageContext.request.contextPath}/scripts/car/car.js"></script>
         <!-- Toast notification -->
         <div id="favorite-toast" style="display: none;"></div>
         <script>

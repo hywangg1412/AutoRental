@@ -55,6 +55,7 @@ public class UserFavoriteCarServlet extends HttpServlet {
             
             String action = request.getParameter("action");
             String carIdStr = request.getParameter("carId");
+            String source = request.getParameter("source");
             
             if (action == null || carIdStr == null) {
                 // Redirect back to car page with error
@@ -64,20 +65,32 @@ public class UserFavoriteCarServlet extends HttpServlet {
             
             UUID carId = UUID.fromString(carIdStr);
             
-            String redirectUrl = switch (action.toLowerCase()) {
-                case "add" -> {
+            String redirectUrl;
+            switch (action.toLowerCase()) {
+                case "add": {
                     UserFavoriteCar newFavorite = new UserFavoriteCar(user.getUserId(), carId);
                     favoriteCarService.add(newFavorite);
-                    yield request.getContextPath() + "/pages/car?success=added_to_favorites";
+                    if ("favorite-car".equals(source)) {
+                        redirectUrl = request.getContextPath() + "/user/favorite-car-page?success=added_to_favorites";
+                    } else {
+                        redirectUrl = request.getContextPath() + "/pages/car?success=added_to_favorites";
+                    }
+                    break;
                 }
-                case "remove" -> {
+                case "remove": {
                     boolean deleted = favoriteCarService.delete(user.getUserId(), carId);
-                    yield deleted ? 
-                        request.getContextPath() + "/pages/car?success=removed_from_favorites" :
-                        request.getContextPath() + "/pages/car?error=favorite_not_found";
+                    if ("favorite-car".equals(source)) {
+                        redirectUrl = request.getContextPath() + "/user/favorite-car-page?success=removed_from_favorites";
+                    } else {
+                        redirectUrl = deleted ? 
+                            request.getContextPath() + "/pages/car?success=removed_from_favorites" :
+                            request.getContextPath() + "/pages/car?error=favorite_not_found";
+                    }
+                    break;
                 }
-                default -> request.getContextPath() + "/pages/car?error=invalid_action";
-            };
+                default:
+                    redirectUrl = request.getContextPath() + "/pages/car?error=invalid_action";
+            }
             
             response.sendRedirect(redirectUrl);
             
