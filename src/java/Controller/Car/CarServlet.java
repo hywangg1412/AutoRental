@@ -20,6 +20,11 @@ import Service.Car.CarCategoriesService;
 import Service.Car.CarFeatureService;
 import Model.DTO.StatusOption;
 import Service.Car.TransmissionTypeService;
+import Service.User.UserFavoriteCarService;
+import Model.Entity.User.UserFavoriteCar;
+import Model.Entity.User.User;
+import java.util.Set;
+import java.util.HashSet;
 
 @WebServlet(urlPatterns = {"/pages/car", "/pages/car-list-fragment"})
 public class CarServlet extends HttpServlet {
@@ -139,6 +144,22 @@ public class CarServlet extends HttpServlet {
             ));
             request.setAttribute("paramNames", request.getParameterMap().keySet());
             request.setAttribute("paramValues", request.getParameterMap());
+
+            // Lấy danh sách carId đã yêu thích nếu user đã đăng nhập
+            User user = (User) request.getSession().getAttribute("user");
+            Set<String> favoriteCarIds = new HashSet<>();
+            if (user != null) {
+                try {
+                    UserFavoriteCarService favoriteCarService = new UserFavoriteCarService();
+                    List<UserFavoriteCar> favoriteList = favoriteCarService.findByUserId(user.getUserId());
+                    for (UserFavoriteCar fav : favoriteList) {
+                        favoriteCarIds.add(fav.getCarId().toString());
+                    }
+                } catch (Exception e) {
+                    // Nếu lỗi thì bỏ qua, không làm crash trang
+                }
+            }
+            request.setAttribute("favoriteCarIds", favoriteCarIds);
 
             String requestURI = request.getRequestURI();
             if (requestURI.contains("car-list-fragment")) {
