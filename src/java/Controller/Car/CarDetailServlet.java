@@ -59,7 +59,7 @@ public class CarDetailServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/notfound.jsp");
 
         } catch (Exception e) {
-            System.out.println("❌ Lỗi khi xử lý chi tiết xe: " + e.getMessage());
+//            System.out.println("❌ Lỗi khi xử lý chi tiết xe: " + e.getMessage());
             e.printStackTrace();
             response.sendRedirect(request.getContextPath() + "/notfound.jsp");
         }
