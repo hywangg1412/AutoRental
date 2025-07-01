@@ -61,8 +61,8 @@ public class UpdateBookingStatusServlet extends HttpServlet {
         }
     }
 
-    @Override
-    public String getServletInfo() {
-        return "Handles updating the status of a booking (Accept/Reject).";
-    }
+//    @Override
+//    public String getServletInfo() {
+//        return "Handles updating the status of a booking (Accept/Reject).";
+//    }
 } 
