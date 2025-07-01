@@ -3,177 +3,43 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Car page loaded - using traditional form submit');
     
-    // Xử lý filter dropdown - tự động submit khi chọn
-    const filterCheckboxes = document.querySelectorAll('.dropdown-menu input[type="checkbox"]');
-    filterCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            console.log('Filter changed:', this.name, this.value, this.checked);
-            // Tạo form tạm thời để submit
-            submitFilterForm();
-        });
-    });
-    
-    // Xử lý sort select - tự động submit khi thay đổi
+    // Lấy form chứa sort/filter
     const sortSelect = document.getElementById('sortSelect');
-    if (sortSelect) {
+    const filterForm = sortSelect ? sortSelect.closest('form') : null;
+    const filterCheckboxes = document.querySelectorAll('.dropdown-menu input[type="checkbox"]');
+    const resetFilterBtn = document.getElementById('resetFilterBtn');
+
+    // Xử lý sort select - tự động submit khi thay đổi
+    if (sortSelect && filterForm) {
         sortSelect.addEventListener('change', function() {
-            console.log('Sort changed:', this.value);
-            submitFilterForm();
+            filterForm.submit();
         });
     }
-    
+
+    // Xử lý filter checkbox - tự động submit khi thay đổi
+    filterCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            if (filterForm) filterForm.submit();
+        });
+    });
+
     // Xử lý reset filter button
-    const resetFilterBtn = document.getElementById('resetFilterBtn');
-    if (resetFilterBtn) {
+    if (resetFilterBtn && filterForm) {
         resetFilterBtn.addEventListener('click', function() {
-            console.log('Reset filter clicked');
             // Reset tất cả checkbox
             filterCheckboxes.forEach(checkbox => {
                 checkbox.checked = false;
             });
             // Reset sort select
-            if (sortSelect) {
-                sortSelect.value = '';
-            }
+            if (sortSelect) sortSelect.value = '';
+            // Reset keyword
+            const keywordInput = filterForm.querySelector('input[name="keyword"]');
+            if (keywordInput) keywordInput.value = '';
             // Submit form
-            submitFilterForm();
+            filterForm.submit();
         });
     }
-    
-    // Hàm submit form filter
-    function submitFilterForm() {
-        // Tạo form tạm thời
-        const form = document.createElement('form');
-        form.method = 'GET';
-        form.action = contextPath + '/pages/car';
-        
-        // Thêm keyword nếu có
-        const keywordInput = document.querySelector('input[name="keyword"]');
-        if (keywordInput && keywordInput.value.trim()) {
-            const keywordField = document.createElement('input');
-            keywordField.type = 'hidden';
-            keywordField.name = 'keyword';
-            keywordField.value = keywordInput.value.trim();
-            form.appendChild(keywordField);
-        }
-        
-        // Thêm sort nếu có
-        if (sortSelect && sortSelect.value) {
-            const sortField = document.createElement('input');
-            sortField.type = 'hidden';
-            sortField.name = 'sort';
-            sortField.value = sortSelect.value;
-            form.appendChild(sortField);
-        }
-        
-        // Thêm các filter đã chọn
-        filterCheckboxes.forEach(checkbox => {
-            if (checkbox.checked) {
-                const field = document.createElement('input');
-                field.type = 'hidden';
-                field.name = checkbox.name;
-                field.value = checkbox.value;
-                form.appendChild(field);
-            }
-        });
-        
-        // Thêm advanced filter nếu có
-        const minPrice = document.querySelector('input[name="minPrice"]');
-        const maxPrice = document.querySelector('input[name="maxPrice"]');
-        const minYear = document.querySelector('input[name="minYear"]');
-        const maxYear = document.querySelector('input[name="maxYear"]');
-        const minSeats = document.querySelector('input[name="minSeats"]');
-        const maxSeats = document.querySelector('input[name="maxSeats"]');
-        const minOdometer = document.querySelector('input[name="minOdometer"]');
-        const maxOdometer = document.querySelector('input[name="maxOdometer"]');
-        const minDistance = document.querySelector('input[name="minDistance"]');
-        const maxDistance = document.querySelector('input[name="maxDistance"]');
-        
-        if (minPrice && minPrice.value) {
-            const field = document.createElement('input');
-            field.type = 'hidden';
-            field.name = 'minPricePerHour';
-            field.value = minPrice.value;
-            form.appendChild(field);
-        }
-        
-        if (maxPrice && maxPrice.value) {
-            const field = document.createElement('input');
-            field.type = 'hidden';
-            field.name = 'maxPricePerHour';
-            field.value = maxPrice.value;
-            form.appendChild(field);
-        }
-        
-        if (minYear && minYear.value) {
-            const field = document.createElement('input');
-            field.type = 'hidden';
-            field.name = 'minYear';
-            field.value = minYear.value;
-            form.appendChild(field);
-        }
-        
-        if (maxYear && maxYear.value) {
-            const field = document.createElement('input');
-            field.type = 'hidden';
-            field.name = 'maxYear';
-            field.value = maxYear.value;
-            form.appendChild(field);
-        }
-        
-        if (minSeats && minSeats.value) {
-            const field = document.createElement('input');
-            field.type = 'hidden';
-            field.name = 'minSeats';
-            field.value = minSeats.value;
-            form.appendChild(field);
-        }
-        
-        if (maxSeats && maxSeats.value) {
-            const field = document.createElement('input');
-            field.type = 'hidden';
-            field.name = 'maxSeats';
-            field.value = maxSeats.value;
-            form.appendChild(field);
-        }
-        
-        if (minOdometer && minOdometer.value) {
-            const field = document.createElement('input');
-            field.type = 'hidden';
-            field.name = 'minOdometer';
-            field.value = minOdometer.value;
-            form.appendChild(field);
-        }
-        
-        if (maxOdometer && maxOdometer.value) {
-            const field = document.createElement('input');
-            field.type = 'hidden';
-            field.name = 'maxOdometer';
-            field.value = maxOdometer.value;
-            form.appendChild(field);
-        }
-        
-        if (minDistance && minDistance.value) {
-            const field = document.createElement('input');
-            field.type = 'hidden';
-            field.name = 'minDistance';
-            field.value = minDistance.value;
-            form.appendChild(field);
-        }
-        
-        if (maxDistance && maxDistance.value) {
-            const field = document.createElement('input');
-            field.type = 'hidden';
-            field.name = 'maxDistance';
-            field.value = maxDistance.value;
-            form.appendChild(field);
-        }
-        
-        // Submit form
-        document.body.appendChild(form);
-        form.submit();
-    }
-    
+
     // Xử lý pagination links
     const paginationLinks = document.querySelectorAll('.pagination-link');
     paginationLinks.forEach(link => {
@@ -483,3 +349,13 @@ function updateSelectAllBtn(type) {
         $icon.removeClass().addClass('bi bi-check2-circle me-2');
     }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    var sortSelect = document.getElementById('sortSelect');
+    if (sortSelect) {
+        sortSelect.addEventListener('change', function() {
+            var form = sortSelect.closest('form');
+            if (form) form.submit();
+        });
+    }
+});

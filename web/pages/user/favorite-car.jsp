@@ -122,9 +122,9 @@
                                                                     </span>
                                                                 </div>
                                                             </div>
-                                                            <div class="mb-3 text-muted small d-flex align-items-center car-info-inline">
-                                                                <span class="me-4"><i class="bi bi-gear me-1"></i>${car.transmissionName}</span>
-                                                                <span class="me-4"><i class="bi bi-people me-1"></i>${car.seats} seats</span>
+                                                            <div class="mb-3 text-muted small fs-7 d-flex align-items-center car-info-inline">
+                                                                <span class="me-3"><i class="bi bi-gear me-1"></i>${car.transmissionName}</span>
+                                                                <span class="me-3"><i class="bi bi-people me-1"></i>${car.seats} seats</span>
                                                                 <span><i class="bi bi-fuel-pump me-1"></i>${car.fuelTypeName}</span>
                                                             </div>
                                                             <div class="d-flex align-items-center mb-2">
@@ -140,9 +140,10 @@
                                                             <form method="post" action="${pageContext.request.contextPath}/user/favorite-car">
                                                                 <input type="hidden" name="action" value="remove">
                                                                 <input type="hidden" name="carId" value="${car.carId}">
-                                                                <button type="submit" class="btn btn-success btn-lg mb-3 px-4 py-2">Unlike</button>
+                                                                <input type="hidden" name="source" value="favorite-car" />
+                                                                <button type="submit" class="btn-favorite-action btn-unlike">Unlike</button>
                                                             </form>
-                                                            <a href="${pageContext.request.contextPath}/pages/car-single?id=${car.carId}" class="btn btn-outline-primary btn-sm">View details</a>
+                                                            <a href="${pageContext.request.contextPath}/pages/car-single?id=${car.carId}" class="btn-favorite-action btn-detail">View details</a>
                                                         </div>
                                                     </div>
                                                 </c:forEach>
@@ -152,7 +153,7 @@
                                                     <i class="bi bi-heart text-muted" style="font-size: 3rem;"></i>
                                                     <h4 class="text-muted mt-3">No favorite cars yet</h4>
                                                     <p class="text-muted">Start adding cars to your favorites to see them here!</p>
-                                                    <a href="${pageContext.request.contextPath}/pages/car" class="btn btn-primary">
+                                                    <a href="${pageContext.request.contextPath}/pages/car" class="btn-browse-cars">
                                                         <i class="bi bi-car-front me-2"></i>Browse Cars
                                                     </a>
                                                 </div>

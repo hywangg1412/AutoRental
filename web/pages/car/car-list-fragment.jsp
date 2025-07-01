@@ -15,6 +15,7 @@
                           enctype="application/x-www-form-urlencoded">
                         <input type="hidden" name="action" value="${isFavorite ? 'remove' : 'add'}">
                         <input type="hidden" name="carId" value="${car.carId}">
+                        <input type="hidden" name="source" value="car" />
                         <button class="favorite-btn" type="submit" title="${isFavorite ? 'Bỏ yêu thích' : 'Yêu thích'}">
                             <i class="bi ${isFavorite ? 'bi-heart-fill text-success' : 'bi-heart'}"></i>
                         </button>

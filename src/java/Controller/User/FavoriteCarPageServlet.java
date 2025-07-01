@@ -72,7 +72,7 @@ public class FavoriteCarPageServlet extends HttpServlet {
             
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error loading favorite cars page", e);
-            request.setAttribute("errorMessage", "Có lỗi xảy ra khi tải trang xe yêu thích. Vui lòng thử lại sau.");
+            request.setAttribute("errorMessage", "Something went wrong. Please try again later.");
             request.getRequestDispatcher("/pages/user/favorite-car.jsp").forward(request, response);
         }
     }
@@ -80,6 +80,14 @@ public class FavoriteCarPageServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        doGet(request, response);
+        String source = request.getParameter("source");
+        if ("favorite-car".equals(source)) {
+            doGet(request, response);
+        } else if ("car".equals(source)) {
+            response.sendRedirect(request.getContextPath() + "/pages/car");
+        } else {
+            // fallback, hoặc redirect về trang mặc định
+            doGet(request, response);
+        }
     }
 } 
