@@ -304,6 +304,10 @@ nav.ftco-navbar-light .nav-link {
     transition: box-shadow 0.2s;
     border-radius: 18px;
     border: 1px solid #f0f0f0;
+    min-height: 200px;
+    padding: 32px;
+    font-size: 1.15rem;
+    overflow: hidden; /* Đảm bảo nội dung không tràn ra ngoài */
 }
 
 .favorite-car-card:hover {
@@ -384,8 +388,10 @@ nav.ftco-navbar-light .nav-link {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    flex-shrink: 0; /* Ngăn không cho phần button bị co lại */
+    gap: 8px;
+    flex-shrink: 0;
+    margin-right: 0; /* Đảm bảo không có margin bên phải */
+    padding-right: 0; /* Đảm bảo không có padding bên phải */
 }
 
 .btn-success.btn-lg, .btn-success, .btn-outline-primary.btn-sm {
@@ -397,12 +403,13 @@ nav.ftco-navbar-light .nav-link {
     align-items: center;
     justify-content: center;
     margin: 0;
+    flex-shrink: 0; /* Ngăn không cho button bị co lại */
 }
 
 /* Đảm bảo layout card không bị lệch */
 .favorite-car-card {
-    min-height: 140px; /* Đảm bảo chiều cao tối thiểu */
-    align-items: stretch; /* Căn đều các phần tử con */
+    align-items: center; 
+    position: relative;
 }
 
 /* Responsive cho mobile */
@@ -422,5 +429,74 @@ nav.ftco-navbar-light .nav-link {
         justify-content: center;
         margin-top: 15px;
         gap: 10px;
+    }
+}
+
+.status-badge {
+    min-width: 80px; /* hoặc giá trị phù hợp */
+    text-align: center;
+    font-weight: 600;
+}
+
+/* =========================== PAGINATION (from car.css) =========================== */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 24px;
+}
+
+.pagination .page-item {
+    margin: 0 1px;
+}
+
+.pagination .page-link {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1.5px solid #e0e7ef;
+    background: #fff;
+    color: #222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background 0.18s, color 0.18s, border 0.18s;
+    box-shadow: none;
+    outline: none;
+    padding: 0;
+}
+
+.pagination .page-link:hover,
+.pagination .page-link:focus {
+    background: #fff;
+    color: #16a34a;
+    border-color: #22c55e;
+    text-decoration: none;
+}
+
+.pagination .page-item.active .page-link {
+    background: #fff;
+    color: #22c55e;
+    border-color: #22c55e;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(34,197,94,0.10);
+}
+
+.pagination .page-link:focus, .pagination .page-link:active {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+@media (max-width: 576px) {
+    .pagination .page-link {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
+    }
+    .pagination {
+        gap: 4px;
     }
 }

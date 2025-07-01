@@ -1,26 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ page import="java.util.*, java.util.UUID, Model.Entity.User.User, Model.DTO.User.FavoriteCarDTO, Service.User.UserFavoriteCarService" %>
+<%@ page import="java.util.*, Model.Entity.User.User" %>
 <%
-    // Lấy user từ session
     User user = (User) session.getAttribute("user");
-    List<FavoriteCarDTO> favoriteCars = new ArrayList<>();
-    
     if (user == null) {
         response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp");
         return;
     }
-    
-    try {
-        UserFavoriteCarService favoriteCarService = new UserFavoriteCarService();
-        favoriteCars = favoriteCarService.getFavoriteCarDetailsByUserId(user.getUserId());
-    } catch (Exception e) {
-        e.printStackTrace();
-        request.setAttribute("errorMessage", "Có lỗi xảy ra khi tải danh sách xe yêu thích.");
-    }
-    
-    request.setAttribute("favoriteCars", favoriteCars);
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -64,7 +51,7 @@
         <jsp:include page="/pages/includes/nav.jsp" />
 
         <div class="container">
-            <div class="row g-5" style="margin-top: 100px">
+            <div class="row g-5" style="margin-top: 80px">
                 <!-- Sidebar -->
                 <div class="col-lg-3 col-md-4">
                     <div class="sidebar">
@@ -74,7 +61,7 @@
                                     <i class="bi bi-person text-dark"></i>
                                     My account
                                 </a></li>
-                            <li><a href="${pageContext.request.contextPath}/pages/user/favorite-car.jsp" class="nav-link active text-dark">
+                            <li><a href="${pageContext.request.contextPath}/user/favorite-car-page" class="nav-link active text-dark">
                                     <i class="bi bi-heart text-dark"></i>
                                     Favorite cars
                                 </a></li>
@@ -128,10 +115,12 @@
                                                         </div>
                                                         <div class="flex-grow-1 ps-3 pe-4">
                                                             <div class="d-flex align-items-center mb-2">
-                                                                <h5 class="mb-0 fw-bold">${car.carModel}</h5>
-                                                                <span class="badge ms-3 ${car.statusDisplay == 'Available' ? 'bg-success' : car.statusDisplay == 'Rented' ? 'bg-warning' : 'bg-danger'}">
-                                                                    ${car.statusDisplay}
-                                                                </span>
+                                                                <div class="car-title-badge d-flex align-items-center">
+                                                                    <h5 class="mb-0 fw-bold me-3">${car.carModel}</h5>
+                                                                    <span class="badge status-badge ms-0 ${car.statusDisplay == 'Available' ? 'bg-success' : car.statusDisplay == 'Rented' ? 'bg-warning' : 'bg-danger'}">
+                                                                        ${car.statusDisplay}
+                                                                    </span>
+                                                                </div>
                                                             </div>
                                                             <div class="mb-3 text-muted small d-flex align-items-center car-info-inline">
                                                                 <span class="me-4"><i class="bi bi-gear me-1"></i>${car.transmissionName}</span>
@@ -147,7 +136,7 @@
                                                                 </span>
                                                             </div>
                                                         </div>
-                                                        <div class="d-flex flex-column align-items-end ms-4">
+                                                        <div class="d-flex flex-column align-items-center">
                                                             <form method="post" action="${pageContext.request.contextPath}/user/favorite-car">
                                                                 <input type="hidden" name="action" value="remove">
                                                                 <input type="hidden" name="carId" value="${car.carId}">
@@ -170,6 +159,37 @@
                                             </c:otherwise>
                                         </c:choose>
                                     </div>
+                                    <!-- PHÂN TRANG -->
+                                    <c:if test="${totalPages > 1}">
+                                        <div class="row mt-5">
+                                            <div class="col text-center">
+                                                <div class="block-27">
+                                                    <ul class="pagination justify-content-center">
+                                                        <c:if test="${currentPage > 1}">
+                                                            <li class="page-item">
+                                                                <a class="page-link" href="${pageContext.request.contextPath}/user/favorite-car-page?page=${currentPage - 1}">&laquo;</a>
+                                                            </li>
+                                                        </c:if>
+                                                        <c:forEach begin="1" end="${totalPages}" var="i">
+                                                            <c:choose>
+                                                                <c:when test="${currentPage eq i}">
+                                                                    <li class="page-item active"><span class="page-link">${i}</span></li>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <li class="page-item"><a class="page-link" href="${pageContext.request.contextPath}/user/favorite-car-page?page=${i}">${i}</a></li>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </c:forEach>
+                                                        <c:if test="${currentPage < totalPages}">
+                                                            <li class="page-item">
+                                                                <a class="page-link" href="${pageContext.request.contextPath}/user/favorite-car-page?page=${currentPage + 1}">&raquo;</a>
+                                                            </li>
+                                                        </c:if>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </c:if>
                                 </div>
                             </div>
                         </div>

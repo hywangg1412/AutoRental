@@ -36,11 +36,38 @@ public class FavoriteCarPageServlet extends HttpServlet {
             
             LOGGER.info("Loading favorite cars for user: " + user.getUserId());
             
+            int pageSize = 4;
+            int page = 1;
+            String pageParam = request.getParameter("page");
+            if (pageParam != null) {
+                try {
+                    page = Integer.parseInt(pageParam);
+                } catch (NumberFormatException e) {
+                    page = 1;
+                }
+            }
+            
             List<FavoriteCarDTO> favoriteCars = favoriteCarService.getFavoriteCarDetailsByUserId(user.getUserId());
+            int totalCars = favoriteCars.size();
+            int totalPages = (int) Math.ceil((double) totalCars / pageSize);
+
+            // Đảm bảo page hợp lệ
+            if (totalPages == 0) {
+                page = 1;
+            } else if (page > totalPages) {
+                page = totalPages;
+            } else if (page < 1) {
+                page = 1;
+            }
+
+            int fromIndex = (page - 1) * pageSize;
+            int toIndex = Math.min(fromIndex + pageSize, totalCars);
+            List<FavoriteCarDTO> pagedCars = (fromIndex < toIndex) ? favoriteCars.subList(fromIndex, toIndex) : java.util.Collections.emptyList();
             
-            LOGGER.info("Found " + favoriteCars.size() + " favorite cars for user: " + user.getUserId());
+            request.setAttribute("favoriteCars", pagedCars);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("currentPage", page);
             
-            request.setAttribute("favoriteCars", favoriteCars);
             request.getRequestDispatcher("/pages/user/favorite-car.jsp").forward(request, response);
             
         } catch (Exception e) {
