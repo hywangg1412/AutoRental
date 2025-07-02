@@ -42,7 +42,7 @@
                                 <i class="bi bi-person text-dark"></i>
                                 My account
                             </a></li>
-                        <li><a href="${pageContext.request.contextPath}/pages/staff/profile/staff-change-password.jsp" class="nav-link active text-dark border-top-custom">
+                        <li><a href="${pageContext.request.contextPath}/pages/staff/profile/staff-change-password.jsp" class="nav-link active text-dark border-bottom-custom">
                                 <i class="bi bi-lock text-dark"></i>
                                 Change password
                             </a></li>
