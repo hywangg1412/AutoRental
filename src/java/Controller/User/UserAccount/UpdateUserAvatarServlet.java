@@ -66,6 +66,11 @@ public class UpdateUserAvatarServlet extends HttpServlet {
             request.getSession().setAttribute("error", "Upload failed: " + e.getMessage());
         }
 
-        response.sendRedirect(request.getContextPath() + "/user/profile");
+        String fromStaffProfile = request.getParameter("fromStaffProfile");
+        if ("true".equals(fromStaffProfile)) {
+            response.sendRedirect(request.getContextPath() + "/staff/profile");
+        } else {
+            response.sendRedirect(request.getContextPath() + "/user/profile");
+        }
     }
 }

@@ -71,7 +71,12 @@ public class ChangePasswordServlet extends HttpServlet {
             for (Map.Entry<String, String> entry : errors.entrySet()) {
                 request.setAttribute(entry.getKey(), entry.getValue());
             }
-            request.getRequestDispatcher("/pages/user/change-password.jsp").forward(request, response);
+            String fromStaffProfile = request.getParameter("fromStaffProfile");
+            if ("true".equals(fromStaffProfile)) {
+                request.getRequestDispatcher("/pages/staff/profile/staff-change-password.jsp").forward(request, response);
+            } else {
+                request.getRequestDispatcher("/pages/user/change-password.jsp").forward(request, response);
+            }
             return;
         }
 
@@ -80,10 +85,20 @@ public class ChangePasswordServlet extends HttpServlet {
             userService.update(user);
             request.getSession().invalidate();
             request.setAttribute("success", "Password changed successfully. Please login again.");
-            request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
+            String fromStaffProfile = request.getParameter("fromStaffProfile");
+            if ("true".equals(fromStaffProfile)) {
+                request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
+            } else {
+                request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
+            }
         } catch (Exception ex) {
             request.setAttribute("error", "An error occurred: " + ex.getMessage());
-            request.getRequestDispatcher("/pages/user/change-password.jsp").forward(request, response);
+            String fromStaffProfile = request.getParameter("fromStaffProfile");
+            if ("true".equals(fromStaffProfile)) {
+                request.getRequestDispatcher("/pages/staff/profile/staff-change-password.jsp").forward(request, response);
+            } else {
+                request.getRequestDispatcher("/pages/user/change-password.jsp").forward(request, response);
+            }
         }
     }
 }

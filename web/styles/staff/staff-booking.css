@@ -107,7 +107,6 @@ body {
 /* Header */
 .header {
   background-color: #ffffff;
-  padding: 1.5rem 2rem;
   border-bottom: 1px solid #e1e8ed;
   display: flex;
   justify-content: space-between;
@@ -640,4 +639,8 @@ body {
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
+}
+
+hr{
+  margin: 0 !important;
 }

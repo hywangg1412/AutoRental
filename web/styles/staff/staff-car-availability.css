@@ -148,7 +148,7 @@ body {
 .user-avatar {
   width: 36px;
   height: 36px;
-  background-color: #3b82f6;
+  /* background-color: #3b82f6; */
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -618,4 +618,12 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+.section {
+  padding: 2rem;
+}
+
+hr{
+  margin: 0 !important;
 }

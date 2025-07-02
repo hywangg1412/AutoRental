@@ -580,3 +580,7 @@ body {
     background: transparent !important;
   }
 }
+
+hr{
+  margin: 0 !important;
+}
