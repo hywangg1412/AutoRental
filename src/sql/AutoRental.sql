@@ -307,7 +307,7 @@ CREATE TABLE [BookingSurcharges] (
     [SurchargeType] NVARCHAR(50) NOT NULL, -- 'LateReturn', 'OverMileage', ...
     [Amount] DECIMAL(10,2) NOT NULL,
     [Description] NVARCHAR(255) NULL,
-    [CreatedDate] DATETIME2 NOT NULL DEFAULT GETDATE(),
+    [CreatedDate] DATETIME2 NOT NULL, --  DEFAULT GETDATE(),
     CONSTRAINT [PK_BookingSurcharges] PRIMARY KEY ([SurchargeId]),
     CONSTRAINT [FK_BookingSurcharges_BookingId] FOREIGN KEY ([BookingId]) REFERENCES [Booking]([BookingId]) ON DELETE CASCADE
 );
