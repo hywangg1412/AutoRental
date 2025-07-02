@@ -1,4 +1,3 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!-- Right: Notifications and User -->
 <div class="col-auto">
     <div class="d-flex align-items-center gap-3">
@@ -48,10 +47,27 @@
             </ul>
         </div>
         <div class="d-flex align-items-center gap-2">
-            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 32px; height: 32px; font-size: 0.875rem;">
-                JS
+            <a href="${pageContext.request.contextPath}/staff/profile" class="user-avatar">
+                <img src="${not empty sessionScope.user.avatarUrl ? sessionScope.user.avatarUrl : pageContext.request.contextPath.concat('/assets/images/default-avatar.png')}"
+                     alt="User Avatar"
+                     width="32"
+                     height="32"
+                     class="rounded-circle"
+                     onerror="this.onerror=null;this.src='${pageContext.request.contextPath}/assets/images/default-avatar.png';">
+            </a>
+            <a href="${pageContext.request.contextPath}/staff/profile" class="nav-link username-link text-dark d-flex align-items-center" style="padding: 0 !important;">
+                <span class="fw-medium">${sessionScope.user.username}</span>
+            </a>
+            <div class="dropdown">
+                <button class="btn btn-link nav-link p-0 text-dark dropdown-toggle" type="button" id="userDropdown" aria-expanded="false">
+                  <i class="bi bi-three-dots-vertical" style="font-size: 1.2rem !important;"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                  <li><a class="dropdown-item" href="${pageContext.request.contextPath}/staff/profile">Profile</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/logout">Logout</a></li>
+                </ul>
             </div>
-            <span class="fw-medium">John Staff</span>
         </div>
     </div>
 </div>
