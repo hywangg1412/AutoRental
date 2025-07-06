@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="6.1" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_1.xsd">
+ 
+ 
     <session-config>
         <session-timeout>1440</session-timeout>
     </session-config>
@@ -43,14 +45,14 @@
         <servlet-name>ResetPasswordServlet</servlet-name>
         <servlet-class>Controller.Auth.ResetPasswordServlet</servlet-class>
     </servlet>
-    <servlet>
+<!--    <servlet>
         <servlet-name>BookingApprovalListServlet</servlet-name>
         <servlet-class>Controller.Booking.BookingApprovalListServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>BookingApprovalServlet</servlet-name>
         <servlet-class>Controller.Booking.BookingApprovalServlet</servlet-class>
-    </servlet>
+    </servlet>-->
     <servlet>
         <servlet-name>SetPasswordServlet</servlet-name>
         <servlet-class>Controller.Auth.SetPasswordServlet</servlet-class>
@@ -91,14 +93,14 @@
         <servlet-name>ResetPasswordServlet</servlet-name>
         <url-pattern>/resetPassword</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
+<!--    <servlet-mapping>
         <servlet-name>BookingApprovalListServlet</servlet-name>
         <url-pattern>/staff/booking-approval-list</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>BookingApprovalServlet</servlet-name>
         <url-pattern>/staff/booking-approval</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping>-->
     <servlet-mapping>
         <servlet-name>SetPasswordServlet</servlet-name>
         <url-pattern>/setPassword</url-pattern>

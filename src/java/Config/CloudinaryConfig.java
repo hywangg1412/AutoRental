@@ -15,7 +15,7 @@ public class CloudinaryConfig {
     static {
         try {
             dotenv = Dotenv.configure()
-            .directory("L:/Workspace/SWP/AutoRental/.env")
+            .directory("D:/ki_5/test2/AutoRental/")
             .ignoreIfMalformed()
             .ignoreIfMissing()
             .load();

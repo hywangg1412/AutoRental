@@ -34,7 +34,7 @@ public class CarRepository implements ICarRepository {
         car.setOdometer(rs.getInt("Odometer"));
         car.setPricePerHour(rs.getBigDecimal("PricePerHour"));
         car.setPricePerDay(rs.getBigDecimal("PricePerDay"));
-        car.setPricePerMonth(rs.getBigDecimal("PricePerMonth"));
+        car.setPricePerMonth(rs.getBigDecimal("PricePerMonth")); // Có thể null
         car.setStatus(Car.CarStatus.fromDbValue(rs.getString("Status")));
         car.setDescription(rs.getString("Description"));
         car.setCreatedDate(rs.getTimestamp("CreatedDate"));
@@ -59,6 +59,15 @@ public class CarRepository implements ICarRepository {
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         try (var conn = dbContext.getConnection(); var ps = conn.prepareStatement(sql)) {
+            System.out.println("=== EXECUTING INSERT CAR ===");
+            System.out.println("CarId: " + entity.getCarId());
+            System.out.println("CarModel: " + entity.getCarModel());
+            System.out.println("BrandId: " + entity.getBrandId());
+            System.out.println("FuelTypeId: " + entity.getFuelTypeId());
+            System.out.println("TransmissionTypeId: " + entity.getTransmissionTypeId());
+            System.out.println("PricePerMonth: " + entity.getPricePerMonth());
+            System.out.println("Status: " + entity.getStatus().getValue());
+            
             ps.setString(1, entity.getCarId().toString());
             ps.setString(2, entity.getBrandId().toString());
             ps.setString(3, entity.getCarModel());
@@ -70,20 +79,37 @@ public class CarRepository implements ICarRepository {
             ps.setInt(9, entity.getOdometer());
             ps.setBigDecimal(10, entity.getPricePerHour());
             ps.setBigDecimal(11, entity.getPricePerDay());
-            ps.setBigDecimal(12, entity.getPricePerMonth());
+            
+            // Xử lý PricePerMonth - có thể null
+            if (entity.getPricePerMonth() != null) {
+                ps.setBigDecimal(12, entity.getPricePerMonth());
+                System.out.println("Setting PricePerMonth: " + entity.getPricePerMonth());
+            } else {
+                ps.setNull(12, java.sql.Types.DECIMAL);
+                System.out.println("Setting PricePerMonth: NULL");
+            }
+            
             ps.setString(13, entity.getStatus().getValue());
             ps.setString(14, entity.getDescription());
             ps.setTimestamp(15, new java.sql.Timestamp(entity.getCreatedDate().getTime()));
             ps.setString(16, entity.getCategoryId() != null ? entity.getCategoryId().toString() : null);
             ps.setString(17, entity.getLastUpdatedBy() != null ? entity.getLastUpdatedBy().toString() : null);
             
-            ps.executeUpdate();
+            int result = ps.executeUpdate();
+            System.out.println("Insert result: " + result + " rows affected");
             
-            if (!entity.getFeatureIds().isEmpty()) {
+            if (entity.getFeatureIds() != null && !entity.getFeatureIds().isEmpty()) {
                 addCarFeatures(entity.getCarId(), entity.getFeatureIds());
             }
             
+            System.out.println("=== INSERT CAR COMPLETED SUCCESSFULLY ===");
             return entity;
+        } catch (SQLException e) {
+            System.err.println("SQL Error in add: " + e.getMessage());
+            System.err.println("SQL State: " + e.getSQLState());
+            System.err.println("Error Code: " + e.getErrorCode());
+            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -110,6 +136,11 @@ public class CarRepository implements ICarRepository {
                     "WHERE CarId = ?";
         
         try (var conn = dbContext.getConnection(); var ps = conn.prepareStatement(sql)) {
+            System.out.println("=== EXECUTING UPDATE CAR ===");
+            System.out.println("CarId: " + entity.getCarId());
+            System.out.println("CarModel: " + entity.getCarModel());
+            System.out.println("PricePerMonth: " + entity.getPricePerMonth());
+            
             ps.setString(1, entity.getBrandId().toString());
             ps.setString(2, entity.getCarModel());
             ps.setInt(3, entity.getYearManufactured());
@@ -120,7 +151,16 @@ public class CarRepository implements ICarRepository {
             ps.setInt(8, entity.getOdometer());
             ps.setBigDecimal(9, entity.getPricePerHour());
             ps.setBigDecimal(10, entity.getPricePerDay());
-            ps.setBigDecimal(11, entity.getPricePerMonth());
+            
+            // Xử lý PricePerMonth - có thể null
+            if (entity.getPricePerMonth() != null) {
+                ps.setBigDecimal(11, entity.getPricePerMonth());
+                System.out.println("Setting PricePerMonth: " + entity.getPricePerMonth());
+            } else {
+                ps.setNull(11, java.sql.Types.DECIMAL);
+                System.out.println("Setting PricePerMonth: NULL");
+            }
+            
             ps.setString(12, entity.getStatus().getValue());
             ps.setString(13, entity.getDescription());
             ps.setString(14, entity.getCategoryId() != null ? entity.getCategoryId().toString() : null);
@@ -128,12 +168,18 @@ public class CarRepository implements ICarRepository {
             ps.setString(16, entity.getCarId().toString());
             
             int result = ps.executeUpdate();
+            System.out.println("Update result: " + result + " rows affected");
             
             if (result > 0) {
                 updateCarFeatures(entity.getCarId(), entity.getFeatureIds());
             }
             
+            System.out.println("=== UPDATE CAR COMPLETED ===");
             return result > 0;
+        } catch (SQLException e) {
+            System.err.println("SQL Error in update: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -199,7 +245,7 @@ public class CarRepository implements ICarRepository {
         }
         
         // Thêm features mới
-        if (!newFeatureIds.isEmpty()) {
+        if (newFeatureIds != null && !newFeatureIds.isEmpty()) {
             addCarFeatures(carId, newFeatureIds);
         }
     }
