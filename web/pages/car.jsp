@@ -231,7 +231,7 @@
                                                 </p>
                                             </div>
                                             <p class="d-flex mb-0 d-block">
-                                                <a href="pages/booking.jsp?id=${car.carId}" class="btn btn-book-now py-2 mr-1">Book now</a>
+                                                <a href="${pageContext.request.contextPath}/booking/form/details?id=${car.carId}" class="btn btn-book-now py-2 mr-1">Book now</a>
                                                 <a href="${pageContext.request.contextPath}/pages/car-single?id=${car.carId}" class="btn btn-details py-2 mr-1">Details</a>
                                                 <a href="${pageContext.request.contextPath}/pages/add-to-cart?id=${car.carId}" class="btn btn-add-to-cart py-2 ml-1">Add to Cart</a>
                                             </p>

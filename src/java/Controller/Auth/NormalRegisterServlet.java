@@ -124,27 +124,13 @@ public class NormalRegisterServlet extends HttpServlet {
 
             userService.add(user);
 
-            EmailOTPVerificationService emailOTPService = new EmailOTPVerificationService();
-            String otp = emailOTPService.generateOtp();
-            EmailOTPVerification otpEntity = new EmailOTPVerification();
-            otpEntity.setId(UUID.randomUUID());
-            otpEntity.setOtp(otp);
-            otpEntity.setUserId(user.getUserId());
-            otpEntity.setCreatedAt(LocalDateTime.now());
-            otpEntity.setExpiryTime(LocalDateTime.now().plusMinutes(10));
-            otpEntity.setIsUsed(false);
-            otpEntity.setResendCount(0);
-            otpEntity.setLastResendTime(null);
-            otpEntity.setResendBlockUntil(null);
-            emailOTPService.add(otpEntity);
-            MailService mailService = new MailService();
-            mailService.sendOtpEmail(user.getEmail(), otp, user.getUsername());
+            
 
             SessionUtil.setSessionAttribute(request, "pendingUserType", "normal");
             SessionUtil.setSessionAttribute(request, "pendingUser", user);
             SessionUtil.setSessionAttribute(request, "userId", user.getUserId().toString());
             SessionUtil.setSessionAttribute(request, "username", user.getUsername());
-            response.sendRedirect(request.getContextPath() + "/verify-otp");
+            response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp");
         } catch (Exception e) {
             String errorMessage;
             if (e instanceof SQLException) {

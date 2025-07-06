@@ -1,3 +1,4 @@
+
 package Controller.Auth;
 
 import Model.Constants.UserStatusConstants;
@@ -16,12 +17,12 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
 import Service.External.MailService;
 import Service.Auth.EmailOTPVerificationService;
 import Model.Entity.OAuth.EmailOTPVerification;
 
 
+@WebServlet("/login")
 public class NormalLoginServlet extends HttpServlet {
 
     private UserService userService;
@@ -29,6 +30,7 @@ public class NormalLoginServlet extends HttpServlet {
     private UserRoleService userRoleService;
     private MailService mailService;
     private EmailOTPVerificationService emailOTPService;
+   
 
     @Override
     public void init() {
@@ -37,6 +39,7 @@ public class NormalLoginServlet extends HttpServlet {
         userRoleService = new UserRoleService();
         mailService = new MailService();
         emailOTPService = new EmailOTPVerificationService();
+      
     }
 
     @Override
@@ -122,12 +125,15 @@ public class NormalLoginServlet extends HttpServlet {
             if (actualRole.getRoleName().equals("Staff")) {
                 redirectUrl = "/staff/dashboard"; 
             } else if (actualRole.getRoleName().equals("Admin")) {
-                redirectUrl = "/admin/dashboard"; 
+                redirectUrl = "/pages/admin/admin-dashboard.jsp"; 
             }
 
             SessionUtil.setSessionAttribute(request, "user", user);
             SessionUtil.setSessionAttribute(request, "userId", user.getUserId());
             SessionUtil.setSessionAttribute(request, "isLoggedIn", true);
+            SessionUtil.setSessionAttribute(request, "userRole", actualRole.getRoleName());
+           
+      
             SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
             response.sendRedirect(request.getContextPath() + redirectUrl);
         } catch (Exception e) {
@@ -136,4 +142,3 @@ public class NormalLoginServlet extends HttpServlet {
         }
     }
 }
-

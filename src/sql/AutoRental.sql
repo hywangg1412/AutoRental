@@ -1,7 +1,7 @@
-CREATE DATABASE [AutoRental3];
+CREATE DATABASE [AutoRental5];
 GO
 
-USE [AutoRental3];
+USE [AutoRental5];
 GO
 
 -- Users Permission Table
@@ -514,4 +514,44 @@ INSERT INTO CarImages (ImageId, CarId, ImageUrl, IsMain) VALUES
 (NEWID(), 'b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b1b1b1', '/assets/images/toyota_camry.jpg', 1),
 (NEWID(), 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e1e1e1', '/assets/images/hyundai_elantra.jpg', 1),
 (NEWID(), 'e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e2e2e2', '/assets/images/ford_ecosport.jpg', 1);
+-- Tạo user mới
+INSERT INTO [Users] (
+    [UserId],
+    [Username],
+    [Email],
+    [PasswordHash],
+    [FirstName],
+    [LastName],
+    [Status],
+    [EmailVerifed],
+    [TwoFactorEnabled],
+    [LockoutEnabled],
+    [AccessFailedCount],
+    [CreatedDate]
+)
+VALUES (
+    '44444444-4444-4444-4444-444444444444',
+    'datnt',
+    'dat123@gmail.com',
+    '$2a$12$K7Q8mhlco6WQCZeHgZKQCequhfHnIXDzx5A2fDHj6lNm1VMoaMPk.', -- hash cho "Datlong123"
+    N'Dat',
+    N'Nguyen',
+    'Active',
+    1,
+    0,
+    1,
+    0,
+    GETDATE()
+);
 
+INSERT INTO [UserRoles] (
+    [UserId],
+    [RoleId]
+)
+VALUES (
+    '44444444-4444-4444-4444-444444444444',
+    '6ba7b810-9dad-11d1-80b4-00c04fd430c8'
+);
+ALTER TABLE [Notification]
+ADD [IsRead] BIT NOT NULL DEFAULT 0;
+SELECT * FROM [Notification];

@@ -42,12 +42,32 @@ public class CarService implements ICarService {
     public Car add(Car entry) throws EventException, InvalidDataException {
         try {
             validateCar(entry);
-            return carRepository.add(entry);
+            System.out.println("=== CAR SERVICE - ADDING CAR ===");
+            System.out.println("CarId: " + entry.getCarId());
+            System.out.println("CarModel: " + entry.getCarModel());
+            System.out.println("BrandId: " + entry.getBrandId());
+            System.out.println("FuelTypeId: " + entry.getFuelTypeId());
+            System.out.println("TransmissionTypeId: " + entry.getTransmissionTypeId());
+            System.out.println("PricePerMonth: " + entry.getPricePerMonth());
+            System.out.println("Status: " + entry.getStatus());
+            
+            Car result = carRepository.add(entry);
+            System.out.println("Car added successfully: " + result.getCarId());
+            return result;
         } catch (SQLException e) {
-            throw new EventException("Error adding car: " + e.getMessage());
+            System.err.println("SQL Error adding car: " + e.getMessage());
+            System.err.println("SQL State: " + e.getSQLState());
+            System.err.println("Error Code: " + e.getErrorCode());
+            e.printStackTrace();
+            throw new EventException("Database error: " + e.getMessage());
         } catch (InvalidDataException ex) {
+            System.err.println("Invalid data error: " + ex.getMessage());
             Logger.getLogger(CarService.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
+            throw ex;
+        } catch (Exception e) {
+            System.err.println("Unexpected error adding car: " + e.getMessage());
+            e.printStackTrace();
+            throw new EventException("Unexpected error: " + e.getMessage());
         }
     }
 
