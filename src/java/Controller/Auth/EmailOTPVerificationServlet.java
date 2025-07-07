@@ -1,11 +1,9 @@
 package Controller.Auth;
 
 import Model.Entity.Role.Role;
-import Model.Entity.Role.UserRole;
 import Model.Entity.User.User;
 import Service.Auth.EmailOTPVerificationService;
 import Service.Role.RoleService;
-import Service.Role.UserRoleService;
 import Service.User.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -27,7 +25,6 @@ public class EmailOTPVerificationServlet extends HttpServlet {
     private EmailOTPVerificationService emailVerificationService;
     private UserService userService;
     private RoleService roleService;
-    private UserRoleService userRoleService;
 
     @Override
     public void init() throws ServletException {
@@ -35,7 +32,6 @@ public class EmailOTPVerificationServlet extends HttpServlet {
         this.emailVerificationService = new EmailOTPVerificationService();
         this.userService = new UserService();
         this.roleService = new RoleService();
-        this.userRoleService = new UserRoleService();
     }
 
     @Override

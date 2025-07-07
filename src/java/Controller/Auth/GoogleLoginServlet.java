@@ -16,9 +16,6 @@ import Model.Entity.User.User;
 import Model.Entity.OAuth.UserLogins;
 import Service.Auth.UserLoginsService;
 import Model.Entity.Role.Role;
-import Model.Entity.Role.UserRole;
-import Service.Role.RoleService;
-import Service.Role.UserRoleService;
 import Model.Constants.UserStatusConstants;
 import Service.External.MailService;
 import Service.Auth.EmailOTPVerificationService;
@@ -31,8 +28,6 @@ public class GoogleLoginServlet extends HttpServlet {
     private UserMapper userMapper;
     private UserService userService;
     private UserLoginsService userLoginsService;
-    private RoleService roleService;
-    private UserRoleService userRoleService;
     private MailService mailService;
     private EmailOTPVerificationService emailOTPService;
 
@@ -42,8 +37,6 @@ public class GoogleLoginServlet extends HttpServlet {
         userMapper = new UserMapper();
         userService = new UserService();
         userLoginsService = new UserLoginsService();
-        roleService = new RoleService();
-        userRoleService = new UserRoleService();
         mailService = new MailService();
         emailOTPService = new EmailOTPVerificationService();
     }
@@ -116,13 +109,14 @@ public class GoogleLoginServlet extends HttpServlet {
             SessionUtil.setSessionAttribute(request, "user", user);
             SessionUtil.setSessionAttribute(request, "isLoggedIn", true);
             SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
-            UserRole userRole = userRoleService.findByUserId(user.getUserId());
-            Role actualRole = roleService.findById(userRole.getRoleId());
             String redirectUrl = "/pages/home";
-            if (actualRole.getRoleName().equals("Staff")) {
-                redirectUrl = "/pages/staff/staff-dashboard.jsp";
-            } else if (actualRole.getRoleName().equals("Admin")) {
-                redirectUrl = "/pages/admin/admin-dashboard.jsp";
+            if (user.getRoleId() != null) {
+                String roleIdStr = user.getRoleId().toString();
+                if (roleIdStr.equals("550e8400-e29b-41d4-a716-446655440000")) { // Staff
+                    redirectUrl = "/pages/staff/staff-dashboard.jsp";
+                } else if (roleIdStr.equals("7c9e6679-7425-40de-944b-e07fc1f90ae7")) { // Admin
+                    redirectUrl = "/pages/admin/admin-dashboard.jsp";
+                }
             }
             response.sendRedirect(request.getContextPath() + redirectUrl);
         } catch (Exception e) {
