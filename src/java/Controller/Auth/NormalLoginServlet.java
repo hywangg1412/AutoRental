@@ -112,13 +112,13 @@ public class NormalLoginServlet extends HttpServlet {
                 return;
             }
 
-            String redirectUrl = "/pages/index.jsp";
+            String redirectUrl = "/pages/home";
             if (user.getRoleId() != null) {
                 String roleIdStr = user.getRoleId().toString();
                 if (roleIdStr.equals("550e8400-e29b-41d4-a716-446655440000")) { // Staff
-                    redirectUrl = "/staff/dashboard";
+                    redirectUrl = "/pages/staff/staff-dashboard.jsp";
                 } else if (roleIdStr.equals("7c9e6679-7425-40de-944b-e07fc1f90ae7")) { // Admin
-                    redirectUrl = "/admin/dashboard";
+                    redirectUrl = "/pages/admin/admin-dashboard.jsp";
                 }
             }
 
