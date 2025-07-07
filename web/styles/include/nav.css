@@ -295,5 +295,12 @@
   }
 }
 
+.badge.rounded-pill.bg-danger {
+  font-size: 0.7rem;
+  top: 0;
+  right: 0;
+}
+
+
 
 
