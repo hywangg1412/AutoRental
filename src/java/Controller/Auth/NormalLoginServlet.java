@@ -116,14 +116,14 @@ public class NormalLoginServlet extends HttpServlet {
             if (user.getRoleId() != null) {
                 String roleIdStr = user.getRoleId().toString();
                 if (roleIdStr.equals("550e8400-e29b-41d4-a716-446655440000")) { // Staff
-                    redirectUrl = "/pages/staff/staff-dashboard.jsp";
+                    redirectUrl = "/staff/dashboard";
                 } else if (roleIdStr.equals("7c9e6679-7425-40de-944b-e07fc1f90ae7")) { // Admin
                     redirectUrl = "/pages/admin/admin-dashboard.jsp";
                 }
             }
 
             SessionUtil.setSessionAttribute(request, "user", user);
-            SessionUtil.setSessionAttribute(request, "userId", user.getUserId());
+            SessionUtil.setSessionAttribute(request, "userId", user.getUserId().toString());
             SessionUtil.setSessionAttribute(request, "isLoggedIn", true);
             SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
             response.sendRedirect(request.getContextPath() + redirectUrl);

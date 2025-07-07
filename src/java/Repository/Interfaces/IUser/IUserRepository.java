@@ -4,6 +4,7 @@ import Model.Entity.User.User;
 import Repository.Interfaces.Repository;
 import java.util.List;
 import java.util.UUID;
+import java.sql.SQLException;
 
 
 public interface IUserRepository extends Repository<User, Integer>{
@@ -25,5 +26,5 @@ public interface IUserRepository extends Repository<User, Integer>{
 
     List<String> findAllUsernamesLike(String baseUsername);
 
-    List<Model.Entity.User.User> findByRoleId(java.util.UUID roleId) throws java.sql.SQLException;
+    List<User> findByRoleId(UUID roleId) throws SQLException;
 }
