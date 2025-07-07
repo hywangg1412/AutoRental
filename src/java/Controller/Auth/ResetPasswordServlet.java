@@ -2,10 +2,10 @@ package Controller.Auth;
 
 import Exception.NotFoundException;
 import Model.Entity.OAuth.PasswordResetToken;
-import Model.Entity.User;
-import Service.PasswordResetTokenService;
-import Service.ResetPasswordService;
-import Service.UserService;
+import Model.Entity.User.User;
+import Service.Auth.PasswordResetTokenService;
+import Service.External.MailService;
+import Service.User.UserService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -22,13 +22,13 @@ import Utils.ObjectUtils;
 public class ResetPasswordServlet extends HttpServlet {
 
     private PasswordResetTokenService PRTService;
-    private ResetPasswordService resetService;
+    private MailService resetService;
     private UserService userService;
 
     @Override
     public void init() {
         PRTService = new PasswordResetTokenService();
-        resetService = new ResetPasswordService();
+        resetService = new MailService();
         userService = new UserService();
     }
 

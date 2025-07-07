@@ -7,12 +7,13 @@ import Exception.NotFoundException;
 import Model.Entity.Car.Car;
 import Service.Interfaces.ICar.ICarService;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class CarService implements ICarService{
+public class CarService implements ICarService {
 
     private final Repository.Car.CarRepository carRepository = new Repository.Car.CarRepository();
 
@@ -92,6 +93,62 @@ public class CarService implements ICarService{
             Logger.getLogger(CarService.class.getName()).log(Level.SEVERE, "Error finding car: " + e.getMessage(), e);
             return null;
         }
+    }
+
+    @Override
+    public List<Car> findAll() throws SQLException {
+        return carRepository.findAll();
+    }
+
+    @Override
+    public List<Car> findByPage(int offset, int limit) throws SQLException {
+        return carRepository.findByPage(offset, limit);
+    }
+
+    @Override
+    public int countAll() throws SQLException {
+        return carRepository.countAll();
+    }
+
+    @Override
+    public List<Car> searchByKeyword(String keyword, int offset, int limit) throws SQLException {
+        return carRepository.searchByKeyword(keyword, offset, limit);
+    }
+
+    @Override
+    public int countByKeyword(String keyword) throws SQLException {
+        return carRepository.countByKeyword(keyword);
+    }
+
+    @Override
+    public List<Car> filterCars(
+        String[] brandIds, String[] fuelTypeIds, String[] seats, String[] categoryIds,
+        String[] statuses, String[] featureIds, String[] transmissionTypeIds, String sort, String keyword,
+        Integer minPricePerHour, Integer maxPricePerHour,
+        Integer minSeats, Integer maxSeats,
+        Integer minYear, Integer maxYear,
+        Integer minOdometer, Integer maxOdometer,
+        Integer minDistance, Integer maxDistance,
+        int offset, int limit
+    ) throws SQLException {
+        return carRepository.filterCars(brandIds, fuelTypeIds, seats, categoryIds, statuses, featureIds, transmissionTypeIds, sort, keyword, minPricePerHour, maxPricePerHour, minSeats, maxSeats, minYear, maxYear, minOdometer, maxOdometer, minDistance, maxDistance, offset, limit);
+    }
+
+    @Override
+    public int countFilteredCars(
+        String[] brandIds, String[] fuelTypeIds, String[] seats, String[] categoryIds,
+        String[] statuses, String[] featureIds, String[] transmissionTypeIds, String keyword,
+        Integer minPricePerHour, Integer maxPricePerHour,
+        Integer minSeats, Integer maxSeats,
+        Integer minYear, Integer maxYear,
+        Integer minOdometer, Integer maxOdometer,
+        Integer minDistance, Integer maxDistance
+    ) throws SQLException {
+        return carRepository.countFilteredCars(brandIds, fuelTypeIds, seats, categoryIds, statuses, featureIds, transmissionTypeIds, keyword, minPricePerHour, maxPricePerHour, minSeats, maxSeats, minYear, maxYear, minOdometer, maxOdometer, minDistance, maxDistance);
+    }
+
+    public List<Integer> getAllSeatNumbers() {
+        return carRepository.getAllSeatNumbers();
     }
 
 }

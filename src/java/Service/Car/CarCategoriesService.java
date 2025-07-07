@@ -30,7 +30,7 @@ public class CarCategoriesService implements ICarCategoriesService {
             for (CarCategories category : categories) {
                 System.out.println(category);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new EventException("Error displaying car categories: " + e.getMessage());
         }
     }
@@ -100,4 +100,7 @@ public class CarCategoriesService implements ICarCategoriesService {
             return null;
         }
     }
-} 
+    public List<CarCategories> getAll() {
+        return repository.findAll();
+    }
+}

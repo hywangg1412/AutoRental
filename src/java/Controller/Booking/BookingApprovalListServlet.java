@@ -1,98 +1,97 @@
 package Controller.Booking;
 
-import Model.DTO.BookingRequestDTO;
-import Model.Entity.Booking.Booking;
-import Model.Entity.Booking.BookingApproval;
-import Model.Entity.Car.Car;
-import Model.Entity.User;
-import Service.Booking.BookingApprovalService;
-import Service.Booking.BookingService;
-import Service.Car.CarService;
-import Service.UserService;
-import Utils.FormatUtils;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import Model.DTO.BookingInfoDTO;
+import Model.Entity.User.User;
+import Service.Booking.StaffBookingService;
+import Utils.SessionUtil;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.time.LocalDateTime;
 
-// /staff/booking-approval-list
+/**
+ * Servlet hiển thị danh sách booking cho staff xem và duyệt
+ * URL: /staff/booking-approval-list
+ * Method: GET (hiển thị trang), POST (redirect)
+ * 
+ * Chức năng:
+ * 1. Lấy danh sách booking từ StaffBookingService
+ * 2. Hiển thị trong staff-booking.jsp
+ * 3. Staff có thể xem chi tiết và duyệt booking
+ */
+@WebServlet("/staff/booking-approval-list")
 public class BookingApprovalListServlet extends HttpServlet {
 
-    private BookingApprovalService BAService;
-    private BookingService bookingService;
-    private UserService userService;
-    private CarService carService;
+    private static final Logger LOGGER = Logger.getLogger(BookingApprovalListServlet.class.getName());
+    private StaffBookingService staffBookingService;
 
     @Override
     public void init() {
-        BAService = new BookingApprovalService();
-        bookingService = new BookingService();
-        userService = new UserService();
-        carService = new CarService();
+        staffBookingService = new StaffBookingService();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            List<Booking> pendingBookings = bookingService.findByStatus("Pending");
-            List<BookingRequestDTO> dtoList = new ArrayList<>();
-
-            for (Booking booking : pendingBookings) {
-                BookingApproval approval = BAService.findByBookingId(booking.getBookingId());
-                // Get staff id từ session
-//                UUID staffId = UUID.fromString("CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCAA");
-                if (approval == null) {
-                    approval = new BookingApproval();
-                    approval.setApprovalId(UUID.randomUUID());
-                    approval.setBookingId(booking.getBookingId());
-                    approval.setStaffId(UUID.randomUUID());
-                    approval.setApprovalStatus("Pending");
-                    approval.setApprovalDate(LocalDateTime.now());
-                    BAService.add(approval);
-                }
-                User customer = userService.findById(booking.getUserId());
-                Car car = carService.findById(booking.getCarId());
-                
-                BookingRequestDTO dto = new BookingRequestDTO();
-                dto.setApprovalId(approval.getApprovalId());
-                dto.setApprovalStatus(approval.getApprovalStatus());
-                dto.setApprovalDate(approval.getApprovalDate());
-                dto.setNote(approval.getNote());
-                dto.setRejectionReason(approval.getRejectionReason());
-
-                dto.setBookingId(booking.getBookingId());
-                dto.setPickupDateTime(FormatUtils.format(booking.getPickupDateTime()));
-                dto.setReturnDateTime(FormatUtils.format(booking.getReturnDateTime()));
-                dto.setTotalAmount(booking.getTotalAmount());
-
-                dto.setCustomerName(customer.getFirstName() + " " + customer.getLastName());
-                dto.setCustomerEmail(customer.getEmail());
-                dto.setCarModel(car.getCarModel());
-                dto.setLicensePlate(car.getLicensePlate());
-
-                dtoList.add(dto);
+            // 1. Kiểm tra session của staff
+            User staff = (User) SessionUtil.getSessionAttribute(request, "user");
+            if (staff == null) {
+                response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp");
+                return;
             }
-            System.out.println("DTO list size: " + dtoList.size());
-            for (BookingRequestDTO dto : dtoList) {
-                System.out.println("BookingId: " + dto.getBookingId() + ", Customer: " + dto.getCustomerName());
+
+            // TODO: Kiểm tra user có phải staff không (có thể kiểm tra role)
+            
+            // ====== PHÂN TRANG ======
+            int page = 1;
+            int pageSize = 10; // Số booking mỗi trang
+            try {
+                String pageParam = request.getParameter("page");
+                if (pageParam != null) page = Integer.parseInt(pageParam);
+            } catch (NumberFormatException ignored) {}
+            // Lấy danh sách booking phân trang
+            List<BookingInfoDTO> bookings = staffBookingService.getBookingInfoPaged(page, pageSize);
+            // Đếm tổng số booking để tính tổng số trang
+            int totalBookings = staffBookingService.getAllBookingInfo().size();
+            int totalPages = (int) Math.ceil((double) totalBookings / pageSize);
+
+            request.setAttribute("bookingRequests", bookings);
+            request.setAttribute("currentPage", page);
+            request.setAttribute("totalPages", totalPages);
+            // ====== END PHÂN TRANG ======
+            
+            // 6. Hiển thị thông báo thành công/lỗi nếu có
+            String successMessage = request.getParameter("success");
+            String errorMessage = request.getParameter("error");
+            
+            if (successMessage != null && !successMessage.trim().isEmpty()) {
+                request.setAttribute("successMessage", successMessage);
             }
-            request.setAttribute("pendingBookings", dtoList);
+            
+            if (errorMessage != null && !errorMessage.trim().isEmpty()) {
+                request.setAttribute("errorMessage", errorMessage);
+            }
+            
         } catch (Exception e) {
-            request.setAttribute("error", "Can't initialize booking list : " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Lỗi trong BookingApprovalListServlet", e);
+            request.setAttribute("errorMessage", "Không thể tải danh sách booking: " + e.getMessage());
         }
+        
+        // 7. Forward đến trang JSP
         request.getRequestDispatcher("/pages/staff/staff-booking.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // POST request chỉ redirect về GET để refresh trang
         response.sendRedirect(request.getContextPath() + "/staff/booking-approval-list");
     }
 }

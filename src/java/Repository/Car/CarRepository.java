@@ -7,6 +7,7 @@ import Repository.Interfaces.ICar.ICarRepository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -201,5 +202,325 @@ public class CarRepository implements ICarRepository {
         if (!newFeatureIds.isEmpty()) {
             addCarFeatures(carId, newFeatureIds);
         }
+    }
+
+    public List<Car> findByPage(int offset, int limit) throws SQLException {
+        String sql = "SELECT * FROM Car ORDER BY CreatedDate DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        List<Car> cars = new ArrayList<>();
+        try (var conn = dbContext.getConnection();
+             var ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, offset);
+            ps.setInt(2, limit);
+            try (var rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    cars.add(mapResultSetToCar(rs));
+                }
+            }
+        }
+        return cars;
+    }
+
+    public int countAll() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Car";
+        try (var conn = dbContext.getConnection();
+             var ps = conn.prepareStatement(sql);
+             var rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return 0;
+    }
+
+    @Override
+    public List<Car> searchByKeyword(String keyword, int offset, int limit) throws SQLException {
+        List<Car> cars = new ArrayList<>();
+        String sql = "SELECT * FROM Car WHERE CarModel LIKE ? OR BrandId IN (SELECT BrandId FROM CarBrand WHERE BrandName LIKE ?) ORDER BY CreatedDate DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        try (var conn = dbContext.getConnection();
+             var ps = conn.prepareStatement(sql)) {
+            ps.setString(1, "%" + keyword + "%");
+            ps.setString(2, "%" + keyword + "%");
+            ps.setInt(3, offset);
+            ps.setInt(4, limit);
+            try (var rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    cars.add(mapResultSetToCar(rs));
+                }
+            }
+        }
+        return cars;
+    }
+
+    @Override
+    public int countByKeyword(String keyword) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Car WHERE CarModel LIKE ? OR BrandId IN (SELECT BrandId FROM CarBrand WHERE BrandName LIKE ?)";
+        try (var conn = dbContext.getConnection();
+             var ps = conn.prepareStatement(sql)) {
+            ps.setString(1, "%" + keyword + "%");
+            ps.setString(2, "%" + keyword + "%");
+            try (var rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
+    }
+
+    @Override
+    public List<Car> filterCars(
+        String[] brandIds, String[] fuelTypeIds, String[] seats, String[] categoryIds,
+        String[] statuses, String[] featureIds, String[] transmissionTypeIds, String sort, String keyword,
+        Integer minPricePerHour, Integer maxPricePerHour,
+        Integer minSeats, Integer maxSeats,
+        Integer minYear, Integer maxYear,
+        Integer minOdometer, Integer maxOdometer,
+        Integer minDistance, Integer maxDistance,
+        int offset, int limit
+    ) throws SQLException {
+        StringBuilder sql = new StringBuilder("SELECT DISTINCT c.* FROM Car c ");
+        List<Object> params = new ArrayList<>();
+        if (featureIds != null && featureIds.length > 0) {
+            sql.append("JOIN CarFeaturesMapping fm ON c.CarId = fm.CarId ");
+        }
+        sql.append("WHERE 1=1 ");
+        
+        // Existing filters
+        if (brandIds != null && brandIds.length > 0) {
+            sql.append("AND c.BrandId IN (").append(String.join(",", Collections.nCopies(brandIds.length, "?"))).append(") ");
+            Collections.addAll(params, brandIds);
+        }
+        if (fuelTypeIds != null && fuelTypeIds.length > 0) {
+            sql.append("AND c.FuelTypeId IN (").append(String.join(",", Collections.nCopies(fuelTypeIds.length, "?"))).append(") ");
+            Collections.addAll(params, fuelTypeIds);
+        }
+        if (transmissionTypeIds != null && transmissionTypeIds.length > 0) {
+            sql.append("AND c.TransmissionTypeId IN (").append(String.join(",", Collections.nCopies(transmissionTypeIds.length, "?"))).append(") ");
+            Collections.addAll(params, transmissionTypeIds);
+        }
+        if (seats != null && seats.length > 0) {
+            sql.append("AND c.Seats IN (").append(String.join(",", Collections.nCopies(seats.length, "?"))).append(") ");
+            for (String s : seats) params.add(Integer.parseInt(s));
+        }
+        if (categoryIds != null && categoryIds.length > 0) {
+            sql.append("AND c.CategoryId IN (").append(String.join(",", Collections.nCopies(categoryIds.length, "?"))).append(") ");
+            Collections.addAll(params, categoryIds);
+        }
+        if (statuses != null && statuses.length > 0) {
+            sql.append("AND c.Status IN (").append(String.join(",", Collections.nCopies(statuses.length, "?"))).append(") ");
+            Collections.addAll(params, statuses);
+        }
+        if (featureIds != null && featureIds.length > 0) {
+            sql.append("AND fm.FeatureId IN (").append(String.join(",", Collections.nCopies(featureIds.length, "?"))).append(") ");
+            Collections.addAll(params, featureIds);
+        }
+        if (keyword != null && !keyword.isEmpty()) {
+            sql.append("AND (c.CarModel LIKE ? OR c.BrandId IN (SELECT BrandId FROM CarBrand WHERE BrandName LIKE ?)) ");
+            params.add("%" + keyword + "%");
+            params.add("%" + keyword + "%");
+        }
+        
+        // New range filters
+        if (minPricePerHour != null) {
+            sql.append("AND c.PricePerHour >= ? ");
+            params.add(minPricePerHour);
+        }
+        if (maxPricePerHour != null) {
+            sql.append("AND c.PricePerHour <= ? ");
+            params.add(maxPricePerHour);
+        }
+        if (minSeats != null) {
+            sql.append("AND c.Seats >= ? ");
+            params.add(minSeats);
+        }
+        if (maxSeats != null) {
+            sql.append("AND c.Seats <= ? ");
+            params.add(maxSeats);
+        }
+        if (minYear != null) {
+            sql.append("AND c.YearManufactured >= ? ");
+            params.add(minYear);
+        }
+        if (maxYear != null) {
+            sql.append("AND c.YearManufactured <= ? ");
+            params.add(maxYear);
+        }
+        if (minOdometer != null) {
+            sql.append("AND c.Odometer >= ? ");
+            params.add(minOdometer);
+        }
+        if (maxOdometer != null) {
+            sql.append("AND c.Odometer <= ? ");
+            params.add(maxOdometer);
+        }
+        if (minDistance != null) {
+            // Note: This would need location data to implement properly
+            // For now, we'll skip this filter or implement it later
+            // sql.append("AND distance >= ? ");
+            // params.add(minDistance);
+        }
+        if (maxDistance != null) {
+            // Note: This would need location data to implement properly
+            // For now, we'll skip this filter or implement it later
+            // sql.append("AND distance <= ? ");
+            // params.add(maxDistance);
+        }
+        
+        // Sort
+        if (sort != null) {
+            switch (sort) {
+                case "priceAsc": sql.append("ORDER BY c.PricePerHour ASC "); break;
+                case "priceDesc": sql.append("ORDER BY c.PricePerHour DESC "); break;
+                case "nameAsc": sql.append("ORDER BY c.CarModel ASC "); break;
+                case "nameDesc": sql.append("ORDER BY c.CarModel DESC "); break;
+                case "yearDesc": sql.append("ORDER BY c.YearManufactured DESC "); break;
+                case "yearAsc": sql.append("ORDER BY c.YearManufactured ASC "); break;
+                default: sql.append("ORDER BY c.CreatedDate DESC "); break;
+            }
+        } else {
+            sql.append("ORDER BY c.CreatedDate DESC ");
+        }
+        sql.append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+        params.add(offset);
+        params.add(limit);
+
+        List<Car> cars = new ArrayList<>();
+        try (var conn = dbContext.getConnection();
+             var ps = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+            try (var rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    cars.add(mapResultSetToCar(rs));
+                }
+            }
+        }
+        return cars;
+    }
+
+    @Override
+    public int countFilteredCars(
+        String[] brandIds, String[] fuelTypeIds, String[] seats, String[] categoryIds,
+        String[] statuses, String[] featureIds, String[] transmissionTypeIds, String keyword,
+        Integer minPrice, Integer maxPrice,
+        Integer minSeats, Integer maxSeats,
+        Integer minYear, Integer maxYear,
+        Integer minOdometer, Integer maxOdometer,
+        Integer minDistance, Integer maxDistance
+    ) throws SQLException {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(DISTINCT c.CarId) FROM Car c ");
+        List<Object> params = new ArrayList<>();
+        if (featureIds != null && featureIds.length > 0) {
+            sql.append("JOIN CarFeaturesMapping fm ON c.CarId = fm.CarId ");
+        }
+        sql.append("WHERE 1=1 ");
+        
+        // Existing filters
+        if (brandIds != null && brandIds.length > 0) {
+            sql.append("AND c.BrandId IN (").append(String.join(",", Collections.nCopies(brandIds.length, "?"))).append(") ");
+            Collections.addAll(params, brandIds);
+        }
+        if (fuelTypeIds != null && fuelTypeIds.length > 0) {
+            sql.append("AND c.FuelTypeId IN (").append(String.join(",", Collections.nCopies(fuelTypeIds.length, "?"))).append(") ");
+            Collections.addAll(params, fuelTypeIds);
+        }
+        if (transmissionTypeIds != null && transmissionTypeIds.length > 0) {
+            sql.append("AND c.TransmissionTypeId IN (").append(String.join(",", Collections.nCopies(transmissionTypeIds.length, "?"))).append(") ");
+            Collections.addAll(params, transmissionTypeIds);
+        }
+        if (seats != null && seats.length > 0) {
+            sql.append("AND c.Seats IN (").append(String.join(",", Collections.nCopies(seats.length, "?"))).append(") ");
+            for (String s : seats) params.add(Integer.parseInt(s));
+        }
+        if (categoryIds != null && categoryIds.length > 0) {
+            sql.append("AND c.CategoryId IN (").append(String.join(",", Collections.nCopies(categoryIds.length, "?"))).append(") ");
+            Collections.addAll(params, categoryIds);
+        }
+        if (statuses != null && statuses.length > 0) {
+            sql.append("AND c.Status IN (").append(String.join(",", Collections.nCopies(statuses.length, "?"))).append(") ");
+            Collections.addAll(params, statuses);
+        }
+        if (featureIds != null && featureIds.length > 0) {
+            sql.append("AND fm.FeatureId IN (").append(String.join(",", Collections.nCopies(featureIds.length, "?"))).append(") ");
+            Collections.addAll(params, featureIds);
+        }
+        if (keyword != null && !keyword.isEmpty()) {
+            sql.append("AND (c.CarModel LIKE ? OR c.BrandId IN (SELECT BrandId FROM CarBrand WHERE BrandName LIKE ?)) ");
+            params.add("%" + keyword + "%");
+            params.add("%" + keyword + "%");
+        }
+        
+        // New range filters
+        if (minPrice != null) {
+            sql.append("AND c.PricePerHour >= ? ");
+            params.add(minPrice);
+        }
+        if (maxPrice != null) {
+            sql.append("AND c.PricePerHour <= ? ");
+            params.add(maxPrice);
+        }
+        if (minSeats != null) {
+            sql.append("AND c.Seats >= ? ");
+            params.add(minSeats);
+        }
+        if (maxSeats != null) {
+            sql.append("AND c.Seats <= ? ");
+            params.add(maxSeats);
+        }
+        if (minYear != null) {
+            sql.append("AND c.YearManufactured >= ? ");
+            params.add(minYear);
+        }
+        if (maxYear != null) {
+            sql.append("AND c.YearManufactured <= ? ");
+            params.add(maxYear);
+        }
+        if (minOdometer != null) {
+            sql.append("AND c.Odometer >= ? ");
+            params.add(minOdometer);
+        }
+        if (maxOdometer != null) {
+            sql.append("AND c.Odometer <= ? ");
+            params.add(maxOdometer);
+        }
+        if (minDistance != null) {
+            // Note: This would need location data to implement properly
+            // For now, we'll skip this filter or implement it later
+            // sql.append("AND distance >= ? ");
+            // params.add(minDistance);
+        }
+        if (maxDistance != null) {
+            // Note: This would need location data to implement properly
+            // For now, we'll skip this filter or implement it later
+            // sql.append("AND distance <= ? ");
+            // params.add(maxDistance);
+        }
+        
+        try (var conn = dbContext.getConnection();
+             var ps = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+            try (var rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        }
+        return 0;
+    }
+
+    public List<Integer> getAllSeatNumbers() {
+        List<Integer> seatList = new ArrayList<>();
+        String sql = "SELECT DISTINCT Seats FROM Car ORDER BY Seats ASC";
+        try (var conn = dbContext.getConnection();
+             var ps = conn.prepareStatement(sql);
+             var rs = ps.executeQuery()) {
+            while (rs.next()) {
+                seatList.add(rs.getInt("Seats"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return seatList;
     }
 }

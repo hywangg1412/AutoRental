@@ -1,10 +1,10 @@
 package Controller.Auth;
 
 import Model.Entity.OAuth.PasswordResetToken;
-import Model.Entity.User;
-import Service.PasswordResetTokenService;
-import Service.ResetPasswordService;
-import Service.UserService;
+import Model.Entity.User.User;
+import Service.Auth.PasswordResetTokenService;
+import Service.External.MailService;
+import Service.User.UserService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -18,13 +18,13 @@ import java.util.UUID;
 public class RequestPasswordServlet extends HttpServlet {
 
     private UserService userService;
-    private ResetPasswordService resetPasswordService;
+    private MailService resetPasswordService;
     private PasswordResetTokenService PRTService;
 
     @Override
     public void init() {
         userService = new UserService();
-        resetPasswordService = new ResetPasswordService();
+        resetPasswordService = new MailService();
         PRTService = new PasswordResetTokenService();
     }
 
@@ -51,6 +51,11 @@ public class RequestPasswordServlet extends HttpServlet {
             User user = userService.findByEmail(email);
             if (user == null) {
                 request.setAttribute("error", "Email not found!");
+                request.getRequestDispatcher("pages/authen/RequestPassword.jsp").forward(request, response);
+                return;
+            }
+            if (user.isDeleted()) {
+                request.setAttribute("error", "This account has been deleted and password cannot be reset.");
                 request.getRequestDispatcher("pages/authen/RequestPassword.jsp").forward(request, response);
                 return;
             }

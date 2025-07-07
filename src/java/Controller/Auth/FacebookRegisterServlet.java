@@ -2,11 +2,12 @@ package Controller.Auth;
 
 import Mapper.UserMapper;
 import Model.Entity.OAuth.FacebookUser;
-import Model.Entity.User;
+import Model.Entity.User.User;
 import Model.Entity.Role.Role;
 import Model.Entity.Role.UserRole;
-import Service.UserService;
-import Service.auth.FacebookAuthService;
+import Model.Constants.RoleConstants;
+import Service.User.UserService;
+import Service.Auth.FacebookAuthService;
 import Service.Role.RoleService;
 import Service.Role.UserRoleService;
 import java.io.IOException;
@@ -18,7 +19,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import Utils.SessionUtil;
 import Model.Entity.OAuth.UserLogins;
-import Service.auth.UserLoginsService;
+import Service.Auth.EmailOTPVerificationService;
+import Service.Auth.UserLoginsService;
 
 //facebookLogin
 public class FacebookRegisterServlet extends HttpServlet {
@@ -29,6 +31,7 @@ public class FacebookRegisterServlet extends HttpServlet {
     private UserLoginsService userLoginsService;
     private RoleService roleService;
     private UserRoleService userRoleService;
+    private EmailOTPVerificationService emailOTPVerificationService;
 
     @Override
     public void init() {
@@ -38,6 +41,7 @@ public class FacebookRegisterServlet extends HttpServlet {
         userLoginsService = new UserLoginsService();
         roleService = new RoleService();
         userRoleService = new UserRoleService();
+        emailOTPVerificationService = new EmailOTPVerificationService();
     }
 
     @Override
@@ -52,40 +56,38 @@ public class FacebookRegisterServlet extends HttpServlet {
             FacebookUser facebookUser = facebookAuthService.getRegisterUserInfo(code);
             User existingUser = userService.findByEmail(facebookUser.getEmail());
             if (existingUser != null) {
-                String errorMsg = existingUser.isBanned() ?
-                    "This email is associated with a banned account. Please contact support." :
-                    "Email already exists!";
+                String errorMsg;
+                if (existingUser.isDeleted()) {
+                    errorMsg = "This email is associated with a deleted account and cannot be reused.";
+                } else if (existingUser.isBanned()) {
+                    errorMsg = "This email is associated with a banned account. Please contact support.";
+                } else {
+                    errorMsg = "An account with this email already exists.";
+                }
                 request.setAttribute("error", errorMsg);
-                request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
+                request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
                 return;
             }
-            User newUser = userMapper.mapFacebookUserToUser(facebookUser);
-            User addedUser = userService.add(newUser);
-            if (addedUser != null) {
-                // Gán role User cho người dùng mới
-                Role userRole = roleService.findByRoleName("User");
+            User newUser = userMapper.mapFacebookUserToUser(facebookUser, userService);
+            newUser.setEmailVerifed(true);
+            userService.add(newUser);
+            
+            try {
+                Role userRole = roleService.findByRoleName(RoleConstants.USER);
                 if (userRole != null) {
-                    UserRole newUserRole = new UserRole(addedUser.getUserId(), userRole.getRoleId());
+                    UserRole newUserRole = new UserRole(newUser.getUserId(), userRole.getRoleId());
                     userRoleService.add(newUserRole);
                 }
-
-                UserLogins userLogins = new UserLogins();
-                userLogins.setUserId(addedUser.getUserId());
-                userLogins.setLoginProvider("facebook");
-                userLogins.setProviderKey(facebookUser.getFacebookId());
-                try {
-                    userLoginsService.add(userLogins);
-                    request.getSession().setAttribute("userId", addedUser.getUserId().toString());
-                    request.getRequestDispatcher("/pages/authen/SetPassword.jsp").forward(request, response);
-                } catch (Exception ex) {
-                    userService.delete(addedUser.getUserId());
-                    request.setAttribute("error", "Register failed (user login): " + ex.getMessage());
-                    request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
-                }
-            } else {
-                request.setAttribute("error", "Register failed. Please try again.");
-                request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
+            } catch (Exception e) {
+                System.err.println("Error assigning default role to user: " + e.getMessage());
             }
+            
+
+            UserLogins userLogins = userMapper.mapFacebookUserToUserLogins(facebookUser, newUser);
+            userLoginsService.add(userLogins);
+
+            response.sendRedirect(request.getContextPath() + "/setPassword");
+            return;
         } catch (Exception e) {
             request.setAttribute("error", "Facebook register failed - " + e.getMessage());
             request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);

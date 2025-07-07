@@ -1,8 +1,8 @@
-package Service.auth;
+package Service.Auth;
 
-import Constant.OAuthConstants;
+import Model.Constants.OAuthConstants;
 import Model.Entity.OAuth.GoogleUser;
-import Model.Entity.User;
+import Model.Entity.User.User;
 import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
@@ -74,6 +74,38 @@ public class GoogleAuthService extends OAuthConstants {
     public GoogleUser getUserInfoRegister(String code) throws IOException {
         TokenResponse tokenResponse = flow.newTokenRequest(code)
                 .setRedirectUri(OAuthConstants.GOOGLE_REDIRECT_URI_REGISTER)
+                .execute();
+
+        GoogleCredential credential = new GoogleCredential()
+                .setAccessToken(tokenResponse.getAccessToken());
+
+        Oauth2 oauth2 = new Oauth2.Builder(
+                new NetHttpTransport(),
+                GsonFactory.getDefaultInstance(),
+                credential)
+                .build();
+
+        Userinfo userInfo = oauth2.userinfo().get().execute();
+
+        return new GoogleUser(
+                userInfo.getId(),
+                userInfo.getEmail(),
+                userInfo.getFamilyName(),
+                userInfo.getGivenName(),
+                userInfo.getPicture(),
+                userInfo.getVerifiedEmail()
+        );
+    }
+
+    public String getAuthorizationLinkUrl() {
+        return flow.newAuthorizationUrl()
+                .setRedirectUri(GOOGLE_REDIRECT_URI_LINK)
+                .build();
+    }
+
+    public GoogleUser getUserInfoLink(String code) throws IOException {
+        TokenResponse tokenResponse = flow.newTokenRequest(code)
+                .setRedirectUri(GOOGLE_REDIRECT_URI_LINK)
                 .execute();
 
         GoogleCredential credential = new GoogleCredential()

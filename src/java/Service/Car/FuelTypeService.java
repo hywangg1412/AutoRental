@@ -30,7 +30,7 @@ public class FuelTypeService implements IFuelTypeService {
             for (FuelType fuelType : fuelTypes) {
                 System.out.println(fuelType);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new EventException("Error displaying fuel types: " + e.getMessage());
         }
     }
@@ -96,5 +96,9 @@ public class FuelTypeService implements IFuelTypeService {
             Logger.getLogger(FuelTypeService.class.getName()).log(Level.SEVERE, "Error finding fuel type: " + e.getMessage(), e);
         }
         return null;
+    }
+
+    public List<FuelType> getAll() {
+        return repository.findAll();
     }
 } 
