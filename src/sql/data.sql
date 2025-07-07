@@ -1,13 +1,3 @@
--- Assign Staff Role
-INSERT INTO [UserRoles] (
-    [UserId],
-    [RoleId]
-)
-VALUES (
-    '11111111-1111-1111-1111-111111111111', -- Staff User ID
-    '550e8400-e29b-41d4-a716-446655440000'  -- Staff Role ID
-);
-GO
 -- Brand
 INSERT INTO CarBrand (BrandId, BrandName) VALUES
 ('11111111-1111-1111-1111-111111111111', N'Toyota'),

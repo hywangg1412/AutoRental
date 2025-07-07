@@ -4,12 +4,10 @@ import Mapper.UserMapper;
 import Model.Entity.OAuth.FacebookUser;
 import Model.Entity.User.User;
 import Model.Entity.Role.Role;
-import Model.Entity.Role.UserRole;
 import Model.Constants.RoleConstants;
 import Service.User.UserService;
 import Service.Auth.FacebookAuthService;
 import Service.Role.RoleService;
-import Service.Role.UserRoleService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -30,7 +28,6 @@ public class FacebookRegisterServlet extends HttpServlet {
     private UserService userService;
     private UserLoginsService userLoginsService;
     private RoleService roleService;
-    private UserRoleService userRoleService;
     private EmailOTPVerificationService emailOTPVerificationService;
 
     @Override
@@ -40,7 +37,6 @@ public class FacebookRegisterServlet extends HttpServlet {
         userService = new UserService();
         userLoginsService = new UserLoginsService();
         roleService = new RoleService();
-        userRoleService = new UserRoleService();
         emailOTPVerificationService = new EmailOTPVerificationService();
     }
 
@@ -70,19 +66,15 @@ public class FacebookRegisterServlet extends HttpServlet {
             }
             User newUser = userMapper.mapFacebookUserToUser(facebookUser, userService);
             newUser.setEmailVerifed(true);
+            Role userRole = roleService.findByRoleName(RoleConstants.USER);
+            if (userRole == null) {
+                request.setAttribute("error", "Default user role not found!");
+                request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
+                return;
+            }
+            newUser.setRoleId(userRole.getRoleId());
             userService.add(newUser);
             
-            try {
-                Role userRole = roleService.findByRoleName(RoleConstants.USER);
-                if (userRole != null) {
-                    UserRole newUserRole = new UserRole(newUser.getUserId(), userRole.getRoleId());
-                    userRoleService.add(newUserRole);
-                }
-            } catch (Exception e) {
-                System.err.println("Error assigning default role to user: " + e.getMessage());
-            }
-            
-
             UserLogins userLogins = userMapper.mapFacebookUserToUserLogins(facebookUser, newUser);
             userLoginsService.add(userLogins);
 

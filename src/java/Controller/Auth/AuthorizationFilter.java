@@ -2,10 +2,8 @@ package Controller.Auth;
 
 import Exception.NotFoundException;
 import Model.Constants.RoleConstants;
-import Model.Entity.Role.UserRole;
 import Model.Entity.User.User;
 import Service.Role.RoleService;
-import Service.Role.UserRoleService;
 import Utils.SessionUtil;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +16,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 // /authorizationFilter
 public class AuthorizationFilter implements Filter {
@@ -25,7 +24,6 @@ public class AuthorizationFilter implements Filter {
     private static final boolean debug = true;
     private FilterConfig filterConfig = null;
     private RoleService roleService = new RoleService();
-    private UserRoleService userRoleService = new UserRoleService();
 
     // Role constants
     private static final String ROLE_ADMIN = "Admin";
@@ -131,15 +129,13 @@ public class AuthorizationFilter implements Filter {
                 return;
             }
 
-            UserRole userRole = userRoleService.findByUserId(user.getUserId());
-            if (userRole == null) {
+            // Kiểm tra roleId trực tiếp trên user
+            UUID userRoleId = user.getRoleId();
+            if (userRoleId == null) {
                 redirectToForbidden(httpRequest, httpResponse);
                 return;
             }
-
-            // Get role object and check permission
-            Model.Entity.Role.Role role = roleService.findById(userRole.getRoleId());
-            if (role == null || !hasPathPermission(role.getRoleName(), requestURI)) {
+            if (!hasPathPermission(userRoleId.toString(), requestURI)) {
                 redirectToForbidden(httpRequest, httpResponse);
                 return;
             }
@@ -245,11 +241,11 @@ public class AuthorizationFilter implements Filter {
         filterConfig.getServletContext().log(msg);
     }
 
-    private boolean hasPathPermission(String userRole, String requestPath) {
-        if (userRole.equals(ROLE_ADMIN)) {
+    private boolean hasPathPermission(String userRoleId, String requestPath) {
+        if (userRoleId.equals(ROLE_ADMIN_ID)) {
             return true; // Admin can access everything
         }
-        if (userRole.equals(ROLE_STAFF)) {
+        if (userRoleId.equals(ROLE_STAFF_ID)) {
             // Staff can access staff pages and all user pages (not admin)
             return isStaffPath(requestPath) || isUserPath(requestPath);
         }
