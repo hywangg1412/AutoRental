@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 
 <!DOCTYPE html>
 <html>
@@ -32,7 +33,7 @@
       <h6 class="px-3 mb-2 text-muted">Navigation</h6>
       <ul class="nav flex-column">
         <li class="nav-item">
-          <a class="nav-link active" href="${pageContext.request.contextPath}/pages/staff/staff-dashboard.jsp">
+          <a class="nav-link active" href="${pageContext.request.contextPath}/staff/dashboard">
             <i class="fas fa-home"></i> Dashboard
           </a>
         </li>
@@ -103,8 +104,17 @@
                 <h6 class="card-title mb-0">Total Requests</h6>
                 <i class="fas fa-calendar text-muted"></i>
               </div>
-              <h3 class="card-text">24</h3>
-              <small class="text-muted">Today's bookings</small>
+              <c:choose>
+                <c:when test="${empty totalRequests or totalRequests == 0 or totalRequests eq '0'}">
+                  <span class="no-booking-message" style="font-size:1.1rem; font-weight:500; color:#222;">No bookings</span>
+                </c:when>
+                <c:otherwise>
+                  <h3 class="card-text">${totalRequests}</h3>
+                </c:otherwise>
+              </c:choose>
+              <c:if test="${not (empty totalRequests or totalRequests == 0 or totalRequests eq '0')}">
+                <small class="text-muted">Total bookings</small>
+              </c:if>
             </div>
           </div>
         </div>
@@ -115,8 +125,17 @@
                 <h6 class="card-title mb-0">Accepted</h6>
                 <i class="fas fa-check-circle text-success"></i>
               </div>
-              <h3 class="card-text text-success">18</h3>
-              <small class="text-muted">Confirmed bookings</small>
+              <c:choose>
+                <c:when test="${empty accepted or accepted == 0 or accepted eq '0'}">
+                  <span class="no-booking-message" style="font-size:1.1rem; font-weight:500; color:#22a06b;">No bookings</span>
+                </c:when>
+                <c:otherwise>
+                  <h3 class="card-text text-success">${accepted}</h3>
+                </c:otherwise>
+              </c:choose>
+              <c:if test="${not (empty accepted or accepted == 0 or accepted eq '0')}">
+                <small class="text-muted">Confirmed bookings</small>
+              </c:if>
             </div>
           </div>
         </div>
@@ -127,8 +146,17 @@
                 <h6 class="card-title mb-0">Pending</h6>
                 <i class="fas fa-clock text-warning"></i>
               </div>
-              <h3 class="card-text text-warning">6</h3>
-              <small class="text-muted">Awaiting approval</small>
+              <c:choose>
+                <c:when test="${empty pending or pending == 0 or pending eq '0'}">
+                  <span class="no-booking-message" style="font-size:1.1rem; font-weight:500; color:#e6a100;">No bookings</span>
+                </c:when>
+                <c:otherwise>
+                  <h3 class="card-text text-warning">${pending}</h3>
+                </c:otherwise>
+              </c:choose>
+              <c:if test="${not (empty pending or pending == 0 or pending eq '0')}">
+                <small class="text-muted">Awaiting approval</small>
+              </c:if>
             </div>
           </div>
         </div>
@@ -146,6 +174,7 @@
         </div>
       </div>
 
+
       <div class="row g-4 mb-4">
         <div class="col-lg-6">
           <div class="card">
@@ -154,54 +183,62 @@
                 <h5 class="card-title mb-0">Live Booking Requests</h5>
                 <small class="text-muted">Recent booking requests requiring attention</small>
               </div>
-              <select class="form-select w-auto">
+              <select class="form-select w-auto" id="statusFilter">
                 <option value="all">All Status</option>
-                <option value="pending">Pending</option>
-                <option value="accepted">Accepted</option>
+                <c:forEach var="status" items="${statusList}">
+                  <option value="${fn:toLowerCase(status)}">${fn:toUpperCase(fn:substring(status, 0, 1))}${fn:substring(status, 1, fn:length(status))}</option>
+                </c:forEach>
               </select>
             </div>
             <div class="card-body">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Customer</th>
-                    <th>Car</th>
-                    <th>Status</th>
-                    <th>Amount</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>BK001</td>
-                    <td>John Smith</td>
-                    <td>Toyota Camry</td>
-                    <td><span class="badge badge-pending"><i class="fas fa-clock me-1"></i> pending</span></td>
-                    <td>$250</td>
-                  </tr>
-                  <tr>
-                    <td>BK002</td>
-                    <td>Sarah Johnson</td>
-                    <td>Honda Civic</td>
-                    <td><span class="badge badge-accepted"><i class="fas fa-check-circle me-1"></i> accepted</span></td>
-                    <td>$180</td>
-                  </tr>
-                  <tr>
-                    <td>BK003</td>
-                    <td>Mike Wilson</td>
-                    <td>BMW X5</td>
-                    <td><span class="badge badge-pending"><i class="fas fa-clock me-1"></i> pending</span></td>
-                    <td>$450</td>
-                  </tr>
-                  <tr>
-                    <td>BK004</td>
-                    <td>Emily Davis</td>
-                    <td>Nissan Altima</td>
-                    <td><span class="badge badge-accepted"><i class="fas fa-check-circle me-1"></i> accepted</span></td>
-                    <td>$200</td>
-                  </tr>
-                </tbody>
-              </table>
+              <c:choose>
+                <c:when test="${hasBookings}">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Booking Code</th>
+                        <th>Customer</th>
+                        <th>Car</th>
+                        <th>Status</th>
+                        <th>Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <c:forEach var="booking" items="${recentBookings}">
+                        <tr>
+                          <td>${booking.bookingCode}</td>
+                          <td>${booking.customerName}</td>
+                          <td>${booking.carId}</td>
+                          <td>
+                            <c:choose>
+                              <c:when test="${fn:toLowerCase(fn:trim(booking.status)) eq 'pending'}">
+                                <span class="badge badge-pending"><i class="fas fa-clock me-1"></i> Pending</span>
+                              </c:when>
+                              <c:when test="${fn:toLowerCase(fn:trim(booking.status)) eq 'confirmed'}">
+                                <span class="badge badge-confirmed"><i class="fas fa-check-circle me-1"></i> Confirmed</span>
+                              </c:when>
+                              <c:when test="${fn:toLowerCase(fn:trim(booking.status)) eq 'cancelled'}">
+                                <span class="badge badge-cancelled"><i class="fas fa-times-circle me-1"></i> Cancelled</span>
+                              </c:when>
+                              <c:otherwise>
+                                <span class="badge badge-secondary">${booking.status}</span>
+                              </c:otherwise>
+                            </c:choose>
+                          </td>
+                          <td>$${booking.totalAmount}</td>
+                        </tr>
+                      </c:forEach>
+                    </tbody>
+                  </table>
+                </c:when>
+                <c:otherwise>
+                  <div class="text-center py-4">
+                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Không có booking request nào</h5>
+                    <p class="text-muted">Hiện tại không có yêu cầu đặt xe nào đang chờ xử lý.</p>
+                  </div>
+                </c:otherwise>
+              </c:choose>
             </div>
           </div>
         </div>
@@ -474,6 +511,34 @@
     </section>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    // Sort order for status
+    const statusOrder = ["pending", "confirmed", "cancelled", "completed"];
+    const table = document.querySelector('.table tbody');
+    const originalRows = Array.from(table.querySelectorAll('tr')); // Lưu lại bản gốc
+
+    document.getElementById('statusFilter').addEventListener('change', function() {
+      const value = this.value;
+      // Luôn thao tác trên bản gốc
+      let filteredRows = originalRows;
+      if (value !== 'all') {
+        filteredRows = originalRows.filter(row => {
+          const status = row.querySelector('.badge').textContent.trim().toLowerCase();
+          return status === value;
+        });
+      }
+      // Sort rows by status order
+      filteredRows = filteredRows.slice().sort((a, b) => {
+        const statusA = a.querySelector('.badge').textContent.trim().toLowerCase();
+        const statusB = b.querySelector('.badge').textContent.trim().toLowerCase();
+        return statusOrder.indexOf(statusA) - statusOrder.indexOf(statusB);
+      });
+      // Remove all rows
+      table.innerHTML = '';
+      // Add sorted/filtered rows
+      filteredRows.forEach(row => table.appendChild(row));
+    });
+    </script>
 </body>
 </html>
 <script type="text/javascript">

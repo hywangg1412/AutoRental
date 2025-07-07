@@ -45,7 +45,7 @@ ACER --%> <%@page contentType="text/html" pageEncoding="UTF-8"%>
         <h6 class="px-3 mb-2 text-muted">Navigation</h6>
         <ul class="nav flex-column">
           <li class="nav-item">
-            <a class="nav-link" href="${pageContext.request.contextPath}/pages/staff/staff-dashboard.jsp">
+            <a class="nav-link" href="${pageContext.request.contextPath}/staff/dashboard">
               <i class="fas fa-home"></i> Dashboard
             </a>
           </li>

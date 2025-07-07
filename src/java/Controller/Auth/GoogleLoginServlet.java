@@ -107,6 +107,7 @@ public class GoogleLoginServlet extends HttpServlet {
             }
             SessionUtil.removeSessionAttribute(request, "user");
             SessionUtil.setSessionAttribute(request, "user", user);
+            SessionUtil.setSessionAttribute(request, "userId", user.getUserId().toString());
             SessionUtil.setSessionAttribute(request, "isLoggedIn", true);
             SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
             String redirectUrl = "/pages/home";
