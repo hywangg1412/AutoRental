@@ -1,38 +1,42 @@
 package Controller.Auth;
 
-import Model.Entity.User;
+import Model.Entity.User.User;
 import Model.Entity.Role.Role;
 import Model.Entity.Role.UserRole;
+import Model.Constants.RoleConstants;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import Utils.SessionUtil;
 import Utils.ObjectUtils;
 import java.time.LocalDateTime;
-import java.util.Date;
-import Service.UserService;
+import Service.User.UserService;
 import Service.Role.RoleService;
 import Service.Role.UserRoleService;
 import java.util.UUID;
-import java.sql.SQLException;
+import Service.Auth.EmailOTPVerificationService;
+import Model.Entity.OAuth.EmailOTPVerification;
+import Service.External.MailService;
 
-// /normalRegister
+@WebServlet("/normalRegister")
 public class NormalRegisterServlet extends HttpServlet {
 
     private UserService userService;
     private RoleService roleService;
     private UserRoleService userRoleService;
+    private EmailOTPVerificationService emailOTPService;
+    private MailService mailService;
 
     @Override
     public void init() {
         userService = new UserService();
         roleService = new RoleService();
         userRoleService = new UserRoleService();
+        emailOTPService = new EmailOTPVerificationService();
+        mailService = new MailService();
     }
 
     @Override
@@ -50,42 +54,40 @@ public class NormalRegisterServlet extends HttpServlet {
         String repassword = request.getParameter("repassword");
 
         // Validate input
-        if (username == null || username.trim().isEmpty()
-                || email == null || email.trim().isEmpty()
-                || password == null || password.trim().isEmpty()) {
-            request.setAttribute("error", "All fields are required!");
-            request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
+        if (username == null || username.trim().isEmpty() ||
+            email == null || email.trim().isEmpty() ||
+            password == null || password.trim().isEmpty()) {
+            forwardWithError(request, response, "All fields are required!");
             return;
         }
         if (username.trim().length() < 3) {
-            request.setAttribute("error", "Username must be at least 3 characters long!");
-            request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
+            forwardWithError(request, response, "Username must be at least 3 characters long!");
             return;
         }
         if (!email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")) {
-            request.setAttribute("error", "Invalid email format!");
-            request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
+            forwardWithError(request, response, "Invalid email format!");
             return;
         }
         if (!password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,100}$")) {
-            request.setAttribute("error", "Password must be between 8 and 100 characters long and contain uppercase, lowercase, and numbers!");
-            request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
+            forwardWithError(request, response, "Password must be between 8 and 100 characters long and contain uppercase, lowercase, and numbers!");
             return;
         }
         if (!password.equals(repassword)) {
-            request.setAttribute("error", "Passwords do not match!");
-            request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
+            forwardWithError(request, response, "Passwords do not match!");
             return;
         }
 
         try {
+            if (userService.findByUsername(username) != null) {
+                forwardWithError(request, response, "Username is already taken!");
+                return;
+            }
             User existingUser = userService.findByEmail(email);
             if (existingUser != null) {
-                String errorMsg = existingUser.isBanned() ?
-                    "This email is associated with a banned account. Please contact support." :
-                    "Email already exists!";
-                request.setAttribute("error", errorMsg);
-                request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
+                String errorMsg = existingUser.isDeleted() ? "This email is associated with a deleted account and cannot be reused."
+                        : existingUser.isBanned() ? "This email is associated with a banned account. Please contact support."
+                        : "An account with this email already exists.";
+                forwardWithError(request, response, errorMsg);
                 return;
             }
 
@@ -105,31 +107,49 @@ public class NormalRegisterServlet extends HttpServlet {
             user.setLockoutEnabled(true);
             user.setAccessFailedCount(0);
 
-            User addedUser = userService.add(user);
-            if (addedUser != null) {
-                Role userRole = roleService.findByRoleName("User");
+            userService.add(user);
+
+            try {
+                Role userRole = roleService.findByRoleName(RoleConstants.USER);
+
                 if (userRole != null) {
-                    UserRole newUserRole = new UserRole(addedUser.getUserId(), userRole.getRoleId());
+                    UserRole newUserRole = new UserRole(user.getUserId(), userRole.getRoleId());
                     userRoleService.add(newUserRole);
                 }
-                
-                request.getSession().setAttribute("message", "Registration successful! Please login to continue.");
-                response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp");
-            } else {
-                request.setAttribute("error", "Register failed. Please try again.");
-                request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
+            } catch (Exception e) {
+
+                System.err.println("Error assigning default role to user: " + e.getMessage());
             }
+
+            // Generate and send OTP
+            String otp = emailOTPService.generateOtp();
+            EmailOTPVerification otpEntity = new EmailOTPVerification();
+            otpEntity.setId(UUID.randomUUID());
+            otpEntity.setOtp(otp);
+            otpEntity.setUserId(user.getUserId());
+            otpEntity.setCreatedAt(LocalDateTime.now());
+            otpEntity.setExpiryTime(LocalDateTime.now().plusMinutes(10));
+            otpEntity.setIsUsed(false);
+            otpEntity.setResendCount(0);
+            otpEntity.setLastResendTime(null);
+            otpEntity.setResendBlockUntil(null);
+            emailOTPService.add(otpEntity);
+            
+            mailService.sendOtpEmail(user.getEmail(), otp, user.getUsername());
+
+            SessionUtil.setSessionAttribute(request, "userId", user.getUserId().toString());
+            SessionUtil.setSessionAttribute(request, "email", user.getEmail());
+            SessionUtil.setSessionAttribute(request, "username", user.getUsername());
+            
+            response.sendRedirect(request.getContextPath() + "/verify-otp");
+            
         } catch (Exception e) {
-            String errorMessage;
-            if (e instanceof SQLException) {
-                errorMessage = "Database error occurred. Please try again later.";
-            } else if (e instanceof IllegalArgumentException) {
-                errorMessage = "Invalid input data. Please check your information.";
-            } else {
-                errorMessage = "An unexpected error occurred. Please try again later.";
-            }
-            request.setAttribute("error", errorMessage);
-            request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
+            forwardWithError(request, response, "An unexpected error occurred. Please try again later.");
         }
+    }
+
+    private void forwardWithError(HttpServletRequest request, HttpServletResponse response, String errorMsg) throws ServletException, IOException {
+        request.setAttribute("error", errorMsg);
+        request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
     }
 }

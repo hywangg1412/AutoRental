@@ -30,7 +30,7 @@ public class CarBrandService implements ICarBrandService {
             for (CarBrand brand : brands) {
                 System.out.println(brand);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new EventException("Error displaying car brands: " + e.getMessage());
         }
     }
@@ -99,5 +99,9 @@ public class CarBrandService implements ICarBrandService {
             Logger.getLogger(CarBrandService.class.getName()).log(Level.SEVERE, "Error finding car brand: " + e.getMessage(), e);
             return null;
         }
+    }
+
+    public List<CarBrand> getAll() {
+        return repository.findAll();
     }
 } 

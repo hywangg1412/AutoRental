@@ -2,8 +2,8 @@ package Utils;
 
 import Exception.EventException;
 import Exception.NotFoundException;
-import Model.Entity.User;
-import Service.UserService;
+import Model.Entity.User.User;
+import Service.User.UserService;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import java.time.LocalDateTime;
 import java.util.logging.Level;

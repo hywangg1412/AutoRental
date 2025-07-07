@@ -19,8 +19,6 @@ CREATE TABLE [Users] (
     [Username] NVARCHAR(100) NOT NULL, --UNIQUE
     [UserDOB] DATE NULL, --CHECK ([UserDOB] <= DATEADD(YEAR, -18, GETDATE())),
     [PhoneNumber] NVARCHAR(11) NULL,
-    [UserAddress] NVARCHAR(MAX) NULL,
-    [UserDescription] NVARCHAR(1000) NULL,
     [AvatarUrl] NVARCHAR(255) NULL,
     [Gender] NVARCHAR(10) NULL, --CHECK ([Gender] IN ('Male', 'Female', 'Other')),
     [FirstName] NVARCHAR(256) NULL,
@@ -62,12 +60,10 @@ GO
 CREATE TABLE [DriverLicenses] (
     [LicenseId] UNIQUEIDENTIFIER NOT NULL,
     [UserId] UNIQUEIDENTIFIER NOT NULL,
-    [LicenseNumber] NVARCHAR(50) NOT NULL,
-    [FullName] NVARCHAR(100) NOT NULL,
-    [DOB] DATE NOT NULL,
+    [LicenseNumber] NVARCHAR(50) NULL,
+    [FullName] NVARCHAR(100) NULL,
+    [DOB] DATE NULL,
     [LicenseImage] NVARCHAR(MAX) NULL,
-    [Status] VARCHAR(20) NULL, --DEFAULT 'Pending', -- Pending, Verified, Rejected
-    [Note] NVARCHAR(255) NULL,
     [CreatedDate] DATETIME2 NULL,-- DEFAULT GETDATE(),
     CONSTRAINT [PK_DriverLicenses] PRIMARY KEY ([LicenseId]),
     CONSTRAINT [FK_DriverLicenses_Users] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE
@@ -85,6 +81,21 @@ CREATE TABLE [PasswordResetTokens] (
     CONSTRAINT [FK_PasswordResetTokens_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE
 );
 GO
+
+CREATE TABLE [EmailOTPVerification] (
+    [Id] UNIQUEIDENTIFIER NOT NULL,
+    [OTP] NVARCHAR(255) NOT NULL,
+    [ExpiryTime] DATETIME NOT NULL,
+    [IsUsed] BIT NOT NULL,-- DEFAULT 0,
+    [UserId] UNIQUEIDENTIFIER NOT NULL,
+    [CreatedAt] DATETIME NOT NULL, -- DEFAULT GETDATE(),
+    [ResendCount] INT NOT NULL, --DEFAULT 0,
+    [LastResendTime] DATETIME NULL,
+    [ResendBlockUntil] DATETIME NULL,
+    CONSTRAINT [PK_EmailOTPVerification] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_EmailOTPVerification_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE
+);
+GO 
 
 CREATE TABLE [UserLogins] (
     [LoginProvider] NVARCHAR(128) NOT NULL,
@@ -248,6 +259,12 @@ CREATE TABLE [Booking] (
     [CancelReason] NVARCHAR(255) NULL,
     [BookingCode] NVARCHAR(20) NULL, --UNIQUE
     [ExpectedPaymentMethod] NVARCHAR(50) NULL,
+    -- Thông tin khách hàng được "đóng băng" tại thời điểm booking
+    [CustomerName] NVARCHAR(255) NULL, -- Tên khách hàng tại thời điểm booking
+    [CustomerPhone] NVARCHAR(20) NULL, -- Số điện thoại khách hàng tại thời điểm booking
+    [CustomerAddress] NVARCHAR(500) NULL, -- Địa chỉ khách hàng tại thời điểm booking
+    [CustomerEmail] NVARCHAR(255) NULL, -- Email khách hàng tại thời điểm booking
+    [DriverLicenseImageUrl] NVARCHAR(500) NULL, -- Ảnh bằng lái xe tại thời điểm booking
     CONSTRAINT [PK_Booking] PRIMARY KEY ([BookingId]),
     CONSTRAINT [FK_Booking_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE,
     CONSTRAINT [FK_Booking_CarId] FOREIGN KEY ([CarId]) REFERENCES [Car]([CarId]) ON DELETE SET NULL,
@@ -290,7 +307,7 @@ CREATE TABLE [BookingSurcharges] (
     [SurchargeType] NVARCHAR(50) NOT NULL, -- 'LateReturn', 'OverMileage', ...
     [Amount] DECIMAL(10,2) NOT NULL,
     [Description] NVARCHAR(255) NULL,
-    [CreatedDate] DATETIME2 NOT NULL DEFAULT GETDATE(),
+    [CreatedDate] DATETIME2 NOT NULL, --  DEFAULT GETDATE(),
     CONSTRAINT [PK_BookingSurcharges] PRIMARY KEY ([SurchargeId]),
     CONSTRAINT [FK_BookingSurcharges_BookingId] FOREIGN KEY ([BookingId]) REFERENCES [Booking]([BookingId]) ON DELETE CASCADE
 );
@@ -375,6 +392,7 @@ CREATE TABLE [Notification] (
     [UserId] UNIQUEIDENTIFIER NOT NULL,
     [Message] NVARCHAR(MAX) NOT NULL,
     [CreatedDate] DATETIME2 NOT NULL, --DEFAULT GETDATE(),
+[IsRead] BIT NOT NULL DEFAULT 0;
     CONSTRAINT [PK_Notification] PRIMARY KEY ([NotificationId]),
     CONSTRAINT [FK_Notification_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE
 );
@@ -395,6 +413,7 @@ CREATE TABLE [UserFeedback] (
 );
 GO
 
+<<<<<<< HEAD
 -- Insert Staff User
 INSERT INTO [Users] (
     [UserId],
@@ -437,3 +456,24 @@ VALUES (
 );
 GO
  
+=======
+CREATE TABLE [AccountDeletionLogs] (
+    [LogId] UNIQUEIDENTIFIER NOT NULL,
+    [UserId] UNIQUEIDENTIFIER NOT NULL,
+    [DeletionReason] NVARCHAR(255) NOT NULL,
+    [AdditionalComments] NVARCHAR(MAX) NULL,
+    [Timestamp] DATETIME2 NOT NULL DEFAULT GETDATE(),
+    CONSTRAINT [PK_AccountDeletionLogs] PRIMARY KEY ([LogId]),
+    CONSTRAINT [FK_AccountDeletionLogs_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE
+);
+GO
+
+CREATE TABLE [UserFavoriteCars] (
+    [UserId] UNIQUEIDENTIFIER NOT NULL,
+    [CarId] UNIQUEIDENTIFIER NOT NULL,
+    CONSTRAINT [PK_UserFavoriteCars] PRIMARY KEY ([UserId], [CarId]),
+    CONSTRAINT [FK_UserFavoriteCars_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE,
+    CONSTRAINT [FK_UserFavoriteCars_CarId] FOREIGN KEY ([CarId]) REFERENCES [Car]([CarId]) ON DELETE CASCADE
+);
+GO 
+>>>>>>> df6cc80a280efe117f2401a63041cc56af5a261e

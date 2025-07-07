@@ -27,18 +27,30 @@ public class Car {
     private Set<UUID> featureIds = new HashSet<>();
 
     public enum CarStatus {
-        AVAILABLE("Available"),
-        RENTED("Rented"),
-        UNAVAILABLE("Unavailable");
+        AVAILABLE("Available", "Available", "status-available"),
+        RENTED("Rented", "Rented", "status-rented"),
+        UNAVAILABLE("Unavailable", "Unavailable", "status-unavailable");
 
         private final String value;
+        private final String displayValue;
+        private final String cssClass;
 
-        CarStatus(String value) {
+        CarStatus(String value, String displayValue, String cssClass) {
             this.value = value;
+            this.displayValue = displayValue;
+            this.cssClass = cssClass;
         }
 
         public String getValue() {
             return value;
+        }
+
+        public String getDisplayValue() {
+            return displayValue;
+        }
+
+        public String getCssClass() {
+            return cssClass;
         }
 
         public static CarStatus fromDbValue(String value) {

@@ -1,4 +1,4 @@
-package Repository.auth;
+package Repository.Auth;
 
 import Config.DBContext;
 import Model.Entity.OAuth.UserLogins;
@@ -9,18 +9,18 @@ import java.util.List;
 import java.util.UUID;
 
 public class UserLoginsRepository implements IUserLoginsRepository {
+
     private DBContext dbContext = new DBContext();
 
     @Override
     public UserLogins add(UserLogins entity) throws SQLException {
         String sql = "INSERT INTO UserLogins (LoginProvider, ProviderKey, ProviderDisplayName, UserId) VALUES (?, ?, ?, ?)";
-        try (Connection conn = dbContext.getConnection();
-             PreparedStatement st = conn.prepareStatement(sql)) {
+        try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
             st.setString(1, entity.getLoginProvider());
             st.setString(2, entity.getProviderKey());
             st.setString(3, entity.getProviderDisplayName());
             st.setObject(4, entity.getUserId());
-            
+
             int affectedRows = st.executeUpdate();
             if (affectedRows > 0) {
                 return findByProviderAndKey(entity.getLoginProvider(), entity.getProviderKey());
@@ -32,8 +32,7 @@ public class UserLoginsRepository implements IUserLoginsRepository {
     @Override
     public UserLogins findById(UUID Id) throws SQLException {
         String sql = "SELECT * FROM UserLogins WHERE UserId = ?";
-        try (Connection conn = dbContext.getConnection();
-             PreparedStatement st = conn.prepareStatement(sql)) {
+        try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
             st.setObject(1, Id);
             ResultSet rs = st.executeQuery();
             if (rs.next()) {
@@ -46,13 +45,12 @@ public class UserLoginsRepository implements IUserLoginsRepository {
     @Override
     public boolean update(UserLogins entity) throws SQLException {
         String sql = "UPDATE UserLogins SET ProviderDisplayName = ? WHERE LoginProvider = ? AND ProviderKey = ? AND UserId = ?";
-        try (Connection conn = dbContext.getConnection();
-             PreparedStatement st = conn.prepareStatement(sql)) {
+        try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
             st.setString(1, entity.getProviderDisplayName());
             st.setString(2, entity.getLoginProvider());
             st.setString(3, entity.getProviderKey());
             st.setObject(4, entity.getUserId());
-            
+
             int affectedRows = st.executeUpdate();
             return affectedRows > 0;
         }
@@ -61,8 +59,7 @@ public class UserLoginsRepository implements IUserLoginsRepository {
     @Override
     public boolean delete(UUID Id) throws SQLException {
         String sql = "DELETE FROM UserLogins WHERE UserId = ?";
-        try (Connection conn = dbContext.getConnection();
-             PreparedStatement st = conn.prepareStatement(sql)) {
+        try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
             st.setObject(1, Id);
             int affectedRows = st.executeUpdate();
             return affectedRows > 0;
@@ -73,9 +70,7 @@ public class UserLoginsRepository implements IUserLoginsRepository {
     public List<UserLogins> findAll() throws SQLException {
         List<UserLogins> userLogins = new ArrayList<>();
         String sql = "SELECT * FROM UserLogins";
-        try (Connection conn = dbContext.getConnection();
-             PreparedStatement st = conn.prepareStatement(sql);
-             ResultSet rs = st.executeQuery()) {
+        try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql); ResultSet rs = st.executeQuery()) {
             while (rs.next()) {
                 userLogins.add(mapResultSetToUserLogin(rs));
             }
@@ -87,8 +82,7 @@ public class UserLoginsRepository implements IUserLoginsRepository {
     @Override
     public UserLogins findByProviderAndKey(String provider, String key) throws SQLException {
         String sql = "SELECT * FROM UserLogins WHERE LoginProvider = ? AND ProviderKey = ?";
-        try (Connection conn = dbContext.getConnection();
-             PreparedStatement st = conn.prepareStatement(sql)) {
+        try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
             st.setString(1, provider);
             st.setString(2, key);
             try (ResultSet rs = st.executeQuery()) {
@@ -105,18 +99,46 @@ public class UserLoginsRepository implements IUserLoginsRepository {
         return null;
     }
 
+    @Override
     public List<UserLogins> findByUserId(UUID userId) throws SQLException {
         List<UserLogins> userLogins = new ArrayList<>();
         String sql = "SELECT * FROM UserLogins WHERE UserId = ?";
-        try (Connection conn = dbContext.getConnection();
+        try (Connection conn = dbContext.getConnection(); 
              PreparedStatement st = conn.prepareStatement(sql)) {
-            st.setObject(1, userId);
+            st.setString(1, userId.toString());
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
-                userLogins.add(mapResultSetToUserLogin(rs));
+                UserLogins login = mapResultSetToUserLogin(rs);
+                userLogins.add(login);
             }
         }
         return userLogins;
+    }
+
+    @Override
+    public UserLogins findByUserIdAndProvider(UUID userId, String provider) throws SQLException {
+        String sql = "SELECT * FROM UserLogins WHERE UserId = ? AND LoginProvider = ?";
+        try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setString(1, userId.toString());
+            st.setString(2, provider);
+            try (ResultSet rs = st.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToUserLogin(rs);
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public boolean deleteByProviderAndKey(String provider, String key) throws SQLException {
+        String sql = "DELETE FROM UserLogins WHERE LoginProvider = ? AND ProviderKey = ?";
+        try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setString(1, provider);
+            st.setString(2, key);
+            int affectedRows = st.executeUpdate();
+            return affectedRows > 0;
+        }
     }
 
     private UserLogins mapResultSetToUserLogin(ResultSet rs) throws SQLException {
@@ -127,5 +149,5 @@ public class UserLoginsRepository implements IUserLoginsRepository {
         userLogin.setUserId(UUID.fromString(rs.getString("UserId")));
         return userLogin;
     }
-    
+
 }

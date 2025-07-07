@@ -64,18 +64,24 @@ public class FuelTypeRepository implements IFuelTypeRepository{
     }
 
     @Override
-    public List<FuelType> findAll() throws SQLException {
+    public List<FuelType> findAll() {
+        List<FuelType> list = new ArrayList<>();
         String sql = "SELECT * FROM FuelType";
-        List<FuelType> fuelTypes = new ArrayList<>();
-        try (var conn = dbContext.getConnection();
+        try (var conn = new DBContext().getConnection();
              var ps = conn.prepareStatement(sql);
              var rs = ps.executeQuery()) {
             while (rs.next()) {
-                fuelTypes.add(mapResultSetToFuelType(rs));
+                FuelType fuel = new FuelType();
+                fuel.setFuelTypeId(UUID.fromString(rs.getString("FuelTypeId")));
+                fuel.setFuelName(rs.getString("FuelName"));
+                list.add(fuel);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return fuelTypes;
+        return list;
     }
+
 
     private FuelType mapResultSetToFuelType(ResultSet rs) throws SQLException {
         FuelType fuelType = new FuelType();

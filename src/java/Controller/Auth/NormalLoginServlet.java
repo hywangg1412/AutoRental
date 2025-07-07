@@ -1,9 +1,10 @@
 package Controller.Auth;
 
-import Model.Entity.User;
+import Model.Constants.UserStatusConstants;
+import Model.Entity.User.User;
 import Model.Entity.Role.Role;
 import Model.Entity.Role.UserRole;
-import Service.UserService;
+import Service.User.UserService;
 import Service.Role.RoleService;
 import Service.Role.UserRoleService;
 import Utils.SessionUtil;
@@ -16,6 +17,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
+import Service.External.MailService;
+import Service.Auth.EmailOTPVerificationService;
+import Model.Entity.OAuth.EmailOTPVerification;
 
 // /normalLogin
 public class NormalLoginServlet extends HttpServlet {
@@ -23,12 +27,16 @@ public class NormalLoginServlet extends HttpServlet {
     private UserService userService;
     private RoleService roleService;
     private UserRoleService userRoleService;
+    private MailService mailService;
+    private EmailOTPVerificationService emailOTPService;
 
     @Override
     public void init() {
         userService = new UserService();
         roleService = new RoleService();
         userRoleService = new UserRoleService();
+        mailService = new MailService();
+        emailOTPService = new EmailOTPVerificationService();
     }
 
     @Override
@@ -55,11 +63,17 @@ public class NormalLoginServlet extends HttpServlet {
                 request.getRequestDispatcher("pages/authen/SignIn.jsp").forward(request, response);
                 return;
             }
+            if (user.isDeleted()) {
+                request.setAttribute("error", "This account has been deleted and cannot be accessed.");
+                request.getRequestDispatcher("pages/authen/SignIn.jsp").forward(request, response);
+                return;
+            }
             if (user.isBanned()) {
                 request.setAttribute("error", "This account has been banned. Please contact support.");
                 request.getRequestDispatcher("pages/authen/SignIn.jsp").forward(request, response);
                 return;
             }
+            
             if (user.isLockoutEnabled() && user.getAccessFailedCount() >= 5) {
                 user.setStatus("Banned");
                 user.setAccessFailedCount(0);
@@ -87,16 +101,32 @@ public class NormalLoginServlet extends HttpServlet {
                 userService.update(user);
             }
 
+            if (!user.isActive()) {
+                user.setStatus(UserStatusConstants.ACTIVE);
+                userService.update(user);
+            }
+
+            if (!user.isEmailVerifed()) {
+                EmailOTPVerification otp = emailOTPService.findByUserId(user.getUserId());
+                if (otp != null) {
+                    mailService.sendOtpEmail(user.getEmail(), otp.getOtp(), user.getUsername());
+                }
+                request.setAttribute("error", "Your email has not been verified. A new verification code has been sent to your email.");
+                request.getRequestDispatcher("pages/authen/SignIn.jsp").forward(request, response);
+                return;
+            }
+
             UserRole userRole = userRoleService.findByUserId(user.getUserId());
             Role actualRole = roleService.findById(userRole.getRoleId());
             String redirectUrl = "/pages/index.jsp";
             if (actualRole.getRoleName().equals("Staff")) {
-                redirectUrl = "/pages/staff/staff-dashboard.jsp";
+                redirectUrl = "/staff/dashboard"; 
             } else if (actualRole.getRoleName().equals("Admin")) {
-                redirectUrl = "/pages/admin/admin-dashboard.jsp";
+                redirectUrl = "/admin/dashboard"; 
             }
 
             SessionUtil.setSessionAttribute(request, "user", user);
+            SessionUtil.setSessionAttribute(request, "userId", user.getUserId());
             SessionUtil.setSessionAttribute(request, "isLoggedIn", true);
             SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
             response.sendRedirect(request.getContextPath() + redirectUrl);

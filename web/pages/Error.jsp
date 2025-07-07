@@ -11,18 +11,23 @@
             String errorMsg = (String) request.getAttribute("errorMsg");
             if (errorMsg != null) {
         %>
-            <div style="color: red; font-weight: bold;">
-                <%= errorMsg %>
-            </div>
+        <div style="color: red; font-weight: bold;">
+            <%= errorMsg%>
+        </div>
         <%
-            } else {
+        } else {
         %>
-            <div style="color: orange;">
-                No detailed error message available.
-            </div>
+        <div style="color: orange;">
+            No detailed error message available.
+        </div>
         <%
             }
         %>
+
+        <div style="color: red; font-weight: bold;">
+            <%= request.getAttribute("error")%>
+        </div>
+
         <a href="${pageContext.request.contextPath}/pages/authen/SignUp.jsp">Back to Sign Up</a>
     </body>
 </html>

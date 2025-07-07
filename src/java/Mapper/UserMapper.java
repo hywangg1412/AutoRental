@@ -2,7 +2,9 @@ package Mapper;
 
 import Model.Entity.OAuth.FacebookUser;
 import Model.Entity.OAuth.GoogleUser;
-import Model.Entity.User;
+import Model.Entity.OAuth.UserLogins;
+import Model.Entity.User.User;
+import Service.User.UserService;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
@@ -10,14 +12,14 @@ import java.util.UUID;
 
 public class UserMapper {
 
-    public User mapGoogleUserToUser(GoogleUser googleUser) {
+    public User mapGoogleUserToUser(GoogleUser googleUser, UserService userService) {
         User user = new User();
 
         user.setUserId(UUID.randomUUID());
         user.setEmail(googleUser.getEmail());
         user.setFirstName(googleUser.getFirstName());
         user.setLastName(googleUser.getLastName());
-        user.setEmailVerifed(googleUser.isEmailVerified());
+        user.setEmailVerifed(false);
         user.setAvatarUrl(googleUser.getAvatarUrl());
         user.setStatus("Active");
 
@@ -30,22 +32,21 @@ public class UserMapper {
         user.setConcurrencyStamp(UUID.randomUUID().toString());
 
         user.setPhoneNumber(null);
-        user.setUserAddress(null);
-        user.setUserDescription(null);
         user.setGender(null);
         user.setUserDOB(null);
         user.setLockoutEnd(null);
 
         String email = googleUser.getEmail();
-        String username = email.substring(0, email.indexOf('@'));
-        user.setUsername(username);
-        user.setNormalizedUserName(username.toLowerCase());
+        String baseUsername = email.substring(0, email.indexOf('@'));
+        String uniqueUsername = userService.generateUniqueUsername(baseUsername);
+        user.setUsername(uniqueUsername);
+        user.setNormalizedUserName(uniqueUsername.toUpperCase());
         user.setNormalizedEmail(email.toLowerCase());
 
         return user;
     }
 
-    public User mapFacebookUserToUser(FacebookUser facebookUser) {
+    public User mapFacebookUserToUser(FacebookUser facebookUser, UserService userService) {
         User user = new User();
         String[] nameParts = splitName(facebookUser.getFullName());
 
@@ -66,19 +67,50 @@ public class UserMapper {
         user.setConcurrencyStamp(UUID.randomUUID().toString());
 
         user.setPhoneNumber(null);
-        user.setUserAddress(null);
-        user.setUserDescription(null);
         user.setGender(null);
         user.setUserDOB(null);
         user.setLockoutEnd(null);
 
         String email = facebookUser.getEmail();
-        String username = email.substring(0, email.indexOf('@'));
-        user.setUsername(username);
-        user.setNormalizedUserName(username.toLowerCase());
+        String baseUsername = email.substring(0, email.indexOf('@'));
+        String uniqueUsername = userService.generateUniqueUsername(baseUsername);
+        user.setUsername(uniqueUsername);
+        user.setNormalizedUserName(uniqueUsername.toUpperCase());
         user.setNormalizedEmail(email.toLowerCase());
 
         return user;
+    }
+
+    public UserLogins mapFacebookUserToUserLogins(FacebookUser facebookUser, User user) {
+        UserLogins login = new UserLogins("facebook", facebookUser.getFacebookId(), "Facebook", user.getUserId());
+        
+        String fullName = facebookUser.getFullName();
+        String displayName = (fullName != null && !fullName.trim().isEmpty()) ? fullName.trim() : "Facebook User";
+        
+        login.setProviderDisplayName(displayName);
+        return login;
+    }
+
+    public UserLogins mapGoogleUserToUserLogins(GoogleUser googleUser, User user) {
+        UserLogins login = new UserLogins("google", googleUser.getGoogleId(), "Google", user.getUserId());
+        
+        // Handle null firstName and lastName
+        String firstName = googleUser.getFirstName() != null ? googleUser.getFirstName().trim() : "";
+        String lastName = googleUser.getLastName() != null ? googleUser.getLastName().trim() : "";
+        
+        String displayName;
+        if (!firstName.isEmpty() && !lastName.isEmpty()) {
+            displayName = firstName + " " + lastName;
+        } else if (!firstName.isEmpty()) {
+            displayName = firstName;
+        } else if (!lastName.isEmpty()) {
+            displayName = lastName;
+        } else {
+            displayName = "Google User"; 
+        }
+        
+        login.setProviderDisplayName(displayName);
+        return login;
     }
 
     private String[] splitName(String fullname) {

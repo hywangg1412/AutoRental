@@ -6,10 +6,11 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import Model.Entity.User;
-import Service.UserService;
+import Model.Entity.User.User;
+import Service.User.UserService;
 import Utils.ObjectUtils;
 import java.util.UUID;
+import Utils.SessionUtil;
 
 // /setPassword
 public class SetPasswordServlet extends HttpServlet {
@@ -30,14 +31,9 @@ public class SetPasswordServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        System.out.println("Debug - SetPasswordServlet doPost called");
         String newPassword = request.getParameter("newPassword");
         String confirmPassword = request.getParameter("confirmPassword");
-        System.out.println("Debug - newPassword: " + (newPassword != null ? "not null" : "null"));
-        System.out.println("Debug - confirmPassword: " + (confirmPassword != null ? "not null" : "null"));
-        HttpSession session = request.getSession();
-        String userIdStr = (String) session.getAttribute("userId");
-        System.out.println("Debug - userId from session: " + userIdStr);
+        String userIdStr = (String) SessionUtil.getSessionAttribute(request, "userId");
         if (userIdStr == null || userIdStr.isEmpty()) {
             request.setAttribute("error", "Invalid user information.");
             request.getRequestDispatcher("/pages/authen/SetPassword.jsp").forward(request, response);
@@ -71,8 +67,8 @@ public class SetPasswordServlet extends HttpServlet {
             user.setPasswordHash(hashedPassword);
             boolean updated = userService.update(user);
             System.out.println("Debug - Update result: " + updated);
-            session.removeAttribute("userId");
-            session.setAttribute("message", "Password set successfully. Please login.");
+            SessionUtil.removeSessionAttribute(request, "userId");
+            SessionUtil.setSessionAttribute(request, "message", "Password set successfully. Please login.");
             response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp");
         } catch (Exception ex) {
             ex.printStackTrace();

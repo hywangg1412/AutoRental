@@ -62,4 +62,8 @@ public class SessionUtil {
         cookie.setPath(path != null ? path : "/");
         response.addCookie(cookie);
     }
+
+    public static boolean hasSession(HttpServletRequest request) {
+        return request.getSession(false) != null;
+    }
 }

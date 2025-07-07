@@ -22,7 +22,7 @@ public class CarFeatureRepository implements ICarFeatureRepository{
         try (var conn = dbContext.getConnection();
              var ps = conn.prepareStatement(sql)) {
             ps.setObject(1, entity.getFeatureId());
-            ps.setString(2, entity.getFetureName());
+            ps.setString(2, entity.getFeatureName());
             ps.executeUpdate();
             return entity;
         }
@@ -47,7 +47,7 @@ public class CarFeatureRepository implements ICarFeatureRepository{
         String sql = "UPDATE CarFeature SET FeatureName = ? WHERE FeatureId = ?";
         try (var conn = dbContext.getConnection();
              var ps = conn.prepareStatement(sql)) {
-            ps.setString(1, entity.getFetureName());
+            ps.setString(1, entity.getFeatureName());
             ps.setObject(2, entity.getFeatureId());
             return ps.executeUpdate() > 0;
         }
@@ -64,14 +64,34 @@ public class CarFeatureRepository implements ICarFeatureRepository{
     }
 
     @Override
-    public List<CarFeature> findAll() throws SQLException {
+    public List<CarFeature> findAll() {
+        List<CarFeature> list = new ArrayList<>();
         String sql = "SELECT * FROM CarFeature";
-        List<CarFeature> features = new ArrayList<>();
-        try (var conn = dbContext.getConnection();
+        try (var conn = new DBContext().getConnection();
              var ps = conn.prepareStatement(sql);
              var rs = ps.executeQuery()) {
             while (rs.next()) {
-                features.add(mapResultSetToCarFeature(rs));
+                CarFeature feature = new CarFeature();
+                feature.setFeatureId(UUID.fromString(rs.getString("FeatureId")));
+                feature.setFeatureName(rs.getString("FeatureName"));
+                list.add(feature);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+
+    public List<CarFeature> findByCarId(UUID carId) throws SQLException {
+        String sql = "SELECT f.FeatureId, f.FeatureName FROM CarFeaturesMapping m JOIN CarFeature f ON m.FeatureId = f.FeatureId WHERE m.CarId = ?";
+        List<CarFeature> features = new ArrayList<>();
+        try (var conn = dbContext.getConnection(); var ps = conn.prepareStatement(sql)) {
+            ps.setObject(1, carId);
+            try (var rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    features.add(mapResultSetToCarFeature(rs));
+                }
             }
         }
         return features;
@@ -80,7 +100,7 @@ public class CarFeatureRepository implements ICarFeatureRepository{
     private CarFeature mapResultSetToCarFeature(ResultSet rs) throws SQLException {
         CarFeature feature = new CarFeature();
         feature.setFeatureId(UUID.fromString(rs.getString("FeatureId")));
-        feature.setFetureName(rs.getString("FeatureName"));
+        feature.setFeatureName(rs.getString("FeatureName"));
         return feature;
     }
 }

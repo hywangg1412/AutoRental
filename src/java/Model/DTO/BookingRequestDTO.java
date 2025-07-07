@@ -1,6 +1,7 @@
 package Model.DTO;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 public class BookingRequestDTO {
@@ -14,24 +15,29 @@ public class BookingRequestDTO {
     // Booking
     private String bookingCode;
     private UUID bookingId;
-    private String pickupDateTime;
-    private String returnDateTime;
+    private LocalDateTime pickupDateTime;
+    private LocalDateTime returnDateTime;
     private double totalAmount;
+    private String status;
 
     //Customer (User)
     private String customerName;
     private String customerEmail;
+    private String customerPhone;
 
     //(Car)
     private String carModel;
-    private String licensePlate;
+    private String carLicensePlate;
+    private String driverLicenseImageUrl;
+
 
     // Getter, Setter, Constructor...
 
     public BookingRequestDTO() {
     }
-
-    public BookingRequestDTO(UUID approvalId, String approvalStatus, LocalDateTime approvalDate, String note, String rejectionReason, UUID bookingId, String pickupDateTime, String returnDateTime, double totalAmount, String customerName, String customerEmail, String carModel, String licensePlate) {
+    
+    // This constructor might need updates based on where it's used
+    public BookingRequestDTO(UUID approvalId, String approvalStatus, LocalDateTime approvalDate, String note, String rejectionReason, UUID bookingId, LocalDateTime pickupDateTime, LocalDateTime returnDateTime, double totalAmount, String customerName, String customerEmail, String carModel, String licensePlate) {
         this.approvalId = approvalId;
         this.approvalStatus = approvalStatus;
         this.approvalDate = approvalDate;
@@ -44,7 +50,7 @@ public class BookingRequestDTO {
         this.customerName = customerName;
         this.customerEmail = customerEmail;
         this.carModel = carModel;
-        this.licensePlate = licensePlate;
+        this.carLicensePlate = licensePlate;
     }
 
     public UUID getApprovalId() {
@@ -93,26 +99,38 @@ public class BookingRequestDTO {
 
     public void setBookingId(UUID bookingId) {
         this.bookingId = bookingId;
-        if (this.bookingCode == null && bookingId != null) {
-            String s = bookingId.toString().replace("-", "");
-            this.bookingCode = "BK" + s.substring(0, 6).toUpperCase();
-        }
     }
 
-    public String getPickupDateTime() {
+    public LocalDateTime getPickupDateTime() {
         return pickupDateTime;
     }
 
-    public void setPickupDateTime(String pickupDateTime) {
+    public void setPickupDateTime(LocalDateTime pickupDateTime) {
         this.pickupDateTime = pickupDateTime;
     }
 
-    public String getReturnDateTime() {
+    public LocalDateTime getReturnDateTime() {
         return returnDateTime;
     }
 
-    public void setReturnDateTime(String returnDateTime) {
+    public void setReturnDateTime(LocalDateTime returnDateTime) {
         this.returnDateTime = returnDateTime;
+    }
+    
+    public String getFormattedPickupDateTime() {
+        if (pickupDateTime == null) {
+            return "";
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy, hh:mm a");
+        return pickupDateTime.format(formatter);
+    }
+
+    public String getFormattedReturnDateTime() {
+        if (returnDateTime == null) {
+            return "";
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy, hh:mm a");
+        return returnDateTime.format(formatter);
     }
 
     public double getTotalAmount() {
@@ -147,12 +165,12 @@ public class BookingRequestDTO {
         this.carModel = carModel;
     }
 
-    public String getLicensePlate() {
-        return licensePlate;
+    public String getCarLicensePlate() {
+        return carLicensePlate;
     }
 
-    public void setLicensePlate(String licensePlate) {
-        this.licensePlate = licensePlate;
+    public void setCarLicensePlate(String carLicensePlate) {
+        this.carLicensePlate = carLicensePlate;
     }
 
     public String getBookingCode() {
@@ -163,9 +181,27 @@ public class BookingRequestDTO {
         this.bookingCode = bookingCode;
     }
 
-    @Override
-    public String toString() {
-        return "BookingApprovalDTO{" + "approvalId=" + approvalId + ", approvalStatus=" + approvalStatus + ", approvalDate=" + approvalDate + ", note=" + note + ", rejectionReason=" + rejectionReason + ", bookingId=" + bookingId + ", pickupDateTime=" + pickupDateTime + ", returnDateTime=" + returnDateTime + ", totalAmount=" + totalAmount + ", customerName=" + customerName + ", customerEmail=" + customerEmail + ", carModel=" + carModel + ", licensePlate=" + licensePlate + '}';
+    public String getStatus() {
+        return status;
     }
-    
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getCustomerPhone() {
+        return customerPhone;
+    }
+
+    public void setCustomerPhone(String customerPhone) {
+        this.customerPhone = customerPhone;
+    }
+
+    public String getDriverLicenseImageUrl() {
+        return driverLicenseImageUrl;
+    }
+
+    public void setDriverLicenseImageUrl(String driverLicenseImageUrl) {
+        this.driverLicenseImageUrl = driverLicenseImageUrl;
+    }
 }
