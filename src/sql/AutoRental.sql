@@ -24,6 +24,7 @@ CREATE TABLE [Users] (
     [FirstName] NVARCHAR(256) NULL,
     [LastName] NVARCHAR(256) NULL,
     [Status] VARCHAR(20) NOT NULL,--DEFAULT 'Active', -- Thay thế IsBanned
+    [RoleId] UNIQUEIDENTIFIER NOT NULL,
     [CreatedDate] DATETIME2 NULL ,--DEFAULT GETDATE(),
     [NormalizedUserName] NVARCHAR(256) NULL,
     [Email] NVARCHAR(100) NOT NULL, --UNIQUE
@@ -36,16 +37,8 @@ CREATE TABLE [Users] (
     [LockoutEnd] DATETIME2 NULL,
     [LockoutEnabled] BIT NOT NULL, --DEFAULT 1,
     [AccessFailedCount] INT NOT NULL, --DEFAULT 0,
-    CONSTRAINT [PK_Users] PRIMARY KEY ([UserId])
-);
-GO
-
-CREATE TABLE [UserRoles] (
-    [UserId] uniqueidentifier NOT NULL,
-    [RoleId] uniqueidentifier NOT NULL,
-    CONSTRAINT [PK_UserRoles] PRIMARY KEY ([UserId], [RoleId]),
-    CONSTRAINT [FK_UserRoles_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE,
-    CONSTRAINT [FK_UserRoles_RoleId] FOREIGN KEY ([RoleId]) REFERENCES [Roles]([RoleId]) ON DELETE CASCADE
+    CONSTRAINT [PK_Users] PRIMARY KEY ([UserId]),
+    CONSTRAINT [FK_Users_Roles] FOREIGN KEY ([RoleId]) REFERENCES [Roles]([RoleId]) ON DELETE CASCADE
 );
 GO
 
@@ -392,7 +385,7 @@ CREATE TABLE [Notification] (
     [UserId] UNIQUEIDENTIFIER NOT NULL,
     [Message] NVARCHAR(MAX) NOT NULL,
     [CreatedDate] DATETIME2 NOT NULL, --DEFAULT GETDATE(),
-[IsRead] BIT NOT NULL DEFAULT 0;
+    [IsRead] BIT NOT NULL, --DEFAULT 0,
     CONSTRAINT [PK_Notification] PRIMARY KEY ([NotificationId]),
     CONSTRAINT [FK_Notification_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE
 );
