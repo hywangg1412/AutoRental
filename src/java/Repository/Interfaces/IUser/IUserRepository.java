@@ -24,4 +24,6 @@ public interface IUserRepository extends Repository<User, Integer>{
     User findByUsername(String username);
 
     List<String> findAllUsernamesLike(String baseUsername);
+
+    List<Model.Entity.User.User> findByRoleId(java.util.UUID roleId) throws java.sql.SQLException;
 }

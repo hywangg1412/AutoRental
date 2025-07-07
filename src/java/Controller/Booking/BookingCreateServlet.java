@@ -17,6 +17,7 @@ import Repository.Car.CarRepository;
 import Service.Booking.BookingService;
 import Service.External.CloudinaryService;
 import Service.User.DriverLicenseService;
+import Service.User.UserService;
 import Utils.SessionUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -146,19 +147,16 @@ public class BookingCreateServlet extends HttpServlet {
             bookingService.add(newBooking);
             // --- Gửi notification cho tất cả staff khi có booking mới ---
             try {
-                Service.Role.RoleService roleService = new Service.Role.RoleService();
-                Model.Entity.Role.Role staffRole = roleService.findByRoleName("Staff");
-                java.util.UUID staffRoleId = staffRole.getRoleId();
-
-                Service.Role.UserRoleService userRoleService = new Service.Role.UserRoleService();
-                java.util.List<Model.Entity.Role.UserRole> staffUserRoles = userRoleService.findByRoleId(staffRoleId);
+                UserService userService = new UserService();
+                java.util.UUID staffRoleId = java.util.UUID.fromString("550e8400-e29b-41d4-a716-446655440000"); // Staff roleId
+                java.util.List<Model.Entity.User.User> staffUsers = userService.findByRoleId(staffRoleId);
 
                 Service.NotificationService notificationService = new Service.NotificationService();
                 String message = "Bạn có một booking request mới.";
-                for (Model.Entity.Role.UserRole ur : staffUserRoles) {
+                for (Model.Entity.User.User staff : staffUsers) {
                     Model.Entity.Notification notification = new Model.Entity.Notification(
                             java.util.UUID.randomUUID(),
-                            ur.getUserId(),
+                            staff.getUserId(),
                             message,
                             java.time.LocalDateTime.now()
                     );
