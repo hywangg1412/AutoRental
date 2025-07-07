@@ -6,7 +6,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>CarRental Pro - Booking Requests</title>
+        <title>AutoRental - Booking Requests</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/staff/staff-booking.css">
@@ -20,7 +20,9 @@
                         <i class="fas fa-car fa-sm"></i>
                     </div>
                     <div>
-                        <h5 class="mb-0">AutoRental</h5>
+                        <h5 class="mb-0">
+                            <span style="font-weight: bold; color: #111;">AUTO</span><span style="font-weight: bold; color: #3b82f6;">RENTAL</span>
+                        </h5>
                         <small class="text-muted">Staff Dashboard</small>
                     </div>
                 </div>
@@ -29,7 +31,7 @@
                 <h6 class="px-3 mb-2 text-muted">Navigation</h6>
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link" href="staff-dashboard.jsp">
+                        <a class="nav-link" href="${pageContext.request.contextPath}/staff/dashboard">
                             <i class="fas fa-home"></i> Dashboard
                         </a>
                     </li>
@@ -39,35 +41,35 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="staff-car-condition.jsp">
+                        <a class="nav-link" href="${pageContext.request.contextPath}/pages/staff/staff-car-condition.jsp">
                             <i class="fas fa-car"></i> Car Condition
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="staff-car-availability.jsp">
+                        <a class="nav-link" href="${pageContext.request.contextPath}/pages/staff/staff-car-availability.jsp">
                             <i class="fas fa-clipboard-list"></i> Car Availability
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
+                    <!-- <li class="nav-item">
+                        <a class="nav-link" href="${pageContext.request.contextPath}/pages/staff/staff-damage-reports.jsp">
                             <i class="fas fa-shield-alt"></i> Damage Reports
                         </a>
-                    </li>
+                    </li> -->
                     <li class="nav-item">
-                        <a class="nav-link" href="staff-customer-support.jsp">
+                        <a class="nav-link" href="${pageContext.request.contextPath}/pages/staff/staff-customer-support.jsp">
                             <i class="fas fa-comment"></i> Customer Feedback
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <i class="fas fa-users"></i> Support Users
+                    <!-- <li class="nav-item">
+                        <a class="nav-link" href="${pageContext.request.contextPath}/pages/staff/staff-profile.jsp">
+                            <i class="fas fa-users"></i> Profile
                         </a>
-                    </li>
+                    </li> -->
                 </ul>
                 <hr>
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link text-danger" href="#">
+                        <a class="nav-link text-danger" href="${pageContext.request.contextPath}/logout">
                             <i class="fas fa-sign-out-alt"></i> Logout
                         </a>
                     </li>

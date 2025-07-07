@@ -6,7 +6,6 @@ import Model.Entity.OAuth.GoogleUser;
 import Model.Entity.User.User;
 import Model.Entity.OAuth.UserLogins;
 import Model.Entity.Role.Role;
-import Model.Entity.Role.UserRole;
 import Model.Constants.RoleConstants;
 import Service.Auth.EmailOTPVerificationService;
 import Service.User.UserService;
@@ -14,7 +13,6 @@ import Service.Auth.GoogleAuthService;
 import Service.Auth.UserLoginsService;
 import Service.External.MailService;
 import Service.Role.RoleService;
-import Service.Role.UserRoleService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -33,7 +31,6 @@ public class GoogleRegisterServlet extends HttpServlet {
     private UserService userService;
     private UserLoginsService userLoginsService;
     private RoleService roleService;
-    private UserRoleService userRoleService;
     private MailService mailService;
     private EmailOTPVerificationService emailOTP;
 
@@ -44,7 +41,6 @@ public class GoogleRegisterServlet extends HttpServlet {
         userService = new UserService();
         userLoginsService = new UserLoginsService();
         roleService = new RoleService();
-        userRoleService = new UserRoleService();
         mailService = new MailService();
         emailOTP = new EmailOTPVerificationService();
     }
@@ -76,17 +72,14 @@ public class GoogleRegisterServlet extends HttpServlet {
 
             User newUser = userMapper.mapGoogleUserToUser(googleUser,userService);
             newUser.setEmailVerifed(true);
-            userService.add(newUser);
-            
-            try {
-                Role userRole = roleService.findByRoleName(RoleConstants.USER);
-                if (userRole != null) {
-                    UserRole newUserRole = new UserRole(newUser.getUserId(), userRole.getRoleId());
-                    userRoleService.add(newUserRole);
-                }
-            } catch (Exception e) {
-                System.err.println("Error assigning default role to user: " + e.getMessage());
+            Role userRole = roleService.findByRoleName(RoleConstants.USER);
+            if (userRole == null) {
+                request.setAttribute("error", "Default user role not found!");
+                request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
+                return;
             }
+            newUser.setRoleId(userRole.getRoleId());
+            userService.add(newUser);
             
             request.getSession().setAttribute("userId", newUser.getUserId().toString());
             UserLogins userLogins = userMapper.mapGoogleUserToUserLogins(googleUser, newUser);

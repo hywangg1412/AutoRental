@@ -35,10 +35,10 @@ public class UserRepository implements IUserRepository {
     @Override
     public User add(User entity) throws SQLException {
         String sql = "INSERT INTO Users (UserId, Username, UserDOB, PhoneNumber, "
-                + "AvatarUrl, Gender, FirstName, LastName, Status, CreatedDate, "
+                + "AvatarUrl, Gender, FirstName, LastName, Status, RoleId, CreatedDate, "
                 + "NormalizedUserName, Email, NormalizedEmail, EmailVerifed, PasswordHash, "
                 + "SecurityStamp, ConcurrencyStamp, TwoFactorEnabled, LockoutEnd, LockoutEnabled, "
-                + "AccessFailedCount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + "AccessFailedCount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
             st.setObject(1, entity.getUserId());
@@ -50,18 +50,19 @@ public class UserRepository implements IUserRepository {
             st.setString(7, entity.getFirstName());
             st.setString(8, entity.getLastName());
             st.setString(9, entity.getStatus());
-            st.setTimestamp(10, entity.getCreatedDate() != null ? Timestamp.valueOf(entity.getCreatedDate()) : null);
-            st.setString(11, entity.getNormalizedUserName());
-            st.setString(12, entity.getEmail());
-            st.setString(13, entity.getNormalizedEmail());
-            st.setBoolean(14, entity.isEmailVerifed());
-            st.setString(15, entity.getPasswordHash());
-            st.setString(16, entity.getSecurityStamp());
-            st.setString(17, entity.getConcurrencyStamp());
-            st.setBoolean(18, entity.isTwoFactorEnabled());
-            st.setTimestamp(19, entity.getLockoutEnd() != null ? Timestamp.valueOf(entity.getLockoutEnd()) : null);
-            st.setBoolean(20, entity.isLockoutEnabled());
-            st.setInt(21, entity.getAccessFailedCount());
+            st.setObject(10, entity.getRoleId());
+            st.setTimestamp(11, entity.getCreatedDate() != null ? Timestamp.valueOf(entity.getCreatedDate()) : null);
+            st.setString(12, entity.getNormalizedUserName());
+            st.setString(13, entity.getEmail());
+            st.setString(14, entity.getNormalizedEmail());
+            st.setBoolean(15, entity.isEmailVerifed());
+            st.setString(16, entity.getPasswordHash());
+            st.setString(17, entity.getSecurityStamp());
+            st.setString(18, entity.getConcurrencyStamp());
+            st.setBoolean(19, entity.isTwoFactorEnabled());
+            st.setTimestamp(20, entity.getLockoutEnd() != null ? Timestamp.valueOf(entity.getLockoutEnd()) : null);
+            st.setBoolean(21, entity.isLockoutEnabled());
+            st.setInt(22, entity.getAccessFailedCount());
             int affectedRows = st.executeUpdate();
             if (affectedRows > 0) {
                 return findById(entity.getUserId());
@@ -89,7 +90,7 @@ public class UserRepository implements IUserRepository {
     public boolean update(User entity) throws SQLException {
         String sql = "UPDATE Users SET Username = ?, UserDOB = ?, PhoneNumber = ?, "
                 + "AvatarUrl = ?, Gender = ?, FirstName = ?, LastName = ?, "
-                + "Status = ?, CreatedDate = ?, NormalizedUserName = ?, Email = ?, "
+                + "Status = ?, RoleId = ?, CreatedDate = ?, NormalizedUserName = ?, Email = ?, "
                 + "NormalizedEmail = ?, EmailVerifed = ?, PasswordHash = ?, SecurityStamp = ?, "
                 + "ConcurrencyStamp = ?, TwoFactorEnabled = ?, LockoutEnd = ?, LockoutEnabled = ?, "
                 + "AccessFailedCount = ? WHERE UserId = ?";
@@ -103,19 +104,20 @@ public class UserRepository implements IUserRepository {
             st.setString(6, entity.getFirstName());
             st.setString(7, entity.getLastName());
             st.setString(8, entity.getStatus());
-            st.setTimestamp(9, entity.getCreatedDate() != null ? Timestamp.valueOf(entity.getCreatedDate()) : null);
-            st.setString(10, entity.getNormalizedUserName());
-            st.setString(11, entity.getEmail());
-            st.setString(12, entity.getNormalizedEmail());
-            st.setBoolean(13, entity.isEmailVerifed());
-            st.setString(14, entity.getPasswordHash());
-            st.setString(15, entity.getSecurityStamp());
-            st.setString(16, entity.getConcurrencyStamp());
-            st.setBoolean(17, entity.isTwoFactorEnabled());
-            st.setTimestamp(18, entity.getLockoutEnd() != null ? Timestamp.valueOf(entity.getLockoutEnd()) : null);
-            st.setBoolean(19, entity.isLockoutEnabled());
-            st.setInt(20, entity.getAccessFailedCount());
-            st.setObject(21, entity.getUserId());
+            st.setObject(9, entity.getRoleId());
+            st.setTimestamp(10, entity.getCreatedDate() != null ? Timestamp.valueOf(entity.getCreatedDate()) : null);
+            st.setString(11, entity.getNormalizedUserName());
+            st.setString(12, entity.getEmail());
+            st.setString(13, entity.getNormalizedEmail());
+            st.setBoolean(14, entity.isEmailVerifed());
+            st.setString(15, entity.getPasswordHash());
+            st.setString(16, entity.getSecurityStamp());
+            st.setString(17, entity.getConcurrencyStamp());
+            st.setBoolean(18, entity.isTwoFactorEnabled());
+            st.setTimestamp(19, entity.getLockoutEnd() != null ? Timestamp.valueOf(entity.getLockoutEnd()) : null);
+            st.setBoolean(20, entity.isLockoutEnabled());
+            st.setInt(21, entity.getAccessFailedCount());
+            st.setObject(22, entity.getUserId());
             int affectedRows = st.executeUpdate();
             return affectedRows > 0;
         }
@@ -174,6 +176,7 @@ public class UserRepository implements IUserRepository {
         user.setFirstName(rs.getString("FirstName"));
         user.setLastName(rs.getString("LastName"));
         user.setStatus(rs.getString("Status"));
+        user.setRoleId(rs.getObject("RoleId") != null ? UUID.fromString(rs.getString("RoleId")) : null);
         user.setCreatedDate(rs.getTimestamp("CreatedDate") != null ? rs.getTimestamp("CreatedDate").toLocalDateTime() : null);
         user.setNormalizedUserName(rs.getString("NormalizedUserName"));
         user.setEmail(rs.getString("Email"));
@@ -312,5 +315,19 @@ public class UserRepository implements IUserRepository {
             LOGGER.log(Level.SEVERE, "Error finding usernames like: " + baseUsername, e);
         }
         return usernames;
+    }
+
+    public List<User> findByRoleId(UUID roleId) throws SQLException {
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT * FROM Users WHERE RoleId = ?";
+        try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setObject(1, roleId);
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    users.add(mapResultSetToUser(rs));
+                }
+            }
+        }
+        return users;
     }
 }

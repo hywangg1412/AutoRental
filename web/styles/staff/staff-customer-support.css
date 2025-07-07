@@ -72,7 +72,8 @@ body {
   border-radius: 0;
   transition: all 0.2s ease;
   text-decoration: none;
-  min-height: 44px; /* Ensure consistent height */
+  min-height: 44px;
+  /* Ensure consistent height */
 }
 
 .sidebar .nav-link:hover {
@@ -91,7 +92,8 @@ body {
 .sidebar .nav-link i {
   width: 18px;
   font-size: 16px;
-  text-align: center; /* Center align icons */
+  text-align: center;
+  /* Center align icons */
 }
 
 .sidebar .text-danger {
@@ -149,7 +151,7 @@ body {
 .user-avatar {
   width: 36px;
   height: 36px;
-  background-color: #3b82f6;
+  /* background-color: #3b82f6; */
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -183,7 +185,7 @@ body {
 }
 
 /* Content Section */
-.content-section {
+.section {
   padding: 2rem;
 }
 
@@ -228,7 +230,8 @@ body {
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  text-align: center; /* Center align headers */
+  text-align: center;
+  /* Center align headers */
 }
 
 .table tbody td {
@@ -236,7 +239,8 @@ body {
   border-bottom: 1px solid #f1f5f9;
   vertical-align: middle;
   color: #2d3748;
-  text-align: center; /* Center align content */
+  text-align: center;
+  /* Center align content */
 }
 
 .table tbody tr:hover {
@@ -292,7 +296,8 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 80px; /* Ensure consistent minimum width */
+  min-width: 80px;
+  /* Ensure consistent minimum width */
   text-align: center;
 }
 
@@ -483,7 +488,7 @@ body {
 }
 
 @media (max-width: 768px) {
-  .content-section {
+  .section {
     padding: 1rem;
   }
 
@@ -534,6 +539,7 @@ body {
 
 /* Print Styles */
 @media print {
+
   .sidebar,
   .modal-footer {
     display: none;
@@ -552,4 +558,8 @@ body {
     color: #000 !important;
     background: transparent !important;
   }
+}
+
+hr {
+  margin: 0 !important;
 }

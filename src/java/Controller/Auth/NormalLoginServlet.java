@@ -3,10 +3,8 @@ package Controller.Auth;
 import Model.Constants.UserStatusConstants;
 import Model.Entity.User.User;
 import Model.Entity.Role.Role;
-import Model.Entity.Role.UserRole;
 import Service.User.UserService;
 import Service.Role.RoleService;
-import Service.Role.UserRoleService;
 import Utils.SessionUtil;
 import Utils.ObjectUtils;
 import java.io.IOException;
@@ -26,7 +24,6 @@ public class NormalLoginServlet extends HttpServlet {
 
     private UserService userService;
     private RoleService roleService;
-    private UserRoleService userRoleService;
     private MailService mailService;
     private EmailOTPVerificationService emailOTPService;
 
@@ -34,7 +31,6 @@ public class NormalLoginServlet extends HttpServlet {
     public void init() {
         userService = new UserService();
         roleService = new RoleService();
-        userRoleService = new UserRoleService();
         mailService = new MailService();
         emailOTPService = new EmailOTPVerificationService();
     }
@@ -116,17 +112,18 @@ public class NormalLoginServlet extends HttpServlet {
                 return;
             }
 
-            UserRole userRole = userRoleService.findByUserId(user.getUserId());
-            Role actualRole = roleService.findById(userRole.getRoleId());
-            String redirectUrl = "/pages/index.jsp";
-            if (actualRole.getRoleName().equals("Staff")) {
-                redirectUrl = "/staff/dashboard"; 
-            } else if (actualRole.getRoleName().equals("Admin")) {
-                redirectUrl = "/admin/dashboard"; 
+            String redirectUrl = "/pages/home";
+            if (user.getRoleId() != null) {
+                String roleIdStr = user.getRoleId().toString();
+                if (roleIdStr.equals("550e8400-e29b-41d4-a716-446655440000")) { // Staff
+                    redirectUrl = "/staff/dashboard";
+                } else if (roleIdStr.equals("7c9e6679-7425-40de-944b-e07fc1f90ae7")) { // Admin
+                    redirectUrl = "/pages/admin/admin-dashboard.jsp";
+                }
             }
 
             SessionUtil.setSessionAttribute(request, "user", user);
-            SessionUtil.setSessionAttribute(request, "userId", user.getUserId());
+            SessionUtil.setSessionAttribute(request, "userId", user.getUserId().toString());
             SessionUtil.setSessionAttribute(request, "isLoggedIn", true);
             SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
             response.sendRedirect(request.getContextPath() + redirectUrl);

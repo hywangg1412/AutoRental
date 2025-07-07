@@ -37,6 +37,9 @@ public class UserService implements IUserService {
     @Override
     public User add(User entry) throws EventException, InvalidDataException {
         try {
+            if (entry.getRoleId() == null) {
+                throw new InvalidDataException("User must have a roleId");
+            }
             return userRepsitory.add(entry);
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Error while adding user", ex);
@@ -47,6 +50,9 @@ public class UserService implements IUserService {
     @Override
     public boolean update(User entry) throws EventException, NotFoundException {
         try {
+            if (entry.getRoleId() == null) {
+                throw new NotFoundException("User must have a roleId");
+            }
             return userRepsitory.update(entry);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Error while updating user", ex);
@@ -209,5 +215,9 @@ public class UserService implements IUserService {
             }
         } while (exists);
         return username;
+    }
+
+    public List<User> findByRoleId(UUID roleId) throws Exception {
+        return userRepsitory.findByRoleId(roleId);
     }
 }
