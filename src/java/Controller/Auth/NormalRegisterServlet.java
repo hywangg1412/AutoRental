@@ -2,7 +2,6 @@ package Controller.Auth;
 
 import Model.Entity.User.User;
 import Model.Entity.Role.Role;
-import Model.Entity.Role.UserRole;
 import Model.Constants.RoleConstants;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -15,7 +14,6 @@ import Utils.ObjectUtils;
 import java.time.LocalDateTime;
 import Service.User.UserService;
 import Service.Role.RoleService;
-import Service.Role.UserRoleService;
 import java.util.UUID;
 import Service.Auth.EmailOTPVerificationService;
 import Model.Entity.OAuth.EmailOTPVerification;
@@ -26,7 +24,6 @@ public class NormalRegisterServlet extends HttpServlet {
 
     private UserService userService;
     private RoleService roleService;
-    private UserRoleService userRoleService;
     private EmailOTPVerificationService emailOTPService;
     private MailService mailService;
 
@@ -34,7 +31,6 @@ public class NormalRegisterServlet extends HttpServlet {
     public void init() {
         userService = new UserService();
         roleService = new RoleService();
-        userRoleService = new UserRoleService();
         emailOTPService = new EmailOTPVerificationService();
         mailService = new MailService();
     }
@@ -107,19 +103,13 @@ public class NormalRegisterServlet extends HttpServlet {
             user.setLockoutEnabled(true);
             user.setAccessFailedCount(0);
 
-            userService.add(user);
-
-            try {
-                Role userRole = roleService.findByRoleName(RoleConstants.USER);
-
-                if (userRole != null) {
-                    UserRole newUserRole = new UserRole(user.getUserId(), userRole.getRoleId());
-                    userRoleService.add(newUserRole);
-                }
-            } catch (Exception e) {
-
-                System.err.println("Error assigning default role to user: " + e.getMessage());
+            Role userRole = roleService.findByRoleName(RoleConstants.USER);
+            if (userRole == null) {
+                forwardWithError(request, response, "Default user role not found!");
+                return;
             }
+            user.setRoleId(userRole.getRoleId());
+            userService.add(user);
 
             // Generate and send OTP
             String otp = emailOTPService.generateOtp();

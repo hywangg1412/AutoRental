@@ -24,6 +24,7 @@ CREATE TABLE [Users] (
     [FirstName] NVARCHAR(256) NULL,
     [LastName] NVARCHAR(256) NULL,
     [Status] VARCHAR(20) NOT NULL,--DEFAULT 'Active', -- Thay thế IsBanned
+    [RoleId] UNIQUEIDENTIFIER NOT NULL,
     [CreatedDate] DATETIME2 NULL ,--DEFAULT GETDATE(),
     [NormalizedUserName] NVARCHAR(256) NULL,
     [Email] NVARCHAR(100) NOT NULL, --UNIQUE
@@ -36,26 +37,12 @@ CREATE TABLE [Users] (
     [LockoutEnd] DATETIME2 NULL,
     [LockoutEnabled] BIT NOT NULL, --DEFAULT 1,
     [AccessFailedCount] INT NOT NULL, --DEFAULT 0,
-    CONSTRAINT [PK_Users] PRIMARY KEY ([UserId])
+    CONSTRAINT [PK_Users] PRIMARY KEY ([UserId]),
+    CONSTRAINT [FK_Users_Roles] FOREIGN KEY ([RoleId]) REFERENCES [Roles]([RoleId]) ON DELETE CASCADE
 );
 GO
 
-CREATE TABLE [UserRoles] (
-    [UserId] uniqueidentifier NOT NULL,
-    [RoleId] uniqueidentifier NOT NULL,
-    CONSTRAINT [PK_UserRoles] PRIMARY KEY ([UserId], [RoleId]),
-    CONSTRAINT [FK_UserRoles_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE,
-    CONSTRAINT [FK_UserRoles_RoleId] FOREIGN KEY ([RoleId]) REFERENCES [Roles]([RoleId]) ON DELETE CASCADE
-);
-GO
 
--- Insert default roles
-INSERT INTO [Roles] ([RoleId], [RoleName], [NormalizedName])
-VALUES 
-    ('7c9e6679-7425-40de-944b-e07fc1f90ae7', 'Admin', 'ADMIN'),
-    ('550e8400-e29b-41d4-a716-446655440000', 'Staff', 'STAFF'),
-    ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', 'User', 'USER');
-GO
 
 CREATE TABLE [DriverLicenses] (
     [LicenseId] UNIQUEIDENTIFIER NOT NULL,
@@ -235,13 +222,22 @@ CREATE TABLE [Discount] (
     [DiscountId] UNIQUEIDENTIFIER NOT NULL,
     [DiscountName] NVARCHAR(100) NOT NULL,
     [Description] NVARCHAR(255) NULL,
-    [DiscountType] NVARCHAR(20) NOT NULL, -- 'Percent' hoặc 'Fixed'
-    [DiscountValue] DECIMAL(10,2) NOT NULL, -- Nếu là Percent thì 0-100, nếu Fixed thì là số tiền
+    [DiscountType] NVARCHAR(20) NOT NULL,
+    [DiscountValue] DECIMAL(10,2) NOT NULL,
     [StartDate] DATE NOT NULL,
     [EndDate] DATE NOT NULL,
-    [IsActive] BIT NOT NULL,-- NULL DEFAULT 1,
-    [CreatedDate] DATETIME2 NULL DEFAULT GETDATE(),
+    [IsActive] BIT NOT NULL,-- DEFAULT 1,
+    [CreatedDate] DATETIME2 NOT NULL,-- DEFAULT GETDATE(),
+    [VoucherCode] NVARCHAR(20) NULL, -- Mã voucher: SAVE10, FIRST50
+    [MinOrderAmount] DECIMAL(10,2) NOT NULL,-- DEFAULT 0, -- Đơn hàng tối thiểu
+    [MaxDiscountAmount] DECIMAL(10,2) NULL, -- Giới hạn giảm tối đa cho phần trăm
+    [UsageLimit] INT NULL, -- Số lần sử dụng tối đa
+    [UsedCount] INT NOT NULL,-- DEFAULT 0, -- Số lần đã sử dụng
+    [DiscountCategory] NVARCHAR(20) NOT NULL DEFAULT 'General', -- 'General', 'Voucher'
     CONSTRAINT [PK_Discount] PRIMARY KEY ([DiscountId])
+    -- CONSTRAINT [CK_Discount_DiscountType] CHECK ([DiscountType] IN ('Percent', 'Fixed')),
+    -- CONSTRAINT [CK_Discount_DiscountValue] CHECK ([DiscountValue] >= 0),
+    -- CONSTRAINT [CK_Discount_DiscountCategory] CHECK ([DiscountCategory] IN ('General', 'Voucher'))
 );
 GO
 
@@ -307,7 +303,7 @@ CREATE TABLE [BookingSurcharges] (
     [SurchargeType] NVARCHAR(50) NOT NULL, -- 'LateReturn', 'OverMileage', ...
     [Amount] DECIMAL(10,2) NOT NULL,
     [Description] NVARCHAR(255) NULL,
-    [CreatedDate] DATETIME2 NOT NULL DEFAULT GETDATE(),
+    [CreatedDate] DATETIME2 NOT NULL, --  DEFAULT GETDATE(),
     CONSTRAINT [PK_BookingSurcharges] PRIMARY KEY ([SurchargeId]),
     CONSTRAINT [FK_BookingSurcharges_BookingId] FOREIGN KEY ([BookingId]) REFERENCES [Booking]([BookingId]) ON DELETE CASCADE
 );
@@ -392,6 +388,7 @@ CREATE TABLE [Notification] (
     [UserId] UNIQUEIDENTIFIER NOT NULL,
     [Message] NVARCHAR(MAX) NOT NULL,
     [CreatedDate] DATETIME2 NOT NULL, --DEFAULT GETDATE(),
+    [IsRead] BIT NOT NULL, --DEFAULT 0,
     CONSTRAINT [PK_Notification] PRIMARY KEY ([NotificationId]),
     CONSTRAINT [FK_Notification_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE
 );
