@@ -67,7 +67,7 @@ public class FuelTypeRepository implements IFuelTypeRepository{
     public List<FuelType> findAll() {
         List<FuelType> list = new ArrayList<>();
         String sql = "SELECT * FROM FuelType";
-        try (var conn = new DBContext().getConnection();
+        try (var conn = dbContext.getConnection();
              var ps = conn.prepareStatement(sql);
              var rs = ps.executeQuery()) {
             while (rs.next()) {

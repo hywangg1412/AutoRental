@@ -9,11 +9,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public class DriverLicenseRepository implements IDriverLicenseRepository {
-    private final DBContext dbContext;
-
-    public DriverLicenseRepository() {
-        dbContext = new DBContext();
-    }
+    private final DBContext dbContext = new DBContext();
 
     @Override
     public DriverLicense add(DriverLicense entity) throws SQLException {

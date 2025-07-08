@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class AccountDeletionLogRepository implements IAccountDeletionLogRepository {
-    private DBContext dbContext = new DBContext();
+    private final DBContext dbContext = new DBContext();
 
     @Override
     public AccountDeletionLog add(AccountDeletionLog entity) throws SQLException {
