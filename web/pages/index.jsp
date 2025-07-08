@@ -589,6 +589,7 @@
         <script src="${pageContext.request.contextPath}/assets/js/google-map.js"></script>
         <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
         <script src="${pageContext.request.contextPath}/scripts/common/index.js"></script>
+        <script src="${pageContext.request.contextPath}/scripts/common/user-notification.js"></script>
 
     </body>
 
