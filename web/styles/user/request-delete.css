@@ -536,6 +536,7 @@ nav.ftco-navbar-light .nav-link {
 
 .bi-bell, .bi-chat-dots {
     color: #222 !important;
+    padding : 0 !important;
 }
 
 .bi-three-dots-vertical,
@@ -544,6 +545,6 @@ nav.ftco-navbar-light .nav-link {
 .dropdown,
 .dropdown-menu,
 .dropdown-toggle {
-  display: none !important;
-  visibility: hidden !important;
+    display: none !important;
+    visibility: hidden !important;
 }

@@ -773,6 +773,7 @@ nav.ftco-navbar-light .nav-link {
 
 .bi-bell, .bi-chat-dots {
     color: #222 !important;
+    padding : 0 !important;
 }
 
 .howto-section {
@@ -877,13 +878,10 @@ nav.ftco-navbar-light .nav-link {
 }
 
 .bi-three-dots-vertical,
-.dropdown-toggle[aria-labelledby="userDropdown"],
 #userDropdown,
-.dropdown,
-.dropdown-menu,
-.dropdown-toggle {
-  display: none !important;
-  visibility: hidden !important;
+.dropdown-toggle[aria-labelledby="userDropdown"] {
+    display: none !important;
+    visibility: hidden !important;
 }
 
 .btn-unlink-social {
