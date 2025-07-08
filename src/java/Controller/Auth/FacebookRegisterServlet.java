@@ -75,6 +75,7 @@ public class FacebookRegisterServlet extends HttpServlet {
             newUser.setRoleId(userRole.getRoleId());
             userService.add(newUser);
             
+
             UserLogins userLogins = userMapper.mapFacebookUserToUserLogins(facebookUser, newUser);
             userLoginsService.add(userLogins);
 

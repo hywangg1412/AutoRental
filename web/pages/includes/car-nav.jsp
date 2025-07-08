@@ -26,7 +26,50 @@
         <c:when test="${sessionScope.isLoggedIn}">
           <div class="d-flex align-items-center justify-content-between w-100">
             <div class="d-flex align-items-center gap-3">
-              <a href="#" class="nav-link p-0 text-dark"><i class="bi bi-bell" style="font-size: 1.2rem !important; color: white;"></i></a>
+              <div class="dropdown me-2" onmouseover="this.querySelector('.dropdown-menu').classList.add('show')" onmouseleave="this.querySelector('.dropdown-menu').classList.remove('show')">
+                <button class="btn btn-link nav-link p-0 text-dark position-relative" type="button" id="userNotificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-bell" style="font-size: 1.2rem !important; color: white;"></i>
+                  <c:if test="${unreadCount > 0}">
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.7rem;">
+                      ${unreadCount}
+                    </span>
+                  </c:if>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userNotificationDropdown" style="min-width: 350px; max-width: 400px;">
+                  <li class="dropdown-header d-flex justify-content-between align-items-center">
+                    <span>Notifications</span>
+                    <c:if test="${unreadCount > 0}">
+                      <button class="btn btn-sm btn-link text-decoration-none p-0" id="markAllAsRead">Mark all as read</button>
+                    </c:if>
+                  </li>
+                  <li><hr class="dropdown-divider"></li>
+                  <c:choose>
+                    <c:when test="${not empty notifications}">
+                      <c:forEach var="noti" items="${notifications}">
+                        <li>
+                          <a class="dropdown-item notification-item ${noti.read ? 'read' : 'unread'}"
+                             href="#"
+                             data-notification-id="${noti.notificationId}">
+                            <div class="d-flex align-items-center">
+                              <div class="flex-grow-1">
+                                ${noti.message}
+                                <br>
+                                <small class="text-muted">${noti.createdDate}</small>
+                              </div>
+                              <c:if test="${!noti.read}">
+                                <span class="badge bg-primary ms-2">New</span>
+                              </c:if>
+                            </div>
+                          </a>
+                        </li>
+                      </c:forEach>
+                    </c:when>
+                    <c:otherwise>
+                      <li><span class="dropdown-item text-muted">No new notifications</span></li>
+                    </c:otherwise>
+                  </c:choose>
+                </ul>
+              </div>
               <a href="#" class="nav-link p-0 text-dark"><i class="bi bi-chat-dots" style="font-size: 1.2rem !important; color: white;"></i></a>
               <a href="${pageContext.request.contextPath}/user/profile" class="user-avatar">
                 <img src="${not empty sessionScope.user.avatarUrl ? sessionScope.user.avatarUrl : pageContext.request.contextPath.concat('/assets/images/default-avatar.png')}" 
