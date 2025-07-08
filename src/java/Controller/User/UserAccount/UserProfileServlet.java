@@ -23,6 +23,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import Service.Role.RoleService;
+import Model.Entity.Role.Role;
 
 @WebServlet("/user/profile")
 public class UserProfileServlet extends HttpServlet {
@@ -33,12 +35,14 @@ public class UserProfileServlet extends HttpServlet {
     private UserService userService;
     private UserLoginsService userLoginsService;
     private DriverLicenseService driverLicenseService;
+    private RoleService roleService;
 
     @Override
     public void init() {
         userService = new UserService();
         userLoginsService = new UserLoginsService();
         driverLicenseService = new DriverLicenseService();
+        roleService = new RoleService();
     }
 
     private UserProfileDTO mapUserToProfileDTO(User user, List<UserLogins> userLogins) {
@@ -94,19 +98,30 @@ public class UserProfileServlet extends HttpServlet {
             request.setAttribute("profile", profile);
 
             DriverLicense driverLicense = null;
+            boolean isStaff = false;
             try {
-                driverLicense = driverLicenseService.findByUserId(user.getUserId());
-            } catch (NotFoundException e) {
-                LOGGER.log(Level.INFO, "User {0} doesn't have a driver license yet, creating new one", user.getUserId());
+                Role userRole = roleService.findById(user.getRoleId());
+                if (userRole != null && "Staff".equalsIgnoreCase(userRole.getRoleName())) {
+                    isStaff = true;
+                }
+            } catch (Exception ex) {
+                // Nếu lỗi khi lấy role, coi như không phải staff
+            }
+            if (!isStaff) {
                 try {
-                    driverLicense = driverLicenseService.createDefaultForUser(user.getUserId());
-                } catch (Exception ex) {
-                    LOGGER.log(Level.SEVERE, "Error creating new driver license for user {0}", user.getUserId());
+                    driverLicense = driverLicenseService.findByUserId(user.getUserId());
+                } catch (NotFoundException e) {
+                    LOGGER.log(Level.INFO, "User {0} doesn't have a driver license yet, creating new one", user.getUserId());
+                    try {
+                        driverLicense = driverLicenseService.createDefaultForUser(user.getUserId());
+                    } catch (Exception ex) {
+                        LOGGER.log(Level.SEVERE, "Error creating new driver license for user {0}", user.getUserId());
+                        driverLicense = null;
+                    }
+                } catch (Exception e) {
+                    LOGGER.log(Level.SEVERE, "Error getting driver license", e);
                     driverLicense = null;
                 }
-            } catch (Exception e) {
-                LOGGER.log(Level.SEVERE, "Error getting driver license", e);
-                driverLicense = null;
             }
             request.setAttribute("driverLicense", driverLicense);
 
