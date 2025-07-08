@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
   <div class="container">
     <a class="navbar-brand" href="${pageContext.request.contextPath}/pages/home">Auto<span>Rental</span></a>
@@ -29,36 +30,32 @@
               <div class="dropdown me-2">
                 <button class="btn btn-link nav-link p-0 text-dark position-relative" type="button" id="userNotificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                   <i class="bi bi-bell" style="font-size: 1.2rem !important; color: white;"></i>
-                  <c:if test="${unreadCount > 0}">
+                  <c:if test="${sessionScope.userUnreadCount > 0}">
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.7rem;">
-                      ${unreadCount}
+                      ${sessionScope.userUnreadCount}
                     </span>
                   </c:if>
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userNotificationDropdown" style="min-width: 350px; max-width: 400px;">
-                  <li class="dropdown-header d-flex justify-content-between align-items-center">
-                    <span>Notifications</span>
-                    <c:if test="${unreadCount > 0}">
-                      <button class="btn btn-sm btn-link text-decoration-none p-0" id="markAllAsRead">Mark all as read</button>
-                    </c:if>
-                  </li>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userNotificationDropdown">
+                  <li class="dropdown-header" style="font-weight: bold; font-size: 1.1rem; color: #222;">Notifications</li>
                   <li><hr class="dropdown-divider"></li>
                   <c:choose>
-                    <c:when test="${not empty notifications}">
-                      <c:forEach var="noti" items="${notifications}">
+                    <c:when test="${not empty sessionScope.userNotifications}">
+                      <c:forEach var="noti" items="${sessionScope.userNotifications}">
                         <li>
                           <a class="dropdown-item notification-item ${noti.read ? 'read' : 'unread'}"
                              href="#"
                              data-notification-id="${noti.notificationId}">
-                            <div class="d-flex align-items-center">
-                              <div class="flex-grow-1">
-                                ${noti.message}
-                                <br>
-                                <small class="text-muted">${noti.createdDate}</small>
+                            <div class="notification-content">
+                              <div class="notification-row">
+                                <div class="notification-title">
+                                  <c:out value="${noti.message}" />
+                                </div>
+                                <c:if test="${!noti.read}">
+                                  <span class="dot-unread"></span>
+                                </c:if>
                               </div>
-                              <c:if test="${!noti.read}">
-                                <span class="badge bg-primary ms-2">New</span>
-                              </c:if>
+                              <small class="text-muted">${fn:substring(noti.createdDate, 0, 10)}</small>
                             </div>
                           </a>
                         </li>
@@ -110,8 +107,10 @@
 <!-- Include dropdown JavaScript -->
 <script src="${pageContext.request.contextPath}/scripts/common/nav-dropdown.js"></script>
 
-<!-- <%-- Debug --%>
-UserId: <c:out value="${sessionScope.userId}"/><br>
-isLoggedIn: <c:out value="${sessionScope.isLoggedIn}"/><br>
-Notifications: <c:out value="${fn:length(notifications)}"/><br>
-UnreadCount: <c:out value="${unreadCount}"/><br> -->
+<!-- Include user notification JavaScript -->
+<script src="${pageContext.request.contextPath}/scripts/common/user-notification.js"></script>
+
+<!-- Debug -->
+<!-- UserId: <c:out value="${sessionScope.userId}"/><br>
+Notifications: <c:out value="${fn:length(sessionScope.userNotifications)}"/><br>
+UnreadCount: <c:out value="${sessionScope.userUnreadCount}"/><br> -->

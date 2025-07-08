@@ -4,6 +4,7 @@ import Model.DTO.CarListItemDTO;
 import Model.Entity.Notification;
 import Service.Car.CarListService;
 import Service.NotificationService;
+import Utils.FormatUtils;
 import Utils.SessionUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -48,10 +49,8 @@ public class HomeServlet extends HttpServlet {
             if (userId != null) {
                 List<Notification> notifications = notificationService.findByUserId(userId);
                 int unreadCount = notificationService.countUnreadByUserId(userId);
-                request.setAttribute("notifications", notifications);
-                request.setAttribute("unreadCount", unreadCount);
-                System.out.println("Notifications found: " + (notifications != null ? notifications.size() : "null"));
-                System.out.println("Unread count: " + unreadCount);
+                SessionUtil.setSessionAttribute(request, "userNotifications", notifications);
+                SessionUtil.setSessionAttribute(request, "userUnreadCount", unreadCount);
             }
 
             request.getRequestDispatcher("/pages/index.jsp").forward(request, response);
