@@ -13,14 +13,18 @@ import Utils.ObjectUtils;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import Service.Role.RoleService;
+import Model.Entity.Role.Role;
 
 @WebServlet(name = "ChangePasswordServlet", urlPatterns = {"/user/change-password"})
 public class ChangePasswordServlet extends HttpServlet {
     private UserService userService;
+    private RoleService roleService;
 
     @Override
     public void init() {
         userService = new UserService();
+        roleService = new RoleService();
     }
 
     @Override
@@ -71,12 +75,16 @@ public class ChangePasswordServlet extends HttpServlet {
             for (Map.Entry<String, String> entry : errors.entrySet()) {
                 request.setAttribute(entry.getKey(), entry.getValue());
             }
-            String fromStaffProfile = request.getParameter("fromStaffProfile");
-            if ("true".equals(fromStaffProfile)) {
-                request.getRequestDispatcher("/pages/staff/profile/staff-change-password.jsp").forward(request, response);
-            } else {
-                request.getRequestDispatcher("/pages/user/change-password.jsp").forward(request, response);
+            String forwardPage = "/pages/user/change-password.jsp";
+            try {
+                Role userRole = roleService.findById(user.getRoleId());
+                if (userRole != null && "Staff".equalsIgnoreCase(userRole.getRoleName())) {
+                    forwardPage = "/pages/staff/profile/staff-change-password.jsp";
+                }
+            } catch (Exception ex) {
+                // Nếu lỗi khi lấy role, giữ nguyên forwardPage là user
             }
+            request.getRequestDispatcher(forwardPage).forward(request, response);
             return;
         }
 
@@ -85,20 +93,19 @@ public class ChangePasswordServlet extends HttpServlet {
             userService.update(user);
             request.getSession().invalidate();
             request.setAttribute("success", "Password changed successfully. Please login again.");
-            String fromStaffProfile = request.getParameter("fromStaffProfile");
-            if ("true".equals(fromStaffProfile)) {
-                request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
-            } else {
-                request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
-            }
+            request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
         } catch (Exception ex) {
             request.setAttribute("error", "An error occurred: " + ex.getMessage());
-            String fromStaffProfile = request.getParameter("fromStaffProfile");
-            if ("true".equals(fromStaffProfile)) {
-                request.getRequestDispatcher("/pages/staff/profile/staff-change-password.jsp").forward(request, response);
-            } else {
-                request.getRequestDispatcher("/pages/user/change-password.jsp").forward(request, response);
+            String forwardPage = "/pages/user/change-password.jsp";
+            try {
+                Role userRole = roleService.findById(user.getRoleId());
+                if (userRole != null && "Staff".equalsIgnoreCase(userRole.getRoleName())) {
+                    forwardPage = "/pages/staff/profile/staff-change-password.jsp";
+                }
+            } catch (Exception e) {
+                // Nếu lỗi khi lấy role, giữ nguyên forwardPage là user
             }
+            request.getRequestDispatcher(forwardPage).forward(request, response);
         }
     }
 }

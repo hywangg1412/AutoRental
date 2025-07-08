@@ -112,13 +112,18 @@
                 SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
 
                 String redirectUrl = "/pages/home";
-                if (user.getRoleId() != null) {
-                    String roleIdStr = user.getRoleId().toString();
-                    if (roleIdStr.equals("550e8400-e29b-41d4-a716-446655440000")) { // Staff
-                        redirectUrl = "/staff/dashboard";
-                    } else if (roleIdStr.equals("7c9e6679-7425-40de-944b-e07fc1f90ae7")) { // Admin
-                        redirectUrl = "/pages/admin/admin-dashboard.jsp";
+                try {
+                    Role userRole = roleService.findById(user.getRoleId());
+                    if (userRole != null) {
+                        String roleName = userRole.getRoleName();
+                        if ("Staff".equalsIgnoreCase(roleName)) {
+                            redirectUrl = "/staff/dashboard";
+                        } else if ("Admin".equalsIgnoreCase(roleName)) {
+                            redirectUrl = "/pages/admin/admin-dashboard.jsp";
+                        }
                     }
+                } catch (Exception ex) {
+                    // Nếu lỗi khi lấy role, giữ nguyên redirectUrl mặc định
                 }
                 response.sendRedirect(request.getContextPath() + redirectUrl);
             } catch (Exception e) {
