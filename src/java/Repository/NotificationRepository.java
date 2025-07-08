@@ -23,8 +23,8 @@ public class NotificationRepository implements INotificationRepository {
         String sql = "INSERT INTO Notification (NotificationId, UserId, Message, CreatedDate, IsRead) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = dbContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setObject(1, entity.getNotificationId());
-            ps.setObject(2, entity.getUserId());
+            ps.setString(1, entity.getNotificationId().toString());
+            ps.setString(2, entity.getUserId().toString());
             ps.setString(3, entity.getMessage());
             ps.setTimestamp(4, Timestamp.valueOf(entity.getCreatedDate()));
             ps.setBoolean(5, entity.isRead());
@@ -38,7 +38,7 @@ public class NotificationRepository implements INotificationRepository {
         String sql = "SELECT * FROM Notification WHERE NotificationId = ?";
         try (Connection conn = dbContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setObject(1, id);
+            ps.setString(1, id.toString());
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return mapResultSetToNotification(rs);
@@ -53,11 +53,11 @@ public class NotificationRepository implements INotificationRepository {
         String sql = "UPDATE Notification SET UserId = ?, Message = ?, CreatedDate = ?, IsRead = ? WHERE NotificationId = ?";
         try (Connection conn = dbContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setObject(1, entity.getUserId());
+            ps.setString(1, entity.getUserId().toString());
             ps.setString(2, entity.getMessage());
             ps.setTimestamp(3, Timestamp.valueOf(entity.getCreatedDate()));
             ps.setBoolean(4, entity.isRead());
-            ps.setObject(5, entity.getNotificationId());
+            ps.setString(5, entity.getNotificationId().toString());
             return ps.executeUpdate() > 0;
         }
     }
@@ -67,7 +67,7 @@ public class NotificationRepository implements INotificationRepository {
         String sql = "DELETE FROM Notification WHERE NotificationId = ?";
         try (Connection conn = dbContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setObject(1, id);
+            ps.setString(1, id.toString());
             return ps.executeUpdate() > 0;
         }
     }
@@ -92,7 +92,7 @@ public class NotificationRepository implements INotificationRepository {
         String sql = "SELECT * FROM Notification WHERE UserId = ? ORDER BY CreatedDate DESC";
         try (Connection conn = dbContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setObject(1, userId);
+            ps.setString(1, userId.toString());
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(mapResultSetToNotification(rs));
@@ -111,7 +111,7 @@ public class NotificationRepository implements INotificationRepository {
         String sql = "SELECT * FROM Notification WHERE UserId = ? AND IsRead = 0 ORDER BY CreatedDate DESC";
         try (Connection conn = dbContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setObject(1, userId);
+            ps.setString(1, userId.toString());
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(mapResultSetToNotification(rs));
@@ -129,7 +129,7 @@ public class NotificationRepository implements INotificationRepository {
         String sql = "SELECT COUNT(*) FROM Notification WHERE UserId = ? AND IsRead = 0";
         try (Connection conn = dbContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setObject(1, userId);
+            ps.setString(1, userId.toString());
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1);
@@ -147,7 +147,7 @@ public class NotificationRepository implements INotificationRepository {
         String sql = "UPDATE Notification SET IsRead = 1 WHERE NotificationId = ?";
         try (Connection conn = dbContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setObject(1, notificationId);
+            ps.setString(1, notificationId.toString());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             System.out.println("Lỗi khi đánh dấu đã đọc notification: " + e.getMessage());
@@ -161,7 +161,7 @@ public class NotificationRepository implements INotificationRepository {
         String sql = "UPDATE Notification SET IsRead = 1 WHERE UserId = ?";
         try (Connection conn = dbContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setObject(1, userId);
+            ps.setString(1, userId.toString());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             System.out.println("Lỗi khi đánh dấu đã đọc tất cả notification: " + e.getMessage());

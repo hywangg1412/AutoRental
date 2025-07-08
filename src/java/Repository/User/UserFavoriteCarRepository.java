@@ -17,10 +17,9 @@ import java.math.BigDecimal;
 public class UserFavoriteCarRepository implements IUserFavoriteCarRepository{
 
     private static final Logger LOGGER = Logger.getLogger(UserFavoriteCarRepository.class.getName());
-    private final DBContext dbContext;
+    private final DBContext dbContext = new DBContext();
 
     public UserFavoriteCarRepository() {
-        dbContext = new DBContext();
     }
 
     @Override
