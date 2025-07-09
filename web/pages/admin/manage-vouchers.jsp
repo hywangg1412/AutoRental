@@ -22,6 +22,7 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
   <body>
     <div class="admin-layout">
       <!-- Sidebar -->
+      <!-- fix lai duong dan -->
       <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
           <a href="admin-dashboard.jsp" class="sidebar-logo">
