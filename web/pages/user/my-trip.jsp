@@ -40,7 +40,7 @@
         <jsp:include page="/pages/includes/nav.jsp" />
 
         <div class="container">
-            <div class="row g-5" style="margin-top:100px">
+            <div class="row g-5" style="margin-top:80px">
                 <!-- Sidebar -->
                 <div class="col-lg-3 col-md-4">
                     <div class="sidebar">
@@ -154,14 +154,14 @@
                                                                         </span>
                                                                     </div>
                                                                     <div class="mytrip-btn-group">
-                                                                        <button class="btn-mytrip-action btn-detail" data-bs-toggle="modal" data-bs-target="#modal-${trip.bookingId}">
+                                                                        <button class="btn-mytrip-action btn-detail btn-view-details" data-booking-id="${trip.bookingId}" data-car-model="${trip.carModel}" data-license-plate="${trip.carLicensePlate}" data-pickup="${trip.formattedPickupDateTime}" data-return="${trip.formattedReturnDateTime}" data-total-amount="${trip.totalAmount}" data-status="${trip.status}" data-bs-toggle="modal" data-bs-target="#myTripDetailModal">
                                                                             View Details
                                                                         </button>
                                                                         <c:if test="${trip.status eq BookingStatusConstants.CONFIRMED || trip.status eq BookingStatusConstants.IN_PROGRESS}">
-                                                                            <button class="btn-mytrip-action btn-mytrip-green btn-sm">Return Car</button>
+                                                                            <button class="btn-mytrip-action btn-mytrip-green btn-sm" data-booking-id="${trip.bookingId}">Return Car</button>
                                                                         </c:if>
                                                                         <c:if test="${trip.status eq BookingStatusConstants.PENDING}">
-                                                                            <button class="btn-mytrip-action btn-mytrip-red btn-sm">Cancel Booking</button>
+                                                                            <button class="btn-mytrip-action btn-mytrip-red btn-sm" data-booking-id="${trip.bookingId}">Cancel Booking</button>
                                                                         </c:if>
                                                                     </div>
                                                                 </div>
@@ -181,94 +181,72 @@
 
                                         <!-- Trip History Tab -->
                                         <div class="tab-pane fade" id="trip-history" role="tabpanel">
-                                            <div class="table-responsive">
-                                                <table class="table">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Booking code</th>
-                                                            <th>Car</th>
-                                                            <th>Pick-up date</th>
-                                                            <th>Return date</th>
-                                                            <th>Status</th>
-                                                            <th>Amount</th>
-                                                            <th>Action</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    <c:choose>
-                                                        <c:when test="${not empty bookingRequests}">
-                                                            <c:forEach items="${bookingRequests}" var="booking">
-                                                                <tr>
-                                                                    <!-- Booking detail modal (like staff) -->
-                                                                    <div class="modal fade" id="modal-${booking.bookingId}" tabindex="-1" aria-labelledby="modalLabel-${booking.bookingId}" aria-hidden="true">
-                                                                        <div class="modal-dialog modal-lg">
-                                                                            <div class="modal-content">
-                                                                                <div class="modal-header">
-                                                                                    <h5 class="modal-title" id="modalLabel-${booking.bookingId}">Booking details - ${booking.bookingCode}</h5>
-                                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                                </div>
-                                                                                <div class="modal-body">
-                                                                                    <!-- Booking details, like staff -->
-                                                                                    <h6>Car information</h6>
-                                                                                    <p>Model: ${booking.carModel}</p>
-                                                                                    <p>License plate: ${booking.carLicensePlate}</p>
-                                                                                    <h6>Rental period</h6>
-                                                                                    <p>Pick-up: ${booking.formattedPickupDateTime}</p>
-                                                                                    <p>Return: ${booking.formattedReturnDateTime}</p>
-                                                                                    <h6>Customer</h6>
-                                                                                    <p>${booking.customerName} - ${booking.customerPhone}</p>
-                                                                                    <p>Email: ${booking.customerEmail}</p>
-                                                                                    <h6>Status: ${booking.status}</h6>
-                                                                                    <h6>Amount: ${booking.totalAmount}.000 VND</h6>
-                                                                                </div>
-                                                                                <div class="modal-footer">
+                                            <c:choose>
+                                                <c:when test="${not empty pastTrips}">
+                                                    <div class="row">
+                                                        <c:forEach items="${pastTrips}" var="booking">
+                                                            <div class="col-12 mb-4">
+                                                                <div class="favorite-car-card d-flex align-items-center p-4 rounded shadow-sm bg-white">
+                                                                    <div class="car-img-wrapper">
+                                                                        <img src="${pageContext.request.contextPath}${booking.carImage}" class="car-img" alt="Car image">
+                                                                    </div>
+                                                                    <div class="flex-grow-1 ps-3 pe-4">
+                                                                        <div class="d-flex align-items-center mb-2">
+                                                                            <div class="car-title-badge d-flex align-items-center">
+                                                                                <h5 class="mb-0 fw-bold me-3">${booking.carModel}</h5>
+                                                                                <span class="badge status-badge status-${booking.status}">
                                                                                     <c:choose>
+                                                                                        <c:when test="${booking.status eq 'Confirmed'}">
+                                                                                            <i class="bi bi-check-circle-fill"></i> Booking Accepted
+                                                                                        </c:when>
                                                                                         <c:when test="${booking.status eq 'Pending'}">
-                                                                                            <button class="btn btn-danger">Cancel Booking</button>
+                                                                                            <i class="bi bi-hourglass-split"></i> Awaiting Confirmation
                                                                                         </c:when>
-                                                                                        <c:when test="${booking.status eq 'Confirmed' || booking.status eq 'Đang thuê'}">
-                                                                                            <button class="btn btn-primary">Return Car</button>
+                                                                                        <c:when test="${booking.status eq 'IN_PROGRESS'}">
+                                                                                            <i class="bi bi-car-front"></i> Ongoing
                                                                                         </c:when>
+                                                                                        <c:when test="${booking.status eq 'Completed'}">
+                                                                                            <i class="bi bi-flag-fill"></i> Completed
+                                                                                        </c:when>
+                                                                                        <c:when test="${booking.status eq 'Cancelled'}">
+                                                                                            <i class="bi bi-x-circle-fill"></i> Cancelled
+                                                                                        </c:when>
+                                                                                        <c:otherwise>${booking.status}</c:otherwise>
                                                                                     </c:choose>
-                                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                                                </div>
+                                                                                </span>
                                                                             </div>
                                                                         </div>
-                                                                    </div>
-                                                                    <!-- Table row -->
-                                                                    <td>${booking.bookingCode}</td>
-                                                                    <td>${booking.carModel} <br><small>${booking.carLicensePlate}</small></td>
-                                                                    <td>${booking.formattedPickupDateTime}</td>
-                                                                    <td>${booking.formattedReturnDateTime}</td>
-                                                                    <td>
-                                                                        <span class="badge status-${booking.status}">
-                                                                            ${booking.status}
+                                                                        <div class="mb-2 text-muted small fs-7 d-flex align-items-center car-info-inline">
+                                                                            <span class="me-3"><i class="bi bi-hash me-1"></i>${booking.bookingCode}</span>
+                                                                            <span class="me-3"><i class="bi bi-car-front me-1"></i>${booking.carLicensePlate}</span>
+                                                                        </div>
+                                                                        <div class="mb-2 text-muted small fs-7 d-flex align-items-center car-info-inline">
+                                                                            <span class="me-3"><i class="bi bi-calendar me-1"></i>${booking.formattedPickupDateTime} - ${booking.formattedReturnDateTime}</span>
+                                                                        </div>
+                                                                        <span class="price-new fw-bold fs-6 text-success me-3" style="margin-bottom:0;">
+                                                                            <fmt:formatNumber value="${booking.totalAmount}" type="number" pattern="#.###" /> VND
                                                                         </span>
-                                                                    </td>
-                                                                    <td>${booking.totalAmount}.000 VND</td>
-                                                                    <td>
-                                                                        <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-${booking.bookingId}">
-                                                                            <i class="fas fa-eye"></i> View
+                                                                    </div>
+                                                                    <div class="mytrip-btn-group">
+                                                                        <button class="btn-mytrip-action btn-detail btn-view-details" data-booking-id="${booking.bookingId}" data-car-model="${booking.carModel}" data-license-plate="${booking.carLicensePlate}" data-pickup="${booking.formattedPickupDateTime}" data-return="${booking.formattedReturnDateTime}" data-total-amount="${booking.totalAmount}" data-status="${booking.status}" data-booking-code="${booking.bookingCode}" data-bs-toggle="modal" data-bs-target="#myTripDetailModal">
+                                                                            View Details
                                                                         </button>
-                                                                        <c:if test="${booking.status eq 'Pending'}">
-                                                                            <button class="btn btn-danger btn-sm">Cancel Booking</button>
-                                                                        </c:if>
-                                                                        <c:if test="${booking.status eq 'Confirmed' || booking.status eq 'Đang thuê'}">
-                                                                            <button class="btn btn-primary btn-sm">Return Car</button>
-                                                                        </c:if>
-                                                                    </td>
-                                                                </tr>
-                                                            </c:forEach>
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <tr>
-                                                                <td colspan="7" class="text-center">You have no booking history.</td>
-                                                            </tr>
-                                                        </c:otherwise>
-                                                    </c:choose>
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                                                                        <button class="btn-mytrip-action btn-mytrip-green btn-sm" data-booking-id="${booking.bookingId}">Book again</button>
+                                                                        <button class="btn-mytrip-action btn-mytrip-blue btn-sm" data-booking-id="${booking.bookingId}">Send review</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </c:forEach>
+                                                    </div>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <div class="empty-state">
+                                                        <i class="bi bi-clock-history" style="font-size: 3rem; color: var(--text-gray); margin-bottom: 1rem;"></i>
+                                                        <h5 class="mb-3">No trip history yet</h5>
+                                                        <p class="text-muted">Your completed trips will appear here!</p>
+                                                    </div>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </div>
                                     </div>
                                 </div>
@@ -304,53 +282,59 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         <script src="${pageContext.request.contextPath}/scripts/user/UserAboutSidebar.js"></script>
+        <script src="${pageContext.request.contextPath}/scripts/user/my-trip.js"></script>
 
-        <script>
-            // Show/hide filter button based on active tab
-            document.addEventListener('DOMContentLoaded', function () {
-                const filterBtn = document.getElementById('filterBtn');
-                const tripHistoryTab = document.getElementById('trip-history-tab');
-                const currentTripTab = document.getElementById('current-trip-tab');
+        <div class="modal fade" id="myTripDetailModal" tabindex="-1" aria-labelledby="myTripDetailModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-md modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header border-0 pb-0">
+                <h2 class="modal-title w-100 text-center fw-bold" id="myTripDetailModalLabel">Booking Details</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <hr class="mytrip-divider" />
+              <div class="modal-body pt-0">
+                <div class="mytrip-modal-section"><i class="bi bi-hash"></i> Booking Information</div>
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <div class="mytrip-modal-label">Booking Code</div>
+                    <div class="mytrip-modal-value" id="modalBookingCode"></div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mytrip-modal-label">Status</div>
+                    <div class="mytrip-modal-value" id="modalStatus"></div>
+                  </div>
+                </div>
+                <div class="mytrip-modal-section"><i class="bi bi-car-front"></i> Car Information</div>
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <div class="mytrip-modal-label">Model</div>
+                    <div class="mytrip-modal-value" id="modalCarModel"></div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mytrip-modal-label">License Plate</div>
+                    <div class="mytrip-modal-value" id="modalLicensePlate"></div>
+                  </div>
+                </div>
+                <div class="mytrip-modal-section"><i class="bi bi-calendar"></i> Rental Details</div>
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <div class="mytrip-modal-label">Pick-up Date</div>
+                    <div class="mytrip-modal-value" id="modalPickup"></div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mytrip-modal-label">Return Date</div>
+                    <div class="mytrip-modal-value" id="modalReturn"></div>
+                  </div>
+                </div>
+                <div class="mytrip-modal-label">Total Amount</div>
+                <div class="mytrip-modal-value fw-bold" id="modalTotalAmount"></div>
+              </div>
+              <div class="modal-footer border-0 pt-0 d-flex flex-column gap-2">
+                <button class="btn btn-success w-100 py-2" id="modalReturnCarBtn">Return Car</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
-                // Show filter button when Trip history tab is active
-                tripHistoryTab.addEventListener('shown.bs.tab', function () {
-                    filterBtn.classList.remove('d-none');
-                });
-
-                // Hide filter button when Current trip tab is active
-                currentTripTab.addEventListener('shown.bs.tab', function () {
-                    filterBtn.classList.add('d-none');
-                });
-            });
-
-            // Clear filter functionality
-            document.querySelector('.btn-clear-filter').addEventListener('click', function () {
-                // Reset all form elements
-                document.querySelectorAll('#filterModal input[type="radio"]').forEach(radio => {
-                    if (radio.value === 'all')
-                        radio.checked = true;
-                    else
-                        radio.checked = false;
-                });
-
-                document.querySelectorAll('#filterModal input[type="text"]').forEach(input => {
-                    input.value = '';
-                });
-
-                document.querySelectorAll('#filterModal select').forEach(select => {
-                    select.selectedIndex = 0;
-                });
-            });
-
-            // Add smooth transition effect for tab switching
-            document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
-                tab.addEventListener('shown.bs.tab', function (e) {
-                    const targetPane = document.querySelector(e.target.getAttribute('data-bs-target'));
-                    targetPane.style.animation = 'none';
-                    targetPane.offsetHeight; // Trigger reflow
-                    targetPane.style.animation = 'fadeIn 0.3s ease-in-out';
-                });
-            });
-        </script>
     </body>
 </html>

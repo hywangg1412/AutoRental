@@ -95,12 +95,15 @@ public class UserBookingListServlet extends HttpServlet {
                     long duration = java.time.Duration.between(booking.getPickupDateTime(), booking.getReturnDateTime()).toDays();
                     dto.setDuration(duration > 0 ? duration : 1);
                 }
-                if (BookingStatusConstants.PENDING.equals(booking.getStatus()) || BookingStatusConstants.CONFIRMED.equals(booking.getStatus())) {
+                if (BookingStatusConstants.PENDING.equals(booking.getStatus()) || 
+                    BookingStatusConstants.CONFIRMED.equals(booking.getStatus()) || 
+                    BookingStatusConstants.IN_PROGRESS.equals(booking.getStatus())) {
                     currentTrips.add(dto);
                 } else {
                     pastTrips.add(dto);
                 }
             }
+            
             request.setAttribute("currentTrips", currentTrips);
             request.setAttribute("pastTrips", pastTrips);
         } catch (Exception e) {
