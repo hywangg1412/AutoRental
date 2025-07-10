@@ -82,7 +82,7 @@
                                 <div class="main-content p-4 mt-1">
                                     <!-- Page Header -->
                                     <div class="d-flex justify-content-between align-items-center mb-4">
-                                        <h1 class="h5 fw-semibold mb-0 text-dark">My trips</h1>
+                                        <h1 class="h2 fw-semibold mb-0 text-dark">My trips</h1>
                                         <button class="filter-btn d-none" id="filterBtn" data-bs-toggle="modal" data-bs-target="#filterModal">
                                             <i class="bi bi-funnel me-2"></i>Filter
                                         </button>
@@ -121,7 +121,26 @@
                                                                         <div class="d-flex align-items-center mb-2">
                                                                             <div class="car-title-badge d-flex align-items-center">
                                                                                 <h5 class="mb-0 fw-bold me-3">${trip.carModel}</h5>
-                                                                                <span class="badge status-badge ms-0">${trip.status}</span>
+                                                                                <span class="badge status-badge status-${trip.status}">
+                                                                                    <c:choose>
+                                                                                        <c:when test="${trip.status eq 'Confirmed'}">
+                                                                                            <i class="bi bi-check-circle-fill"></i> Booking Accepted
+                                                                                        </c:when>
+                                                                                        <c:when test="${trip.status eq 'Pending'}">
+                                                                                            <i class="bi bi-hourglass-split"></i> Awaiting Confirmation
+                                                                                        </c:when>
+                                                                                        <c:when test="${trip.status eq 'IN_PROGRESS'}">
+                                                                                            <i class="bi bi-car-front"></i> Ongoing
+                                                                                        </c:when>
+                                                                                        <c:when test="${trip.status eq 'Completed'}">
+                                                                                            <i class="bi bi-flag-fill"></i> Completed
+                                                                                        </c:when>
+                                                                                        <c:when test="${trip.status eq 'Cancelled'}">
+                                                                                            <i class="bi bi-x-circle-fill"></i> Cancelled
+                                                                                        </c:when>
+                                                                                        <c:otherwise>${trip.status}</c:otherwise>
+                                                                                    </c:choose>
+                                                                                </span>
                                                                             </div>
                                                                         </div>
                                                                         <div class="mb-2 text-muted small fs-7 d-flex align-items-center car-info-inline">
@@ -222,7 +241,9 @@
                                                                     <td>${booking.formattedPickupDateTime}</td>
                                                                     <td>${booking.formattedReturnDateTime}</td>
                                                                     <td>
-                                                                        <span class="badge">${booking.status}</span>
+                                                                        <span class="badge status-${booking.status}">
+                                                                            ${booking.status}
+                                                                        </span>
                                                                     </td>
                                                                     <td>${booking.totalAmount}.000 VND</td>
                                                                     <td>
