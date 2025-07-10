@@ -93,7 +93,7 @@
                                 <div class="main-content p-4 mt-1">
                                     <!-- Page Header -->
                                     <div class="mb-4">
-                                        <h1 class="h5 fw-semibold mb-0 text-dark">My Favorite Cars</h1>
+                                        <h1 class="h2 fw-semibold mb-0 text-dark">My Favorite Cars</h1>
                                     </div>
 
                                     <!-- Error Message -->

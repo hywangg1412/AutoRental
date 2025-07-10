@@ -128,14 +128,20 @@ body {
 }
 
 .main-content {
-    /*background: white;*/
     border-radius: 12px;
+    padding-bottom: 40px;
     /*box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);*/
+}
+
+.main-content > .container > .row > .main-content > .d-flex.mb-4,
+.main-content > .d-flex.mb-4 {
+    margin-bottom: 0.5rem !important;
 }
 
 .custom-tabs {
     border-bottom: 1px solid var(--border-gray);
     margin-bottom: 2rem;
+    margin-top: 0.5rem;
 }
 
 .custom-tabs .nav-link {
@@ -269,6 +275,7 @@ body {
 
 .tab-content {
     animation: fadeIn 0.3s ease-in-out;
+    margin-top: 18px;
 }
 
 @keyframes fadeIn {
@@ -474,3 +481,9 @@ nav.ftco-navbar-light .nav-link {
 .car-img:not([src]), .car-img[src=""], .car-img:not([src*="."]) {
   background: #f8f9fa url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ccc"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>') center/50% no-repeat;
 }
+
+.status-badge.status-Pending { background: #fbbf24; color: #fff; }
+.status-badge.status-Confirmed { background: #10b981; color: #fff; }
+.status-badge.status-IN_PROGRESS { background: #2563eb; color: #fff; }
+.status-badge.status-Completed { background: #6b7280; color: #fff; }
+.status-badge.status-Cancelled { background: #dc2626; color: #fff; }
