@@ -32,7 +32,7 @@ public class HomeServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            List<CarListItemDTO> carList = carListService.getAll();
+            List<CarListItemDTO> carList = carListService.getForHomePage(8);
             request.setAttribute("carList", carList);
 
             Object sessionValue = SessionUtil.getSessionAttribute(request, "userId");
