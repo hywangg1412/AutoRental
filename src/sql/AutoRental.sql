@@ -310,39 +310,77 @@ CREATE TABLE [BookingSurcharges] (
 GO
 
 CREATE TABLE [Contract] (
-    [ContractId] UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
-    [UserId] UNIQUEIDENTIFIER NOT NULL, 
-    [BookingId] UNIQUEIDENTIFIER NOT NULL, 
-    [ContractContent] NVARCHAR(MAX) NOT NULL, 
-    [PickupDateTime] DATETIME2 NOT NULL, -- Ngày bắt đầu thuê xe
-    [ReturnDateTime] DATETIME2 NOT NULL, -- Ngày kết thúc thuê xe
-    [TotalPrice] DECIMAL(10, 2) NOT NULL, -- Tổng giá trị hợp đồng
-    [DepositAmount] DECIMAL(10, 2) NOT NULL, -- Số tiền đặt cọc
-    [DepositStatus] VARCHAR(20) NOT NULL, -- Pending, Paid, Failed, Refunded
-    [Status] VARCHAR(20) NOT NULL, --DEFAULT 'Created', Created, Pending, Active, Completed, Cancelled, Terminated
-    [CompanyRepresentativeId] UNIQUEIDENTIFIER NOT NULL, -- ID của nhân viên duyệt
-    [CreatedDate] DATETIME2 NOT NULL DEFAULT GETDATE(), -- Ngày tạo hợp đồng
-    [ContractFile] NVARCHAR(MAX) NULL, -- Đường dẫn file hợp đồng
-    [ContractCode] NVARCHAR(20) NOT NULL, -- Mã hợp đồng
+    -- Thông tin cơ bản
+    [ContractId] UNIQUEIDENTIFIER NOT NULL,
+    [ContractCode] NVARCHAR(20) NOT NULL,      -- Mã hợp đồng (CTR-20241201-001)
+    
+    -- Liên kết
+    [UserId] UNIQUEIDENTIFIER NOT NULL,        -- Khách hàng
+    [BookingId] UNIQUEIDENTIFIER NOT NULL,     -- Booking liên quan
+    [StaffId] UNIQUEIDENTIFIER NOT NULL,       -- Nhân viên tạo/duyệt
+    
+    -- Thông tin thời gian
+    [CreatedDate] DATETIME2 NOT NULL DEFAULT GETDATE(),
+    [SignedDate] DATETIME2 NULL,               -- Ngày ký
+    [CompletedDate] DATETIME2 NULL,            -- Ngày hoàn thành
+    
+    -- Thông tin tài chính
+    -- [DepositStatus] VARCHAR(20) NOT NULL,      -- Pending, Paid, Failed, Refunded
+    -- [FinalAmount] DECIMAL(10, 2) NULL,         -- Số tiền cuối cùng (sau phụ phí)
+    
+    -- Trạng thái
+    [Status] VARCHAR(20) NOT NULL,             -- Created, Pending, Active, Completed, Cancelled, Terminated
+    [TermsAccepted] BIT NOT NULL DEFAULT 0,    -- Đã đồng ý điều khoản
+    [TermsAcceptedDate] DATETIME2 NULL,        -- Ngày đồng ý điều khoản
+    
+    -- Nội dung hợp đồng
+    [ContractPDFUrl] NVARCHAR(500) NULL,       -- File PDF hợp đồng
+    
+    -- Chữ ký
+    [SignatureData] NVARCHAR(MAX) NULL,        -- Dữ liệu canvas signature (base64)
+    [SignatureImageUrl] NVARCHAR(500) NULL,    -- Ảnh chữ ký
+    [SignatureMethod] VARCHAR(50) NULL,        -- Canvas, Upload, Digital, Checkbox
+
+    
+    -- Ghi chú
+    [Notes] NVARCHAR(1000) NULL,               -- Ghi chú thêm
+    [CancellationReason] NVARCHAR(500) NULL,   -- Lý do hủy (nếu có)
+    
+    -- Constraints
     CONSTRAINT [PK_Contract] PRIMARY KEY ([ContractId]),
-    CONSTRAINT [FK_Contract_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE,
-    CONSTRAINT [FK_Contract_BookingId] FOREIGN KEY ([BookingId]) REFERENCES [Booking]([BookingId]) ON DELETE NO ACTION,
-    CONSTRAINT [FK_Contract_CompanyRepresentativeId] FOREIGN KEY ([CompanyRepresentativeId]) REFERENCES [Users]([UserId])
+    CONSTRAINT [FK_Contract_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]),
+    CONSTRAINT [FK_Contract_BookingId] FOREIGN KEY ([BookingId]) REFERENCES [Booking]([BookingId]),
+    CONSTRAINT [FK_Contract_StaffId] FOREIGN KEY ([StaffId]) REFERENCES [Users]([UserId])
+    -- CONSTRAINT [CK_Contract_Status] CHECK ([Status] IN ('Created', 'Pending', 'Active', 'Completed', 'Cancelled', 'Terminated')),
+    -- CONSTRAINT [CK_Contract_SignatureMethod] CHECK ([SignatureMethod] IN ('Canvas', 'Upload', 'Digital', 'Checkbox')),
+    -- CONSTRAINT [CK_Contract_Status_Logic] CHECK (
+    --     ([Status] = 'Active' AND [SignedDate] IS NOT NULL AND [TermsAccepted] = 1) OR
+    --     ([Status] IN ('Created', 'Pending', 'Completed', 'Cancelled', 'Terminated'))
+    -- )
 );
 GO
 
-CREATE TABLE [ContractCars] (
-    [ContractCarId] UNIQUEIDENTIFIER NOT NULL,
-    [ContractId] UNIQUEIDENTIFIER NOT NULL,
-    [CarId] UNIQUEIDENTIFIER NOT NULL,
-    [PricePerCar] DECIMAL(10,2) NULL, 
-    [DiscountId] UNIQUEIDENTIFIER NULL, 
-    CONSTRAINT [PK_ContractCars] PRIMARY KEY ([ContractCarId]),
-    CONSTRAINT [FK_ContractCars_ContractId] FOREIGN KEY ([ContractId]) REFERENCES [Contract]([ContractId]) ON DELETE CASCADE,
-    CONSTRAINT [FK_ContractCars_CarId] FOREIGN KEY ([CarId]) REFERENCES [Car]([CarId]) ON DELETE CASCADE,
-    CONSTRAINT [FK_ContractCars_DiscountId] FOREIGN KEY ([DiscountId]) REFERENCES [Discount]([DiscountId]) ON DELETE SET NULL
-);
+CREATE INDEX [IX_Contract_Status] ON [Contract]([Status]);
+CREATE INDEX [IX_Contract_UserId_Status] ON [Contract]([UserId], [Status]);
+CREATE INDEX [IX_Contract_BookingId] ON [Contract]([BookingId]);
+CREATE INDEX [IX_Contract_StaffId] ON [Contract]([StaffId]);
+CREATE INDEX [IX_Contract_SignedDate] ON [Contract]([SignedDate]);
+CREATE INDEX [IX_Contract_CreatedDate] ON [Contract]([CreatedDate]);
 GO
+
+
+-- CREATE TABLE [ContractCars] (
+--     [ContractCarId] UNIQUEIDENTIFIER NOT NULL,
+--     [ContractId] UNIQUEIDENTIFIER NOT NULL,
+--     [CarId] UNIQUEIDENTIFIER NOT NULL,
+--     [PricePerCar] DECIMAL(10,2) NULL, 
+--     [DiscountId] UNIQUEIDENTIFIER NULL, 
+--     CONSTRAINT [PK_ContractCars] PRIMARY KEY ([ContractCarId]),
+--     CONSTRAINT [FK_ContractCars_ContractId] FOREIGN KEY ([ContractId]) REFERENCES [Contract]([ContractId]) ON DELETE CASCADE,
+--     CONSTRAINT [FK_ContractCars_CarId] FOREIGN KEY ([CarId]) REFERENCES [Car]([CarId]) ON DELETE CASCADE,
+--     CONSTRAINT [FK_ContractCars_DiscountId] FOREIGN KEY ([DiscountId]) REFERENCES [Discount]([DiscountId]) ON DELETE SET NULL
+-- );
+-- GO
 
 CREATE TABLE [Payment] (
     [PaymentId] UNIQUEIDENTIFIER NOT NULL,
