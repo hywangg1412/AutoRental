@@ -122,19 +122,17 @@
                                                                     </span>
                                                                 </div>
                                                             </div>
-                                                            <div class="mb-3 text-muted small fs-7 d-flex align-items-center car-info-inline">
+                                                            <div class="mb-2 text-muted small fs-7 d-flex align-items-center car-info-inline">
                                                                 <span class="me-3"><i class="bi bi-gear me-1"></i>${car.transmissionName}</span>
                                                                 <span class="me-3"><i class="bi bi-people me-1"></i>${car.seats} seats</span>
                                                                 <span><i class="bi bi-fuel-pump me-1"></i>${car.fuelTypeName}</span>
                                                             </div>
-                                                            <div class="d-flex align-items-center mb-2">
-                                                                <span class="price-new fw-bold fs-6 text-success me-3">
-                                                                    <fmt:formatNumber value="${car.pricePerDay}" type="number" pattern="#.###" /> VND/day
-                                                                </span>
-                                                                <span class="price-old text-muted text-decoration-line-through me-2" style="font-size: 1rem;">
-                                                                    <!-- Show old price here if available -->
-                                                                </span>
-                                                            </div>
+                                                            <span class="price-new fw-bold fs-6 text-success me-3" style="margin-bottom:0;">
+                                                                <fmt:formatNumber value="${car.pricePerDay}" type="number" pattern="#.###" /> VND/day
+                                                            </span>
+                                                            <span class="price-old text-muted text-decoration-line-through me-2" style="font-size: 1rem;">
+                                                                <!-- Show old price here if available -->
+                                                            </span>
                                                         </div>
                                                         <div class="d-flex flex-column align-items-center">
                                                             <form method="post" action="${pageContext.request.contextPath}/user/favorite-car">
