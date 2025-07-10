@@ -2,8 +2,11 @@ package Config;
 
 import static Config.DBInfo.*;
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DBContext {
+    private static final Logger LOGGER = Logger.getLogger(DBContext.class.getName());
 
     public DBContext() {
     }
@@ -12,13 +15,13 @@ public class DBContext {
         try {
             Class.forName(DRIVER_NAME); 
             Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            System.out.println("Database connected successfully");
+            // LOGGER.info("Database connected successfully"); // Bật khi cần debug
             return conn;
         } catch (ClassNotFoundException e) {
-            System.err.println("JDBC Driver not found: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "JDBC Driver not found", e);
             throw new SQLException("Driver not found", e);
         } catch (SQLException e) {
-            System.err.println("Database connection failed: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Database connection failed: " + e.getMessage(), e);
             throw e;
         }
     }
@@ -27,19 +30,19 @@ public class DBContext {
         try {
             if (rs != null && !rs.isClosed()) rs.close();
         } catch (SQLException e) {
-            System.err.println("❗ Error closing ResultSet: " + e.getMessage());
+            LOGGER.log(Level.WARNING, "Error closing ResultSet", e);
         }
 
         try {
             if (ps != null && !ps.isClosed()) ps.close();
         } catch (SQLException e) {
-            System.err.println("❗ Error closing PreparedStatement: " + e.getMessage());
+            LOGGER.log(Level.WARNING, "Error closing PreparedStatement", e);
         }
 
         try {
             if (conn != null && !conn.isClosed()) conn.close();
         } catch (SQLException e) {
-            System.err.println("❗ Error closing Connection: " + e.getMessage());
+            LOGGER.log(Level.WARNING, "Error closing Connection", e);
         }
     }
 

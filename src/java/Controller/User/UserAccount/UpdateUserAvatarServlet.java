@@ -14,17 +14,21 @@ import java.io.InputStream;
 import Model.Entity.User.User;
 import java.util.UUID;
 import jakarta.servlet.annotation.MultipartConfig;
+import Service.Role.RoleService;
+import Model.Entity.Role.Role;
 
 @WebServlet(name = "UpdateUserAvatarServlet", urlPatterns = {"/user/update-avatar"})
 @MultipartConfig
 public class UpdateUserAvatarServlet extends HttpServlet {
     private CloudinaryService cloudinaryService;
     private UserService userService;
+    private RoleService roleService;
     
     @Override
     public void init(){
         cloudinaryService = new CloudinaryService();
         userService = new UserService();
+        roleService = new RoleService();
     }
 
     @Override
@@ -58,6 +62,17 @@ public class UpdateUserAvatarServlet extends HttpServlet {
                 User updatedUser = userService.findById(userId);
                 request.getSession().setAttribute("user", updatedUser);
                 request.getSession().setAttribute("success", "Avatar updated successfully!");
+                String profileRedirect = "/user/profile";
+                try {
+                    Role userRole = roleService.findById(updatedUser.getRoleId());
+                    if (userRole != null && "Staff".equalsIgnoreCase(userRole.getRoleName())) {
+                        profileRedirect = "/staff/profile";
+                    }
+                } catch (Exception ex) {
+                    // Nếu lỗi khi lấy role, giữ nguyên profileRedirect là /user/profile
+                }
+                response.sendRedirect(request.getContextPath() + profileRedirect);
+                return;
             } else {
                 request.getSession().setAttribute("error", "Failed to update avatar in database.");
             }
@@ -66,11 +81,6 @@ public class UpdateUserAvatarServlet extends HttpServlet {
             request.getSession().setAttribute("error", "Upload failed: " + e.getMessage());
         }
 
-        String fromStaffProfile = request.getParameter("fromStaffProfile");
-        if ("true".equals(fromStaffProfile)) {
-            response.sendRedirect(request.getContextPath() + "/staff/profile");
-        } else {
-            response.sendRedirect(request.getContextPath() + "/user/profile");
-        }
+        response.sendRedirect(request.getContextPath() + "/user/profile");
     }
 }
