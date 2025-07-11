@@ -246,9 +246,6 @@
                                             <button type="button" class="btn btn-outline-custom" onclick="window.history.back()">
                                                 <i class="bi bi-arrow-left me-2"></i>Cancel and Go Back
                                             </button>
-                                            <button type="button" class="btn btn-secondary" onclick="testFunction()">
-                                                <i class="bi bi-bug me-2"></i>Test JavaScript
-                                            </button>
                                             <button type="submit" class="btn btn-danger-custom" id="deleteBtn" disabled>
                                                 <i class="bi bi-trash me-2"></i>Delete My Account Permanently
                                             </button>

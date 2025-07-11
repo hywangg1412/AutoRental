@@ -1,44 +1,41 @@
-.custom-login-btn,
-.custom-signup-btn {
-  min-width: 110px;
-  text-align: center;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+nav .custom-login-btn,
+nav .custom-signup-btn {
+  min-width: 90px !important;
+  text-align: center !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 600 !important;
+  border-radius: 5px !important;
+  box-shadow: none !important;
+  outline: none !important;
+  border: 2px solid #1089ff !important;
+  background: #fff !important;
+  transition: background 0.2s, color 0.2s, border 0.2s !important;
+  padding: 0.25rem 1rem !important;
+  font-size: 1rem !important;
+  width: auto !important;
+  height: 38px !important;
 }
-.custom-login-btn {
-  color: #007bff;
-  background-color: #fff;
-  border: 2px solid #007bff;
-  font-weight: 600;
-  border-radius: 7px 0 0 7px;
-  box-shadow: none;
-  outline: none;
-  transition: background 0.2s, color 0.2s, border 0.2s;
-  margin-right: -1px;
-  padding: 0.375rem 1.5rem;
+nav .custom-login-btn {
+  color: #1089ff !important;
+  margin-right: 8px !important;
+  background: #fff !important;
 }
-.custom-login-btn:hover, .custom-login-btn:focus {
-  background-color: #e6f0ff;
-  color: #0056b3;
-  border-color: #0056b3;
+nav .custom-login-btn:hover, nav .custom-login-btn:focus {
+  background-color: #1089ff !important;
+  color: #fff !important;
+  border-color: #1089ff !important;
 }
-.custom-signup-btn {
-  background-color: #fff;
-  color: #1089ff;
-  font-weight: 600;
-  border: 2px solid #1089ff;
-  border-radius: 0 7px 7px 0;
-  box-shadow: none;
-  outline: none;
-  transition: background 0.2s, color 0.2s, border 0.2s;
-  margin-left: 12px;
-  padding: 0.375rem 1.5rem;
+nav .custom-signup-btn {
+  color: #fff !important;
+  background: #1089ff !important;
+  margin-left: 0 !important;
 }
-.custom-signup-btn:hover, .custom-signup-btn:focus {
-  background-color: #0056b3;
-  border-color: #0056b3;
-  color: #fff;
+nav .custom-signup-btn:hover, nav .custom-signup-btn:focus {
+  background-color: #0056b3 !important;
+  border-color: #0056b3 !important;
+  color: #fff !important;
 }
 .vr {
   width: 1px;
