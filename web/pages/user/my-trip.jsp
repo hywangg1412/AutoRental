@@ -62,7 +62,7 @@
                                     <i class="bi bi-lock text-dark"></i>
                                     Change password
                                 </a></li>
-                            <li><a href="${pageContext.request.contextPath}/user/request-delete" class="nav-link text-dark border-bottom-custom">
+                            <li><a href="${pageContext.request.contextPath}/pages/user/request-delete.jsp" class="nav-link text-dark border-bottom-custom">
                                     <i class="bi bi-trash text-dark"></i>
                                     Request account deletion
                                 </a></li>
