@@ -8,6 +8,7 @@ import Service.Role.RoleService;
 import Service.User.UserService;
 import Utils.ObjectUtils;
 import Utils.SessionUtil;
+import Utils.FormatUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -23,52 +24,39 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@WebServlet("/StaffServlet")
+@WebServlet("/admin/staff-management")
 public class StaffManagementServlet extends HttpServlet {
     
     private static final Logger LOGGER = Logger.getLogger(StaffManagementServlet.class.getName());
-    private final UserService userService = new UserService();
-    private final RoleService roleService = new RoleService();
+    private UserService userService;
+    private RoleService roleService;
     
+
+    @Override
+    public void init() throws ServletException {
+        userService = new UserService();
+        roleService = new RoleService();
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        
-        // Kiểm tra quyền admin
-        if (!isAuthorized(request)) {
-            response.sendRedirect(request.getContextPath() + "/pages/authen/access-denied.jsp");
+        String userId = (String) SessionUtil.getSessionAttribute(request, "userId");
+        if (userId == null || userId.trim().isEmpty()) {
+            response.sendRedirect(request.getContextPath() + "/pages/authen/login.jsp");
             return;
         }
         
         try {
-            // Lấy danh sách tất cả staff
-            Role staffRole = null;
-            List<User> staffList = new ArrayList<>();
+            Role staffRole = roleService.findByRoleName(RoleConstants.STAFF);
+            List<User> staffList = userService.findByRoleId(staffRole.getRoleId());
             
-            try {
-                staffRole = roleService.findByRoleName(RoleConstants.STAFF);
-                staffList = userService.findByRoleId(staffRole.getRoleId());
-            } catch (Exception roleException) {
-                LOGGER.log(Level.WARNING, "Không thể tìm role Staff bằng tên, thử tìm bằng UUID", roleException);
-                
-                // Fallback: thử tìm role Staff bằng UUID cố định từ data.sql
-                try {
-                    UUID staffRoleId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
-                    staffRole = roleService.findById(staffRoleId);
-                    if (staffRole != null) {
-                        staffList = userService.findByRoleId(staffRole.getRoleId());
-                        LOGGER.info("Đã tìm thấy role Staff bằng UUID fallback");
-                    }
-                } catch (Exception fallbackException) {
-                    LOGGER.log(Level.SEVERE, "Không thể tìm role Staff bằng UUID fallback", fallbackException);
-                    throw new Exception("Không thể tìm thấy role Staff trong database. Vui lòng chạy script CHECK_AND_FIX_STAFF_ROLE.sql");
-                }
+            int totalStaff = 0, activeStaff = 0, disabledStaff = 0;
+            for (User user : staffList) {
+                totalStaff++;
+                if (UserStatusConstants.ACTIVE.equals(user.getStatus())) activeStaff++;
+                else if (UserStatusConstants.BANNED.equals(user.getStatus())) disabledStaff++;
             }
-            
-            // Tính toán thống kê
-            long totalStaff = staffList.size();
-            long activeStaff = staffList.stream().filter(user -> UserStatusConstants.ACTIVE.equals(user.getStatus())).count();
-            long disabledStaff = staffList.stream().filter(user -> UserStatusConstants.BANNED.equals(user.getStatus())).count();
             
             request.setAttribute("staffList", staffList);
             request.setAttribute("totalStaff", totalStaff);
@@ -88,13 +76,19 @@ public class StaffManagementServlet extends HttpServlet {
                 SessionUtil.removeSessionAttribute(request, "error");
             }
             
+            List<String> statusList = new ArrayList<>();
+            statusList.add(UserStatusConstants.ACTIVE);
+            statusList.add(UserStatusConstants.BANNED);
+            statusList.add(UserStatusConstants.INACTIVE);
+            statusList.add(UserStatusConstants.DELETED);
+            request.setAttribute("statusList", statusList);
+            
             request.getRequestDispatcher("/pages/admin/manage-staff.jsp").forward(request, response);
             
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error loading staff management page", e);
             String errorMessage = "Không thể tải trang quản lý nhân viên: " + e.getMessage();
             
-            // Log chi tiết lỗi
             if (e.getCause() != null) {
                 LOGGER.log(Level.SEVERE, "Root cause: " + e.getCause().getMessage(), e.getCause());
             }
@@ -107,10 +101,9 @@ public class StaffManagementServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        
-        // Kiểm tra quyền admin
-        if (!isAuthorized(request)) {
-            response.sendRedirect(request.getContextPath() + "/pages/authen/access-denied.jsp");
+        String userId = (String) SessionUtil.getSessionAttribute(request, "userId");
+        if (userId == null || userId.trim().isEmpty()) {
+            response.sendRedirect(request.getContextPath() + "/pages/authen/login.jsp");
             return;
         }
         
@@ -140,7 +133,6 @@ public class StaffManagementServlet extends HttpServlet {
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error processing staff management action: " + action, e);
             
-            // Log chi tiết lỗi
             if (e.getCause() != null) {
                 LOGGER.log(Level.SEVERE, "Root cause: " + e.getCause().getMessage(), e.getCause());
             }
@@ -159,7 +151,7 @@ public class StaffManagementServlet extends HttpServlet {
             }
             
             SessionUtil.setSessionAttribute(request, "error", errorMessage);
-            response.sendRedirect(request.getContextPath() + "/StaffServlet");
+            response.sendRedirect(request.getContextPath() + "/admin/staff-management");
         }
     }
     
@@ -184,17 +176,15 @@ public class StaffManagementServlet extends HttpServlet {
                 email == null || email.trim().isEmpty() ||
                 username == null || username.trim().isEmpty() ||
                 password == null || password.trim().isEmpty()) {
-                throw new IllegalArgumentException("Vui lòng điền đầy đủ thông tin bắt buộc");
+                throw new IllegalArgumentException("Please fill in all required fields");
             }
             
-            // Kiểm tra email đã tồn tại chưa
             if (userService.findByEmail(email) != null) {
-                throw new IllegalArgumentException("Email đã được sử dụng");
+                throw new IllegalArgumentException("Email is already in use");
             }
             
-            // Kiểm tra username đã tồn tại chưa
             if (userService.findByUsername(username) != null) {
-                throw new IllegalArgumentException("Tên đăng nhập đã được sử dụng");
+                throw new IllegalArgumentException("Username is already in use");
             }
             
             // Tạo user mới
@@ -218,18 +208,15 @@ public class StaffManagementServlet extends HttpServlet {
             newStaff.setNormalizedUserName(username.trim().toUpperCase());
             newStaff.setNormalizedEmail(email.trim().toUpperCase());
             
-            // Parse ngày sinh nếu có
             if (dobStr != null && !dobStr.trim().isEmpty()) {
                 try {
-                    LocalDate dob = LocalDate.parse(dobStr);
+                    LocalDate dob = FormatUtils.parseDate(dobStr);
                     newStaff.setUserDOB(dob);
                 } catch (Exception e) {
                     LOGGER.log(Level.WARNING, "Invalid date format for DOB: " + dobStr, e);
                 }
             }
             
-            // Lấy role Staff
-            LOGGER.info("Finding Staff role...");
             Role staffRole = roleService.findByRoleName(RoleConstants.STAFF);
             newStaff.setRoleId(staffRole.getRoleId());
             LOGGER.info("Staff role found with ID: " + staffRole.getRoleId());
@@ -238,12 +225,12 @@ public class StaffManagementServlet extends HttpServlet {
             LOGGER.info("Saving staff member to database...");
             User savedStaff = userService.add(newStaff);
             if (savedStaff == null) {
-                throw new Exception("Không thể tạo tài khoản nhân viên");
+                throw new Exception("Failed to create staff account");
             }
             
             LOGGER.info("Staff member added successfully: " + savedStaff.getUserId());
-            SessionUtil.setSessionAttribute(request, "success", "Tạo tài khoản nhân viên thành công");
-            response.sendRedirect(request.getContextPath() + "/StaffServlet");
+            SessionUtil.setSessionAttribute(request, "success", "Staff account created successfully");
+            response.sendRedirect(request.getContextPath() + "/admin/staff-management");
             
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error adding staff member", e);
@@ -262,16 +249,15 @@ public class StaffManagementServlet extends HttpServlet {
         String dobStr = request.getParameter("userDOB");
         
         if (userIdStr == null || userIdStr.trim().isEmpty()) {
-            throw new IllegalArgumentException("ID nhân viên không hợp lệ");
+            throw new IllegalArgumentException("Invalid staff ID");
         }
         
         UUID userId = UUID.fromString(userIdStr);
         User existingStaff = userService.findById(userId);
         if (existingStaff == null) {
-            throw new IllegalArgumentException("Không tìm thấy nhân viên");
+            throw new IllegalArgumentException("Staff not found");
         }
         
-        // Cập nhật thông tin
         if (firstName != null && !firstName.trim().isEmpty()) {
             existingStaff.setFirstName(firstName.trim());
         }
@@ -281,24 +267,22 @@ public class StaffManagementServlet extends HttpServlet {
         existingStaff.setPhoneNumber(phoneNumber != null ? phoneNumber.trim() : null);
         existingStaff.setGender(gender != null ? gender.trim() : null);
         
-        // Parse ngày sinh nếu có
         if (dobStr != null && !dobStr.trim().isEmpty()) {
             try {
-                LocalDate dob = LocalDate.parse(dobStr);
+                LocalDate dob = FormatUtils.parseDate(dobStr);
                 existingStaff.setUserDOB(dob);
             } catch (Exception e) {
                 LOGGER.log(Level.WARNING, "Invalid date format for DOB: " + dobStr, e);
             }
         }
         
-        // Lưu thay đổi
         boolean updated = userService.update(existingStaff);
         if (!updated) {
-            throw new Exception("Không thể cập nhật thông tin nhân viên");
+            throw new Exception("Failed to update staff information");
         }
         
-        SessionUtil.setSessionAttribute(request, "success", "Cập nhật thông tin nhân viên thành công");
-        response.sendRedirect(request.getContextPath() + "/StaffServlet");
+        SessionUtil.setSessionAttribute(request, "success", "Staff information updated successfully");
+        response.sendRedirect(request.getContextPath() + "/admin/staff-management");
     }
     
     private void handleDisableStaff(HttpServletRequest request, HttpServletResponse response) 
@@ -308,29 +292,28 @@ public class StaffManagementServlet extends HttpServlet {
         String reason = request.getParameter("reason");
         
         if (userIdStr == null || userIdStr.trim().isEmpty()) {
-            throw new IllegalArgumentException("ID nhân viên không hợp lệ");
+            throw new IllegalArgumentException("Invalid staff ID");
         }
         
         UUID userId = UUID.fromString(userIdStr);
         User staff = userService.findById(userId);
         if (staff == null) {
-            throw new IllegalArgumentException("Không tìm thấy nhân viên");
+            throw new IllegalArgumentException("Staff not found");
         }
         
-        // Vô hiệu hóa tài khoản
         staff.setStatus(UserStatusConstants.BANNED);
         boolean updated = userService.update(staff);
         if (!updated) {
-            throw new Exception("Không thể vô hiệu hóa tài khoản nhân viên");
+            throw new Exception("Failed to disable staff account");
         }
         
         String message = "Đã vô hiệu hóa tài khoản nhân viên";
         if (reason != null && !reason.trim().isEmpty()) {
-            message += ". Lý do: " + reason.trim();
+            message += ". Reason: " + reason.trim();
         }
         
-        SessionUtil.setSessionAttribute(request, "success", message);
-        response.sendRedirect(request.getContextPath() + "/StaffServlet");
+        SessionUtil.setSessionAttribute(request, "success", "Staff account disabled successfully");
+        response.sendRedirect(request.getContextPath() + "/admin/staff-management");
     }
     
     private void handleEnableStaff(HttpServletRequest request, HttpServletResponse response) 
@@ -339,24 +322,23 @@ public class StaffManagementServlet extends HttpServlet {
         String userIdStr = request.getParameter("userId");
         
         if (userIdStr == null || userIdStr.trim().isEmpty()) {
-            throw new IllegalArgumentException("ID nhân viên không hợp lệ");
+            throw new IllegalArgumentException("Invalid staff ID");
         }
         
         UUID userId = UUID.fromString(userIdStr);
         User staff = userService.findById(userId);
         if (staff == null) {
-            throw new IllegalArgumentException("Không tìm thấy nhân viên");
+            throw new IllegalArgumentException("Staff not found");
         }
         
-        // Kích hoạt lại tài khoản
         staff.setStatus(UserStatusConstants.ACTIVE);
         boolean updated = userService.update(staff);
         if (!updated) {
-            throw new Exception("Không thể kích hoạt tài khoản nhân viên");
+            throw new Exception("Failed to enable staff account");
         }
         
-        SessionUtil.setSessionAttribute(request, "success", "Đã kích hoạt lại tài khoản nhân viên");
-        response.sendRedirect(request.getContextPath() + "/StaffServlet");
+        SessionUtil.setSessionAttribute(request, "success", "Staff account enabled successfully");
+        response.sendRedirect(request.getContextPath() + "/admin/staff-management");
     }
     
     private void handleDeleteStaff(HttpServletRequest request, HttpServletResponse response) 
@@ -365,43 +347,26 @@ public class StaffManagementServlet extends HttpServlet {
         String userIdStr = request.getParameter("userId");
         
         if (userIdStr == null || userIdStr.trim().isEmpty()) {
-            throw new IllegalArgumentException("ID nhân viên không hợp lệ");
+            throw new IllegalArgumentException("Invalid staff ID");
         }
         
         UUID userId = UUID.fromString(userIdStr);
         User staff = userService.findById(userId);
         if (staff == null) {
-            throw new IllegalArgumentException("Không tìm thấy nhân viên");
+            throw new IllegalArgumentException("Staff not found");
         }
         
-        // Mark user as deleted first
         boolean markedAsDeleted = userService.markUserAsDeleted(userId);
         if (!markedAsDeleted) {
-            throw new Exception("Không thể đánh dấu tài khoản nhân viên để xóa");
+            throw new Exception("Failed to mark staff account for deletion");
         }
         
-        // Xóa tài khoản (thực tế là anonymize)
         boolean deleted = userService.anonymizeDeletedUser(userId);
         if (!deleted) {
-            throw new Exception("Không thể xóa tài khoản nhân viên");
+            throw new Exception("Failed to delete staff account");
         }
         
-        SessionUtil.setSessionAttribute(request, "success", "Đã xóa tài khoản nhân viên");
-        response.sendRedirect(request.getContextPath() + "/StaffServlet");
-    }
-    
-    private boolean isAuthorized(HttpServletRequest request) {
-        User user = (User) SessionUtil.getSessionAttribute(request, "user");
-        if (user == null) {
-            return false;
-        }
-        
-        try {
-            Role userRole = roleService.findById(user.getRoleId());
-            return userRole != null && RoleConstants.ADMIN.equalsIgnoreCase(userRole.getRoleName());
-        } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "Error checking user role", e);
-            return false;
-        }
+        SessionUtil.setSessionAttribute(request, "success", "Staff account deleted successfully");
+        response.sendRedirect(request.getContextPath() + "/admin/staff-management");
     }
 } 
