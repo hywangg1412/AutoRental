@@ -95,7 +95,7 @@
                                     <i class="bi bi-trash text-dark"></i>
                                     Request account deletion
                                 </a></li>
-                            <li><a href="${pageContext.request.contextPath}/logout" class="nav-link text-danger">
+                            <li><a href="#" class="nav-link text-danger logoutBtn">
                                     <i class="bi bi-box-arrow-right"></i>
                                     Log out
                                 </a></li>
@@ -269,14 +269,14 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <form id="driverLicenseInfoForm" action="${pageContext.request.contextPath}/user/update-driver-license" method="post" enctype="multipart/form-data">
+                                        <form id="driverLicenseInfoForm" action="${pageContext.request.contextPath}/user/update-driver-license" method="post" enctype="multipart/form-data" onsubmit="return false;">
                                             <div class="row g-5">
                                                 <div class="col-md-5">
                                                     <h6 class="driver-license-label">Image</h6>
                                                     <label class="driver-license-upload-area" style="width:100%;display:block;cursor:pointer;position:relative;">
                                                         <c:choose>
                                                             <c:when test="${not empty driverLicense.licenseImage}">
-                                                                <img src="${driverLicense.licenseImage}"
+                                                                <img id="driverLicenseImg" src="${driverLicense.licenseImage}"
                                                                      alt="Driver License Image"
                                                                      class="driver-license-img-preview">
                                                                 <span class="driver-license-upload-icon">
@@ -355,9 +355,9 @@
 
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="${pageContext.request.contextPath}/scripts/user/UserAboutSidebar.js"></script>
-        <script src="${pageContext.request.contextPath}/scripts/user/userAbout.js"></script>
-
+        <!-- <script src="${pageContext.request.contextPath}/scripts/user/UserAboutSidebar.js"></script> -->
+        <!-- <script src="${pageContext.request.contextPath}/scripts/user/userAbout.js"></script> -->
+        <script src="${pageContext.request.contextPath}/scripts/user/user-profile.js"></script>
         <!-- Modal: Update User Info -->
         <div class="modal fade" id="editUserInfoModal" tabindex="-1" aria-labelledby="editUserInfoModalLabel" aria-hidden="true">
           <div class="modal-dialog">
@@ -432,6 +432,6 @@
             </div>
           </div>
         </div>
-        <script src="${pageContext.request.contextPath}/scripts/user/user-profile.js"></script>
+<jsp:include page="/pages/includes/logout-confirm-modal.jsp" />
     </body>
-</html>
+</html> 
