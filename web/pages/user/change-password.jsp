@@ -58,7 +58,7 @@
                                 <i class="bi bi-trash text-dark"></i>
                                 Request account deletion
                             </a></li>
-                        <li><a href="${pageContext.request.contextPath}/logout" class="nav-link text-danger">
+                        <li><a href="#" class="nav-link text-danger logoutBtn">
                                 <i class="bi bi-box-arrow-right"></i>
                                 Log out
                             </a></li>
@@ -178,6 +178,7 @@
         </div>
     </div>
     <jsp:include page="/pages/includes/footer.jsp" />
+    <jsp:include page="/pages/includes/logout-confirm-modal.jsp" />
     <!-- Bootstrap JS & Custom Scripts giống UserAbout -->
     <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
     <script src="${pageContext.request.contextPath}/assets/js/jquery.min.js"></script>
