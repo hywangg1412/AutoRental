@@ -4,11 +4,8 @@ import Model.DTO.BookingInfoDTO;
 import Model.Entity.Booking.Booking;
 import Model.Entity.Car.Car;
 import Model.Entity.User.User;
-import Model.Constants.BookingStatusConstants;
 import Repository.Car.CarRepository;
-import Repository.Car.CarImageRepository;
 import Service.Booking.BookingService;
-import Service.Car.CarImageService;
 import Utils.SessionUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -20,21 +17,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.Map;
-import java.util.HashMap;
 
 @WebServlet("/user/my-trip")
 public class UserBookingListServlet extends HttpServlet {
     private BookingService bookingService;
     private CarRepository carRepository;
-    private CarImageRepository carImageRepository;
-    private CarImageService carImageService;
 
     @Override
     public void init() {
         bookingService = new BookingService();
         carRepository = new CarRepository();
-        carImageService = new CarImageService();
     }
 
     @Override
@@ -48,28 +40,7 @@ public class UserBookingListServlet extends HttpServlet {
         try {
             UUID userId = user.getUserId();
             List<Booking> bookings = bookingService.findByUserId(userId);
-            List<BookingInfoDTO> currentTrips = new ArrayList<>();
-            List<BookingInfoDTO> pastTrips = new ArrayList<>();
-
-            List<UUID> carIds = new ArrayList<>();
-            for (Booking booking : bookings) {
-                if (booking.getCarId() != null) {
-                    carIds.add(booking.getCarId());
-                }
-            }
-
-            Map<UUID, Car> carMap = new HashMap<>();
-            for (UUID carId : carIds) {
-                Car car = carRepository.findById(carId);
-                if (car != null) {
-                    carMap.put(carId, car);
-                }
-            }
-            Map<UUID, String> carImageMap = new HashMap<>();
-            for (UUID carId : carIds) {
-                String imgUrl = carImageService.getMainImageUrlByCarId(carId);
-                carImageMap.put(carId, imgUrl);
-            }
+            List<BookingInfoDTO> dtos = new ArrayList<>();
             for (Booking booking : bookings) {
                 BookingInfoDTO dto = new BookingInfoDTO();
                 dto.setBookingId(booking.getBookingId());
@@ -83,29 +54,21 @@ public class UserBookingListServlet extends HttpServlet {
                 dto.setCustomerEmail(booking.getCustomerEmail());
                 dto.setCustomerPhone(booking.getCustomerPhone());
                 dto.setDriverLicenseImageUrl(booking.getDriverLicenseImageUrl());
-                Car car = carMap.get(booking.getCarId());
+                // Lấy thông tin xe
+                Car car = carRepository.findById(booking.getCarId());
                 if (car != null) {
                     dto.setCarModel(car.getCarModel());
                     dto.setCarLicensePlate(car.getLicensePlate());
                     dto.setCarStatus(car.getStatus() != null ? car.getStatus().getValue() : "");
                 }
-                String carImg = carImageMap.getOrDefault(booking.getCarId(), "/images/car-default.jpg");
-                dto.setCarImage(carImg);
+                // Tính duration
                 if (booking.getPickupDateTime() != null && booking.getReturnDateTime() != null) {
                     long duration = java.time.Duration.between(booking.getPickupDateTime(), booking.getReturnDateTime()).toDays();
                     dto.setDuration(duration > 0 ? duration : 1);
                 }
-                if (BookingStatusConstants.PENDING.equals(booking.getStatus()) || 
-                    BookingStatusConstants.CONFIRMED.equals(booking.getStatus()) || 
-                    BookingStatusConstants.IN_PROGRESS.equals(booking.getStatus())) {
-                    currentTrips.add(dto);
-                } else {
-                    pastTrips.add(dto);
-                }
+                dtos.add(dto);
             }
-            
-            request.setAttribute("currentTrips", currentTrips);
-            request.setAttribute("pastTrips", pastTrips);
+            request.setAttribute("bookingRequests", dtos);
         } catch (Exception e) {
             request.setAttribute("errorMessage", "Cannot load booking list: " + e.getMessage());
         }
