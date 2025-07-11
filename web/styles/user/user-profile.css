@@ -398,7 +398,7 @@ input:disabled:active {
 }
 .modal.fade .modal-dialog {
     transition: opacity 0.4s cubic-bezier(0.4,0,0.2,1);
-    transform: none !important;
+    /* transform: none !important; */
     /* opacity: 0; */
 }
 .modal.fade.show .modal-dialog {
