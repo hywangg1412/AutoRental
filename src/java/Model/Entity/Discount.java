@@ -1,107 +1,80 @@
+
 package Model.Entity;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.UUID;
 
 public class Discount {
     private UUID discountId;
     private String discountName;
     private String description;
-    private String discountType; // 'Percent' or 'Fixed'
+    private String discountType;
     private BigDecimal discountValue;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private Date startDate;
+    private Date endDate;
     private boolean isActive;
-    private LocalDateTime createdDate;
+    private Date createdDate;
+    private String voucherCode;
+    private BigDecimal minOrderAmount;
+    private BigDecimal maxDiscountAmount;
+    private Integer usageLimit;
+    private int usedCount;
+    private String discountCategory;
 
-    public Discount() {}
-
-    public UUID getDiscountId() {
-        return discountId;
+    // Constructor
+    public Discount() {
+        this.discountId = UUID.randomUUID();
+        this.isActive = true;
+        this.createdDate = new Date();
+        this.minOrderAmount = BigDecimal.ZERO;
+        this.usedCount = 0;
+        this.discountCategory = "General";
     }
 
-    public void setDiscountId(UUID discountId) {
-        this.discountId = discountId;
-    }
+    // Getters and Setters
+    public UUID getDiscountId() { return discountId; }
+    public void setDiscountId(UUID discountId) { this.discountId = discountId; }
 
-    public String getDiscountName() {
-        return discountName;
-    }
+    public String getDiscountName() { return discountName; }
+    public void setDiscountName(String discountName) { this.discountName = discountName; }
 
-    public void setDiscountName(String discountName) {
-        this.discountName = discountName;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public String getDescription() {
-        return description;
-    }
+    public String getDiscountType() { return discountType; }
+    public void setDiscountType(String discountType) { this.discountType = discountType; }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public BigDecimal getDiscountValue() { return discountValue; }
+    public void setDiscountValue(BigDecimal discountValue) { this.discountValue = discountValue; }
 
-    public String getDiscountType() {
-        return discountType;
-    }
+    public Date getStartDate() { return startDate; }
+    public void setStartDate(Date startDate) { this.startDate = startDate; }
 
-    public void setDiscountType(String discountType) {
-        this.discountType = discountType;
-    }
+    public Date getEndDate() { return endDate; }
+    public void setEndDate(Date endDate) { this.endDate = endDate; }
 
-    public BigDecimal getDiscountValue() {
-        return discountValue;
-    }
+    public boolean isIsActive() { return isActive; }
+    public void setIsActive(boolean isActive) { this.isActive = isActive; }
 
-    public void setDiscountValue(BigDecimal discountValue) {
-        this.discountValue = discountValue;
-    }
+    public Date getCreatedDate() { return createdDate; }
+    public void setCreatedDate(Date createdDate) { this.createdDate = createdDate; }
 
-    public LocalDateTime getStartDate() {
-        return startDate;
-    }
+    public String getVoucherCode() { return voucherCode; }
+    public void setVoucherCode(String voucherCode) { this.voucherCode = voucherCode; }
 
-    public void setStartDate(LocalDateTime startDate) {
-        this.startDate = startDate;
-    }
+    public BigDecimal getMinOrderAmount() { return minOrderAmount; }
+    public void setMinOrderAmount(BigDecimal minOrderAmount) { this.minOrderAmount = minOrderAmount; }
 
-    public LocalDateTime getEndDate() {
-        return endDate;
-    }
+    public BigDecimal getMaxDiscountAmount() { return maxDiscountAmount; }
+    public void setMaxDiscountAmount(BigDecimal maxDiscountAmount) { this.maxDiscountAmount = maxDiscountAmount; }
 
-    public void setEndDate(LocalDateTime endDate) {
-        this.endDate = endDate;
-    }
-    
-    public boolean isActive() {
-        return isActive;
-    }
+    public Integer getUsageLimit() { return usageLimit; }
+    public void setUsageLimit(Integer usageLimit) { this.usageLimit = usageLimit; }
 
-    public void setActive(boolean isActive) {
-        this.isActive = isActive;
-    }
+    public int getUsedCount() { return usedCount; }
+    public void setUsedCount(int usedCount) { this.usedCount = usedCount; }
 
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    @Override
-    public String toString() {
-        return "Discount{" +
-                "discountId=" + discountId +
-                ", discountName='" + discountName + '\'' +
-                ", description='" + description + '\'' +
-                ", discountType='" + discountType + '\'' +
-                ", discountValue=" + discountValue +
-                ", startDate=" + startDate +
-                ", endDate=" + endDate +
-                ", isActive=" + isActive +
-                ", createdDate=" + createdDate +
-                '}';
-    }
+    public String getDiscountCategory() { return discountCategory; }
+    public void setDiscountCategory(String discountCategory) { this.discountCategory = discountCategory; }
 }
