@@ -62,11 +62,11 @@
                                     <i class="bi bi-lock text-dark"></i>
                                     Change password
                                 </a></li>
-                            <li><a href="${pageContext.request.contextPath}/user/request-delete" class="nav-link text-dark border-bottom-custom">
+                            <li><a href="${pageContext.request.contextPath}/pages/user/request-delete.jsp" class="nav-link text-dark border-bottom-custom">
                                     <i class="bi bi-trash text-dark"></i>
                                     Request account deletion
                                 </a></li>
-                            <li><a href="${pageContext.request.contextPath}/logout" class="nav-link text-danger">
+                            <li><a href="#" class="nav-link text-danger logoutBtn">
                                     <i class="bi bi-box-arrow-right"></i>
                                     Log out
                                 </a></li>
@@ -336,5 +336,6 @@
           </div>
         </div>
 
+        <jsp:include page="/pages/includes/logout-confirm-modal.jsp" />
     </body>
 </html>
