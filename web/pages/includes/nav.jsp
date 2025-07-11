@@ -4,7 +4,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
   <div class="container">
     <a class="navbar-brand" href="${pageContext.request.contextPath}/pages/home">Auto<span>Rental</span></a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav"
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#ftco-nav" aria-controls="ftco-nav"
       aria-expanded="false" aria-label="Toggle navigation">
       <span class="oi oi-menu"></span> Menu
     </button>
@@ -88,7 +88,7 @@
                   <li><a class="dropdown-item" href="${pageContext.request.contextPath}/user/my-trip">My Trips</a></li>
                   <li><a class="dropdown-item" href="${pageContext.request.contextPath}/pages/user/favorite-car.jsp">Favorite Cars</a></li> 
                   <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/logout">Logout</a></li>
+                  <li><a class="dropdown-item text-danger logoutBtn" href="#" style="cursor: pointer;">Logout</a></li>
                 </ul>
               </div>
             </div>
@@ -109,6 +109,9 @@
 
 <!-- Include user notification JavaScript -->
 <script src="${pageContext.request.contextPath}/scripts/common/user-notification.js"></script>
+
+<!-- Include logout confirmation modal -->
+<jsp:include page="logout-confirm-modal.jsp" />
 
 <!-- Debug -->
 <!-- UserId: <c:out value="${sessionScope.userId}"/><br>
