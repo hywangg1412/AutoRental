@@ -5,4 +5,5 @@ public class BookingStatusConstants {
     public static final String CONFIRMED = "Confirmed";
     public static final String CANCELLED = "Cancelled";
     public static final String COMPLETED = "Completed";
+    public static final String IN_PROGRESS = "In Progress";
 }
