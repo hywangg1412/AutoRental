@@ -33,6 +33,7 @@
 
     <!-- ===== NavBar Styles (load last to override other styles) ===== -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/nav.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/main/contact.css">
   </head>
 
   <body>
