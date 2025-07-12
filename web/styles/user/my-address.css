@@ -338,3 +338,15 @@ body {
 .border-top-custom {
     border-top: 1.5px solid #cccccc !important;
 }
+
+/* Chỉ ẩn dropdown ba chấm */
+.dropdown-toggle[aria-labelledby="userDropdown"],
+#userDropdown {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+.bi-bell, .bi-chat-dots {
+    color: #222 !important;
+    padding : 0 !important;
+}

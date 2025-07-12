@@ -1,6 +1,8 @@
 package Service.Booking;
 
-import Model.DTO.BookingDTO;
+import java.util.UUID;
+
+import Model.DTO.BookingInfoDTO;
 import Model.Entity.Booking.Booking;
 import Model.Entity.Car.Car;
 import Model.Entity.Car.CarImage;
@@ -10,8 +12,6 @@ import Repository.Car.CarImageRepository;
 import Service.Car.CarService;
 import Service.User.UserService;
 
-import java.util.UUID;
-
 public class BookingDetailService {
 
     private final BookingRepository bookingRepository = new BookingRepository();
@@ -19,7 +19,7 @@ public class BookingDetailService {
     private final CarService carService = new CarService();
     private final CarImageRepository carImageRepository = new CarImageRepository();
 
-    public BookingDTO getBookingDetail(UUID bookingId) throws Exception {
+    public BookingInfoDTO getBookingDetail(UUID bookingId) throws Exception {
         Booking booking = bookingRepository.findById(bookingId);
         if (booking == null) {
             throw new Exception("Không tìm thấy booking với ID: " + bookingId);
@@ -34,7 +34,7 @@ public class BookingDetailService {
                 .findFirst()
                 .orElse("/assets/images/default-car.jpg");
 
-        BookingDTO dto = new BookingDTO();
+        BookingInfoDTO dto = new BookingInfoDTO();
 
         dto.setBookingId(booking.getBookingId());
         dto.setBookingCode(booking.getBookingCode());
@@ -43,16 +43,15 @@ public class BookingDetailService {
         dto.setPickupDateTime(booking.getPickupDateTime());
         dto.setReturnDateTime(booking.getReturnDateTime());
         dto.setTotalAmount(booking.getTotalAmount());
-        dto.setCancelReason(booking.getCancelReason());
+        dto.setCustomerName(booking.getCustomerName());
+        dto.setCustomerEmail(booking.getCustomerEmail());
+        dto.setCustomerPhone(booking.getCustomerPhone());
+        dto.setDriverLicenseImageUrl(booking.getDriverLicenseImageUrl());
         
-        // User Info
-        dto.setFullName(user.getFirstName() + " " + user.getLastName());
-        dto.setEmail(user.getEmail());
-        dto.setPhoneNumber(user.getPhoneNumber());
-
         // Car Info
         dto.setCarModel(car.getCarModel());
-        dto.setLicensePlate(car.getLicensePlate());
+        dto.setCarLicensePlate(car.getLicensePlate());
+        dto.setCarStatus(car.getStatus() != null ? car.getStatus().getValue() : "");
         dto.setCarImage(mainImage);
         dto.setPricePerDay(car.getPricePerDay());
 

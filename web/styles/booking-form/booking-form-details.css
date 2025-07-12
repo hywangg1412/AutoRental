@@ -1,5 +1,798 @@
-/* css for booking a car */
+/* css for booking a car 
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+ Progress Steps - Đặt ở đầu để đảm bảo không bị override 
+.progress-container {
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1.5rem 0;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.progress-steps {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #9ca3af;
+  position: relative;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.step.completed,
+.step.active {
+  color: #10b981;
+}
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1rem;
+  border: 2px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+.step.completed .step-number,
+.step.active .step-number {
+  background: #10b981;
+  color: white;
+  border-color: #10b981;
+}
+
+.step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: calc(100% + 0.75rem);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3rem;
+  height: 2px;
+  background: #e5e7eb;
+  z-index: 1;
+}
+
+.step.completed:not(:last-child)::after {
+  background: #10b981;
+}
+
+ Progress Steps - Force override 
+.progress-container .progress-steps {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 3rem !important;
+  max-width: 800px !important;
+  margin: 0 auto !important;
+}
+
+.progress-container .step {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  color: #9ca3af !important;
+  position: relative !important;
+  font-weight: 500 !important;
+  white-space: nowrap !important;
+}
+
+.progress-container .step.completed,
+.progress-container .step.active {
+  color: #10b981 !important;
+}
+
+.progress-container .step-number {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  background: #e5e7eb !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: bold !important;
+  font-size: 1rem !important;
+  border: 2px solid #e5e7eb !important;
+  transition: all 0.3s ease !important;
+}
+
+.progress-container .step.completed .step-number,
+.progress-container .step.active .step-number {
+  background: #10b981 !important;
+  color: white !important;
+  border-color: #10b981 !important;
+}
+
+.progress-container .step:not(:last-child)::after {
+  content: "" !important;
+  position: absolute !important;
+  left: calc(100% + 0.75rem) !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 3rem !important;
+  height: 2px !important;
+  background: #e5e7eb !important;
+  z-index: 1 !important;
+}
+
+.progress-container .step.completed:not(:last-child)::after {
+  background: #10b981 !important;
+}
+
+ Responsive cho progress steps 
+@media (max-width: 768px) {
+  .progress-steps {
+    gap: 1.5rem;
+  }
+
+  .step span {
+    display: none;
+  }
+
+  .step-number {
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
+  }
+
+  .step:not(:last-child)::after {
+    width: 1.5rem;
+    left: calc(100% + 0.375rem);
+  }
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f9fa;
+  color: #333;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+ Header 
+.header {
+  background: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+.logo h1 {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.logo span {
+  color: #10b981;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #666;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.nav-link:hover {
+  color: #10b981;
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-menu i {
+  color: #666;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.user-menu i:hover {
+  color: #10b981;
+}
+
+.user-avatar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+ Main Content 
+.main-content {
+  padding: 2rem 0;
+}
+
+.booking-container {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+ Car Info Section 
+.car-info-section {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.car-gallery {
+  margin-bottom: 2rem;
+}
+
+.main-image {
+  margin-bottom: 1rem;
+}
+
+.main-image img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.thumbnail-gallery {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+}
+
+.thumbnail {
+  width: 100px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+}
+
+.thumbnail.active,
+.thumbnail:hover {
+  opacity: 1;
+  border: 2px solid #10b981;
+}
+
+.car-details h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.car-title {
+  font-size: 1.8rem;
+  margin-bottom: 0;
+  color: #333;
+  font-weight: 600;
+}
+
+.car-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.car-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stars {
+  color: #fbbf24;
+}
+
+.rating-text {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.car-specs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.spec-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.spec-item i {
+  color: #10b981;
+  width: 20px;
+  font-size: 1.1rem;
+}
+
+.pricing {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  border: 1px solid #e5e7eb;
+}
+
+.price-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem 0;
+}
+
+.price-item:last-child {
+  margin-bottom: 0;
+  border-top: 1px solid #d1d5db;
+  padding-top: 0.75rem;
+}
+
+.price-label {
+  font-weight: 500;
+  color: #666;
+}
+
+.price-value {
+  font-weight: bold;
+  color: #10b981;
+  font-size: 1.1rem;
+}
+
+.car-description,
+.car-features,
+.reviews-section {
+  margin-bottom: 2rem;
+}
+
+.car-description h3,
+.car-features h3,
+.reviews-section h3 {
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.feature-item i {
+  color: #10b981;
+}
+
+.review-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.reviewer-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.reviewer-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.reviewer-name {
+  font-weight: 500;
+}
+
+.review-stars {
+  color: #fbbf24;
+  font-size: 0.8rem;
+}
+
+.review-date {
+  color: #666;
+  font-size: 0.8rem;
+}
+
+.review-text {
+  color: #666;
+}
+
+ Booking Form Section 
+.booking-form-section {
+  position: sticky;
+  top: 100px;
+  height: fit-content;
+}
+
+.booking-form-container {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.booking-form-container h3 {
+  margin-bottom: 1.5rem;
+  color: #333;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.form-row .form-group {
+  margin-bottom: 1.5rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.form-row .form-group label {
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.form-group input[type="datetime-local"] {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+ Remove the webkit datetime edit styling that was making it vertical 
+.form-group input[type="datetime-local"]::-webkit-datetime-edit {
+  display: block;
+}
+
+.form-group input[type="datetime-local"]::-webkit-datetime-edit-fields-wrapper {
+  display: inline;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.total-price {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-top: 1.5rem;
+}
+
+.price-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.price-row.total {
+  border-top: 1px solid #d1d5db;
+  padding-top: 0.5rem;
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #10b981;
+}
+
+ Action Buttons 
+.action-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.btn {
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: #10b981;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #059669;
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: #6b7280;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: #4b5563;
+  transform: translateY(-2px);
+}
+
+ Responsive 
+@media (max-width: 1024px) {
+  .booking-container {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .booking-form-section {
+    position: static;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 15px;
+  }
+
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .nav {
+    gap: 1rem;
+  }
+
+  .car-specs {
+    grid-template-columns: 1fr;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .car-info-section,
+  .booking-form-container {
+    padding: 1rem;
+  }
+}
+
+ Driver License Image Upload Styles 
+.license-upload-container {
+  width: 100%;
+}
+
+.license-upload-area {
+  display: block;
+  width: 100%;
+  min-height: 200px;
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.license-upload-area:hover {
+  border-color: #10b981;
+  background-color: #f0fdf4;
+}
+
+.upload-preview {
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.upload-placeholder {
+  text-align: center;
+  color: #6b7280;
+  padding: 2rem;
+}
+
+.upload-placeholder i {
+  font-size: 3rem;
+  color: #9ca3af;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.upload-placeholder span {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.upload-placeholder small {
+  color: #9ca3af;
+  font-size: 0.875rem;
+}
+
+.license-preview-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.upload-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  color: white;
+  font-size: 1.2rem;
+}
+
+.license-upload-area:hover .upload-overlay {
+  opacity: 1;
+}
+
+.upload-error {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 4px;
+}
+
+.upload-success {
+  color: #10b981;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 4px;
+}
+
+ Responsive adjustments 
+@media (max-width: 768px) {
+  .license-upload-area {
+    min-height: 150px;
+  }
+
+  .upload-placeholder {
+    padding: 1rem;
+  }
+
+  .upload-placeholder i {
+    font-size: 2rem;
+  }
+
+  .license-preview-image {
+    height: 150px;
+  }
+}*/
+
+
+
+
+
+/* css for booking a car */
 
 * {
   margin: 0;
@@ -665,3 +1458,314 @@ body {
     padding: 1rem;
   }
 }
+
+/* Driver License Image Upload Styles */
+.license-upload-container {
+  width: 100%;
+}
+
+.license-upload-area {
+  display: block;
+  width: 100%;
+  min-height: 200px;
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.license-upload-area:hover {
+  border-color: #10b981;
+  background-color: #f0fdf4;
+}
+
+.upload-preview {
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.upload-placeholder {
+  text-align: center;
+  color: #6b7280;
+  padding: 2rem;
+}
+
+.upload-placeholder i {
+  font-size: 3rem;
+  color: #9ca3af;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.upload-placeholder span {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.upload-placeholder small {
+  color: #9ca3af;
+  font-size: 0.875rem;
+}
+
+.license-preview-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.upload-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  color: white;
+  font-size: 1.2rem;
+}
+
+.license-upload-area:hover .upload-overlay {
+  opacity: 1;
+}
+
+.upload-error {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 4px;
+}
+
+.upload-success {
+  color: #10b981;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 4px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .license-upload-area {
+    min-height: 150px;
+  }
+
+  .upload-placeholder {
+    padding: 1rem;
+  }
+
+  .upload-placeholder i {
+    font-size: 2rem;
+  }
+
+  .license-preview-image {
+    height: 150px;
+  }
+}
+
+/* ===== NEW STYLES FOR UPDATED BOOKING FORM ===== */
+
+/* Alert Styles */
+.alert {
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.alert-success {
+  background-color: #d1fae5;
+  border-color: #a7f3d0;
+  color: #065f46;
+}
+
+.alert-info {
+  background-color: #dbeafe;
+  border-color: #93c5fd;
+  color: #1e40af;
+}
+
+.alert i {
+  font-size: 1.1rem;
+}
+
+/* Form Section Styles */
+.form-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #10b981;
+}
+
+/* Existing License Info Styles */
+.existing-license-info {
+  margin-top: 1rem;
+}
+
+.license-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.license-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  color: #10b981;
+  font-weight: 600;
+}
+
+.license-header i {
+  font-size: 1.2rem;
+}
+
+.license-details {
+  margin-bottom: 1rem;
+}
+
+.license-details p {
+  margin-bottom: 0.5rem;
+  color: #6b7280;
+}
+
+.license-details strong {
+  color: #333;
+}
+
+.license-image-display {
+  text-align: center;
+}
+
+.license-thumbnail {
+  max-width: 200px;
+  max-height: 120px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Updated License Upload Styles */
+.license-upload-container .upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6b7280;
+}
+
+.license-upload-container .upload-content i {
+  font-size: 2.5rem;
+  color: #9ca3af;
+  margin-bottom: 0.5rem;
+}
+
+.license-upload-container .upload-content p {
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.license-upload-container .upload-content small {
+  font-size: 0.875rem;
+  color: #9ca3af;
+}
+
+/* License Image Preview */
+.license-image-preview {
+  position: relative;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.license-image-preview img {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.remove-image {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #dc2626;
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.remove-image:hover {
+  background: #b91c1c;
+  transform: scale(1.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .form-section {
+    padding: 1rem;
+  }
+  
+  .license-card {
+    padding: 1rem;
+  }
+  
+  .license-thumbnail {
+    max-width: 150px;
+    max-height: 90px;
+  }
+  
+  .license-upload-area .upload-content i {
+    font-size: 2rem;
+  }
+  
+  .license-image-preview img {
+    max-height: 150px;
+  }
+}
+

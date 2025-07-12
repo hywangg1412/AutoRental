@@ -28,10 +28,6 @@
         <servlet-class>Controller.Auth.FacebookRegisterServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>NormalRegisterServlet</servlet-name>
-        <servlet-class>Controller.Auth.NormalRegisterServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>NormalLoginServlet</servlet-name>
         <servlet-class>Controller.Auth.NormalLoginServlet</servlet-class>
     </servlet>
@@ -76,10 +72,6 @@
         <url-pattern>/facebookRegister</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>NormalRegisterServlet</servlet-name>
-        <url-pattern>/normalRegister</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>NormalLoginServlet</servlet-name>
         <url-pattern>/normalLogin</url-pattern>
     </servlet-mapping>
@@ -91,14 +83,14 @@
         <servlet-name>ResetPasswordServlet</servlet-name>
         <url-pattern>/resetPassword</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
+<!--    <servlet-mapping>
         <servlet-name>BookingApprovalListServlet</servlet-name>
         <url-pattern>/staff/booking-approval-list</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>BookingApprovalServlet</servlet-name>
         <url-pattern>/staff/booking-approval</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping>-->
     <servlet-mapping>
         <servlet-name>SetPasswordServlet</servlet-name>
         <url-pattern>/setPassword</url-pattern>
@@ -108,6 +100,6 @@
         <url-pattern>/user/update-info</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
-        <welcome-file>pages/index.jsp</welcome-file>
+        <welcome-file>pages/home</welcome-file>
     </welcome-file-list>
 </web-app>

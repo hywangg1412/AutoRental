@@ -9,7 +9,9 @@ import Repository.Car.CarBrandRepository;
 import Service.Interfaces.ICar.ICarBrandService;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -103,5 +105,18 @@ public class CarBrandService implements ICarBrandService {
 
     public List<CarBrand> getAll() {
         return repository.findAll();
+    }
+
+    public Map<UUID, CarBrand> findByIds(List<UUID> ids) {
+        Map<UUID, CarBrand> map = new HashMap<>();
+        try {
+            List<CarBrand> brands = repository.findByIds(ids);
+            for (CarBrand brand : brands) {
+                map.put(brand.getBrandId(), brand);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return map;
     }
 } 

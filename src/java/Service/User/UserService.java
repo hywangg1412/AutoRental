@@ -14,6 +14,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.List;
 
 public class UserService implements IUserService {
 
@@ -36,6 +37,9 @@ public class UserService implements IUserService {
     @Override
     public User add(User entry) throws EventException, InvalidDataException {
         try {
+            if (entry.getRoleId() == null) {
+                throw new InvalidDataException("User must have a roleId");
+            }
             return userRepsitory.add(entry);
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Error while adding user", ex);
@@ -46,6 +50,9 @@ public class UserService implements IUserService {
     @Override
     public boolean update(User entry) throws EventException, NotFoundException {
         try {
+            if (entry.getRoleId() == null) {
+                throw new NotFoundException("User must have a roleId");
+            }
             return userRepsitory.update(entry);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Error while updating user", ex);
@@ -168,5 +175,66 @@ public class UserService implements IUserService {
             LOGGER.log(Level.SEVERE, "Error during user anonymization service call", e);
             return false;
         }
+    }
+    
+    @Override
+    public boolean updateStatus(UUID userId, String status) {
+        try {
+            return userRepsitory.updateStatus(userId, status);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error updating user status for userId: " + userId, e);
+            return false;
+        }
+    }
+
+    @Override
+    public User findByUsername(String username) {
+        try {
+            return userRepsitory.findByUsername(username);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error finding user by username: " + username, e);
+            return null;
+        }
+    }
+
+    @Override
+    public String generateUniqueUsername(String baseUsername) {
+        List<String> existingUsernames = userRepsitory.findAllUsernamesLike(baseUsername);
+        String username = baseUsername;
+        int count = 1;
+        boolean exists;
+        do {
+            exists = false;
+            for (String u : existingUsernames) {
+                if (u.equalsIgnoreCase(username)) {
+                    exists = true;
+                    username = baseUsername + count;
+                    count++;
+                    break;
+                }
+            }
+        } while (exists);
+        return username;
+    }
+
+    public List<User> findByRoleId(UUID roleId) throws Exception {
+        return userRepsitory.findByRoleId(roleId);
+    }
+    
+    public List<User> getAllUsers() throws SQLException{
+        return userRepsitory.findAll();
+    }
+    
+    // New optimized filter methods
+    public List<User> getUsersWithFilters(String roleFilter, String statusFilter, String searchTerm) throws SQLException {
+        return userRepsitory.findWithFilters(roleFilter, statusFilter, searchTerm);
+    }
+    
+    public List<User> getUsersByStatus(String status) throws SQLException {
+        return userRepsitory.findByStatus(status);
+    }
+    
+    public List<User> searchUsers(String searchTerm) throws SQLException {
+        return userRepsitory.searchUsers(searchTerm);
     }
 }

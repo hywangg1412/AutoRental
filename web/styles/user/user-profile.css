@@ -393,16 +393,15 @@ input:disabled:active {
     text-overflow: ellipsis;
 }
 
-.modal.fade {
-    transition: opacity 0.7s cubic-bezier(.4,0,.2,1);
-}
+/* Zoom animation for all modals */
 .modal.fade .modal-dialog {
-    transition: opacity 0.4s cubic-bezier(0.4,0,0.2,1);
-    transform: none !important;
-    /* opacity: 0; */
+  transition: transform 0.18s cubic-bezier(0.4,0,0.2,1), opacity 0.15s cubic-bezier(0.4,0,0.2,1);
+  transform: scale(0.8);
+  opacity: 0;
 }
 .modal.fade.show .modal-dialog {
-    opacity: 1;
+  transform: scale(1);
+  opacity: 1;
 }
 
 .modal-content {
@@ -773,6 +772,7 @@ nav.ftco-navbar-light .nav-link {
 
 .bi-bell, .bi-chat-dots {
     color: #222 !important;
+    padding : 0 !important;
 }
 
 .howto-section {
@@ -874,6 +874,28 @@ nav.ftco-navbar-light .nav-link {
     .howto-section .title {
         font-size: 16px;
     }
+}
+
+.bi-three-dots-vertical,
+#userDropdown,
+.dropdown-toggle[aria-labelledby="userDropdown"] {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+.btn-unlink-social {
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.btn-unlink-social:hover, .btn-unlink-social:focus {
+    background: #ffeaea;
+    color: #c82333;
+    border-color: #c82333;
+}
+.btn-unlink-social i {
+    transition: color 0.2s;
+}
+.btn-unlink-social:hover i {
+    color: #c82333;
 }
 
 

@@ -6,4 +6,7 @@ import java.util.List;
 
 public interface IBookingService extends Service<Booking> {
     List<Booking> findByStatus(String status) throws SQLException;
+    int countAllBookings();
+    int countBookingsByStatus(String status);
+    List<Booking> findAll();
 }

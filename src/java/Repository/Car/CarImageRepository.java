@@ -5,7 +5,12 @@ import Model.Entity.Car.CarImage;
 import Repository.Interfaces.ICar.ICarImageRepository;
 
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.HashMap;
 
 public class CarImageRepository implements ICarImageRepository {
 
@@ -85,6 +90,42 @@ public class CarImageRepository implements ICarImageRepository {
         return null;
     }
 
+    @Override
+    public List<CarImage> findByCarId(UUID carId) throws SQLException {
+        String sql = "SELECT * FROM CarImages WHERE CarId = ?";
+        List<CarImage> images = new ArrayList<>();
+        try (var conn = dbContext.getConnection(); var ps = conn.prepareStatement(sql)) {
+            ps.setObject(1, carId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    images.add(map(rs));
+                }
+            }
+        }
+        return images;
+    }
+
+    public Map<UUID, CarImage> findMainImagesByCarIds(List<UUID> carIds) throws SQLException {
+        Map<UUID, CarImage> map = new HashMap<>();
+        if (carIds == null || carIds.isEmpty()) {
+            return map;
+        }
+        StringBuilder sql = new StringBuilder("SELECT * FROM CarImages WHERE CarId IN (");
+        sql.append(String.join(",", Collections.nCopies(carIds.size(), "?"))).append(") AND IsMain = 1");
+        try (var conn = dbContext.getConnection(); var ps = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < carIds.size(); i++) {
+                ps.setObject(i + 1, carIds.get(i));
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    CarImage image = map(rs);
+                    map.put(image.getCarId(), image);
+                }
+            }
+        }
+        return map;
+    }
+
     private CarImage map(ResultSet rs) throws SQLException {
         CarImage image = new CarImage();
         image.setImageId(UUID.fromString(rs.getString("ImageId")));
@@ -93,19 +134,4 @@ public class CarImageRepository implements ICarImageRepository {
         image.setIsMain(rs.getBoolean("IsMain"));
         return image;
     }
-    @Override
-public List<CarImage> findByCarId(UUID carId) throws SQLException {
-    String sql = "SELECT * FROM CarImages WHERE CarId = ?";
-    List<CarImage> images = new ArrayList<>();
-    try (var conn = dbContext.getConnection(); var ps = conn.prepareStatement(sql)) {
-        ps.setObject(1, carId);
-        try (ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                images.add(map(rs));
-            }
-        }
-    }
-    return images;
-}
-
 }

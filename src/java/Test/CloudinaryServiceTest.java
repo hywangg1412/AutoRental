@@ -1,6 +1,6 @@
 package Test;
 
-import Service.CloudinaryService;
+import Service.External.CloudinaryService;
 import Config.CloudinaryConfig;
 import com.cloudinary.Cloudinary;
 import java.io.File;

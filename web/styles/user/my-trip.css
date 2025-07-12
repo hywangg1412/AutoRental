@@ -128,14 +128,20 @@ body {
 }
 
 .main-content {
-    /*background: white;*/
     border-radius: 12px;
+    padding-bottom: 40px;
     /*box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);*/
+}
+
+.main-content > .container > .row > .main-content > .d-flex.mb-4,
+.main-content > .d-flex.mb-4 {
+    margin-bottom: 0.5rem !important;
 }
 
 .custom-tabs {
     border-bottom: 1px solid var(--border-gray);
     margin-bottom: 2rem;
+    margin-top: 0.5rem;
 }
 
 .custom-tabs .nav-link {
@@ -269,6 +275,7 @@ body {
 
 .tab-content {
     animation: fadeIn 0.3s ease-in-out;
+    margin-top: 18px;
 }
 
 @keyframes fadeIn {
@@ -315,4 +322,419 @@ nav.ftco-navbar-light .nav-link {
 
 .bi-bell, .bi-chat-dots {
     color: #222 !important;
+    padding : 0 !important;
+}
+
+/* Chỉ ẩn dropdown trong sidebar, KHÔNG ẩn dropdown ở navbar */
+.profile-sidebar .dropdown,
+.profile-sidebar .dropdown-menu,
+.profile-sidebar .dropdown-toggle,
+.sidebar-menu .dropdown,
+.sidebar-menu .dropdown-menu,
+.sidebar-menu .dropdown-toggle {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+.mytrip-btn-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-width: 120px;
+    width: 120px;
+}
+
+/* Trip history button group - ensure proper spacing for 3 buttons */
+#trip-history .mytrip-btn-group {
+    gap: 6px;
+    min-width: 110px;
+    width: 110px;
+}
+
+.mytrip-btn-group .btn-mytrip-action {
+    width: 120px !important;
+    min-width: 120px !important;
+    max-width: 120px !important;
+    min-height: 44px !important;
+    height: 44px !important;
+    font-size: 0.9rem !important;
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
+    text-align: center !important;
+    padding: 0 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+}
+
+.btn-mytrip-action,
+.btn-mytrip-action.btn-mytrip-green,
+.btn-mytrip-action.btn-mytrip-red,
+.btn-mytrip-action.btn-detail {
+    border-radius: 8px !important;
+    border-width: 2px !important;
+    border-style: solid !important;
+}
+
+.btn-mytrip-action {
+    width: 100%;
+    min-width: 110px;
+    min-height: 36px;
+    font-size: 0.98rem;
+    font-weight: 600;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    background: #fff;
+    transition: all 0.22s ease;
+    box-sizing: border-box;
+    border-width: 2px;
+    border-style: solid;
+    cursor: pointer;
+    border-color: #1e88e5;
+    color: #1e88e5;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-mytrip-action:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.btn-mytrip-action:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 768px) {
+    .mytrip-btn-group {
+        flex-direction: row;
+        width: 100%;
+        min-width: 0;
+        gap: 6px;
+        justify-content: center;
+    }
+    .btn-mytrip-action {
+        width: auto;
+        min-width: 90px;
+        font-size: 0.95rem;
+    }
+    
+    #trip-history .mytrip-btn-group {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    #trip-history .btn-mytrip-action {
+        min-width: 80px;
+        font-size: 0.9rem;
+        padding: 8px 12px;
+    }
+}
+
+.btn-mytrip-action.btn-mytrip-green {
+    border-color: var(--primary-green);
+    color: var(--primary-green);
+}
+
+.btn-mytrip-action.btn-mytrip-green:hover, .btn-mytrip-action.btn-mytrip-green:focus {
+    background: var(--primary-green);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(16,185,129,0.25);
+    border-color: var(--primary-green);
+    transform: translateY(-1px);
+}
+
+.btn-mytrip-action.btn-mytrip-red {
+    border-color: var(--danger-red) !important;
+    color: var(--danger-red) !important;
+}
+
+.btn-mytrip-action.btn-mytrip-red:hover, .btn-mytrip-action.btn-mytrip-red:focus {
+    background: var(--danger-red) !important;
+    color: #fff !important;
+    box-shadow: 0 4px 16px rgba(220,38,38,0.25);
+    border-color: var(--danger-red) !important;
+    transform: translateY(-1px);
+}
+
+.btn-mytrip-action.btn-detail {
+    border-color: #2563eb;
+    color: #2563eb;
+    margin-bottom: 0;
+}
+
+.btn-mytrip-action.btn-detail:hover, .btn-mytrip-action.btn-detail:focus {
+    background: #2563eb;
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(37,99,235,0.25);
+    border-color: #2563eb;
+    transform: translateY(-1px);
+}
+
+.btn-mytrip-action.btn-mytrip-blue {
+    border-color: #3b82f6;
+    color: #3b82f6;
+}
+
+.btn-mytrip-action.btn-mytrip-blue:hover, .btn-mytrip-action.btn-mytrip-blue:focus {
+    background: #3b82f6;
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(59,130,246,0.25);
+    border-color: #3b82f6;
+    transform: translateY(-1px);
+}
+
+.car-img-wrapper {
+  width: 200px;
+  height: 140px;
+  border-radius: 14px;
+  background: #f8f9fa;
+  border: 2px solid #e5e7eb;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0; /* Ngăn không cho wrapper bị co lại */
+}
+
+.car-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Đảm bảo ảnh không bị méo */
+  object-position: center; /* Căn giữa ảnh */
+  border-radius: 12px; /* Nhỏ hơn wrapper một chút */
+  display: block;
+}
+
+/* Nếu ảnh bị lỗi hoặc chưa load */
+.car-img-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #f8f9fa;
+  z-index: -1;
+}
+
+/* Fallback cho ảnh bị lỗi */
+.car-img:not([src]), .car-img[src=""], .car-img:not([src*="."]) {
+  background: #f8f9fa url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ccc"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>') center/50% no-repeat;
+}
+
+.status-badge.status-Pending { background: #fbbf24; color: #fff; }
+.status-badge.status-Confirmed { background: #10b981; color: #fff; }
+.status-badge.status-IN_PROGRESS { background: #2563eb; color: #fff; }
+.status-badge.status-Completed { background: #6b7280; color: #fff; }
+.status-badge.status-Cancelled { background: #dc2626; color: #fff; }
+
+.modal-content {
+    border-radius: 18px !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12) !important;
+    border: none !important;
+}
+
+.modal-title {
+    font-size: 1.6rem !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    width: 100%;
+    color: #222;
+    letter-spacing: -0.5px;
+}
+
+.modal-header {
+    border: none !important;
+    padding-top: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
+    justify-content: center;
+}
+
+.modal-body {
+    padding-top: 0 !important;
+    padding-bottom: 0.5rem !important;
+}
+
+.modal-footer {
+    border: none !important;
+    padding-top: 0 !important;
+    padding-bottom: 2rem !important;
+    background: transparent !important;
+}
+
+.btn-success.w-100 {
+    background: #4ade80 !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 12px !important;
+    font-size: 1.1rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(16,185,129,0.10);
+    transition: background 0.18s, box-shadow 0.18s;
+}
+.btn-success.w-100:hover, .btn-success.w-100:focus {
+    background: #22c55e !important;
+    color: #fff !important;
+    box-shadow: 0 4px 16px rgba(34,197,94,0.15);
+    transform: translateY(-1px);
+}
+
+.btn-success.w-100:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(34,197,94,0.15);
+}
+
+.btn-close {
+    top: 1.2rem;
+    right: 1.2rem;
+    position: absolute;
+    z-index: 10;
+    opacity: 0.7;
+    transition: opacity 0.15s;
+}
+.btn-close:hover {
+    opacity: 1;
+}
+.btn-close:focus, .btn-close:active {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+hr.mt-0.mb-4 {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    border-top: 1px solid #d1d5db !important;
+    opacity: 1 !important;
+}
+
+hr.mytrip-divider {
+    width: 100%;
+    border: none;
+    border-top: 1px solid #222 !important;
+    margin-top: 0.5rem !important;
+    margin-bottom: 1.5rem !important;
+    opacity: 1 !important;
+}
+
+.mytrip-modal-section {
+    font-size: 1.08rem;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 0.5rem;
+    margin-top: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.mytrip-modal-label {
+    color: #888;
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 0.1rem;
+}
+
+.mytrip-modal-value {
+    color: #111;
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.status-text-accepted {
+    color: #10b981;
+    font-weight: 600;
+}
+.status-text-pending {
+    color: #f59e0b;
+    font-weight: 600;
+}
+.status-text-ongoing {
+    color: #2563eb;
+    font-weight: 600;
+}
+.status-text-completed {
+    color: #6b7280;
+    font-weight: 600;
+}
+.status-text-cancelled {
+    color: #dc2626;
+    font-weight: 600;
+}
+
+.modal-dialog-centered {
+    align-items: flex-start !important;
+}
+
+.modal-dialog {
+    margin-top: 4vh !important;
+}
+
+.btn-mytrip-action:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Trip history cards - same as current trip cards */
+#trip-history .favorite-car-card {
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+#trip-history .favorite-car-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+    border-color: var(--border-gray);
+}
+
+/* Empty state for trip history */
+#trip-history .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-gray);
+}
+
+#trip-history .empty-state i {
+    font-size: 3rem;
+    color: var(--text-gray);
+    margin-bottom: 1rem;
+}
+
+/* Card hover effects */
+.favorite-car-card {
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.favorite-car-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+    border-color: var(--border-gray);
+}
+
+/* Status badge hover effects */
+.status-badge {
+    transition: all 0.2s ease;
+}
+
+.status-badge:hover {
+    transform: scale(1.05);
+}
+
+/* Filter button improvements */
+.filter-btn:hover {
+    border-color: var(--primary-green);
+    color: var(--primary-green);
+    background-color: var(--light-green);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(16,185,129,0.15);
 }

@@ -4,11 +4,10 @@ import Mapper.UserMapper;
 import Model.Entity.OAuth.FacebookUser;
 import Model.Entity.User.User;
 import Model.Entity.Role.Role;
-import Model.Entity.Role.UserRole;
+import Model.Constants.RoleConstants;
 import Service.User.UserService;
 import Service.Auth.FacebookAuthService;
 import Service.Role.RoleService;
-import Service.Role.UserRoleService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -18,6 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import Utils.SessionUtil;
 import Model.Entity.OAuth.UserLogins;
+import Service.Auth.EmailOTPVerificationService;
 import Service.Auth.UserLoginsService;
 
 //facebookLogin
@@ -28,7 +28,7 @@ public class FacebookRegisterServlet extends HttpServlet {
     private UserService userService;
     private UserLoginsService userLoginsService;
     private RoleService roleService;
-    private UserRoleService userRoleService;
+    private EmailOTPVerificationService emailOTPVerificationService;
 
     @Override
     public void init() {
@@ -37,7 +37,7 @@ public class FacebookRegisterServlet extends HttpServlet {
         userService = new UserService();
         userLoginsService = new UserLoginsService();
         roleService = new RoleService();
-        userRoleService = new UserRoleService();
+        emailOTPVerificationService = new EmailOTPVerificationService();
     }
 
     @Override
@@ -64,32 +64,23 @@ public class FacebookRegisterServlet extends HttpServlet {
                 request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
                 return;
             }
-            User newUser = userMapper.mapFacebookUserToUser(facebookUser);
-            User addedUser = userService.add(newUser);
-            if (addedUser != null) {
-                Role userRole = roleService.findByRoleName("User");
-                if (userRole != null) {
-                    UserRole newUserRole = new UserRole(addedUser.getUserId(), userRole.getRoleId());
-                    userRoleService.add(newUserRole);
-                }
-
-                UserLogins userLogins = new UserLogins();
-                userLogins.setUserId(addedUser.getUserId());
-                userLogins.setLoginProvider("facebook");
-                userLogins.setProviderKey(facebookUser.getFacebookId());
-                try {
-                    userLoginsService.add(userLogins);
-                    request.getSession().setAttribute("userId", addedUser.getUserId().toString());
-                    request.getRequestDispatcher("/pages/authen/SetPassword.jsp").forward(request, response);
-                } catch (Exception ex) {
-                    userService.delete(addedUser.getUserId());
-                    request.setAttribute("error", "Register failed (user login): " + ex.getMessage());
-                    request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
-                }
-            } else {
-                request.setAttribute("error", "Register failed. Please try again.");
+            User newUser = userMapper.mapFacebookUserToUser(facebookUser, userService);
+            newUser.setEmailVerifed(true);
+            Role userRole = roleService.findByRoleName(RoleConstants.USER);
+            if (userRole == null) {
+                request.setAttribute("error", "Default user role not found!");
                 request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
+                return;
             }
+            newUser.setRoleId(userRole.getRoleId());
+            userService.add(newUser);
+            
+
+            UserLogins userLogins = userMapper.mapFacebookUserToUserLogins(facebookUser, newUser);
+            userLoginsService.add(userLogins);
+
+            response.sendRedirect(request.getContextPath() + "/setPassword");
+            return;
         } catch (Exception e) {
             request.setAttribute("error", "Facebook register failed - " + e.getMessage());
             request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);

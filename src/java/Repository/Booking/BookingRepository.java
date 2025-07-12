@@ -1,16 +1,20 @@
 package Repository.Booking;
 
-import Config.DBContext;
-import Model.Entity.Booking.Booking;
-import Repository.Interfaces.IBooking.IBookingRepository;
-import java.sql.*;
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import Config.DBContext;
+import Model.Entity.Booking.Booking;
+import Repository.Interfaces.IBooking.IBookingRepository;
 
 public class BookingRepository implements IBookingRepository {
     private static final Logger LOGGER = Logger.getLogger(BookingRepository.class.getName());
@@ -18,18 +22,23 @@ public class BookingRepository implements IBookingRepository {
     
     private static final String SQL_INSERT = 
         "INSERT INTO Booking (BookingId, UserId, CarId, HandledBy, PickupDateTime, ReturnDateTime, " +
-        "TotalAmount, Status, DiscountId, CreatedDate, CancelReason, BookingCode, ExpectedPaymentMethod) " +
-        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        "TotalAmount, Status, DiscountId, CreatedDate, CancelReason, BookingCode, ExpectedPaymentMethod, " +
+        "CustomerName, CustomerPhone, CustomerAddress, CustomerEmail, DriverLicenseImageUrl) " +
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
     private static final String SQL_FIND_BY_ID = "SELECT * FROM Booking WHERE BookingId = ?";
     
     private static final String SQL_UPDATE = 
         "UPDATE Booking SET UserId = ?, CarId = ?, HandledBy = ?, PickupDateTime = ?, " +
         "ReturnDateTime = ?, TotalAmount = ?, Status = ?, DiscountId = ?, CreatedDate = ?, " +
-        "CancelReason = ?, BookingCode = ?, ExpectedPaymentMethod = ? WHERE BookingId = ?";
+        "CancelReason = ?, BookingCode = ?, ExpectedPaymentMethod = ?, " +
+        "CustomerName = ?, CustomerPhone = ?, CustomerAddress = ?, CustomerEmail = ?, DriverLicenseImageUrl = ? " +
+        "WHERE BookingId = ?";
     
     private static final String SQL_DELETE = "DELETE FROM Booking WHERE BookingId = ?";
     private static final String SQL_FIND_ALL = "SELECT * FROM Booking";
+    private static final String SQL_UPDATE_STATUS = "UPDATE Booking SET Status = ? WHERE BookingId = ?";
+    private static final String SQL_FIND_BY_USER_ID = "SELECT * FROM Booking WHERE UserId = ?";
 
     public BookingRepository() {
         this.dbContext = new DBContext();
@@ -41,11 +50,16 @@ public class BookingRepository implements IBookingRepository {
             throw new IllegalArgumentException("Booking entity cannot be null");
         }
         
+        LOGGER.info("Adding booking with ID: " + entity.getBookingId());
+        LOGGER.info("Booking code before insert: " + entity.getBookingCode());
+        
         try (Connection conn = dbContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_INSERT)) {
             
             setBookingParameters(ps, entity);
-            ps.executeUpdate();
+            int affectedRows = ps.executeUpdate();
+            LOGGER.info("Insert affected rows: " + affectedRows);
+            
             return entity;
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Error adding booking: " + e.getMessage(), e);
@@ -96,7 +110,12 @@ public class BookingRepository implements IBookingRepository {
             ps.setString(10, entity.getCancelReason());
             ps.setString(11, entity.getBookingCode());
             ps.setString(12, entity.getExpectedPaymentMethod());
-            ps.setObject(13, entity.getBookingId());
+            ps.setString(13, entity.getCustomerName());
+            ps.setString(14, entity.getCustomerPhone());
+            ps.setString(15, entity.getCustomerAddress());
+            ps.setString(16, entity.getCustomerEmail());
+            ps.setString(17, entity.getDriverLicenseImageUrl());
+            ps.setObject(18, entity.getBookingId());
             
             int affectedRows = ps.executeUpdate();
             return affectedRows > 0;
@@ -158,7 +177,52 @@ public class BookingRepository implements IBookingRepository {
         return bookings;
     }
 
+    @Override
+    public List<Booking> findByUserId(UUID userId) throws SQLException {
+        List<Booking> bookings = new ArrayList<>();
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_FIND_BY_USER_ID)) {
+            ps.setObject(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    bookings.add(mapResultSetToBooking(rs));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error finding bookings by user ID: " + userId, e);
+            throw e;
+        }
+        return bookings;
+    }
+
+    @Override
+    public void updateBookingStatus(UUID bookingId, String status) throws SQLException {
+        if (bookingId == null || status == null || status.trim().isEmpty()) {
+            throw new IllegalArgumentException("Booking ID and status cannot be null or empty");
+        }
+        
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_UPDATE_STATUS)) {
+            
+            ps.setString(1, status);
+            ps.setObject(2, bookingId);
+            
+            int affectedRows = ps.executeUpdate();
+            if (affectedRows == 0) {
+                LOGGER.log(Level.WARNING, "No booking found with ID {0} to update status.", bookingId);
+            } else {
+                LOGGER.log(Level.INFO, "Successfully updated status for booking ID {0} to {1}", new Object[]{bookingId, status});
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error updating booking status for ID " + bookingId, e);
+            throw e;
+        }
+    }
+
     private void setBookingParameters(PreparedStatement ps, Booking entity) throws SQLException {
+        LOGGER.info("Setting booking parameters...");
+        LOGGER.info("BookingCode parameter: " + entity.getBookingCode());
+        
         ps.setObject(1, entity.getBookingId());
         ps.setObject(2, entity.getUserId());
         ps.setObject(3, entity.getCarId());
@@ -172,6 +236,13 @@ public class BookingRepository implements IBookingRepository {
         ps.setString(11, entity.getCancelReason());
         ps.setString(12, entity.getBookingCode());
         ps.setString(13, entity.getExpectedPaymentMethod());
+        ps.setString(14, entity.getCustomerName());
+        ps.setString(15, entity.getCustomerPhone());
+        ps.setString(16, entity.getCustomerAddress());
+        ps.setString(17, entity.getCustomerEmail());
+        ps.setString(18, entity.getDriverLicenseImageUrl());
+        
+        LOGGER.info("All parameters set successfully");
     }
 
     private Booking mapResultSetToBooking(ResultSet rs) throws SQLException {
@@ -189,12 +260,35 @@ public class BookingRepository implements IBookingRepository {
         booking.setCancelReason(rs.getString("CancelReason"));
         booking.setBookingCode(rs.getString("BookingCode"));
         booking.setExpectedPaymentMethod(rs.getString("ExpectedPaymentMethod"));
+        booking.setCustomerName(rs.getString("CustomerName"));
+        booking.setCustomerPhone(rs.getString("CustomerPhone"));
+        booking.setCustomerAddress(rs.getString("CustomerAddress"));
+        booking.setCustomerEmail(rs.getString("CustomerEmail"));
+        booking.setDriverLicenseImageUrl(rs.getString("DriverLicenseImageUrl"));
         return booking;
     }
     public static String generateBookingCode() {
     String datePart = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd"));
     String randomPart = UUID.randomUUID().toString().substring(0, 5).toUpperCase();
     return "BK-" + datePart + "-" + randomPart;
+    }
+
+    // Lấy danh sách booking theo phân trang (offset, limit)
+    public List<Booking> findAllPaged(int offset, int limit) throws SQLException {
+        List<Booking> bookings = new ArrayList<>();
+        // SQL Server: dùng OFFSET ... FETCH NEXT ...
+        String sql = "SELECT * FROM Booking ORDER BY CreatedDate DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, offset);
+            ps.setInt(2, limit);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    bookings.add(mapResultSetToBooking(rs));
+                }
+            }
+        }
+        return bookings;
     }
 
 }

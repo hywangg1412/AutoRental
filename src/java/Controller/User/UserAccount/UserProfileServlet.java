@@ -23,6 +23,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import Service.Role.RoleService;
+import Model.Entity.Role.Role;
 
 @WebServlet("/user/profile")
 public class UserProfileServlet extends HttpServlet {
@@ -33,12 +35,14 @@ public class UserProfileServlet extends HttpServlet {
     private UserService userService;
     private UserLoginsService userLoginsService;
     private DriverLicenseService driverLicenseService;
+    private RoleService roleService;
 
     @Override
     public void init() {
         userService = new UserService();
         userLoginsService = new UserLoginsService();
         driverLicenseService = new DriverLicenseService();
+        roleService = new RoleService();
     }
 
     private UserProfileDTO mapUserToProfileDTO(User user, List<UserLogins> userLogins) {
@@ -54,14 +58,24 @@ public class UserProfileServlet extends HttpServlet {
         profile.setGender(user.getGender());
         profile.setPhoneNumber(user.getPhoneNumber());
         profile.setEmail(user.getEmail());
+        profile.setEmailVerified(user.isEmailVerifed());
         profile.setAvatarUrl(user.getAvatarUrl());
         profile.setCreatedAt(user.getCreatedDate().format(formatter));
 
         Set<String> providers = new HashSet<>();
-        userLogins.forEach(login -> providers.add(login.getLoginProvider().toLowerCase()));
-
-        profile.setHasFacebookLogin(providers.contains("facebook"));
-        profile.setHasGoogleLogin(providers.contains("google"));
+        for (UserLogins login : userLogins) {
+            String provider = login.getLoginProvider().toLowerCase();
+            providers.add(provider);
+            
+            // Set provider account names
+            if ("facebook".equals(provider)) {
+                profile.setHasFacebookLogin(true);
+                profile.setFacebookAccountName(login.getProviderDisplayName());
+            } else if ("google".equals(provider)) {
+                profile.setHasGoogleLogin(true);
+                profile.setGoogleAccountName(login.getProviderDisplayName());
+            }
+        }
 
         return profile;
     }
@@ -84,22 +98,46 @@ public class UserProfileServlet extends HttpServlet {
             request.setAttribute("profile", profile);
 
             DriverLicense driverLicense = null;
+            boolean isStaff = false;
             try {
-                driverLicense = driverLicenseService.findByUserId(user.getUserId());
-            } catch (NotFoundException e) {
-                // User doesn't have a driver license yet, create a new one
-                LOGGER.log(Level.INFO, "User {0} doesn't have a driver license yet, creating new one", user.getUserId());
+                Role userRole = roleService.findById(user.getRoleId());
+                if (userRole != null && "Staff".equalsIgnoreCase(userRole.getRoleName())) {
+                    isStaff = true;
+                }
+            } catch (Exception ex) {
+                // Nếu lỗi khi lấy role, coi như không phải staff
+            }
+            if (!isStaff) {
                 try {
-                    driverLicense = driverLicenseService.createDefaultForUser(user.getUserId());
-                } catch (Exception ex) {
-                    LOGGER.log(Level.SEVERE, "Error creating new driver license for user {0}", user.getUserId());
+                    driverLicense = driverLicenseService.findByUserId(user.getUserId());
+                } catch (NotFoundException e) {
+                    LOGGER.log(Level.INFO, "User {0} doesn't have a driver license yet, creating new one", user.getUserId());
+                    try {
+                        driverLicense = driverLicenseService.createDefaultForUser(user.getUserId());
+                    } catch (Exception ex) {
+                        LOGGER.log(Level.SEVERE, "Error creating new driver license for user {0}", user.getUserId());
+                        driverLicense = null;
+                    }
+                } catch (Exception e) {
+                    LOGGER.log(Level.SEVERE, "Error getting driver license", e);
                     driverLicense = null;
                 }
-            } catch (Exception e) {
-                LOGGER.log(Level.SEVERE, "Error getting driver license", e);
-                driverLicense = null;
             }
             request.setAttribute("driverLicense", driverLicense);
+
+            // Read session messages and clear them
+            String successMessage = (String) SessionUtil.getSessionAttribute(request, "success");
+            String errorMessage = (String) SessionUtil.getSessionAttribute(request, "error");
+            
+            if (successMessage != null) {
+                request.setAttribute("success", successMessage);
+                SessionUtil.removeSessionAttribute(request, "success");
+            }
+            
+            if (errorMessage != null) {
+                request.setAttribute("error", errorMessage);
+                SessionUtil.removeSessionAttribute(request, "error");
+            }
 
             request.getRequestDispatcher("/pages/user/user-profile.jsp").forward(request, response);
 

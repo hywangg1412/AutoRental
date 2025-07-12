@@ -32,6 +32,7 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/icomoon.css">
 
         <!-- 3. Global/Shared CSS -->
+<<<<<<< HEAD
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/nav.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/car.css">
@@ -54,6 +55,31 @@
 
         <jsp:include page="includes/nav.jsp" />
 
+=======
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/nav.css">
+
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/car.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
+
+        <!-- 4. Page-specific CSS -->
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/index.css">
+
+        <style>
+            .step-number {
+                color: #2196F3;
+                font-weight: 700;
+                font-size: 1.5rem;
+                margin-right: 8px;
+                letter-spacing: 1px;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <jsp:include page="includes/nav.jsp" />
+
+>>>>>>> 1eda0a07c16170acc428e6463aa9f7687302b836
         <!-- 1. Hero/Banner -->
         <div class="hero-wrap ftco-degree-bg"
              style="background-image: url('${pageContext.request.contextPath}/assets/images/bg_1.jpg');"
@@ -188,12 +214,20 @@
                                              style="background-image: url('${pageContext.request.contextPath}${car.mainImageUrl}');">
                                         </div>
                                         <div class="text">
+<<<<<<< HEAD
                                             <div class="d-flex align-items-center mb-2">
                                                 <h2 class="mb-0" style="font-size: 1.25rem;">
                                                     <a href="car-single.jsp?id=${car.carId}">${car.carModel}</a>
                                                 </h2>
                                                 <span class="car-status-inline ${car.statusCssClass}"
                                                       style="margin-left:10px;">${car.statusDisplay}</span>
+=======
+                                            <div class="car-title-row">
+                                                <h2 class="mb-0" style="font-size: 1.25rem;">
+                                                    <a href="car-single.jsp?id=${car.carId}">${car.carModel}</a>
+                                                </h2>
+                                                <span class="car-status-inline ${car.statusCssClass}">${car.statusDisplay}</span>
+>>>>>>> 1eda0a07c16170acc428e6463aa9f7687302b836
                                             </div>
                                             <div class="d-flex mb-3">
                                                 <span class="cat">${car.brandName}</span>
@@ -589,6 +623,10 @@
         <script src="${pageContext.request.contextPath}/assets/js/google-map.js"></script>
         <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
         <script src="${pageContext.request.contextPath}/scripts/common/index.js"></script>
+<<<<<<< HEAD
+=======
+        <script src="${pageContext.request.contextPath}/scripts/common/user-notification.js"></script>
+>>>>>>> 1eda0a07c16170acc428e6463aa9f7687302b836
 
     </body>
 

@@ -18,14 +18,18 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
+import Service.Role.RoleService;
+import Model.Entity.Role.Role;
 
 //@WebServlet(name = "UpdateInfoServlet", urlPatterns = {"/user/update-info"})
 public class UpdateInfoServlet extends HttpServlet {
     private UserService userService;
+    private RoleService roleService;
     
     @Override
     public void init() {
         userService = new UserService();
+        roleService = new RoleService();
     }
 
     @Override
@@ -47,7 +51,7 @@ public class UpdateInfoServlet extends HttpServlet {
         try {
             User freshUser = userService.findById(user.getUserId());
             if (freshUser.isBanned() || freshUser.isDeleted()) {
-                request.getSession().invalidate(); // Log them out
+                request.getSession().invalidate();
                 response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp?error=Your+account+is+no+longer+active.");
                 return;
             }
@@ -72,6 +76,10 @@ public class UpdateInfoServlet extends HttpServlet {
             }
             if (!username.matches("^[\\p{L}0-9 ]+$")) {
                 errors.put("usernameError", "Username must not contain special characters.");
+            }
+            User userWithSameUsername = userService.findByUsername(username);
+            if (userWithSameUsername != null && !userWithSameUsername.getUserId().equals(userId)) {
+                errors.put("usernameError", "Username is already taken by another user.");
             }
         }
 
@@ -100,7 +108,7 @@ public class UpdateInfoServlet extends HttpServlet {
                 request.setAttribute(entry.getKey(), entry.getValue());
             }
             request.setAttribute("profile_username", username);
-            request.setAttribute("profile_userDOB", request.getParameter("dob")); // giữ lại định dạng nhập
+            request.setAttribute("profile_userDOB", request.getParameter("dob"));
             request.setAttribute("profile_gender", gender);
             request.getRequestDispatcher("/pages/user/user-profile.jsp").forward(request, response);
             return;
@@ -112,6 +120,17 @@ public class UpdateInfoServlet extends HttpServlet {
             try {
                 User updatedUser = userService.findById(userId);
                 request.getSession().setAttribute("user", updatedUser);
+                String profileRedirect = "/user/profile";
+                try {
+                    Role userRole = roleService.findById(updatedUser.getRoleId());
+                    if (userRole != null && "Staff".equalsIgnoreCase(userRole.getRoleName())) {
+                        profileRedirect = "/staff/profile";
+                    }
+                } catch (Exception ex) {
+                }
+                request.getSession().setAttribute("success", "Update information successfully!");
+                response.sendRedirect(request.getContextPath() + profileRedirect);
+                return;
             } catch (NotFoundException ex) {
                 Logger.getLogger(UpdateInfoServlet.class.getName()).log(Level.SEVERE, null, ex);
             }

@@ -1,4 +1,7 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ page import="Model.Constants.BookingStatusConstants" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -15,6 +18,7 @@
         <!-- ===== Include Styles ===== -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/userNav.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/nav.css">
+        <!-- <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/user/favorite-car.css"> -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/user/my-trip.css">
 
         <!-- ===== Custom Styles ===== -->
@@ -36,7 +40,7 @@
         <jsp:include page="/pages/includes/nav.jsp" />
 
         <div class="container">
-            <div class="row g-5" style="margin-top:100px">
+            <div class="row g-5" style="margin-top:80px">
                 <!-- Sidebar -->
                 <div class="col-lg-3 col-md-4">
                     <div class="sidebar">
@@ -46,15 +50,15 @@
                                     <i class="bi bi-person text-dark"></i>
                                     My account
                                 </a></li>
-                            <li><a href="${pageContext.request.contextPath}/pages/user/favorite-car.jsp" class="nav-link text-dark">
+                            <li><a href="${pageContext.request.contextPath}/user/favorite-car-page" class="nav-link text-dark">
                                     <i class="bi bi-heart text-dark"></i>
                                     Favorite cars
                                 </a></li>
-                            <li><a href="${pageContext.request.contextPath}/pages/user/my-trip.jsp" class="nav-link active text-dark">
+                            <li><a href="${pageContext.request.contextPath}/user/my-trip" class="nav-link active text-dark">
                                     <i class="bi bi-car-front text-dark"></i>
                                     My trips
                                 </a></li>
-                            <li><a href="${pageContext.request.contextPath}/pages/user/change-password.jsp" class="nav-link text-dark border-top-custom">
+                            <li><a href="${pageContext.request.contextPath}/user/change-password" class="nav-link text-dark border-top-custom">
                                     <i class="bi bi-lock text-dark"></i>
                                     Change password
                                 </a></li>
@@ -62,7 +66,7 @@
                                     <i class="bi bi-trash text-dark"></i>
                                     Request account deletion
                                 </a></li>
-                            <li><a href="${pageContext.request.contextPath}/logout" class="nav-link text-danger">
+                            <li><a href="#" class="nav-link text-danger logoutBtn">
                                     <i class="bi bi-box-arrow-right"></i>
                                     Log out
                                 </a></li>
@@ -78,7 +82,7 @@
                                 <div class="main-content p-4 mt-1">
                                     <!-- Page Header -->
                                     <div class="d-flex justify-content-between align-items-center mb-4">
-                                        <h1 class="h5 fw-semibold mb-0 text-dark">My trips</h1>
+                                        <h1 class="h2 fw-semibold mb-0 text-dark">My trips</h1>
                                         <button class="filter-btn d-none" id="filterBtn" data-bs-toggle="modal" data-bs-target="#filterModal">
                                             <i class="bi bi-funnel me-2"></i>Filter
                                         </button>
@@ -104,20 +108,145 @@
                                     <div class="tab-content" id="tripTabContent">
                                         <!-- Current Trip Tab -->
                                         <div class="tab-pane fade show active" id="current-trip" role="tabpanel">
-                                            <div class="empty-state">
-                                                <i class="bi bi-car-front" style="font-size: 3rem; color: var(--text-gray); margin-bottom: 1rem;"></i>
-                                                <h5 class="mb-3">You have no trip yet</h5>
-                                                <p class="text-muted">Start your first trip by booking a car!</p>
-                                            </div>
+                                            <c:choose>
+                                                <c:when test="${not empty currentTrips}">
+                                                    <div class="row">
+                                                        <c:forEach var="trip" items="${currentTrips}">
+                                                            <div class="col-12 mb-4">
+                                                                <div class="favorite-car-card d-flex align-items-center p-4 rounded shadow-sm bg-white">
+                                                                    <div class="car-img-wrapper">
+                                                                        <img src="${pageContext.request.contextPath}${trip.carImage}" class="car-img" alt="Car image">
+                                                                    </div>
+                                                                    <div class="flex-grow-1 ps-3 pe-4">
+                                                                        <div class="d-flex align-items-center mb-2">
+                                                                            <div class="car-title-badge d-flex align-items-center">
+                                                                                <h5 class="mb-0 fw-bold me-3">${trip.carModel}</h5>
+                                                                                <span class="badge status-badge status-${trip.status}">
+                                                                                    <c:choose>
+                                                                                        <c:when test="${trip.status eq 'Confirmed'}">
+                                                                                            <i class="bi bi-check-circle-fill"></i> Booking Accepted
+                                                                                        </c:when>
+                                                                                        <c:when test="${trip.status eq 'Pending'}">
+                                                                                            <i class="bi bi-hourglass-split"></i> Awaiting Confirmation
+                                                                                        </c:when>
+                                                                                        <c:when test="${trip.status eq 'IN_PROGRESS'}">
+                                                                                            <i class="bi bi-car-front"></i> Ongoing
+                                                                                        </c:when>
+                                                                                        <c:when test="${trip.status eq 'Completed'}">
+                                                                                            <i class="bi bi-flag-fill"></i> Completed
+                                                                                        </c:when>
+                                                                                        <c:when test="${trip.status eq 'Cancelled'}">
+                                                                                            <i class="bi bi-x-circle-fill"></i> Cancelled
+                                                                                        </c:when>
+                                                                                        <c:otherwise>${trip.status}</c:otherwise>
+                                                                                    </c:choose>
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="mb-2 text-muted small fs-7 d-flex align-items-center car-info-inline">
+                                                                            <span class="me-3"><i class="bi bi-car-front me-1"></i>${trip.carLicensePlate}</span>
+                                                                        </div>
+                                                                        <div class="mb-2 text-muted small fs-7 d-flex align-items-center car-info-inline">
+                                                                            <span class="me-3"><i class="bi bi-calendar me-1"></i>${trip.formattedPickupDateTime} - ${trip.formattedReturnDateTime}</span>
+                                                                        </div>
+                                                                        <span class="price-new fw-bold fs-6 text-success me-3" style="margin-bottom:0;">
+                                                                            <fmt:formatNumber value="${trip.totalAmount}" type="number" pattern="#.###" /> VND
+                                                                        </span>
+                                                                    </div>
+                                                                    <div class="mytrip-btn-group">
+                                                                        <button class="btn-mytrip-action btn-detail btn-view-details" data-booking-id="${trip.bookingId}" data-car-model="${trip.carModel}" data-license-plate="${trip.carLicensePlate}" data-pickup="${trip.formattedPickupDateTime}" data-return="${trip.formattedReturnDateTime}" data-total-amount="${trip.totalAmount}" data-status="${trip.status}" data-bs-toggle="modal" data-bs-target="#myTripDetailModal">
+                                                                            View Details
+                                                                        </button>
+                                                                        <c:if test="${trip.status eq BookingStatusConstants.CONFIRMED || trip.status eq BookingStatusConstants.IN_PROGRESS}">
+                                                                            <button class="btn-mytrip-action btn-mytrip-green btn-sm" data-booking-id="${trip.bookingId}">Return Car</button>
+                                                                        </c:if>
+                                                                        <c:if test="${trip.status eq BookingStatusConstants.PENDING}">
+                                                                            <button class="btn-mytrip-action btn-mytrip-red btn-sm" data-booking-id="${trip.bookingId}">Cancel Booking</button>
+                                                                        </c:if>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </c:forEach>
+                                                    </div>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <div class="empty-state">
+                                                        <i class="bi bi-car-front" style="font-size: 3rem; color: var(--text-gray); margin-bottom: 1rem;"></i>
+                                                        <h5 class="mb-3">You have no trip yet</h5>
+                                                        <p class="text-muted">Start your first trip by booking a car!</p>
+                                                    </div>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </div>
 
                                         <!-- Trip History Tab -->
                                         <div class="tab-pane fade" id="trip-history" role="tabpanel">
-                                            <div class="empty-state">
-                                                <i class="bi bi-clock-history" style="font-size: 3rem; color: var(--text-gray); margin-bottom: 1rem;"></i>
-                                                <h5 class="mb-3">You have no trip yet</h5>
-                                                <p class="text-muted">Your completed trips will appear here.</p>
-                                            </div>
+                                            <c:choose>
+                                                <c:when test="${not empty pastTrips}">
+                                                    <div class="row">
+                                                        <c:forEach items="${pastTrips}" var="booking">
+                                                            <div class="col-12 mb-4">
+                                                                <div class="favorite-car-card d-flex align-items-center p-4 rounded shadow-sm bg-white">
+                                                                    <div class="car-img-wrapper">
+                                                                        <img src="${pageContext.request.contextPath}${booking.carImage}" class="car-img" alt="Car image">
+                                                                    </div>
+                                                                    <div class="flex-grow-1 ps-3 pe-4">
+                                                                        <div class="d-flex align-items-center mb-2">
+                                                                            <div class="car-title-badge d-flex align-items-center">
+                                                                                <h5 class="mb-0 fw-bold me-3">${booking.carModel}</h5>
+                                                                                <span class="badge status-badge status-${booking.status}">
+                                                                                    <c:choose>
+                                                                                        <c:when test="${booking.status eq 'Confirmed'}">
+                                                                                            <i class="bi bi-check-circle-fill"></i> Booking Accepted
+                                                                                        </c:when>
+                                                                                        <c:when test="${booking.status eq 'Pending'}">
+                                                                                            <i class="bi bi-hourglass-split"></i> Awaiting Confirmation
+                                                                                        </c:when>
+                                                                                        <c:when test="${booking.status eq 'IN_PROGRESS'}">
+                                                                                            <i class="bi bi-car-front"></i> Ongoing
+                                                                                        </c:when>
+                                                                                        <c:when test="${booking.status eq 'Completed'}">
+                                                                                            <i class="bi bi-flag-fill"></i> Completed
+                                                                                        </c:when>
+                                                                                        <c:when test="${booking.status eq 'Cancelled'}">
+                                                                                            <i class="bi bi-x-circle-fill"></i> Cancelled
+                                                                                        </c:when>
+                                                                                        <c:otherwise>${booking.status}</c:otherwise>
+                                                                                    </c:choose>
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="mb-2 text-muted small fs-7 d-flex align-items-center car-info-inline">
+                                                                            <span class="me-3"><i class="bi bi-hash me-1"></i>${booking.bookingCode}</span>
+                                                                            <span class="me-3"><i class="bi bi-car-front me-1"></i>${booking.carLicensePlate}</span>
+                                                                        </div>
+                                                                        <div class="mb-2 text-muted small fs-7 d-flex align-items-center car-info-inline">
+                                                                            <span class="me-3"><i class="bi bi-calendar me-1"></i>${booking.formattedPickupDateTime} - ${booking.formattedReturnDateTime}</span>
+                                                                        </div>
+                                                                        <span class="price-new fw-bold fs-6 text-success me-3" style="margin-bottom:0;">
+                                                                            <fmt:formatNumber value="${booking.totalAmount}" type="number" pattern="#.###" /> VND
+                                                                        </span>
+                                                                    </div>
+                                                                    <div class="mytrip-btn-group">
+                                                                        <button class="btn-mytrip-action btn-detail btn-view-details" data-booking-id="${booking.bookingId}" data-car-model="${booking.carModel}" data-license-plate="${booking.carLicensePlate}" data-pickup="${booking.formattedPickupDateTime}" data-return="${booking.formattedReturnDateTime}" data-total-amount="${booking.totalAmount}" data-status="${booking.status}" data-booking-code="${booking.bookingCode}" data-bs-toggle="modal" data-bs-target="#myTripDetailModal">
+                                                                            View Details
+                                                                        </button>
+                                                                        <button class="btn-mytrip-action btn-mytrip-green btn-sm" data-booking-id="${booking.bookingId}">Book again</button>
+                                                                        <button class="btn-mytrip-action btn-mytrip-blue btn-sm" data-booking-id="${booking.bookingId}">Send review</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </c:forEach>
+                                                    </div>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <div class="empty-state">
+                                                        <i class="bi bi-clock-history" style="font-size: 3rem; color: var(--text-gray); margin-bottom: 1rem;"></i>
+                                                        <h5 class="mb-3">No trip history yet</h5>
+                                                        <p class="text-muted">Your completed trips will appear here!</p>
+                                                    </div>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </div>
                                     </div>
                                 </div>
@@ -153,53 +282,60 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         <script src="${pageContext.request.contextPath}/scripts/user/UserAboutSidebar.js"></script>
+        <script src="${pageContext.request.contextPath}/scripts/user/my-trip.js"></script>
 
-        <script>
-            // Show/hide filter button based on active tab
-            document.addEventListener('DOMContentLoaded', function () {
-                const filterBtn = document.getElementById('filterBtn');
-                const tripHistoryTab = document.getElementById('trip-history-tab');
-                const currentTripTab = document.getElementById('current-trip-tab');
+        <div class="modal fade" id="myTripDetailModal" tabindex="-1" aria-labelledby="myTripDetailModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-md modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header border-0 pb-0">
+                <h2 class="modal-title w-100 text-center fw-bold" id="myTripDetailModalLabel">Booking Details</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <hr class="mytrip-divider" />
+              <div class="modal-body pt-0">
+                <div class="mytrip-modal-section"><i class="bi bi-hash"></i> Booking Information</div>
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <div class="mytrip-modal-label">Booking Code</div>
+                    <div class="mytrip-modal-value" id="modalBookingCode"></div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mytrip-modal-label">Status</div>
+                    <div class="mytrip-modal-value" id="modalStatus"></div>
+                  </div>
+                </div>
+                <div class="mytrip-modal-section"><i class="bi bi-car-front"></i> Car Information</div>
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <div class="mytrip-modal-label">Model</div>
+                    <div class="mytrip-modal-value" id="modalCarModel"></div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mytrip-modal-label">License Plate</div>
+                    <div class="mytrip-modal-value" id="modalLicensePlate"></div>
+                  </div>
+                </div>
+                <div class="mytrip-modal-section"><i class="bi bi-calendar"></i> Rental Details</div>
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <div class="mytrip-modal-label">Pick-up Date</div>
+                    <div class="mytrip-modal-value" id="modalPickup"></div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mytrip-modal-label">Return Date</div>
+                    <div class="mytrip-modal-value" id="modalReturn"></div>
+                  </div>
+                </div>
+                <div class="mytrip-modal-label">Total Amount</div>
+                <div class="mytrip-modal-value fw-bold" id="modalTotalAmount"></div>
+              </div>
+              <div class="modal-footer border-0 pt-0 d-flex flex-column gap-2">
+                <button class="btn btn-success w-100 py-2" id="modalReturnCarBtn">Return Car</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
-                // Show filter button when Trip history tab is active
-                tripHistoryTab.addEventListener('shown.bs.tab', function () {
-                    filterBtn.classList.remove('d-none');
-                });
-
-                // Hide filter button when Current trip tab is active
-                currentTripTab.addEventListener('shown.bs.tab', function () {
-                    filterBtn.classList.add('d-none');
-                });
-            });
-
-            // Clear filter functionality
-            document.querySelector('.btn-clear-filter').addEventListener('click', function () {
-                // Reset all form elements
-                document.querySelectorAll('#filterModal input[type="radio"]').forEach(radio => {
-                    if (radio.value === 'all')
-                        radio.checked = true;
-                    else
-                        radio.checked = false;
-                });
-
-                document.querySelectorAll('#filterModal input[type="text"]').forEach(input => {
-                    input.value = '';
-                });
-
-                document.querySelectorAll('#filterModal select').forEach(select => {
-                    select.selectedIndex = 0;
-                });
-            });
-
-            // Add smooth transition effect for tab switching
-            document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
-                tab.addEventListener('shown.bs.tab', function (e) {
-                    const targetPane = document.querySelector(e.target.getAttribute('data-bs-target'));
-                    targetPane.style.animation = 'none';
-                    targetPane.offsetHeight; // Trigger reflow
-                    targetPane.style.animation = 'fadeIn 0.3s ease-in-out';
-                });
-            });
-        </script>
+        <jsp:include page="/pages/includes/logout-confirm-modal.jsp" />
     </body>
 </html>

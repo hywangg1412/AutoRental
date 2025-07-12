@@ -10,13 +10,12 @@ public class User {
     private String username;
     private LocalDate userDOB;
     private String phoneNumber;
-    private String userAddress;
-    private String userDescription;
     private String avatarUrl;
     private String gender;
     private String firstName;
     private String lastName;
     private String status;
+    private UUID roleId;
     private LocalDateTime createdDate;
     private String normalizedUserName;
     private String email;
@@ -34,8 +33,8 @@ public class User {
     }
 
     public User(UUID userId, String username, LocalDate userDOB, String phoneNumber,
-            String userAddress, String userDescription, String avatarUrl, String gender,
-            String firstName, String lastName, String status, LocalDateTime createdDate,
+             String avatarUrl, String gender,
+            String firstName, String lastName, String status, UUID roleId, LocalDateTime createdDate,
             String normalizedUserName, String email, String normalizedEmail, boolean emailVerifed,
             String passwordHash, String securityStamp, String concurrencyStamp,
             boolean twoFactorEnabled, LocalDateTime lockoutEnd, boolean lockoutEnabled,
@@ -44,13 +43,12 @@ public class User {
         this.username = username;
         this.userDOB = userDOB;
         this.phoneNumber = phoneNumber;
-        this.userAddress = userAddress;
-        this.userDescription = userDescription;
         this.avatarUrl = avatarUrl;
         this.gender = gender;
         this.firstName = firstName;
         this.lastName = lastName;
         this.status = status;
+        this.roleId = roleId;
         this.createdDate = createdDate;
         this.normalizedUserName = normalizedUserName;
         this.email = email;
@@ -100,22 +98,6 @@ public class User {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
-    }
-
-    public String getUserAddress() {
-        return userAddress;
-    }
-
-    public void setUserAddress(String userAddress) {
-        this.userAddress = userAddress;
-    }
-
-    public String getUserDescription() {
-        return userDescription;
-    }
-
-    public void setUserDescription(String userDescription) {
-        this.userDescription = userDescription;
     }
 
     public String getAvatarUrl() {
@@ -266,6 +248,14 @@ public class User {
         this.accessFailedCount = accessFailedCount;
     }
 
+    public UUID getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(UUID roleId) {
+        this.roleId = roleId;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -276,7 +266,6 @@ public class User {
                 ", fullName='" + getFullName() + '\'' +
                 ", userDOB=" + userDOB +
                 ", gender='" + gender + '\'' +
-                ", userAddress='" + userAddress + '\'' +
                 ", createdDate=" + createdDate +
                 ", status='" + status + '\'' +
                 '}';

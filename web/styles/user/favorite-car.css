@@ -9,7 +9,7 @@
 }
 
 body {
-    background-color: var(--light-gray);
+    background-color: #f5f5f5 !important;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
@@ -121,107 +121,149 @@ body {
 }
 
 .car-card {
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    transition: all 0.2s;
+    display: flex;
+    align-items: flex-start;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    margin-bottom: 24px;
+    padding: 20px 24px;
+    border: 1px solid #f0f0f0;
+    transition: box-shadow 0.2s;
 }
 
 .car-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
 }
 
-.car-image {
-    width: 200px;
-    height: 140px;
-    background-color: #d1d5db;
-    border-radius: 8px;
-    flex-shrink: 0;
+.car-card-img {
+    width: 140px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid #eee;
+    margin-right: 24px;
 }
 
-.car-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 0.5rem;
-}
-
-.car-specs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-bottom: 0.75rem;
-}
-
-.car-spec {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    font-size: 0.875rem;
-    color: var(--text-gray);
-}
-
-.car-location {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    font-size: 0.875rem;
-    color: var(--text-gray);
-    margin-bottom: 0.75rem;
-}
-
-.car-rating {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-}
-
-.stars {
-    color: var(--warning-orange);
-}
-
-.rating-text {
-    font-size: 0.875rem;
-    color: var(--text-gray);
-}
-
-.car-pricing {
+.car-card-content {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
-    gap: 0.25rem;
+    justify-content: space-between;
 }
 
-.original-price {
-    font-size: 0.875rem;
-    color: var(--text-gray);
-    text-decoration: line-through;
+.car-card-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
 }
 
-.current-price {
-    font-size: 1.1rem;
+.car-card-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-right: 12px;
+    text-transform: uppercase;
+}
+
+.car-card-badge {
+    background: #e6f4ea;
+    color: #1dbf73;
+    font-size: 0.85rem;
+    border-radius: 8px;
+    padding: 2px 10px;
+    margin-left: 8px;
     font-weight: 600;
-    color: #333;
+}
+
+.car-card-info {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    color: #555;
+    font-size: 0.98rem;
+    margin-bottom: 4px;
+}
+
+.car-card-info i {
+    margin-right: 4px;
+    color: #1dbf73;
+}
+
+.car-card-location {
+    color: #888;
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+}
+
+.car-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.car-card-price {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #ff6600;
+}
+
+.btn-unlike, .btn-detail {
+    width: 110px;
+    min-height: 36px;
+    font-size: 0.98rem;
+    font-weight: 600;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    margin-bottom: 8px;
+    background: #fff;
+    transition: all 0.22s ease;
+    box-sizing: border-box;
+    border-width: 2px;
+    border-style: solid;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-unlike:hover, .btn-detail:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.btn-unlike:active, .btn-detail:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .btn-unlike {
-    background-color: var(--primary-green);
-    border-color: var(--primary-green);
-    color: white;
-    font-size: 0.875rem;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    transition: all 0.2s;
+    border-color: #10b981;
+    color: #10b981;
 }
 
-.btn-unlike:hover {
-    background-color: #059669;
-    border-color: #059669;
-    color: white;
+.btn-unlike:hover, .btn-unlike:focus {
+    background: #10b981;
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(16,185,129,0.25);
+    border-color: #10b981;
+    transform: translateY(-1px);
+}
+
+.btn-detail {
+    border-color: #2563eb;
+    color: #2563eb;
+    margin-bottom: 0;
+}
+
+.btn-detail:hover, .btn-detail:focus {
+    background: #2563eb;
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(37,99,235,0.25);
+    border-color: #2563eb;
+    transform: translateY(-1px);
 }
 
 .view-details {
@@ -273,4 +315,364 @@ nav.ftco-navbar-light .nav-link {
 
 .bi-bell, .bi-chat-dots {
     color: #222 !important;
+    padding : 0 !important;
+}
+
+/* Chỉ ẩn dropdown ba chấm */
+.dropdown-toggle[aria-labelledby="userDropdown"],
+#userDropdown {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+.favorite-car-card {
+    display: flex;
+    align-items: stretch; /* Đảm bảo ảnh và nội dung cùng chiều cao */
+    transition: box-shadow 0.2s;
+    border-radius: 18px;
+    border: 1px solid #f0f0f0;
+    min-height: 200px;
+    padding: 32px;
+    font-size: 1.15rem;
+    overflow: hidden; /* Đảm bảo nội dung không tràn ra ngoài */
+}
+
+.favorite-car-card {
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.favorite-car-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+    border-color: var(--border-gray);
+}
+
+.car-img-wrapper {
+    width: 200px;
+    height: 140px;
+    border-radius: 14px;
+    background: #f8f9fa;
+    border: 2px solid #e5e7eb;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0; /* Ngăn không cho wrapper bị co lại */
+}
+
+.car-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Đảm bảo ảnh không bị méo */
+    object-position: center; /* Căn giữa ảnh */
+    border-radius: 12px; /* Nhỏ hơn wrapper một chút */
+    display: block;
+}
+
+/* Nếu ảnh bị lỗi hoặc chưa load */
+.car-img-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #f8f9fa;
+    z-index: -1;
+}
+
+/* Fallback cho ảnh bị lỗi */
+.car-img:not([src]), .car-img[src=""], .car-img:not([src*="."]) {
+    background: #f8f9fa url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ccc"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>') center/50% no-repeat;
+}
+
+.favorite-icon {
+    right: 0;
+    top: 0;
+    z-index: 2;
+}
+
+.btn-success.btn-lg, .btn-success {
+    background-color: #fff !important;
+    border: 2px solid #01D28E !important;
+    color: #01D28E !important;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: background 0.2s, color 0.2s;
+}
+
+.btn-success.btn-lg:hover, .btn-success:hover {
+    background-color: #01D28E !important;
+    color: #fff !important;
+}
+
+.price-old {
+    color: #aaa;
+}
+
+.car-info-inline span {
+    white-space: nowrap;
+}
+
+.favorite-car-card .d-flex.flex-column.align-items-end {
+    min-width: 110px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-right: 0;
+    padding-right: 0;
+}
+
+/* Đảm bảo layout card không bị lệch */
+.favorite-car-card {
+    align-items: center; 
+    position: relative;
+}
+
+.car-card-content, .favorite-car-card .flex-grow-1 {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Dàn đều các dòng thông tin */
+    height: 100%;
+}
+
+.car-card-middle {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    /* Có thể thêm text-align: left nếu cần */
+}
+
+/* Responsive cho mobile */
+@media (max-width: 768px) {
+    .car-img-wrapper {
+        width: 120px;
+        height: 80px;
+    }
+    
+    .favorite-car-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .favorite-car-card .d-flex.flex-column.align-items-end {
+        flex-direction: row;
+        justify-content: center;
+        margin-top: 15px;
+        gap: 10px;
+    }
+}
+
+.status-badge {
+    min-width: 80px; /* hoặc giá trị phù hợp */
+    text-align: center;
+    font-weight: 600;
+}
+
+/* =========================== PAGINATION =========================== */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 24px;
+}
+
+.pagination .page-item {
+    margin: 0 1px;
+}
+
+.pagination .page-link {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1.5px solid #e0e7ef;
+    background: #fff;
+    color: #222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background 0.18s, color 0.18s, border 0.18s;
+    box-shadow: none;
+    outline: none;
+    padding: 0;
+}
+
+.pagination .page-link:hover,
+.pagination .page-link:focus {
+    background: #fff;
+    color: #16a34a;
+    border-color: #22c55e;
+    text-decoration: none;
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(34,197,94,0.15);
+}
+
+.pagination .page-item.active .page-link {
+    background: #fff;
+    color: #22c55e;
+    border-color: #22c55e;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(34,197,94,0.10);
+}
+
+.pagination .page-link:focus, .pagination .page-link:active {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+@media (max-width: 576px) {
+    .pagination .page-link {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
+    }
+    .pagination {
+        gap: 4px;
+    }
+}
+
+.btn-browse-cars {
+    background: #01D28E;
+    color: #fff;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    padding: 7px 20px;
+    font-size: 0.98rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    transition: background 0.18s, box-shadow 0.18s, color 0.18s;
+    box-shadow: none;
+}
+.btn-browse-cars i {
+    color: #fff !important;
+    font-size: 1em;
+}
+.btn-browse-cars:hover, .btn-browse-cars:focus {
+    background: #01D28E;
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(1, 210, 142, 0.18);
+    text-decoration: none;
+    transform: translateY(-1px);
+}
+
+.btn-browse-cars:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(1, 210, 142, 0.18);
+}
+.btn-browse-cars:hover i, .btn-browse-cars:focus i {
+    color: #fff !important;
+}
+
+/* Loading animation for buttons */
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Status badge hover effects */
+.status-badge {
+    transition: all 0.2s ease;
+}
+
+.status-badge:hover {
+    transform: scale(1.05);
+}
+
+/* Focus styles for accessibility */
+.btn-unlike:focus, .btn-detail:focus, .btn-browse-cars:focus, .page-link:focus {
+    outline: 2px solid #10b981;
+    outline-offset: 2px;
+}
+
+/* Disabled button styles */
+.btn-unlike:disabled, .btn-detail:disabled, .btn-browse-cars:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Card image hover effect */
+.car-img-wrapper:hover .car-img {
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+}
+
+.car-img {
+    transition: transform 0.3s ease;
+}
+
+/* Empty state animation */
+.text-center.py-5 {
+    transition: all 0.5s ease;
+}
+
+/* Form button improvements */
+form button[type="submit"] {
+    transition: all 0.22s ease;
+}
+
+form button[type="submit"]:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .btn-unlike, .btn-detail {
+        width: 100px;
+        font-size: 0.9rem;
+    }
+    
+    .favorite-car-card:hover {
+        transform: translateY(-1px);
+    }
+    
+    .btn-browse-cars {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
+}
+
+.car-card-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 100%;
+    min-height: 140px; /* hoặc cùng chiều cao với .car-img-wrapper */
+}
+
+.car-card-content > div {
+    margin: 0 !important; /* Xóa mọi margin trên các div con trực tiếp */
+}
+
+.car-card-middle {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 0 !important; /* Đảm bảo không có margin dọc */
+}
+
+.car-card-content .mb-2,
+.car-card-content .car-title-badge,
+.car-title-badge {
+    margin: 0 !important;
 }
