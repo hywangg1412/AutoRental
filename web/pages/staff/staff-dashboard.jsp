@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
@@ -12,6 +12,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/staff/staff-dashboard.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/staff/staff-notification.css">
 </head>
 <body>
   <!-- Sidebar -->
@@ -234,8 +235,8 @@
                 <c:otherwise>
                   <div class="text-center py-4">
                     <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                    <h5 class="text-muted">Không có booking request nào</h5>
-                    <p class="text-muted">Hiện tại không có yêu cầu đặt xe nào đang chờ xử lý.</p>
+                    <h5 class="text-muted">Kh�ng c� booking request n�o</h5>
+                    <p class="text-muted">Hi?n t?i kh�ng c� y�u c?u ??t xe n�o ?ang ch? x? l�.</p>
                   </div>
                 </c:otherwise>
               </c:choose>
@@ -515,11 +516,11 @@
     // Sort order for status
     const statusOrder = ["pending", "confirmed", "cancelled", "completed"];
     const table = document.querySelector('.table tbody');
-    const originalRows = Array.from(table.querySelectorAll('tr')); // Lưu lại bản gốc
+    const originalRows = Array.from(table.querySelectorAll('tr')); // L?u l?i b?n g?c
 
     document.getElementById('statusFilter').addEventListener('change', function() {
       const value = this.value;
-      // Luôn thao tác trên bản gốc
+      // Lu�n thao t�c tr�n b?n g?c
       let filteredRows = originalRows;
       if (value !== 'all') {
         filteredRows = originalRows.filter(row => {

@@ -19,6 +19,8 @@
       rel="stylesheet"
       href="${pageContext.request.contextPath}/styles/staff/staff-customer-support.css"
     />
+    <!-- Notification CSS -->
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/staff/staff-notification.css">
   </head>
   <body>
     <!-- Sidebar -->

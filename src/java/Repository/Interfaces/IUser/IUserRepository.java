@@ -27,4 +27,14 @@ public interface IUserRepository extends Repository<User, Integer>{
     List<String> findAllUsernamesLike(String baseUsername);
 
     List<User> findByRoleId(UUID roleId) throws SQLException;
+    
+    // New optimized filter methods
+    List<User> findWithFilters(String roleFilter, String statusFilter, String searchTerm) throws SQLException;
+    
+    List<User> findByStatus(String status) throws SQLException;
+    
+    List<User> searchUsers(String searchTerm) throws SQLException;
+    
+    // Additional methods
+    User findById(UUID userId) throws SQLException;
 }

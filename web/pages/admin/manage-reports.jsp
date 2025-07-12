@@ -8,10 +8,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reports & Analytics - AutoRental</title>
-   <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/admin/admin-style.css">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/admin/admin-style.css">
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
-
 </head>
 <body>
     <div class="admin-layout">
@@ -34,7 +38,7 @@
                     </svg>
                     Dashboard
                 </a>
-                <a href="${pageContext.request.contextPath}/pages/admin/manage-users.jsp" class="nav-item">
+                <a href="${pageContext.request.contextPath}/admin/user-management" class="nav-item">
                     <svg class="nav-item-icon" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M16 7c0-2.21-1.79-4-4-4S8 4.79 8 7s1.79 4 4 4 4-1.79 4-4zm-4 6c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"/>
                     </svg>
@@ -73,12 +77,12 @@
             </nav>
 
             <div class="sidebar-user">
-                <button class="logout-btn" onclick="logout()">
+                <a class="logout-btn" href="${pageContext.request.contextPath}/logout">
                     <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.59L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
                     </svg>
                     Logout
-                </button>
+                </a>
             </div>
         </div>
 
@@ -331,16 +335,11 @@
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             sidebar.classList.toggle('open');
-        }
-
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                window.location.href = 'login.jsp';
-            }
         }
 
         // Initialize Charts
