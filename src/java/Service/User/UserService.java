@@ -220,4 +220,21 @@ public class UserService implements IUserService {
     public List<User> findByRoleId(UUID roleId) throws Exception {
         return userRepsitory.findByRoleId(roleId);
     }
+    
+    public List<User> getAllUsers() throws SQLException{
+        return userRepsitory.findAll();
+    }
+    
+    // New optimized filter methods
+    public List<User> getUsersWithFilters(String roleFilter, String statusFilter, String searchTerm) throws SQLException {
+        return userRepsitory.findWithFilters(roleFilter, statusFilter, searchTerm);
+    }
+    
+    public List<User> getUsersByStatus(String status) throws SQLException {
+        return userRepsitory.findByStatus(status);
+    }
+    
+    public List<User> searchUsers(String searchTerm) throws SQLException {
+        return userRepsitory.searchUsers(searchTerm);
+    }
 }

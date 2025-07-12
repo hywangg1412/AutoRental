@@ -145,27 +145,12 @@ public class BookingCreateServlet extends HttpServlet {
 
             // Step 7: Save the booking to the database
             bookingService.add(newBooking);
-            // --- Gửi notification cho tất cả staff khi có booking mới ---
-            try {
-                UserService userService = new UserService();
-                java.util.UUID staffRoleId = java.util.UUID.fromString("550e8400-e29b-41d4-a716-446655440000"); // Staff roleId
-                java.util.List<Model.Entity.User.User> staffUsers = userService.findByRoleId(staffRoleId);
-
-                Service.NotificationService notificationService = new Service.NotificationService();
-                String message = "Bạn có một booking request mới.";
-                for (Model.Entity.User.User staff : staffUsers) {
-                    Model.Entity.Notification notification = new Model.Entity.Notification(
-                            java.util.UUID.randomUUID(),
-                            staff.getUserId(),
-                            message,
-                            java.time.LocalDateTime.now()
-                    );
-                    notificationService.add(notification);
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                // Không làm fail booking nếu lỗi notification
-            }
+            
+            // Gửi notification cho tất cả staff khi có booking mới
+            Service.NotificationService notificationService = new Service.NotificationService();
+            String message = "Bạn có một booking request mới.";
+            notificationService.sendNotificationToAllStaff(message);
+            
             // Step 8: Lấy lại booking từ DB để lấy totalAmount và các thông tin khác
             Booking savedBooking = bookingService.findById(newBooking.getBookingId());
             request.setAttribute("booking", savedBooking);

@@ -133,7 +133,8 @@ body {
   font-size: 0.875rem;
 }
 
-.header .btn-outline-secondary {
+/* Loại bỏ các CSS có thể xung đột với CSS thông báo */
+/* .header .btn-outline-secondary {
   border-color: #e2e8f0;
   color: #4a5568;
 }
@@ -141,7 +142,7 @@ body {
 .header .btn-outline-secondary:hover {
   background-color: #f7fafc;
   border-color: #cbd5e0;
-}
+} */
 
 .header .bg-primary {
   background-color: #3b82f6 !important;
@@ -438,7 +439,7 @@ body {
 .btn-sm {
   padding: 0.375rem 0.75rem;
   font-size: 0.8rem;
-  min-width: 80px; /* Ensure consistent button width */
+  min-width: 37px; /* Ensure consistent button width */
   text-align: center;
 }
 
