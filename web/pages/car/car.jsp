@@ -55,7 +55,7 @@
                     </head>
 
                     <body class="car-page">
-                        <div class="container" ;">
+                        <div class="container">
                             <jsp:include page="../includes/car-nav.jsp" />
                         </div>
                         <section class="ftco-section bg-light">
