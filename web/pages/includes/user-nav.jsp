@@ -36,7 +36,7 @@
             <div class="d-flex align-items-center gap-3">
               <div class="dropdown me-2 notification-wrapper">
                 <button class="btn btn-link nav-link p-0 text-dark position-relative notification-btn" type="button" id="userNotificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                  <i class="fas fa-bell" style="font-size: 1.2rem !important; color: white;"></i>
+                  <i class="fas fa-bell" style="font-size: 1.2rem !important; color: #222 !important;"></i>
                   <span class="notification-count" style="display: ${sessionScope.userUnreadCount > 0 ? 'flex' : 'none'};">
                     ${sessionScope.userUnreadCount}
                   </span>
