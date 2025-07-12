@@ -39,6 +39,7 @@
 
            <!-- ===== NavBar Styles ===== -->
            <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/nav.css">
+           <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/main/car-signle.css">
     </head>
     <body>
 

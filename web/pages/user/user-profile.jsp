@@ -21,7 +21,7 @@
 
         <!-- ===== Include Styles ===== -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/user/user-profile.css">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/nav.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/user-nav.css">
 
         <!-- ===== Custom Styles ===== -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/open-iconic-bootstrap.min.css">

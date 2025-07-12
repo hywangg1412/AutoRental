@@ -23,7 +23,7 @@
         <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800&display=swap" rel="stylesheet">
 
         <!-- ===== Include Styles ===== -->
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/nav.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/user-nav.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/user/favorite-car.css">
 
         <!-- ===== Custom Styles ===== -->
