@@ -42,7 +42,7 @@
                   </span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userNotificationDropdown" id="notificationDropdownMenu">
-                  <li class="dropdown-header">Thông báo</li>
+                  <li class="dropdown-header">Notifications</li>
                   <li><hr class="dropdown-divider"></li>
                   
                   <c:choose>
@@ -87,13 +87,13 @@
                         <li><hr class="dropdown-divider"></li>
                         <li>
                           <a class="dropdown-item text-center mark-all-read-btn" href="#">
-                            <i class="fas fa-check-double"></i> Đánh dấu tất cả đã đọc
+                            <i class="fas fa-check-double"></i> Mark all as read
                           </a>
                         </li>
                       </c:if>
                     </c:when>
                     <c:otherwise>
-                      <li><span class="dropdown-item text-muted">Không có thông báo mới</span></li>
+                      <li><span class="dropdown-item text-muted">No new notifications</span></li>
                     </c:otherwise>
                   </c:choose>
                 </ul>
