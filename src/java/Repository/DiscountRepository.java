@@ -2,106 +2,163 @@ package Repository;
 
 import Config.DBContext;
 import Model.Entity.Discount;
-import Repository.Interfaces.IDiscountRepository;
+
+
 import java.sql.*;
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
-public class DiscountRepository implements IDiscountRepository{
-    private DBContext dbContext;
-    
-    public DiscountRepository(){
-        dbContext = new DBContext();
+public class DiscountRepository {
+    private final DBContext dbContext;
+
+    public DiscountRepository() {
+        this.dbContext = new DBContext();
     }
 
-    private Connection getConnection() throws SQLException {
-        return dbContext.getConnection();
-    }
-
-    @Override
-    public Discount add(Discount entity) throws SQLException {
-        String sql = "INSERT INTO Discount (DiscountId, DiscountName, Description, DiscountType, DiscountValue, StartDate, EndDate, IsActive, CreatedDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setObject(1, entity.getDiscountId());
-            ps.setString(2, entity.getDiscountName());
-            ps.setString(3, entity.getDescription());
-            ps.setString(4, entity.getDiscountType());
-            ps.setBigDecimal(5, entity.getDiscountValue());
-            ps.setTimestamp(6, Timestamp.valueOf(entity.getStartDate()));
-            ps.setTimestamp(7, Timestamp.valueOf(entity.getEndDate()));
-            ps.setBoolean(8, entity.isActive());
-            ps.setTimestamp(9, Timestamp.valueOf(entity.getCreatedDate()));
-            ps.executeUpdate();
-            return entity;
-        }
-    }
-
-    @Override
-    public Discount findById(UUID id) throws SQLException {
-        String sql = "SELECT * FROM Discount WHERE DiscountId = ?";
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setObject(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return mapResultSetToDiscount(rs);
-                }
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public boolean update(Discount entity) throws SQLException {
-        String sql = "UPDATE Discount SET DiscountName=?, Description=?, DiscountType=?, DiscountValue=?, StartDate=?, EndDate=?, IsActive=?, CreatedDate=? WHERE DiscountId=?";
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, entity.getDiscountName());
-            ps.setString(2, entity.getDescription());
-            ps.setString(3, entity.getDiscountType());
-            ps.setBigDecimal(4, entity.getDiscountValue());
-            ps.setTimestamp(5, Timestamp.valueOf(entity.getStartDate()));
-            ps.setTimestamp(6, Timestamp.valueOf(entity.getEndDate()));
-            ps.setBoolean(7, entity.isActive());
-            ps.setTimestamp(8, Timestamp.valueOf(entity.getCreatedDate()));
-            ps.setObject(9, entity.getDiscountId());
-            return ps.executeUpdate() > 0;
-        }
-    }
-
-    @Override
-    public boolean delete(UUID id) throws SQLException {
-        String sql = "DELETE FROM Discount WHERE DiscountId = ?";
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setObject(1, id);
-            return ps.executeUpdate() > 0;
-        }
-    }
-
-    @Override
     public List<Discount> findAll() throws SQLException {
+        List<Discount> discounts = new ArrayList<>();
         String sql = "SELECT * FROM Discount";
-        List<Discount> list = new ArrayList<>();
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = dbContext.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
             while (rs.next()) {
-                list.add(mapResultSetToDiscount(rs));
+                Discount discount = new Discount();
+                discount.setDiscountId(UUID.fromString(rs.getString("DiscountId")));
+                discount.setDiscountName(rs.getString("DiscountName"));
+                discount.setDescription(rs.getString("Description"));
+                discount.setDiscountType(rs.getString("DiscountType"));
+                discount.setDiscountValue(rs.getBigDecimal("DiscountValue"));
+                discount.setStartDate(rs.getDate("StartDate"));
+                discount.setEndDate(rs.getDate("EndDate"));
+                discount.setIsActive(rs.getBoolean("IsActive"));
+                discount.setCreatedDate(rs.getTimestamp("CreatedDate"));
+                discount.setVoucherCode(rs.getString("VoucherCode"));
+                discount.setMinOrderAmount(rs.getBigDecimal("MinOrderAmount"));
+                discount.setMaxDiscountAmount(rs.getBigDecimal("MaxDiscountAmount"));
+                discount.setUsageLimit(rs.getObject("UsageLimit") != null ? rs.getInt("UsageLimit") : null);
+                discount.setUsedCount(rs.getInt("UsedCount"));
+                discount.setDiscountCategory(rs.getString("DiscountCategory"));
+                discounts.add(discount);
             }
+        } finally {
+            dbContext.close(conn, pstmt, rs);
         }
-        return list;
+        return discounts;
     }
 
-    private Discount mapResultSetToDiscount(ResultSet rs) throws SQLException {
-        Discount d = new Discount();
-        d.setDiscountId(UUID.fromString(rs.getString("DiscountId")));
-        d.setDiscountName(rs.getString("DiscountName"));
-        d.setDescription(rs.getString("Description"));
-        d.setDiscountType(rs.getString("DiscountType"));
-        d.setDiscountValue(rs.getBigDecimal("DiscountValue"));
-        Timestamp start = rs.getTimestamp("StartDate");
-        Timestamp end = rs.getTimestamp("EndDate");
-        Timestamp created = rs.getTimestamp("CreatedDate");
-        d.setStartDate(start != null ? start.toLocalDateTime() : null);
-        d.setEndDate(end != null ? end.toLocalDateTime() : null);
-        d.setActive(rs.getBoolean("IsActive"));
-        d.setCreatedDate(created != null ? created.toLocalDateTime() : null);
-        return d;
+    public Discount findById(UUID discountId) throws SQLException {
+        String sql = "SELECT * FROM Discount WHERE DiscountId = ?";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = dbContext.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, discountId.toString());
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                Discount discount = new Discount();
+                discount.setDiscountId(UUID.fromString(rs.getString("DiscountId")));
+                discount.setDiscountName(rs.getString("DiscountName"));
+                discount.setDescription(rs.getString("Description"));
+                discount.setDiscountType(rs.getString("DiscountType"));
+                discount.setDiscountValue(rs.getBigDecimal("DiscountValue"));
+                discount.setStartDate(rs.getDate("StartDate"));
+                discount.setEndDate(rs.getDate("EndDate"));
+                discount.setIsActive(rs.getBoolean("IsActive"));
+                discount.setCreatedDate(rs.getTimestamp("CreatedDate"));
+                discount.setVoucherCode(rs.getString("VoucherCode"));
+                discount.setMinOrderAmount(rs.getBigDecimal("MinOrderAmount"));
+                discount.setMaxDiscountAmount(rs.getBigDecimal("MaxDiscountAmount"));
+                discount.setUsageLimit(rs.getObject("UsageLimit") != null ? rs.getInt("UsageLimit") : null);
+                discount.setUsedCount(rs.getInt("UsedCount"));
+                discount.setDiscountCategory(rs.getString("DiscountCategory"));
+                return discount;
+            }
+            return null;
+        } finally {
+            dbContext.close(conn, pstmt, rs);
+        }
+    }
+
+    public void save(Discount discount) throws SQLException {
+        String sql = "INSERT INTO Discount (DiscountId, DiscountName, Description, DiscountType, DiscountValue, StartDate, EndDate, IsActive, CreatedDate, VoucherCode, MinOrderAmount, MaxDiscountAmount, UsageLimit, UsedCount, DiscountCategory) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            conn = dbContext.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, discount.getDiscountId().toString());
+            pstmt.setString(2, discount.getDiscountName());
+            pstmt.setString(3, discount.getDescription());
+            pstmt.setString(4, discount.getDiscountType());
+            pstmt.setBigDecimal(5, discount.getDiscountValue());
+            pstmt.setDate(6, new java.sql.Date(discount.getStartDate().getTime()));
+            pstmt.setDate(7, new java.sql.Date(discount.getEndDate().getTime()));
+            pstmt.setBoolean(8, discount.isIsActive());
+            pstmt.setTimestamp(9, new java.sql.Timestamp(discount.getCreatedDate().getTime()));
+            pstmt.setString(10, discount.getVoucherCode());
+            pstmt.setBigDecimal(11, discount.getMinOrderAmount());
+            pstmt.setBigDecimal(12, discount.getMaxDiscountAmount());
+            pstmt.setObject(13, discount.getUsageLimit());
+            pstmt.setInt(14, discount.getUsedCount());
+            pstmt.setString(15, discount.getDiscountCategory());
+            pstmt.executeUpdate();
+        } finally {
+            dbContext.close(conn, pstmt);
+        }
+    }
+
+    public void update(Discount discount) throws SQLException {
+        String sql = "UPDATE Discount SET DiscountName = ?, Description = ?, DiscountType = ?, DiscountValue = ?, StartDate = ?, EndDate = ?, IsActive = ?, VoucherCode = ?, MinOrderAmount = ?, MaxDiscountAmount = ?, UsageLimit = ?, UsedCount = ?, DiscountCategory = ? WHERE DiscountId = ?";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            conn = dbContext.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, discount.getDiscountName());
+            pstmt.setString(2, discount.getDescription());
+            pstmt.setString(3, discount.getDiscountType()); // Fixed typo: getDiscountfnType to getDiscountType
+            pstmt.setBigDecimal(4, discount.getDiscountValue());
+            pstmt.setDate(5, new java.sql.Date(discount.getStartDate().getTime()));
+            pstmt.setDate(6, new java.sql.Date(discount.getEndDate().getTime()));
+            pstmt.setBoolean(7, discount.isIsActive());
+            pstmt.setString(8, discount.getVoucherCode());
+            pstmt.setBigDecimal(9, discount.getMinOrderAmount());
+            pstmt.setBigDecimal(10, discount.getMaxDiscountAmount());
+            pstmt.setObject(11, discount.getUsageLimit());
+            pstmt.setInt(12, discount.getUsedCount());
+            pstmt.setString(13, discount.getDiscountCategory());
+            pstmt.setString(14, discount.getDiscountId().toString());
+            pstmt.executeUpdate();
+        } finally {
+            dbContext.close(conn, pstmt);
+        }
+    }
+
+    public int delete(String discountId) throws SQLException {
+        String sql = "DELETE FROM Discount WHERE DiscountId = ?";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            conn = dbContext.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, discountId);
+            int affectedRows = pstmt.executeUpdate();
+            return affectedRows;
+        } finally {
+            dbContext.close(conn, pstmt);
+        }
     }
 }

@@ -1,8 +1,7 @@
 package Model.Entity.Booking;
 
-import java.util.Date;
-import java.util.UUID;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class Booking {
     private UUID bookingId;
@@ -18,6 +17,12 @@ public class Booking {
     private String cancelReason;
     private String bookingCode;
     private String expectedPaymentMethod;
+    // Thông tin khách hàng được "đóng băng" tại thời điểm booking
+    private String customerName; // Tên khách hàng tại thời điểm booking
+    private String customerPhone; // Số điện thoại khách hàng tại thời điểm booking
+    private String customerAddress; // Địa chỉ khách hàng tại thời điểm booking
+    private String customerEmail; // Email khách hàng tại thời điểm booking
+    private String driverLicenseImageUrl; // Ảnh bằng lái xe tại thời điểm booking
 
     public Booking() {
     }
@@ -142,7 +147,37 @@ public class Booking {
         this.expectedPaymentMethod = expectedPaymentMethod;
     }
 
-    
+    // Getter & Setter cho các trường mới
+    public String getCustomerName() {
+        return customerName;
+    }
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+    public String getCustomerPhone() {
+        return customerPhone;
+    }
+    public void setCustomerPhone(String customerPhone) {
+        this.customerPhone = customerPhone;
+    }
+    public String getCustomerAddress() {
+        return customerAddress;
+    }
+    public void setCustomerAddress(String customerAddress) {
+        this.customerAddress = customerAddress;
+    }
+    public String getCustomerEmail() {
+        return customerEmail;
+    }
+    public void setCustomerEmail(String customerEmail) {
+        this.customerEmail = customerEmail;
+    }
+    public String getDriverLicenseImageUrl() {
+        return driverLicenseImageUrl;
+    }
+    public void setDriverLicenseImageUrl(String driverLicenseImageUrl) {
+        this.driverLicenseImageUrl = driverLicenseImageUrl;
+    }
 
     @Override
     public String toString() {

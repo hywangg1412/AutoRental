@@ -1,16 +1,18 @@
 package Controller.Auth;
 
 import Mapper.UserMapper;
+import Model.Entity.OAuth.EmailOTPVerification;
 import Model.Entity.OAuth.GoogleUser;
 import Model.Entity.User.User;
 import Model.Entity.OAuth.UserLogins;
 import Model.Entity.Role.Role;
-import Model.Entity.Role.UserRole;
+import Model.Constants.RoleConstants;
+import Service.Auth.EmailOTPVerificationService;
 import Service.User.UserService;
 import Service.Auth.GoogleAuthService;
 import Service.Auth.UserLoginsService;
+import Service.External.MailService;
 import Service.Role.RoleService;
-import Service.Role.UserRoleService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -18,6 +20,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import Utils.SessionUtil;
+import java.util.UUID;
+import java.time.LocalDateTime;
 
 // googleRegister
 public class GoogleRegisterServlet extends HttpServlet {
@@ -27,7 +31,8 @@ public class GoogleRegisterServlet extends HttpServlet {
     private UserService userService;
     private UserLoginsService userLoginsService;
     private RoleService roleService;
-    private UserRoleService userRoleService;
+    private MailService mailService;
+    private EmailOTPVerificationService emailOTP;
 
     @Override
     public void init() {
@@ -36,7 +41,8 @@ public class GoogleRegisterServlet extends HttpServlet {
         userService = new UserService();
         userLoginsService = new UserLoginsService();
         roleService = new RoleService();
-        userRoleService = new UserRoleService();
+        mailService = new MailService();
+        emailOTP = new EmailOTPVerificationService();
     }
 
     @Override
@@ -64,32 +70,23 @@ public class GoogleRegisterServlet extends HttpServlet {
                 return;
             }
 
-            User newUser = userMapper.mapGoogleUserToUser(googleUser);
-            User addedUser = userService.add(newUser);
-            if (addedUser != null) {
-                Role userRole = roleService.findByRoleName("User");
-                if (userRole != null) {
-                    UserRole newUserRole = new UserRole(addedUser.getUserId(), userRole.getRoleId());
-                    userRoleService.add(newUserRole);
-                }
-
-                UserLogins userLogins = new UserLogins();
-                userLogins.setUserId(addedUser.getUserId());
-                userLogins.setLoginProvider("google");
-                userLogins.setProviderKey(googleUser.getGoogleId());
-                try {
-                    userLoginsService.add(userLogins);
-                    request.getSession().setAttribute("userId", addedUser.getUserId().toString());
-                    request.getRequestDispatcher("/pages/authen/SetPassword.jsp").forward(request, response);
-                } catch (Exception ex) {
-                    userService.delete(addedUser.getUserId());
-                    request.setAttribute("error", "Register failed (user login): " + ex.getMessage());
-                    request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
-                }
-            } else {
-                request.setAttribute("error", "Register failed. Please try again.");
+            User newUser = userMapper.mapGoogleUserToUser(googleUser,userService);
+            newUser.setEmailVerifed(true);
+            Role userRole = roleService.findByRoleName(RoleConstants.USER);
+            if (userRole == null) {
+                request.setAttribute("error", "Default user role not found!");
                 request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
+                return;
             }
+            newUser.setRoleId(userRole.getRoleId());
+            userService.add(newUser);
+            
+            request.getSession().setAttribute("userId", newUser.getUserId().toString());
+            UserLogins userLogins = userMapper.mapGoogleUserToUserLogins(googleUser, newUser);
+            userLoginsService.add(userLogins);
+
+            response.sendRedirect(request.getContextPath() + "/setPassword");
+            return;
         } catch (Exception e) {
             request.setAttribute("error", "Google register failed - " + e.getMessage());
             request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);

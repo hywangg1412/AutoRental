@@ -170,8 +170,10 @@ document.addEventListener('DOMContentLoaded', function() {
             input.addEventListener('input', validateDriverLicenseFields);
         });
 
+        const loading = document.getElementById('driverLicenseLoading');
         licenseImageInput.addEventListener('change', function(e) {
             if (this.files && this.files[0]) {
+                if (loading) loading.style.display = 'block';
                 const formData = new FormData();
                 formData.append('licenseImage', this.files[0]);
                 formData.append('action', 'uploadImage');
@@ -188,6 +190,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 })
                 .then(data => {
+                    if (loading) loading.style.display = 'none';
                     if (data) {
                         try {
                             const result = JSON.parse(data);
@@ -215,6 +218,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 })
                 .catch(error => {
+                    if (loading) loading.style.display = 'none';
                     showToast('Failed to upload image. Please try again.', 'error');
                 });
             }
@@ -373,4 +377,11 @@ window.addEventListener('beforeunload', function (e) {
         e.preventDefault();
         e.returnValue = '';
     }
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+        new bootstrap.Tooltip(tooltipTriggerEl);
+    });
 });

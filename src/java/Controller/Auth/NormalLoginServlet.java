@@ -1,11 +1,10 @@
 package Controller.Auth;
 
+import Model.Constants.UserStatusConstants;
 import Model.Entity.User.User;
 import Model.Entity.Role.Role;
-import Model.Entity.Role.UserRole;
 import Service.User.UserService;
 import Service.Role.RoleService;
-import Service.Role.UserRoleService;
 import Utils.SessionUtil;
 import Utils.ObjectUtils;
 import java.io.IOException;
@@ -16,19 +15,24 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
+import Service.External.MailService;
+import Service.Auth.EmailOTPVerificationService;
+import Model.Entity.OAuth.EmailOTPVerification;
 
 // /normalLogin
 public class NormalLoginServlet extends HttpServlet {
 
     private UserService userService;
     private RoleService roleService;
-    private UserRoleService userRoleService;
+    private MailService mailService;
+    private EmailOTPVerificationService emailOTPService;
 
     @Override
     public void init() {
         userService = new UserService();
         roleService = new RoleService();
-        userRoleService = new UserRoleService();
+        mailService = new MailService();
+        emailOTPService = new EmailOTPVerificationService();
     }
 
     @Override
@@ -65,6 +69,7 @@ public class NormalLoginServlet extends HttpServlet {
                 request.getRequestDispatcher("pages/authen/SignIn.jsp").forward(request, response);
                 return;
             }
+            
             if (user.isLockoutEnabled() && user.getAccessFailedCount() >= 5) {
                 user.setStatus("Banned");
                 user.setAccessFailedCount(0);
@@ -92,16 +97,38 @@ public class NormalLoginServlet extends HttpServlet {
                 userService.update(user);
             }
 
-            UserRole userRole = userRoleService.findByUserId(user.getUserId());
-            Role actualRole = roleService.findById(userRole.getRoleId());
+            if (!user.isActive()) {
+                user.setStatus(UserStatusConstants.ACTIVE);
+                userService.update(user);
+            }
+
+            if (!user.isEmailVerifed()) {
+                EmailOTPVerification otp = emailOTPService.findByUserId(user.getUserId());
+                if (otp != null) {
+                    mailService.sendOtpEmail(user.getEmail(), otp.getOtp(), user.getUsername());
+                }
+                request.setAttribute("error", "Your email has not been verified. A new verification code has been sent to your email.");
+                request.getRequestDispatcher("pages/authen/SignIn.jsp").forward(request, response);
+                return;
+            }
+
             String redirectUrl = "/pages/home";
-            if (actualRole.getRoleName().equals("Staff")) {
-                redirectUrl = "/pages/staff/staff-dashboard.jsp";
-            } else if (actualRole.getRoleName().equals("Admin")) {
-                redirectUrl = "/pages/admin/admin-dashboard.jsp";
+            try {
+                Role userRole = roleService.findById(user.getRoleId());
+                if (userRole != null) {
+                    String roleName = userRole.getRoleName();
+                    if ("Staff".equalsIgnoreCase(roleName)) {
+                        redirectUrl = "/staff/dashboard";
+                    } else if ("Admin".equalsIgnoreCase(roleName)) {
+                        redirectUrl = "/pages/admin/admin-dashboard.jsp";
+                    }
+                }
+            } catch (Exception ex) {
+                // Nếu lỗi khi lấy role, giữ nguyên redirectUrl mặc định
             }
 
             SessionUtil.setSessionAttribute(request, "user", user);
+            SessionUtil.setSessionAttribute(request, "userId", user.getUserId().toString());
             SessionUtil.setSessionAttribute(request, "isLoggedIn", true);
             SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
             response.sendRedirect(request.getContextPath() + redirectUrl);
