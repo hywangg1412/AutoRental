@@ -622,7 +622,6 @@
                     data.recentBookings.forEach(function (bk) {
                         var li = document.createElement('li');
                         li.className = 'list-group-item px-0';
-                        li.innerHTML = `<span class="fw-bold">#${bk.code}</span> | ${bk.date} | <span class="badge bg-${bk.status === 'Completed' ? 'success' : 'secondary'}">${bk.status}</span> | $${bk.amount}`;
                         bookingsList.appendChild(li);
                     });
                 } else {
