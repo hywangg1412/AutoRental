@@ -554,3 +554,8 @@ nav.ftco-navbar-light .nav-link {
     display: none !important;
     visibility: hidden !important;
 }
+
+.fa-bell, .fa-comment-dots {
+    color: #222 !important;
+}
+
