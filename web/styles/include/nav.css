@@ -467,6 +467,146 @@ nav .custom-signup-btn:hover, nav .custom-signup-btn:focus {
     color: inherit !important;
   } */
 
+/* Sửa vấn đề notification count bị khuất */
+.notification-wrapper {
+  position: relative !important;
+  overflow: visible !important;
+}
+
+.notification-btn {
+  position: relative !important;
+  display: inline-block !important;
+  padding: 8px !important;
+  overflow: visible !important;
+}
+
+.notification-count {
+  position: absolute !important;
+  top: 10px !important;
+  right: 4px !important;
+  background: #dc3545 !important;
+  color: white !important;
+  border-radius: 50% !important;
+  min-width: 19px !important;
+  height: 19px !important;
+  font-size: 11px !important;
+  font-weight: bold !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  /* border: 2px solid white !important; */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  z-index: 1060 !important;
+  transform: translate(50%, -50%) !important;
+  line-height: 1 !important;
+}
+
+/* Đảm bảo icon bell không bị overflow */
+.notification-btn i.fa-bell {
+  border: none !important;
+  border-radius: 50%;
+  padding: 6px;
+  box-sizing: content-box;
+  color: #fff !important;
+  font-size: 1.2rem !important;
+  transition: border 0.2s;
+  position: relative;
+  z-index: 1;
+}
+
+/* Sửa cho navbar khi scroll */
+.ftco-navbar-light.scrolled .notification-btn i.fa-bell {
+  color: #222 !important;
+}
+
+.ftco-navbar-light.scrolled .notification-count {
+  border-color: #f8f9fa !important;
+}
+
+/* Responsive cho mobile */
+@media (max-width: 767.98px) {
+  .notification-count {
+    min-width: 18px !important;
+    height: 18px !important;
+    font-size: 10px !important;
+    top: 2px !important;
+    right: 2px !important;
+  }
+}
+
+/* Đảm bảo dropdown không bị ảnh hưởng */
+.dropdown-menu {
+  z-index: 1050 !important;
+}
+
+/* Fix cho trường hợp button bị clip */
+.notification-wrapper .btn {
+  overflow: visible !important;
+}
+
+/* Alternative positioning nếu vẫn bị lỗi */
+/* .notification-count-alt {
+  position: absolute !important;
+  top: -8px !important;
+  right: -8px !important;
+  background: #dc3545 !important;
+  color: white !important;
+  border-radius: 50% !important;
+  min-width: 20px !important;
+  height: 20px !important;
+  font-size: 11px !important;
+  font-weight: bold !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  border: 2px solid white !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  z-index: 1060 !important;
+  line-height: 1 !important;
+} */
+
+/* Đảm bảo parent container không bị overflow */
+.d-flex.align-items-center.gap-3 {
+  overflow: visible !important;
+}
+
+.navbar .d-flex {
+  overflow: visible !important;
+}
+
+.ftco-navbar-light.scrolled .notification-btn i.fa-bell,
+.ftco-navbar-light.scrolled .fa-comment-dots {
+  color: #222 !important;
+}
+
+.ftco-navbar-light.scrolled .notification-btn i.fa-bell,
+.ftco-navbar-light.scrolled .notification-btn ~ a i.fa-comment-dots {
+  color: #222 !important;
+}
+
+.ftco-navbar-light.scrolled .notification-count {
+  position: absolute !important;
+  top: 19px !important;
+  right: 4px !important;
+  background: #dc3545 !important;
+  color: white !important;
+  border-radius: 50% !important;
+  min-width: 19px !important;
+  height: 19px !important;
+  font-size: 11px !important;
+  font-weight: bold !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  /* border: 2px solid white !important; */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  z-index: 1060 !important;
+  transform: translate(50%, -50%) !important;
+  line-height: 1 !important;
+}
 
 
 

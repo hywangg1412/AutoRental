@@ -30,7 +30,7 @@
 </head>
 <body>
     <!-- Header -->
-    <jsp:include page="/pages/includes/nav.jsp" />
+    <jsp:include page="/pages/includes/user-nav.jsp" />
     <div class="container">
         <div class="row g-5" style="margin-top: 80px;">
             <!-- Sidebar -->
