@@ -28,6 +28,7 @@ public class User {
     private LocalDateTime lockoutEnd;
     private boolean lockoutEnabled;
     private int accessFailedCount;
+    private boolean phoneVerified;
 
     public User() {
     }
@@ -38,7 +39,7 @@ public class User {
             String normalizedUserName, String email, String normalizedEmail, boolean emailVerifed,
             String passwordHash, String securityStamp, String concurrencyStamp,
             boolean twoFactorEnabled, LocalDateTime lockoutEnd, boolean lockoutEnabled,
-            int accessFailedCount) {
+            int accessFailedCount, boolean phoneVerified) {
         this.userId = userId;
         this.username = username;
         this.userDOB = userDOB;
@@ -61,6 +62,7 @@ public class User {
         this.lockoutEnd = lockoutEnd;
         this.lockoutEnabled = lockoutEnabled;
         this.accessFailedCount = accessFailedCount;
+        this.phoneVerified = phoneVerified;
     }
 
     public String getFullName() {
@@ -254,6 +256,13 @@ public class User {
 
     public void setRoleId(UUID roleId) {
         this.roleId = roleId;
+    }
+
+    public boolean isPhoneVerified() {
+        return phoneVerified;
+    }
+    public void setPhoneVerified(boolean phoneVerified) {
+        this.phoneVerified = phoneVerified;
     }
 
     @Override

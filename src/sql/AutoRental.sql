@@ -37,6 +37,7 @@ CREATE TABLE [Users] (
     [LockoutEnd] DATETIME2 NULL,
     [LockoutEnabled] BIT NOT NULL, --DEFAULT 1,
     [AccessFailedCount] INT NOT NULL, --DEFAULT 0,
+    [PhoneVerified] BIT NULL, --DEFAULT 0,
     CONSTRAINT [PK_Users] PRIMARY KEY ([UserId]),
     CONSTRAINT [FK_Users_Roles] FOREIGN KEY ([RoleId]) REFERENCES [Roles]([RoleId]) ON DELETE CASCADE
 );
