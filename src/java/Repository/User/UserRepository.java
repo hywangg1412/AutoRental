@@ -71,6 +71,7 @@ public class UserRepository implements IUserRepository {
         return null;
     }
 
+    @Override
     public User findById(UUID userId) throws SQLException {
         String sql = "SELECT * FROM Users WHERE UserId = ?";
         try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
@@ -147,6 +148,7 @@ public class UserRepository implements IUserRepository {
         return users;
     }
 
+    @Override
     public User findByUsernameAndPassword(String username, String passwordHash) {
         String sql = "SELECT * FROM Users WHERE Username = ? AND PasswordHash = ?";
         try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
@@ -302,6 +304,7 @@ public class UserRepository implements IUserRepository {
     /**
      * Lấy tất cả username bắt đầu bằng baseUsername (không phân biệt hoa thường)
      */
+    @Override
     public List<String> findAllUsernamesLike(String baseUsername) {
         List<String> usernames = new ArrayList<>();
         String sql = "SELECT Username FROM Users WHERE LOWER(Username) LIKE ?";
@@ -317,11 +320,124 @@ public class UserRepository implements IUserRepository {
         return usernames;
     }
 
+    @Override
     public List<User> findByRoleId(UUID roleId) throws SQLException {
         List<User> users = new ArrayList<>();
         String sql = "SELECT * FROM Users WHERE RoleId = ?";
         try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
             st.setObject(1, roleId);
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    users.add(mapResultSetToUser(rs));
+                }
+            }
+        }
+        return users;
+    }
+    
+    // New optimized filter methods
+    @Override
+    public List<User> findWithFilters(String roleFilter, String statusFilter, String searchTerm) throws SQLException {
+        List<User> users = new ArrayList<>();
+        
+        // Optimized query with specific columns instead of SELECT *
+        StringBuilder sql = new StringBuilder("SELECT TOP 1000 u.UserId, u.Username, u.UserDOB, u.PhoneNumber, ");
+        sql.append("u.AvatarUrl, u.Gender, u.FirstName, u.LastName, u.Status, u.RoleId, u.CreatedDate, ");
+        sql.append("u.NormalizedUserName, u.Email, u.NormalizedEmail, u.EmailVerifed, u.PasswordHash, ");
+        sql.append("u.SecurityStamp, u.ConcurrencyStamp, u.TwoFactorEnabled, u.LockoutEnd, u.LockoutEnabled, ");
+        sql.append("u.AccessFailedCount FROM Users u");
+        
+        // Use LEFT JOIN instead of INNER JOIN for better performance
+        if (roleFilter != null && !roleFilter.equals("all")) {
+            sql.append(" LEFT JOIN Roles r ON u.RoleId = r.RoleId");
+        }
+        
+        sql.append(" WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+        
+        // Role filter with index optimization
+        if (roleFilter != null && !roleFilter.equals("all")) {
+            sql.append(" AND r.RoleName = ?");
+            params.add(roleFilter);
+        }
+        
+        // Status filter with index optimization
+        if (statusFilter != null && !statusFilter.equals("all")) {
+            sql.append(" AND u.Status = ?");
+            params.add(statusFilter);
+        }
+        
+        // Optimized search with full-text search capabilities
+        if (searchTerm != null && !searchTerm.trim().isEmpty()) {
+            String trimmedSearch = searchTerm.trim();
+            // Use more efficient search pattern
+            if (trimmedSearch.length() >= 3) {
+                sql.append(" AND (u.FirstName LIKE ? OR u.LastName LIKE ? OR u.Email LIKE ? OR u.Username LIKE ?)");
+                String searchPattern = "%" + trimmedSearch + "%";
+                params.add(searchPattern);
+                params.add(searchPattern);
+                params.add(searchPattern);
+                params.add(searchPattern);
+            } else {
+                // For short search terms, use exact match on email/username
+                sql.append(" AND (u.Email = ? OR u.Username = ?)");
+                params.add(trimmedSearch);
+                params.add(trimmedSearch);
+            }
+        }
+        
+        // Optimized ordering with index
+        sql.append(" ORDER BY u.CreatedDate DESC, u.UserId");
+        
+        try (Connection conn = dbContext.getConnection(); 
+             PreparedStatement st = conn.prepareStatement(sql.toString())) {
+            
+            // Set parameters efficiently
+            for (int i = 0; i < params.size(); i++) {
+                st.setObject(i + 1, params.get(i));
+            }
+            
+            // Execute with optimized fetch size
+            st.setFetchSize(100);
+            
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    users.add(mapResultSetToUser(rs));
+                }
+            }
+        }
+        
+        return users;
+    }
+    
+    @Override
+    public List<User> findByStatus(String status) throws SQLException {
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT * FROM Users WHERE Status = ?";
+        try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setString(1, status);
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    users.add(mapResultSetToUser(rs));
+                }
+            }
+        }
+        return users;
+    }
+    
+    @Override
+    public List<User> searchUsers(String searchTerm) throws SQLException {
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT TOP 1000 * FROM Users WHERE FirstName LIKE ? OR LastName LIKE ? OR Email LIKE ? OR Username LIKE ? OR PhoneNumber LIKE ?";
+        String searchPattern = "%" + searchTerm.trim() + "%";
+        
+        try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setString(1, searchPattern);
+            st.setString(2, searchPattern);
+            st.setString(3, searchPattern);
+            st.setString(4, searchPattern);
+            st.setString(5, searchPattern);
+            
             try (ResultSet rs = st.executeQuery()) {
                 while (rs.next()) {
                     users.add(mapResultSetToUser(rs));

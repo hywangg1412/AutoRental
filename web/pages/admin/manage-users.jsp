@@ -8,6 +8,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>User Management - AutoRental</title>
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  
   <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/admin/admin-style.css">    
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -34,7 +38,7 @@
                   </svg>
                   Dashboard
               </a>
-              <a href="${pageContext.request.contextPath}/pages/admin/manage-users.jsp" class="nav-item active">
+              <a href="${pageContext.request.contextPath}/admin/user-management" class="nav-item active">
                   <svg class="nav-item-icon" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M16 7c0-2.21-1.79-4-4-4S8 4.79 8 7s1.79 4 4 4 4-1.79 4-4zm-4 6c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"/>
                   </svg>
@@ -123,14 +127,14 @@
               <div class="page-header">
                   <div class="flex items-center justify-between">
                       <div>
-                          <h1 class="page-title">User Management</h1>
-                          <p class="page-description">Manage customer accounts and permissions</p>
+                          <h1 class="page-title">Account Management</h1>
+                          <p class="page-description">Manage all user accounts, staff members, and administrators</p>
                       </div>
                       <button class="btn btn-primary" onclick="openAddUserModal()">
                           <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
                               <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
                           </svg>
-                          Add User
+                          Add Account
                       </button>
                   </div>
               </div>
@@ -141,29 +145,53 @@
                       <div class="stat-header">
                           <span class="stat-title">Total Users</span>
                       </div>
-                      <div class="stat-value">1,245</div>
-                      <div class="stat-change positive">+12% from last month</div>
+                      <div class="stat-value">${not empty users ? users.size() : 0}</div>
+                      <div class="stat-change positive">All registered users</div>
+                  </div>
+                  <div class="stat-card">
+                      <div class="stat-header">
+                          <span class="stat-title">Customers</span>
+                      </div>
+                      <div class="stat-value">
+                          <c:set var="userCount" value="0"/>
+                          <c:forEach var="user" items="${users}">
+                              <c:if test="${requestScope['role_' += user.userId] == 'User'}">
+                                  <c:set var="userCount" value="${userCount + 1}"/>
+                              </c:if>
+                          </c:forEach>
+                          ${userCount}
+                      </div>
+                      <div class="stat-change positive">Regular customers</div>
+                  </div>
+                  <div class="stat-card">
+                      <div class="stat-header">
+                          <span class="stat-title">Staff Members</span>
+                      </div>
+                      <div class="stat-value">
+                          <c:set var="staffCount" value="0"/>
+                          <c:forEach var="user" items="${users}">
+                              <c:if test="${requestScope['role_' += user.userId] == 'Staff'}">
+                                  <c:set var="staffCount" value="${staffCount + 1}"/>
+                              </c:if>
+                          </c:forEach>
+                          ${staffCount}
+                      </div>
+                      <div class="stat-change">System staff</div>
                   </div>
                   <div class="stat-card">
                       <div class="stat-header">
                           <span class="stat-title">Active Users</span>
                       </div>
-                      <div class="stat-value">1,089</div>
+                      <div class="stat-value">
+                          <c:set var="activeCount" value="0"/>
+                          <c:forEach var="user" items="${users}">
+                              <c:if test="${user.status == 'Active'}">
+                                  <c:set var="activeCount" value="${activeCount + 1}"/>
+                              </c:if>
+                          </c:forEach>
+                          ${activeCount}
+                      </div>
                       <div class="stat-change positive">Currently active</div>
-                  </div>
-                  <div class="stat-card">
-                      <div class="stat-header">
-                          <span class="stat-title">Banned Users</span>
-                      </div>
-                      <div class="stat-value">12</div>
-                      <div class="stat-change">Requires attention</div>
-                  </div>
-                  <div class="stat-card">
-                      <div class="stat-header">
-                          <span class="stat-title">New This Month</span>
-                      </div>
-                      <div class="stat-value">156</div>
-                      <div class="stat-change positive">+25% growth</div>
                   </div>
               </div>
 
@@ -173,21 +201,28 @@
                       <svg class="search-icon" fill="currentColor" viewBox="0 0 24 24">
                           <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
                       </svg>
-                      <input type="text" class="search-input" placeholder="Search users..." id="searchUsers">
+                      <input type="text" class="search-input" placeholder="Search users..." id="searchUsers" value="${param.search}">
                   </div>
+                  <select class="form-select" id="roleFilter">
+                      <option value="all" ${param.role == null || param.role == 'all' ? 'selected' : ''}>All Roles</option>
+                      <option value="User" ${param.role == 'User' ? 'selected' : ''}>User</option>
+                      <option value="Staff" ${param.role == 'Staff' ? 'selected' : ''}>Staff</option>
+                      <option value="Admin" ${param.role == 'Admin' ? 'selected' : ''}>Admin</option>
+                  </select>
                   <select class="form-select" id="statusFilter">
-                      <option value="all">All Status</option>
-                      <option value="active">Active</option>
-                      <option value="inactive">Inactive</option>
-                      <option value="banned">Banned</option>
+                      <option value="all" ${param.status == null || param.status == 'all' ? 'selected' : ''}>All Status</option>
+                      <option value="Active" ${param.status == 'Active' ? 'selected' : ''}>Active</option>
+                      <option value="Inactive" ${param.status == 'Inactive' ? 'selected' : ''}>Inactive</option>
+                      <option value="Banned" ${param.status == 'Banned' ? 'selected' : ''}>Banned</option>
+                      <option value="Deleted" ${param.status == 'Deleted' ? 'selected' : ''}>Deleted</option>
                   </select>
               </div>
 
               <!-- Users Table -->
               <div class="card">
                   <div class="card-header">
-                      <h2 class="card-title">All Users</h2>
-                      <p class="card-description">Manage and monitor user accounts</p>
+                      <h2 class="card-title">All Accounts</h2>
+                      <p class="card-description">Manage and monitor all user accounts, staff members, and administrators</p>
                   </div>
                   <div class="card-content">
                       <div class="table-container">
@@ -197,6 +232,7 @@
                                       <th>User</th>
                                       <th>Contact</th>
                                       <th>Join Date</th>
+                                      <th>Role</th>
                                       <th>Bookings</th>
                                       <th>Total Spent</th>
                                       <th>Status</th>
@@ -204,41 +240,80 @@
                                   </tr>
                               </thead>
                               <tbody>
+                                  <c:choose>
+                                      <c:when test="${not empty users}">
+                                          <c:forEach var="user" items="${users}">
                                   <tr>
                                       <td>
                                           <div>
-                                              <div class="font-medium">John Doe</div>
-                                              <div class="text-sm text-gray-500">john@example.com</div>
+                                                          <div class="font-medium">${user.fullName}</div>
+                                                          <div class="text-sm text-gray-500">${user.email}</div>
                                           </div>
                                       </td>
                                       <td>
                                           <div>
-                                              <div>+1 234 567 8901</div>
-                                              <div class="text-xs text-gray-500">123 Main St, City, State</div>
+                                                          <div>${user.phoneNumber != null ? user.phoneNumber : 'N/A'}</div>
+                                                          <div class="text-xs text-gray-500">${user.username}</div>
                                           </div>
                                       </td>
-                                      <td>Jan 15, 2024</td>
-                                      <td class="font-medium">12</td>
-                                      <td class="font-medium">$1,245</td>
-                                      <td><span class="badge success">Active</span></td>
+                                                  <td>
+                                                      ${user.createdDate != null ? user.createdDate.toString().substring(0, 10) : ''}
+                                      </td>
+                                                  <td>
+                                                      <span class="text-sm">${requestScope['role_' += user.userId] != null ? requestScope['role_' += user.userId] : 'Unknown'}</span>
+                                                  </td>
+                                                  <td class="font-medium">${requestScope['bookingCount_' += user.userId] != null ? requestScope['bookingCount_' += user.userId] : 0}</td>
+                                                  <td class="font-medium">
+                                                      <fmt:formatNumber value="${requestScope['totalSpent_' += user.userId] != null ? requestScope['totalSpent_' += user.userId] : 0}" type="currency" currencySymbol="$"/>
+                                      </td>
+                                      <td>
+                                                      <c:choose>
+                                                          <c:when test="${user.status == 'Active'}">
+                                                              <span class="badge success">Active</span>
+                                                          </c:when>
+                                                          <c:when test="${user.status == 'Banned'}">
+                                                              <span class="badge danger">Banned</span>
+                                                          </c:when>
+                                                          <c:when test="${user.status == 'Inactive'}">
+                                                              <span class="badge warning">Inactive</span>
+                                                          </c:when>
+                                                          <c:when test="${user.status == 'Deleted'}">
+                                                              <span class="badge secondary">Deleted</span>
+                                                          </c:when>
+                                                          <c:otherwise>
+                                                              <span class="badge secondary">${user.status}</span>
+                                                          </c:otherwise>
+                                                      </c:choose>
+                                      </td>
                                       <td>
                                           <div class="flex items-center gap-4">
-                                              <button class="btn-ghost" onclick="viewUser(1)">
+                                                          <button class="btn-ghost" onclick="viewUser('${user.userId}')" title="View User">
                                                   <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
                                                       <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
                                                   </svg>
                                               </button>
-                                              <button class="btn-ghost" onclick="editUser(1)">
+                                                          <button class="btn-ghost" onclick="editUser('${user.userId}')" title="Edit User">
                                                   <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
                                                       <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
                                                   </svg>
                                               </button>
-                                              <button class="btn-ghost" onclick="banUser(1, 'John Doe')">
+                                                          <c:choose>
+                                                              <c:when test="${user.status == 'Banned'}">
+                                                                  <button class="btn-ghost" onclick="unbanUser('${user.userId}', '${user.fullName}')" title="Unban User">
+                                                                      <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                                                                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                                                      </svg>
+                                                                  </button>
+                                                              </c:when>
+                                                              <c:otherwise>
+                                                                  <button class="btn-ghost" onclick="banUser('${user.userId}', '${user.fullName}')" title="Ban User">
                                                   <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
                                                       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM4 12c0-4.42 3.58-8 8-8 1.85 0 3.55.63 4.9 1.69L5.69 16.9C4.63 15.55 4 13.85 4 12zm8 8c-1.85 0-3.55-.63-4.9-1.69L18.31 7.1C19.37 8.45 20 10.15 20 12c0 4.42-3.58 8-8 8z"/>
                                                   </svg>
                                               </button>
-                                              <button class="btn-ghost" onclick="deleteUser(1, 'John Doe')">
+                                                              </c:otherwise>
+                                                          </c:choose>
+                                                          <button class="btn-ghost" onclick="deleteUser('${user.userId}', '${user.fullName}')" title="Delete User">
                                                   <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
                                                       <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
                                                   </svg>
@@ -246,90 +321,16 @@
                                           </div>
                                       </td>
                                   </tr>
-                                  <tr>
-                                      <td>
-                                          <div>
-                                              <div class="font-medium">Jane Smith</div>
-                                              <div class="text-sm text-gray-500">jane@example.com</div>
-                                          </div>
-                                      </td>
-                                      <td>
-                                          <div>
-                                              <div>+1 234 567 8902</div>
-                                              <div class="text-xs text-gray-500">456 Oak Ave, City, State</div>
-                                          </div>
-                                      </td>
-                                      <td>Feb 20, 2024</td>
-                                      <td class="font-medium">8</td>
-                                      <td class="font-medium">$890</td>
-                                      <td><span class="badge success">Active</span></td>
-                                      <td>
-                                          <div class="flex items-center gap-4">
-                                              <button class="btn-ghost" onclick="viewUser(2)">
-                                                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                                                      <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
-                                                  </svg>
-                                              </button>
-                                              <button class="btn-ghost" onclick="editUser(2)">
-                                                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                                                      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-                                                  </svg>
-                                              </button>
-                                              <button class="btn-ghost" onclick="banUser(2, 'Jane Smith')">
-                                                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                                                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM4 12c0-4.42 3.58-8 8-8 1.85 0 3.55.63 4.9 1.69L5.69 16.9C4.63 15.55 4 13.85 4 12zm8 8c-1.85 0-3.55-.63-4.9-1.69L18.31 7.1C19.37 8.45 20 10.15 20 12c0 4.42-3.58 8-8 8z"/>
-                                                  </svg>
-                                              </button>
-                                              <button class="btn-ghost" onclick="deleteUser(2, 'Jane Smith')">
-                                                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                                                      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-                                                  </svg>
-                                              </button>
-                                          </div>
+                                          </c:forEach>
+                                      </c:when>
+                                      <c:otherwise>
+                                          <tr>
+                                              <td colspan="8" class="text-center py-8">
+                                                  <div class="text-gray-500">No users found</div>
                                       </td>
                                   </tr>
-                                  <tr>
-                                      <td>
-                                          <div>
-                                              <div class="font-medium">Mike Johnson</div>
-                                              <div class="text-sm text-gray-500">mike@example.com</div>
-                                          </div>
-                                      </td>
-                                      <td>
-                                          <div>
-                                              <div>+1 234 567 8903</div>
-                                              <div class="text-xs text-gray-500">789 Pine St, City, State</div>
-                                          </div>
-                                      </td>
-                                      <td>Mar 10, 2024</td>
-                                      <td class="font-medium">3</td>
-                                      <td class="font-medium">$245</td>
-                                      <td><span class="badge danger">Banned</span></td>
-                                      <td>
-                                          <div class="flex items-center gap-4">
-                                              <button class="btn-ghost" onclick="viewUser(3)">
-                                                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                                                      <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
-                                                  </svg>
-                                              </button>
-                                              <button class="btn-ghost" onclick="editUser(3)">
-                                                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                                                      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-                                                  </svg>
-                                              </button>
-                                              <button class="btn-ghost" onclick="unbanUser(3, 'Mike Johnson')">
-                                                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                                                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                                                  </svg>
-                                              </button>
-                                              <button class="btn-ghost" onclick="deleteUser(3, 'Mike Johnson')">
-                                                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                                                      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-                                                  </svg>
-                                              </button>
-                                          </div>
-                                      </td>
-                                  </tr>
+                                      </c:otherwise>
+                                  </c:choose>
                               </tbody>
                           </table>
                       </div>
@@ -393,6 +394,12 @@
       </div>
   </div>
 
+  <!-- Include Logout Modal -->
+  <jsp:include page="../includes/logout-confirm-modal.jsp" />
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
   <script>
       let currentUserId = null;
       let currentUserName = null;
@@ -403,8 +410,16 @@
       }
 
       function logout() {
+          // Show logout modal
+          const logoutModal = document.getElementById('logoutConfirmModal');
+          if (logoutModal) {
+              const modal = new bootstrap.Modal(logoutModal);
+              modal.show();
+          } else {
+              // Fallback to confirm if modal not available
           if (confirm('Are you sure you want to logout?')) {
-              window.location.href = 'login.jsp';
+                  window.location.href = '${pageContext.request.contextPath}/logout';
+              }
           }
       }
 
@@ -481,36 +496,39 @@
           }
       }
 
-      // Search functionality
-      document.getElementById('searchUsers').addEventListener('input', function(e) {
-          const searchTerm = e.target.value.toLowerCase();
-          const table = document.getElementById('usersTable');
-          const rows = table.getElementsByTagName('tr');
+      // Apply filters function
+      function applyFilters() {
+          const searchTerm = document.getElementById('searchUsers').value;
+          const roleFilter = document.getElementById('roleFilter').value;
+          const statusFilter = document.getElementById('statusFilter').value;
           
-          for (let i = 1; i < rows.length; i++) {
-              const row = rows[i];
-              const text = row.textContent.toLowerCase();
-              row.style.display = text.includes(searchTerm) ? '' : 'none';
-          }
+          // Build query parameters
+          const params = new URLSearchParams();
+          if (searchTerm) params.append('search', searchTerm);
+          if (roleFilter && roleFilter !== 'all') params.append('role', roleFilter);
+          if (statusFilter && statusFilter !== 'all') params.append('status', statusFilter);
+          
+          // Reload page with filters
+          window.location.href = '${pageContext.request.contextPath}/admin/user-management?' + params.toString();
+      }
+
+      // Search functionality with debounce
+      let searchTimeout;
+      document.getElementById('searchUsers').addEventListener('input', function(e) {
+          clearTimeout(searchTimeout);
+          searchTimeout = setTimeout(() => {
+              applyFilters();
+          }, 500); // Wait 500ms after user stops typing
+      });
+
+      // Role filter functionality
+      document.getElementById('roleFilter').addEventListener('change', function(e) {
+          applyFilters();
       });
 
       // Status filter functionality
       document.getElementById('statusFilter').addEventListener('change', function(e) {
-          const filterValue = e.target.value;
-          const table = document.getElementById('usersTable');
-          const rows = table.getElementsByTagName('tr');
-          
-          for (let i = 1; i < rows.length; i++) {
-              const row = rows[i];
-              const statusCell = row.cells[5];
-              const statusText = statusCell.textContent.toLowerCase();
-              
-              if (filterValue === 'all' || statusText.includes(filterValue)) {
-                  row.style.display = '';
-              } else {
-                  row.style.display = 'none';
-              }
-          }
+          applyFilters();
       });
 
       // Close modals when clicking outside
