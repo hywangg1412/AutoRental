@@ -13,16 +13,20 @@ import jakarta.servlet.http.HttpSession;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import Service.Role.RoleService;
+import Model.Entity.Role.Role;
 
 @WebServlet(name = "UpdatePhoneServlet", urlPatterns = {"/user/update-phone"})
 public class UpdatePhoneServlet extends HttpServlet {
     private static final Logger LOGGER = Logger.getLogger(UpdatePhoneServlet.class.getName());
     private static final String LOGIN_PAGE = "/pages/authen/SignIn.jsp";
     private UserService userService;
+    private RoleService roleService;
     
     @Override
     public void init() {
         userService = new UserService();
+        roleService = new RoleService();
     }
 
     @Override
@@ -56,6 +60,17 @@ public class UpdatePhoneServlet extends HttpServlet {
                 User updatedUser = userService.findById(user.getUserId());
                 session.setAttribute("user", updatedUser);
                 session.setAttribute("success", "Phone number updated successfully!");
+                String profileRedirect = "/user/profile";
+                try {
+                    Role userRole = roleService.findById(updatedUser.getRoleId());
+                    if (userRole != null && "Staff".equalsIgnoreCase(userRole.getRoleName())) {
+                        profileRedirect = "/staff/profile";
+                    }
+                } catch (Exception ex) {
+                    // Nếu lỗi khi lấy role, giữ nguyên profileRedirect là /user/profile
+                }
+                response.sendRedirect(request.getContextPath() + profileRedirect);
+                return;
             } else {
                 session.setAttribute("error", "Failed to update phone number!");
             }

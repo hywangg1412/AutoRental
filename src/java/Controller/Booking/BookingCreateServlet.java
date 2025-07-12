@@ -17,6 +17,7 @@ import Repository.Car.CarRepository;
 import Service.Booking.BookingService;
 import Service.External.CloudinaryService;
 import Service.User.DriverLicenseService;
+import Service.User.UserService;
 import Utils.SessionUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -144,52 +145,12 @@ public class BookingCreateServlet extends HttpServlet {
 
             // Step 7: Save the booking to the database
             bookingService.add(newBooking);
-            // --- Gửi notification cho tất cả staff khi có booking mới ---
-            try {
-                Service.Role.RoleService roleService = new Service.Role.RoleService();
-                Model.Entity.Role.Role staffRole = roleService.findByRoleName("Staff");
-                java.util.UUID staffRoleId = staffRole.getRoleId();
-<<<<<<< HEAD
-
-                Service.Role.UserRoleService userRoleService = new Service.Role.UserRoleService();
-                java.util.List<Model.Entity.Role.UserRole> staffUserRoles = userRoleService.findByRoleId(staffRoleId);
-
-                Service.NotificationService notificationService = new Service.NotificationService();
-                String message = "Bạn có một booking request mới.";
-                for (Model.Entity.Role.UserRole ur : staffUserRoles) {
-                    Model.Entity.Notification notification = new Model.Entity.Notification(
-                            java.util.UUID.randomUUID(),
-                            ur.getUserId(),
-                            message,
-                            java.time.LocalDateTime.now()
-                    );
-                    notificationService.add(notification);
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                // Không làm fail booking nếu lỗi notification
-            }
-=======
->>>>>>> d3d7bdf5e4b539790b126e4f5f92a46cb6196723
-
-                Service.Role.UserRoleService userRoleService = new Service.Role.UserRoleService();
-                java.util.List<Model.Entity.Role.UserRole> staffUserRoles = userRoleService.findByRoleId(staffRoleId);
-
-                Service.NotificationService notificationService = new Service.NotificationService();
-                String message = "Bạn có một booking request mới.";
-                for (Model.Entity.Role.UserRole ur : staffUserRoles) {
-                    Model.Entity.Notification notification = new Model.Entity.Notification(
-                            java.util.UUID.randomUUID(),
-                            ur.getUserId(),
-                            message,
-                            java.time.LocalDateTime.now()
-                    );
-                    notificationService.add(notification);
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                // Không làm fail booking nếu lỗi notification
-            }
+            
+            // Gửi notification cho tất cả staff khi có booking mới
+            Service.NotificationService notificationService = new Service.NotificationService();
+            String message = "Bạn có một booking request mới.";
+            notificationService.sendNotificationToAllStaff(message);
+            
             // Step 8: Lấy lại booking từ DB để lấy totalAmount và các thông tin khác
             Booking savedBooking = bookingService.findById(newBooking.getBookingId());
             request.setAttribute("booking", savedBooking);

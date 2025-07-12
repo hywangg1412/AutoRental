@@ -4,6 +4,7 @@ import Model.Entity.Car.Car;
 import Repository.Interfaces.Repository;
 import java.util.List;
 import java.sql.SQLException;
+import Model.DTO.CarListItemDTO;
 
 public interface ICarRepository extends Repository<Car, Integer> {
     List<Car> searchByKeyword(String keyword, int offset, int limit) throws SQLException;
@@ -27,4 +28,5 @@ public interface ICarRepository extends Repository<Car, Integer> {
         Integer minOdometer, Integer maxOdometer,
         Integer minDistance, Integer maxDistance
     ) throws SQLException;
+    List<CarListItemDTO> findAllForHomePage(int limit) throws SQLException;
 }

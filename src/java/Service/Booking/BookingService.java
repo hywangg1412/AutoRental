@@ -14,13 +14,19 @@ import Exception.NotFoundException;
 import Model.Entity.Booking.Booking;
 import Repository.Booking.BookingRepository;
 import Service.Interfaces.IBooking.IBookingService;
+import Model.Constants.BookingStatusConstants;
 
 public class BookingService implements IBookingService {
     private static final Logger LOGGER = Logger.getLogger(BookingService.class.getName());
     private final BookingRepository bookingRepository;
     
-    private static final String[] VALID_STATUSES = {"Pending", "Confirmed", "Cancelled", "Completed"};
-    private static final String DEFAULT_STATUS = "Pending";
+    private static final String[] VALID_STATUSES = {
+        BookingStatusConstants.PENDING,
+        BookingStatusConstants.CONFIRMED,
+        BookingStatusConstants.CANCELLED,
+        BookingStatusConstants.COMPLETED
+    };
+    private static final String DEFAULT_STATUS = BookingStatusConstants.PENDING;
 
     public BookingService() {
         this.bookingRepository = new BookingRepository();
@@ -103,6 +109,35 @@ public class BookingService implements IBookingService {
 
     public List<Booking> findByUserId(UUID userId) throws SQLException {
         return bookingRepository.findByUserId(userId);
+    }
+
+    @Override
+    public int countAllBookings() {
+        try {
+            return bookingRepository.findAll().size();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error counting all bookings", e);
+            return 0;
+        }
+    }
+
+    @Override
+    public int countBookingsByStatus(String status) {
+        try {
+            return bookingRepository.findByStatus(status).size();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error counting bookings by status: " + status, e);
+            return 0;
+        }
+    }
+
+    public List<Booking> findAll() {
+        try {
+            return bookingRepository.findAll();
+        } catch (SQLException ex) {
+            Logger.getLogger(BookingService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     private void validateBooking(Booking booking) throws InvalidDataException {

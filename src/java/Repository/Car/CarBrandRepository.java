@@ -82,6 +82,24 @@ public class CarBrandRepository implements ICarBrandRepository{
         return list;
     }
 
+    public List<CarBrand> findByIds(List<UUID> ids) throws SQLException {
+        List<CarBrand> list = new ArrayList<>();
+        if (ids == null || ids.isEmpty()) return list;
+        StringBuilder sql = new StringBuilder("SELECT * FROM CarBrand WHERE BrandId IN (");
+        sql.append(String.join(",", java.util.Collections.nCopies(ids.size(), "?"))).append(")");
+        try (var conn = dbContext.getConnection();
+             var ps = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < ids.size(); i++) {
+                ps.setObject(i + 1, ids.get(i));
+            }
+            try (var rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSetToCarBrand(rs));
+                }
+            }
+        }
+        return list;
+    }
 
     private CarBrand mapResultSetToCarBrand(ResultSet rs) throws SQLException {
         CarBrand brand = new CarBrand();

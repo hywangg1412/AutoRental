@@ -3,10 +3,8 @@ package Controller.Auth;
 import Model.Constants.UserStatusConstants;
 import Model.Entity.User.User;
 import Model.Entity.Role.Role;
-import Model.Entity.Role.UserRole;
 import Service.User.UserService;
 import Service.Role.RoleService;
-import Service.Role.UserRoleService;
 import Utils.SessionUtil;
 import Utils.ObjectUtils;
 import java.io.IOException;
@@ -26,7 +24,6 @@ public class NormalLoginServlet extends HttpServlet {
 
     private UserService userService;
     private RoleService roleService;
-    private UserRoleService userRoleService;
     private MailService mailService;
     private EmailOTPVerificationService emailOTPService;
 
@@ -34,7 +31,6 @@ public class NormalLoginServlet extends HttpServlet {
     public void init() {
         userService = new UserService();
         roleService = new RoleService();
-        userRoleService = new UserRoleService();
         mailService = new MailService();
         emailOTPService = new EmailOTPVerificationService();
     }
@@ -116,17 +112,23 @@ public class NormalLoginServlet extends HttpServlet {
                 return;
             }
 
-            UserRole userRole = userRoleService.findByUserId(user.getUserId());
-            Role actualRole = roleService.findById(userRole.getRoleId());
-            String redirectUrl = "/pages/index.jsp";
-            if (actualRole.getRoleName().equals("Staff")) {
-                redirectUrl = "/staff/dashboard"; 
-            } else if (actualRole.getRoleName().equals("Admin")) {
-                redirectUrl = "/admin/dashboard"; 
+            String redirectUrl = "/pages/home";
+            try {
+                Role userRole = roleService.findById(user.getRoleId());
+                if (userRole != null) {
+                    String roleName = userRole.getRoleName();
+                    if ("Staff".equalsIgnoreCase(roleName)) {
+                        redirectUrl = "/staff/dashboard";
+                    } else if ("Admin".equalsIgnoreCase(roleName)) {
+                        redirectUrl = "/pages/admin/admin-dashboard.jsp";
+                    }
+                }
+            } catch (Exception ex) {
+                // Nếu lỗi khi lấy role, giữ nguyên redirectUrl mặc định
             }
 
             SessionUtil.setSessionAttribute(request, "user", user);
-            SessionUtil.setSessionAttribute(request, "userId", user.getUserId());
+            SessionUtil.setSessionAttribute(request, "userId", user.getUserId().toString());
             SessionUtil.setSessionAttribute(request, "isLoggedIn", true);
             SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
             response.sendRedirect(request.getContextPath() + redirectUrl);

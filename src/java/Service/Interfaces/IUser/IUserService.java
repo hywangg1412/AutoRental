@@ -3,6 +3,7 @@ package Service.Interfaces.IUser;
 import Model.Entity.User.User;
 import Service.Interfaces.Service;
 import java.util.UUID;
+import java.util.List;
 
 public interface IUserService extends Service<User> {
 
@@ -21,4 +22,6 @@ public interface IUserService extends Service<User> {
     User findByUsername(String username);
 
     String generateUniqueUsername(String baseUsername);
+
+    List<User> findByRoleId(UUID roleId) throws Exception;
 }

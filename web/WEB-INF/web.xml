@@ -39,14 +39,14 @@
         <servlet-name>ResetPasswordServlet</servlet-name>
         <servlet-class>Controller.Auth.ResetPasswordServlet</servlet-class>
     </servlet>
-<!--    <servlet>
+    <servlet>
         <servlet-name>BookingApprovalListServlet</servlet-name>
         <servlet-class>Controller.Booking.BookingApprovalListServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>BookingApprovalServlet</servlet-name>
         <servlet-class>Controller.Booking.BookingApprovalServlet</servlet-class>
-    </servlet>-->
+    </servlet>
     <servlet>
         <servlet-name>SetPasswordServlet</servlet-name>
         <servlet-class>Controller.Auth.SetPasswordServlet</servlet-class>
@@ -100,6 +100,6 @@
         <url-pattern>/user/update-info</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
-        <welcome-file>pages/index.jsp</welcome-file>
+        <welcome-file>pages/home</welcome-file>
     </welcome-file-list>
 </web-app>

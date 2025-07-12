@@ -35,10 +35,10 @@ public class UserRepository implements IUserRepository {
     @Override
     public User add(User entity) throws SQLException {
         String sql = "INSERT INTO Users (UserId, Username, UserDOB, PhoneNumber, "
-                + "AvatarUrl, Gender, FirstName, LastName, Status, CreatedDate, "
+                + "AvatarUrl, Gender, FirstName, LastName, Status, RoleId, CreatedDate, "
                 + "NormalizedUserName, Email, NormalizedEmail, EmailVerifed, PasswordHash, "
                 + "SecurityStamp, ConcurrencyStamp, TwoFactorEnabled, LockoutEnd, LockoutEnabled, "
-                + "AccessFailedCount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + "AccessFailedCount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
             st.setObject(1, entity.getUserId());
@@ -50,18 +50,19 @@ public class UserRepository implements IUserRepository {
             st.setString(7, entity.getFirstName());
             st.setString(8, entity.getLastName());
             st.setString(9, entity.getStatus());
-            st.setTimestamp(10, entity.getCreatedDate() != null ? Timestamp.valueOf(entity.getCreatedDate()) : null);
-            st.setString(11, entity.getNormalizedUserName());
-            st.setString(12, entity.getEmail());
-            st.setString(13, entity.getNormalizedEmail());
-            st.setBoolean(14, entity.isEmailVerifed());
-            st.setString(15, entity.getPasswordHash());
-            st.setString(16, entity.getSecurityStamp());
-            st.setString(17, entity.getConcurrencyStamp());
-            st.setBoolean(18, entity.isTwoFactorEnabled());
-            st.setTimestamp(19, entity.getLockoutEnd() != null ? Timestamp.valueOf(entity.getLockoutEnd()) : null);
-            st.setBoolean(20, entity.isLockoutEnabled());
-            st.setInt(21, entity.getAccessFailedCount());
+            st.setObject(10, entity.getRoleId());
+            st.setTimestamp(11, entity.getCreatedDate() != null ? Timestamp.valueOf(entity.getCreatedDate()) : null);
+            st.setString(12, entity.getNormalizedUserName());
+            st.setString(13, entity.getEmail());
+            st.setString(14, entity.getNormalizedEmail());
+            st.setBoolean(15, entity.isEmailVerifed());
+            st.setString(16, entity.getPasswordHash());
+            st.setString(17, entity.getSecurityStamp());
+            st.setString(18, entity.getConcurrencyStamp());
+            st.setBoolean(19, entity.isTwoFactorEnabled());
+            st.setTimestamp(20, entity.getLockoutEnd() != null ? Timestamp.valueOf(entity.getLockoutEnd()) : null);
+            st.setBoolean(21, entity.isLockoutEnabled());
+            st.setInt(22, entity.getAccessFailedCount());
             int affectedRows = st.executeUpdate();
             if (affectedRows > 0) {
                 return findById(entity.getUserId());
@@ -70,6 +71,7 @@ public class UserRepository implements IUserRepository {
         return null;
     }
 
+    @Override
     public User findById(UUID userId) throws SQLException {
         String sql = "SELECT * FROM Users WHERE UserId = ?";
         try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
@@ -89,7 +91,7 @@ public class UserRepository implements IUserRepository {
     public boolean update(User entity) throws SQLException {
         String sql = "UPDATE Users SET Username = ?, UserDOB = ?, PhoneNumber = ?, "
                 + "AvatarUrl = ?, Gender = ?, FirstName = ?, LastName = ?, "
-                + "Status = ?, CreatedDate = ?, NormalizedUserName = ?, Email = ?, "
+                + "Status = ?, RoleId = ?, CreatedDate = ?, NormalizedUserName = ?, Email = ?, "
                 + "NormalizedEmail = ?, EmailVerifed = ?, PasswordHash = ?, SecurityStamp = ?, "
                 + "ConcurrencyStamp = ?, TwoFactorEnabled = ?, LockoutEnd = ?, LockoutEnabled = ?, "
                 + "AccessFailedCount = ? WHERE UserId = ?";
@@ -103,19 +105,20 @@ public class UserRepository implements IUserRepository {
             st.setString(6, entity.getFirstName());
             st.setString(7, entity.getLastName());
             st.setString(8, entity.getStatus());
-            st.setTimestamp(9, entity.getCreatedDate() != null ? Timestamp.valueOf(entity.getCreatedDate()) : null);
-            st.setString(10, entity.getNormalizedUserName());
-            st.setString(11, entity.getEmail());
-            st.setString(12, entity.getNormalizedEmail());
-            st.setBoolean(13, entity.isEmailVerifed());
-            st.setString(14, entity.getPasswordHash());
-            st.setString(15, entity.getSecurityStamp());
-            st.setString(16, entity.getConcurrencyStamp());
-            st.setBoolean(17, entity.isTwoFactorEnabled());
-            st.setTimestamp(18, entity.getLockoutEnd() != null ? Timestamp.valueOf(entity.getLockoutEnd()) : null);
-            st.setBoolean(19, entity.isLockoutEnabled());
-            st.setInt(20, entity.getAccessFailedCount());
-            st.setObject(21, entity.getUserId());
+            st.setObject(9, entity.getRoleId());
+            st.setTimestamp(10, entity.getCreatedDate() != null ? Timestamp.valueOf(entity.getCreatedDate()) : null);
+            st.setString(11, entity.getNormalizedUserName());
+            st.setString(12, entity.getEmail());
+            st.setString(13, entity.getNormalizedEmail());
+            st.setBoolean(14, entity.isEmailVerifed());
+            st.setString(15, entity.getPasswordHash());
+            st.setString(16, entity.getSecurityStamp());
+            st.setString(17, entity.getConcurrencyStamp());
+            st.setBoolean(18, entity.isTwoFactorEnabled());
+            st.setTimestamp(19, entity.getLockoutEnd() != null ? Timestamp.valueOf(entity.getLockoutEnd()) : null);
+            st.setBoolean(20, entity.isLockoutEnabled());
+            st.setInt(21, entity.getAccessFailedCount());
+            st.setObject(22, entity.getUserId());
             int affectedRows = st.executeUpdate();
             return affectedRows > 0;
         }
@@ -145,6 +148,7 @@ public class UserRepository implements IUserRepository {
         return users;
     }
 
+    @Override
     public User findByUsernameAndPassword(String username, String passwordHash) {
         String sql = "SELECT * FROM Users WHERE Username = ? AND PasswordHash = ?";
         try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
@@ -174,6 +178,7 @@ public class UserRepository implements IUserRepository {
         user.setFirstName(rs.getString("FirstName"));
         user.setLastName(rs.getString("LastName"));
         user.setStatus(rs.getString("Status"));
+        user.setRoleId(rs.getObject("RoleId") != null ? UUID.fromString(rs.getString("RoleId")) : null);
         user.setCreatedDate(rs.getTimestamp("CreatedDate") != null ? rs.getTimestamp("CreatedDate").toLocalDateTime() : null);
         user.setNormalizedUserName(rs.getString("NormalizedUserName"));
         user.setEmail(rs.getString("Email"));
@@ -299,6 +304,7 @@ public class UserRepository implements IUserRepository {
     /**
      * Lấy tất cả username bắt đầu bằng baseUsername (không phân biệt hoa thường)
      */
+    @Override
     public List<String> findAllUsernamesLike(String baseUsername) {
         List<String> usernames = new ArrayList<>();
         String sql = "SELECT Username FROM Users WHERE LOWER(Username) LIKE ?";
@@ -312,5 +318,132 @@ public class UserRepository implements IUserRepository {
             LOGGER.log(Level.SEVERE, "Error finding usernames like: " + baseUsername, e);
         }
         return usernames;
+    }
+
+    @Override
+    public List<User> findByRoleId(UUID roleId) throws SQLException {
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT * FROM Users WHERE RoleId = ?";
+        try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setObject(1, roleId);
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    users.add(mapResultSetToUser(rs));
+                }
+            }
+        }
+        return users;
+    }
+    
+    // New optimized filter methods
+    @Override
+    public List<User> findWithFilters(String roleFilter, String statusFilter, String searchTerm) throws SQLException {
+        List<User> users = new ArrayList<>();
+        
+        // Optimized query with specific columns instead of SELECT *
+        StringBuilder sql = new StringBuilder("SELECT TOP 1000 u.UserId, u.Username, u.UserDOB, u.PhoneNumber, ");
+        sql.append("u.AvatarUrl, u.Gender, u.FirstName, u.LastName, u.Status, u.RoleId, u.CreatedDate, ");
+        sql.append("u.NormalizedUserName, u.Email, u.NormalizedEmail, u.EmailVerifed, u.PasswordHash, ");
+        sql.append("u.SecurityStamp, u.ConcurrencyStamp, u.TwoFactorEnabled, u.LockoutEnd, u.LockoutEnabled, ");
+        sql.append("u.AccessFailedCount FROM Users u");
+        
+        // Use LEFT JOIN instead of INNER JOIN for better performance
+        if (roleFilter != null && !roleFilter.equals("all")) {
+            sql.append(" LEFT JOIN Roles r ON u.RoleId = r.RoleId");
+        }
+        
+        sql.append(" WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+        
+        // Role filter with index optimization
+        if (roleFilter != null && !roleFilter.equals("all")) {
+            sql.append(" AND r.RoleName = ?");
+            params.add(roleFilter);
+        }
+        
+        // Status filter with index optimization
+        if (statusFilter != null && !statusFilter.equals("all")) {
+            sql.append(" AND u.Status = ?");
+            params.add(statusFilter);
+        }
+        
+        // Optimized search with full-text search capabilities
+        if (searchTerm != null && !searchTerm.trim().isEmpty()) {
+            String trimmedSearch = searchTerm.trim();
+            // Use more efficient search pattern
+            if (trimmedSearch.length() >= 3) {
+                sql.append(" AND (u.FirstName LIKE ? OR u.LastName LIKE ? OR u.Email LIKE ? OR u.Username LIKE ?)");
+                String searchPattern = "%" + trimmedSearch + "%";
+                params.add(searchPattern);
+                params.add(searchPattern);
+                params.add(searchPattern);
+                params.add(searchPattern);
+            } else {
+                // For short search terms, use exact match on email/username
+                sql.append(" AND (u.Email = ? OR u.Username = ?)");
+                params.add(trimmedSearch);
+                params.add(trimmedSearch);
+            }
+        }
+        
+        // Optimized ordering with index
+        sql.append(" ORDER BY u.CreatedDate DESC, u.UserId");
+        
+        try (Connection conn = dbContext.getConnection(); 
+             PreparedStatement st = conn.prepareStatement(sql.toString())) {
+            
+            // Set parameters efficiently
+            for (int i = 0; i < params.size(); i++) {
+                st.setObject(i + 1, params.get(i));
+            }
+            
+            // Execute with optimized fetch size
+            st.setFetchSize(100);
+            
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    users.add(mapResultSetToUser(rs));
+                }
+            }
+        }
+        
+        return users;
+    }
+    
+    @Override
+    public List<User> findByStatus(String status) throws SQLException {
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT * FROM Users WHERE Status = ?";
+        try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setString(1, status);
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    users.add(mapResultSetToUser(rs));
+                }
+            }
+        }
+        return users;
+    }
+    
+    @Override
+    public List<User> searchUsers(String searchTerm) throws SQLException {
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT TOP 1000 * FROM Users WHERE FirstName LIKE ? OR LastName LIKE ? OR Email LIKE ? OR Username LIKE ? OR PhoneNumber LIKE ?";
+        String searchPattern = "%" + searchTerm.trim() + "%";
+        
+        try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setString(1, searchPattern);
+            st.setString(2, searchPattern);
+            st.setString(3, searchPattern);
+            st.setString(4, searchPattern);
+            st.setString(5, searchPattern);
+            
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    users.add(mapResultSetToUser(rs));
+                }
+            }
+        }
+        return users;
     }
 }

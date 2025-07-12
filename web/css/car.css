@@ -694,13 +694,17 @@ footer, .site-footer, #footer {
 }
 .favorite-btn.active .bi-heart, .favorite-btn.favorited .bi-heart,
 .favorite-btn.active .fa-heart, .favorite-btn.favorited .fa-heart {
-    color: #fff !important;
-    fill: #fff !important;
-    stroke: #fff !important;
+    color: #22c55e !important;
+    fill: #22c55e !important;
+    stroke: #22c55e !important;
 }
 .favorite-btn:focus {
     outline: none;
     box-shadow: 0 0 0 2px #01D28E;
+}
+
+.favorite-btn .bi-heart-fill {
+    color: #01D28E !important; /* Màu xanh logo */
 }
 
 /* =========================== BADGES =========================== */

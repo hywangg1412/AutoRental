@@ -15,6 +15,7 @@ public class User {
     private String firstName;
     private String lastName;
     private String status;
+    private UUID roleId;
     private LocalDateTime createdDate;
     private String normalizedUserName;
     private String email;
@@ -33,7 +34,7 @@ public class User {
 
     public User(UUID userId, String username, LocalDate userDOB, String phoneNumber,
              String avatarUrl, String gender,
-            String firstName, String lastName, String status, LocalDateTime createdDate,
+            String firstName, String lastName, String status, UUID roleId, LocalDateTime createdDate,
             String normalizedUserName, String email, String normalizedEmail, boolean emailVerifed,
             String passwordHash, String securityStamp, String concurrencyStamp,
             boolean twoFactorEnabled, LocalDateTime lockoutEnd, boolean lockoutEnabled,
@@ -47,6 +48,7 @@ public class User {
         this.firstName = firstName;
         this.lastName = lastName;
         this.status = status;
+        this.roleId = roleId;
         this.createdDate = createdDate;
         this.normalizedUserName = normalizedUserName;
         this.email = email;
@@ -244,6 +246,14 @@ public class User {
 
     public void setAccessFailedCount(int accessFailedCount) {
         this.accessFailedCount = accessFailedCount;
+    }
+
+    public UUID getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(UUID roleId) {
+        this.roleId = roleId;
     }
 
     @Override

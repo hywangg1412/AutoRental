@@ -32,6 +32,6 @@ public class LogoutServlet extends HttpServlet {
         
         SessionUtil.deleteCookie(response, "userId", "/");
         
-        response.sendRedirect(request.getContextPath() + "/pages/index.jsp");
+        response.sendRedirect(request.getContextPath() + "/pages/home");
     }
 } 

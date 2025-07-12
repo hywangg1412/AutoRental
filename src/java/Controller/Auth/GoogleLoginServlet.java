@@ -16,9 +16,6 @@ import Model.Entity.User.User;
 import Model.Entity.OAuth.UserLogins;
 import Service.Auth.UserLoginsService;
 import Model.Entity.Role.Role;
-import Model.Entity.Role.UserRole;
-import Service.Role.RoleService;
-import Service.Role.UserRoleService;
 import Model.Constants.UserStatusConstants;
 import Service.External.MailService;
 import Service.Auth.EmailOTPVerificationService;
@@ -31,8 +28,6 @@ public class GoogleLoginServlet extends HttpServlet {
     private UserMapper userMapper;
     private UserService userService;
     private UserLoginsService userLoginsService;
-    private RoleService roleService;
-    private UserRoleService userRoleService;
     private MailService mailService;
     private EmailOTPVerificationService emailOTPService;
 
@@ -42,8 +37,6 @@ public class GoogleLoginServlet extends HttpServlet {
         userMapper = new UserMapper();
         userService = new UserService();
         userLoginsService = new UserLoginsService();
-        roleService = new RoleService();
-        userRoleService = new UserRoleService();
         mailService = new MailService();
         emailOTPService = new EmailOTPVerificationService();
     }
@@ -114,15 +107,23 @@ public class GoogleLoginServlet extends HttpServlet {
             }
             SessionUtil.removeSessionAttribute(request, "user");
             SessionUtil.setSessionAttribute(request, "user", user);
+            SessionUtil.setSessionAttribute(request, "userId", user.getUserId().toString());
             SessionUtil.setSessionAttribute(request, "isLoggedIn", true);
             SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
-            UserRole userRole = userRoleService.findByUserId(user.getUserId());
-            Role actualRole = roleService.findById(userRole.getRoleId());
             String redirectUrl = "/pages/home";
-            if (actualRole.getRoleName().equals("Staff")) {
-                redirectUrl = "/pages/staff/staff-dashboard.jsp";
-            } else if (actualRole.getRoleName().equals("Admin")) {
-                redirectUrl = "/pages/admin/admin-dashboard.jsp";
+            try {
+                Service.Role.RoleService roleService = new Service.Role.RoleService();
+                Role userRole = roleService.findById(user.getRoleId());
+                if (userRole != null) {
+                    String roleName = userRole.getRoleName();
+                    if ("Staff".equalsIgnoreCase(roleName)) {
+                        redirectUrl = "/staff/dashboard";
+                    } else if ("Admin".equalsIgnoreCase(roleName)) {
+                        redirectUrl = "/pages/admin/admin-dashboard.jsp";
+                    }
+                }
+            } catch (Exception ex) {
+                // Nếu lỗi khi lấy role, giữ nguyên redirectUrl mặc định
             }
             response.sendRedirect(request.getContextPath() + redirectUrl);
         } catch (Exception e) {
