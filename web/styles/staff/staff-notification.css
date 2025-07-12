@@ -1,0 +1,168 @@
+/* CSS chung cho thông báo của staff */
+
+/* Notification Wrapper */
+.notification-wrapper {
+    position: relative !important;
+    overflow: visible !important;
+    margin-right: 15px !important;
+}
+
+/* Notification Button */
+.notification-btn {
+    width: 10px !important;
+    height: 28px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    position: relative !important;
+    overflow: visible !important;
+    border: 1px solid #d1d5db !important;
+    background-color: #fff !important;
+    box-shadow: 0 1px 2px rgba(60,60,60,0.06) !important;
+}
+
+.notification-btn i.fa-bell {
+    font-size: 1rem !important;
+    color: #4a5568 !important;
+}
+
+/* Notification Badge */
+.notification-badge {
+    position: absolute !important;
+    top: -6px !important;
+    right: -6px !important;
+    background: #dc3545 !important;
+    color: white !important;
+    border-radius: 50% !important;
+    min-width: 16px !important;
+    height: 16px !important;
+    font-size: 10px !important;
+    font-weight: bold !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 3px !important;
+    border: 1px solid #fff !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18) !important;
+    z-index: 1050 !important;
+}
+
+/* Notification Dropdown Menu */
+#notificationDropdownMenu {
+    width: 350px !important;
+    max-height: 450px !important;
+    overflow-y: auto !important;
+    padding: 0 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 32px rgba(60,60,60,0.18) !important;
+    border: none !important;
+}
+
+#notificationDropdownMenu .dropdown-header {
+    padding: 10px 15px !important;
+    font-weight: bold !important;
+    font-size: 1.1rem !important;
+    color: #222 !important;
+    background-color: #f8f9fa !important;
+    border-bottom: 1px solid #eee !important;
+}
+
+#notificationDropdownMenu .dropdown-divider {
+    margin: 0 !important;
+}
+
+/* Notification Items */
+.notification-item {
+    padding: 10px 15px !important;
+    border-bottom: 1px solid #eee !important;
+    transition: all 0.2s ease !important;
+}
+
+.notification-item:hover {
+    background-color: #f5f5f5 !important;
+}
+
+.notification-item:last-child {
+    border-bottom: none !important;
+}
+
+.notification-item.unread {
+    background-color: #f0f8ff !important;
+}
+
+.notification-item.read {
+    background-color: #fff !important;
+}
+
+/* Notification Content */
+.notification-content {
+    width: 100% !important;
+}
+
+.notification-row {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    margin-bottom: 5px !important;
+}
+
+.notification-title {
+    font-size: 0.9rem !important;
+    color: #333 !important;
+    flex: 1 !important;
+    font-weight: 500 !important;
+}
+
+.dot-unread {
+    display: inline-block !important;
+    width: 8px !important;
+    height: 8px !important;
+    background-color: #01d28e !important;
+    border-radius: 50% !important;
+    margin-left: 5px !important;
+}
+
+.notification-time {
+    color: #6c757d !important;
+    font-size: 0.8rem !important;
+    display: block !important;
+}
+
+/* Mark All Read Button */
+.mark-all-read-btn {
+    color: #01d28e !important;
+    font-weight: 500 !important;
+}
+
+.mark-all-read-btn:hover {
+    background-color: #f0f8ff !important;
+    color: #008c5e !important;
+}
+
+/* Delete Button */
+.notification-actions {
+    display: flex !important;
+    align-items: center !important;
+    margin-left: 8px !important;
+}
+
+.btn-delete-notification {
+    background: none !important;
+    border: none !important;
+    color: #dc3545 !important;
+    font-size: 0.8rem !important;
+    padding: 2px 4px !important;
+    cursor: pointer !important;
+    opacity: 0.6 !important;
+    transition: opacity 0.2s !important;
+}
+
+.btn-delete-notification:hover {
+    opacity: 1 !important;
+}
+
+.notification-item:hover .btn-delete-notification {
+    opacity: 0.8 !important;
+} 
