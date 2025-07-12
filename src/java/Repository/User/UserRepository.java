@@ -38,7 +38,7 @@ public class UserRepository implements IUserRepository {
                 + "AvatarUrl, Gender, FirstName, LastName, Status, RoleId, CreatedDate, "
                 + "NormalizedUserName, Email, NormalizedEmail, EmailVerifed, PasswordHash, "
                 + "SecurityStamp, ConcurrencyStamp, TwoFactorEnabled, LockoutEnd, LockoutEnabled, "
-                + "AccessFailedCount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + "AccessFailedCount, PhoneVerified) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
             st.setObject(1, entity.getUserId());
@@ -63,6 +63,7 @@ public class UserRepository implements IUserRepository {
             st.setTimestamp(20, entity.getLockoutEnd() != null ? Timestamp.valueOf(entity.getLockoutEnd()) : null);
             st.setBoolean(21, entity.isLockoutEnabled());
             st.setInt(22, entity.getAccessFailedCount());
+            st.setBoolean(23, entity.isPhoneVerified());
             int affectedRows = st.executeUpdate();
             if (affectedRows > 0) {
                 return findById(entity.getUserId());
@@ -94,7 +95,7 @@ public class UserRepository implements IUserRepository {
                 + "Status = ?, RoleId = ?, CreatedDate = ?, NormalizedUserName = ?, Email = ?, "
                 + "NormalizedEmail = ?, EmailVerifed = ?, PasswordHash = ?, SecurityStamp = ?, "
                 + "ConcurrencyStamp = ?, TwoFactorEnabled = ?, LockoutEnd = ?, LockoutEnabled = ?, "
-                + "AccessFailedCount = ? WHERE UserId = ?";
+                + "AccessFailedCount = ?, PhoneVerified = ? WHERE UserId = ?";
 
         try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
             st.setString(1, entity.getUsername());
@@ -118,7 +119,8 @@ public class UserRepository implements IUserRepository {
             st.setTimestamp(19, entity.getLockoutEnd() != null ? Timestamp.valueOf(entity.getLockoutEnd()) : null);
             st.setBoolean(20, entity.isLockoutEnabled());
             st.setInt(21, entity.getAccessFailedCount());
-            st.setObject(22, entity.getUserId());
+            st.setBoolean(22, entity.isPhoneVerified());
+            st.setObject(23, entity.getUserId());
             int affectedRows = st.executeUpdate();
             return affectedRows > 0;
         }
@@ -191,6 +193,7 @@ public class UserRepository implements IUserRepository {
         user.setLockoutEnd(rs.getTimestamp("LockoutEnd") != null ? rs.getTimestamp("LockoutEnd").toLocalDateTime() : null);
         user.setLockoutEnabled(rs.getBoolean("LockoutEnabled"));
         user.setAccessFailedCount(rs.getInt("AccessFailedCount"));
+        user.setPhoneVerified(rs.getObject("PhoneVerified") != null ? rs.getBoolean("PhoneVerified") : false);
         return user;
     }
 
