@@ -88,12 +88,12 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
           </a>
         </nav>
         <div class="sidebar-user">
-          <button class="logout-btn" onclick="logout()">
+          <a class="logout-btn" href="${pageContext.request.contextPath}/logout">
             <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
               <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.59L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
             </svg>
             Logout
-          </button>
+          </a>
         </div>
       </div>
 
@@ -639,28 +639,6 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
           sidebar.classList.toggle("open");
         }
 
-        function logout() {
-          // Show logout modal
-          const logoutModal = document.getElementById('logoutConfirmModal');
-          if (logoutModal) {
-              const modal = new bootstrap.Modal(logoutModal);
-              modal.show();
-          } else {
-              // Fallback to SweetAlert if modal not available
-              Swal.fire({
-                title: "Are you sure you want to log out?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Log Out",
-                cancelButtonText: "Cancel",
-              }).then((result) => {
-                if (result.isConfirmed) {
-                  window.location.href = "${pageContext.request.contextPath}/logout";
-                }
-              });
-          }
-        }
-
         function openCreateVoucherModal() {
           document.getElementById("createVoucherModal").style.display = "flex";
           document.getElementById("createVoucherForm").reset();
@@ -903,12 +881,6 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
         });
       </script>
     </div>
-    
-    <!-- Include Logout Modal -->
-    <jsp:include page="../includes/logout-confirm-modal.jsp" />
-    
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
   </body>
 </html>
