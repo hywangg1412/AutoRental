@@ -32,6 +32,8 @@
 
     <!-- ===== NavBar Styles ===== -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/nav.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/main/about.css">
+
   </head>
   <body>
     
