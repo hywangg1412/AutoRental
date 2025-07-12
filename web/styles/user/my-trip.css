@@ -738,3 +738,7 @@ hr.mytrip-divider {
     transform: translateY(-1px);
     box-shadow: 0 2px 8px rgba(16,185,129,0.15);
 }
+
+.fa-bell, .fa-comment-dots {
+    color: #222 !important;
+}

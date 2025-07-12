@@ -20,8 +20,8 @@
         <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800&display=swap" rel="stylesheet">
 
         <!-- ===== Include Styles ===== -->
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/nav.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/user/user-profile.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/nav.css">
 
         <!-- ===== Custom Styles ===== -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/open-iconic-bootstrap.min.css">
@@ -66,7 +66,7 @@
             <% } %>
         </div>
         <!-- Header -->
-        <jsp:include page="/pages/includes/nav.jsp" />
+        <jsp:include page="/pages/includes/user-nav.jsp" />
 
         <div class="container">
             <div class="row g-5" style="margin-top: 80px;">

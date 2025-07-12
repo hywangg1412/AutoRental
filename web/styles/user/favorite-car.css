@@ -676,3 +676,7 @@ form button[type="submit"]:hover {
 .car-title-badge {
     margin: 0 !important;
 }
+
+.fa-bell, .fa-comment-dots {
+    color: #222 !important;
+}

@@ -898,6 +898,10 @@ nav.ftco-navbar-light .nav-link {
     color: #c82333;
 }
 
+.fa-bell, .fa-comment-dots {
+    color: #222 !important;
+}
+
 
 
 
