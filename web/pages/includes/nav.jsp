@@ -308,9 +308,3 @@
 <!-- Include notification JavaScript -->
 <script src="${pageContext.request.contextPath}/scripts/common/notification.js"></script>
 
-<!-- Debug -->
-<%-- 
-UserId: <c:out value="${sessionScope.userId}"/>
-Notifications: <c:out value="${fn:length(sessionScope.userNotifications)}"/>
-UnreadCount: <c:out value="${sessionScope.userUnreadCount}"/>
---%>
