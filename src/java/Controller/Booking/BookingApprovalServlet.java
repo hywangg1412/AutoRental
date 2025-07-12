@@ -6,9 +6,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import Exception.EventException;
+import Model.Entity.Booking.Booking;
 import Model.Entity.Booking.BookingApproval;
 import Model.Entity.User.User;
 import Service.Booking.BookingApprovalService;
+import Service.Booking.BookingService;
+import Service.NotificationService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -31,6 +34,8 @@ public class BookingApprovalServlet extends HttpServlet {
     
     private static final Logger LOGGER = Logger.getLogger(BookingApprovalServlet.class.getName());
     private final BookingApprovalService bookingApprovalService = new BookingApprovalService();
+    private final BookingService bookingService = new BookingService();
+    private final NotificationService notificationService = new NotificationService();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
@@ -79,6 +84,13 @@ public class BookingApprovalServlet extends HttpServlet {
                 return;
             }
             
+            // Lấy thông tin booking để biết userId
+            Booking booking = bookingService.findById(bookingId);
+            if (booking == null) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Không tìm thấy booking");
+                return;
+            }
+            
             // 5. Xử lý duyệt booking
             // Nếu action là approve thì approvalStatus = 'Approved', nếu reject thì 'Rejected'
             String approvalStatus = "approve".equals(action) ? "Approved" : "Rejected";
@@ -96,8 +108,21 @@ public class BookingApprovalServlet extends HttpServlet {
                 rejectionReason
             );
             
-            // 6. Trả về kết quả thành công
-            LOGGER.log(Level.INFO, "Staff {0} đã {1} booking {2} thành công", 
+            // 6. Gửi thông báo cho khách hàng
+            UUID userId = booking.getUserId();
+            String bookingCode = booking.getBookingCode();
+            
+            if ("approve".equals(action)) {
+                // Nếu duyệt thành công, gửi thông báo kèm link đến trang thanh toán đặt cọc
+                String message = "Booking của bạn (mã " + bookingCode + ") đã được duyệt. Vui lòng tiến hành thanh toán đặt cọc để hoàn tất đặt xe.";
+                notificationService.sendNotificationToUser(userId, message);
+            } else {
+                // Nếu từ chối, gửi thông báo kèm lý do từ chối
+                String message = "Booking của bạn (mã " + bookingCode + ") đã bị từ chối với lý do: " + rejectionReason;
+                notificationService.sendNotificationToUser(userId, message);
+            }
+            // 7. Trả về kết quả thành công
+            LOGGER.log(Level.INFO, "Staff {0} đã {1} booking {2} thành công và gửi thông báo cho khách hàng", 
                 new Object[]{currentUser.getUserId(), action, bookingId});
             
             // Redirect về trang danh sách booking với thông báo thành công
