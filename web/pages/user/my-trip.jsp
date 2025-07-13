@@ -123,7 +123,10 @@
                                                                                 <span class="badge status-badge status-${trip.status}">
                                                                                     <c:choose>
                                                                                         <c:when test="${trip.status eq 'Confirmed'}">
-                                                                                            <i class="bi bi-check-circle-fill"></i> Booking Accepted
+                                                                                            <i class="bi bi-credit-card"></i> Awaiting Payment
+                                                                                        </c:when>
+                                                                                        <c:when test="${trip.status eq 'DepositPaid'}">
+                                                                                            <i class="bi bi-check-circle-fill"></i> Deposit Paid
                                                                                         </c:when>
                                                                                         <c:when test="${trip.status eq 'Pending'}">
                                                                                             <i class="bi bi-hourglass-split"></i> Awaiting Confirmation
@@ -136,6 +139,9 @@
                                                                                         </c:when>
                                                                                         <c:when test="${trip.status eq 'Cancelled'}">
                                                                                             <i class="bi bi-x-circle-fill"></i> Cancelled
+                                                                                        </c:when>
+                                                                                        <c:when test="${trip.status eq 'ContractSigned'}">
+                                                                                            <i class="bi bi-pencil-square"></i> Contract Signed
                                                                                         </c:when>
                                                                                         <c:otherwise>${trip.status}</c:otherwise>
                                                                                     </c:choose>
@@ -165,6 +171,20 @@
                                                                         <c:if test="${trip.status eq BookingStatusConstants.PENDING}">
                                                                             <button class="btn-mytrip-action btn-mytrip-red btn-sm" data-booking-id="${trip.bookingId}">Cancel Booking</button>
                                                                         </c:if>
+                                                                        <c:if test="${trip.status eq 'DepositPaid'}">
+                                                                            <a class="btn-mytrip-action btn-mytrip-green btn-sm"
+                                                                               href="${pageContext.request.contextPath}/contract/create?bookingId=${trip.bookingId}">
+                                                                               Sign Contract
+                                                                            </a>
+                                                                        </c:if>
+                                                                        <c:if test="${trip.status eq 'ContractSigned'}">
+                                                                            <button class="btn-mytrip-action btn-mytrip-blue btn-sm return-car-btn" 
+                                                                                    data-booking-id="${trip.bookingId}" 
+                                                                                    data-car-model="${trip.carModel}" 
+                                                                                    data-license-plate="${trip.carLicensePlate}">
+                                                                                Return Car
+                                                                            </button>
+                                                                        </c:if>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -187,60 +207,62 @@
                                                 <c:when test="${not empty pastTrips}">
                                                     <div class="row">
                                                         <c:forEach items="${pastTrips}" var="booking">
-                                                            <div class="col-12 mb-4">
-                                                                <div class="favorite-car-card d-flex align-items-center p-4 rounded shadow-sm bg-white">
-                                                                    <div class="car-img-wrapper">
-                                                                        <img src="${pageContext.request.contextPath}${booking.carImage}" class="car-img" alt="Car image">
-                                                                    </div>
-                                                                    <div class="flex-grow-1 ps-3 pe-4">
-                                                                        <div class="d-flex align-items-center mb-2">
-                                                                            <div class="car-title-badge d-flex align-items-center">
-                                                                                <h5 class="mb-0 fw-bold me-3">${booking.carModel}</h5>
-                                                                                <span class="badge status-badge status-${booking.status}">
-                                                                                    <c:choose>
-                                                                                        <c:when test="${booking.status eq 'Confirmed'}">
-                                                                                            <i class="bi bi-check-circle-fill"></i> Booking Accepted
-                                                                                        </c:when>
-                                                                                        <c:when test="${booking.status eq 'Pending'}">
-                                                                                            <i class="bi bi-hourglass-split"></i> Awaiting Confirmation
-                                                                                        </c:when>
-                                                                                        <c:when test="${booking.status eq 'IN_PROGRESS'}">
-                                                                                            <i class="bi bi-car-front"></i> Ongoing
-                                                                                        </c:when>
-                                                                                        <c:when test="${booking.status eq 'Completed'}">
-                                                                                            <i class="bi bi-flag-fill"></i> Completed
-                                                                                        </c:when>
-                                                                                        <c:when test="${booking.status eq 'Cancelled'}">
-                                                                                            <i class="bi bi-x-circle-fill"></i> Cancelled
-                                                                                        </c:when>
-                                                                                        <c:otherwise>${booking.status}</c:otherwise>
-                                                                                    </c:choose>
-                                                                                </span>
+                                                            <c:if test="${booking.status ne 'DepositPaid'}">
+                                                                <div class="col-12 mb-4">
+                                                                    <div class="favorite-car-card d-flex align-items-center p-4 rounded shadow-sm bg-white">
+                                                                        <div class="car-img-wrapper">
+                                                                            <img src="${pageContext.request.contextPath}${booking.carImage}" class="car-img" alt="Car image">
+                                                                        </div>
+                                                                        <div class="flex-grow-1 ps-3 pe-4">
+                                                                            <div class="d-flex align-items-center mb-2">
+                                                                                <div class="car-title-badge d-flex align-items-center">
+                                                                                    <h5 class="mb-0 fw-bold me-3">${booking.carModel}</h5>
+                                                                                    <span class="badge status-badge status-${booking.status}">
+                                                                                        <c:choose>
+                                                                                            <c:when test="${booking.status eq 'Confirmed'}">
+                                                                                                <i class="bi bi-check-circle-fill"></i> Booking Accepted
+                                                                                            </c:when>
+                                                                                            <c:when test="${booking.status eq 'Pending'}">
+                                                                                                <i class="bi bi-hourglass-split"></i> Awaiting Confirmation
+                                                                                            </c:when>
+                                                                                            <c:when test="${booking.status eq 'IN_PROGRESS'}">
+                                                                                                <i class="bi bi-car-front"></i> Ongoing
+                                                                                            </c:when>
+                                                                                            <c:when test="${booking.status eq 'Completed'}">
+                                                                                                <i class="bi bi-flag-fill"></i> Completed
+                                                                                            </c:when>
+                                                                                            <c:when test="${booking.status eq 'Cancelled'}">
+                                                                                                <i class="bi bi-x-circle-fill"></i> Cancelled
+                                                                                            </c:when>
+                                                                                            <c:otherwise>${booking.status}</c:otherwise>
+                                                                                        </c:choose>
+                                                                                    </span>
+                                                                                </div>
                                                                             </div>
+                                                                            <div class="mb-2 text-muted small fs-7 d-flex align-items-center car-info-inline">
+                                                                                <span class="me-3"><i class="bi bi-hash me-1"></i>${booking.bookingCode}</span>
+                                                                                <span class="me-3"><i class="bi bi-car-front me-1"></i>${booking.carLicensePlate}</span>
+                                                                            </div>
+                                                                            <div class="mb-2 text-muted small fs-7 d-flex align-items-center car-info-inline">
+                                                                                <span class="me-3"><i class="bi bi-calendar me-1"></i>${booking.formattedPickupDateTime} - ${booking.formattedReturnDateTime}</span>
+                                                                            </div>
+                                                                            <span class="price-new fw-bold fs-6 text-success me-3" style="margin-bottom:0;">
+                                                                                <fmt:formatNumber value="${booking.totalAmount}" type="number" pattern="#.###" /> VND
+                                                                            </span>
                                                                         </div>
-                                                                        <div class="mb-2 text-muted small fs-7 d-flex align-items-center car-info-inline">
-                                                                            <span class="me-3"><i class="bi bi-hash me-1"></i>${booking.bookingCode}</span>
-                                                                            <span class="me-3"><i class="bi bi-car-front me-1"></i>${booking.carLicensePlate}</span>
+                                                                        <div class="mytrip-btn-group">
+                                                                            <button class="btn-mytrip-action btn-detail btn-view-details" data-booking-id="${booking.bookingId}" data-car-model="${booking.carModel}" data-license-plate="${booking.carLicensePlate}" data-pickup="${booking.formattedPickupDateTime}" data-return="${booking.formattedReturnDateTime}" data-total-amount="${booking.totalAmount}" data-status="${booking.status}" data-booking-code="${booking.bookingCode}" data-bs-toggle="modal" data-bs-target="#myTripDetailModal">
+                                                                                View Details
+                                                                            </button>
+                                                                            <a class="btn-mytrip-action btn-mytrip-green btn-sm"
+                                                                               href="${pageContext.request.contextPath}/customer/deposit?bookingId=${booking.bookingId}">
+                                                                               Continue to Payment
+                                                                            </a>
+                                                                            <button class="btn-mytrip-action btn-mytrip-blue btn-sm" data-booking-id="${booking.bookingId}">Send review</button>
                                                                         </div>
-                                                                        <div class="mb-2 text-muted small fs-7 d-flex align-items-center car-info-inline">
-                                                                            <span class="me-3"><i class="bi bi-calendar me-1"></i>${booking.formattedPickupDateTime} - ${booking.formattedReturnDateTime}</span>
-                                                                        </div>
-                                                                        <span class="price-new fw-bold fs-6 text-success me-3" style="margin-bottom:0;">
-                                                                            <fmt:formatNumber value="${booking.totalAmount}" type="number" pattern="#.###" /> VND
-                                                                        </span>
-                                                                    </div>
-                                                                    <div class="mytrip-btn-group">
-                                                                        <button class="btn-mytrip-action btn-detail btn-view-details" data-booking-id="${booking.bookingId}" data-car-model="${booking.carModel}" data-license-plate="${booking.carLicensePlate}" data-pickup="${booking.formattedPickupDateTime}" data-return="${booking.formattedReturnDateTime}" data-total-amount="${booking.totalAmount}" data-status="${booking.status}" data-booking-code="${booking.bookingCode}" data-bs-toggle="modal" data-bs-target="#myTripDetailModal">
-                                                                            View Details
-                                                                        </button>
-                                                                        <a class="btn-mytrip-action btn-mytrip-green btn-sm"
-                                                                           href="${pageContext.request.contextPath}/customer/deposit?bookingId=${booking.bookingId}">
-                                                                           Continue to Payment
-                                                                        </a>
-                                                                        <button class="btn-mytrip-action btn-mytrip-blue btn-sm" data-booking-id="${booking.bookingId}">Send review</button>
                                                                     </div>
                                                                 </div>
-                                                            </div>
+                                                            </c:if>
                                                         </c:forEach>
                                                     </div>
                                                 </c:when>
@@ -335,16 +357,31 @@
                 <div class="mytrip-modal-value fw-bold" id="modalTotalAmount"></div>
               </div>
               <div class="modal-footer border-0 pt-0 d-flex flex-column gap-2">
-                <a class="btn btn-success w-100 py-2"
-                   id="modalContinuePaymentBtn"
-                   href="#">
-                   Continue to Payment
-                </a>
               </div>
             </div>
           </div>
         </div>
 
         <jsp:include page="/pages/includes/logout-confirm-modal.jsp" />
+
+        <!-- Cancel Booking Confirmation Modal -->
+        <div class="modal fade" id="cancelBookingModal" tabindex="-1" aria-labelledby="cancelBookingModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content custom-modal-content">
+              <div class="modal-header border-0 pb-0 justify-content-end">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body text-center pt-0">
+                <h2 class="modal-title fw-bold mb-3" id="cancelBookingModalLabel" style="font-size: 2rem;">Cancel Booking</h2>
+                <div class="mb-4" style="font-size: 1.1rem;">Are you sure you want to cancel this booking?</div>
+                <form id="cancelBookingForm" method="post" action="${pageContext.request.contextPath}/user/booking-cancel">
+                  <input type="hidden" name="bookingId" id="cancelBookingIdInput" value="">
+                  <button type="submit" class="btn btn-danger w-100" id="confirmCancelBookingBtn">Yes, Cancel Booking</button>
+                  <button type="button" class="btn btn-secondary w-100 mt-2" data-bs-dismiss="modal">No, Keep Booking</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
     </body>
 </html>

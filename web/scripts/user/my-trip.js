@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
+    let bookingIdToCancel = null;
     // Handle Return Car buttons (both in cards and modal)
     document.addEventListener('click', function(e) {
         if (e.target.classList.contains('btn-mytrip-green') || 
@@ -25,13 +26,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Handle Cancel Booking buttons
     document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('btn-mytrip-red') || 
-            e.target.closest('.btn-mytrip-red')) {
-            const bookingId = e.target.getAttribute('data-booking-id') || 
-                             e.target.closest('[data-booking-id]')?.getAttribute('data-booking-id');
-            if (confirm('Are you sure you want to cancel this booking?')) {
-                // TODO: Call API or submit form to cancel booking
-                console.log('Cancel Booking: ' + bookingId);
+        const btn = e.target.closest('.btn-mytrip-red');
+        if (btn) {
+            // Kiểm tra status
+            const card = btn.closest('.favorite-car-card');
+            const statusBadge = card.querySelector('.status-badge');
+            if (statusBadge && statusBadge.textContent.includes('Awaiting Confirmation')) {
+                bookingIdToCancel = btn.getAttribute('data-booking-id');
+                document.getElementById('cancelBookingIdInput').value = bookingIdToCancel;
+                const modal = new bootstrap.Modal(document.getElementById('cancelBookingModal'));
+                modal.show();
             }
         }
     });
@@ -159,4 +163,5 @@ document.addEventListener('DOMContentLoaded', function () {
             e.stopPropagation();
         });
     });
+
 });

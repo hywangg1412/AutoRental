@@ -21,10 +21,10 @@ public class ContractRepository implements IContractRepository {
 
     @Override
     public Contract add(Contract entity) throws SQLException {
-        String sql = "INSERT INTO Contract (ContractId, ContractCode, UserId, BookingId, StaffId, " +
+        String sql = "INSERT INTO Contract (ContractId, ContractCode, UserId, BookingId, " +
                     "CreatedDate, SignedDate, CompletedDate, Status, TermsAccepted, TermsAcceptedDate, " +
-                    "ContractPDFUrl, SignatureData, SignatureImageUrl, SignatureMethod, Notes, CancellationReason) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    "TermsVersion, TermsFileUrl, SignatureData, SignatureMethod, Notes, CancellationReason) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = dbContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -33,19 +33,18 @@ public class ContractRepository implements IContractRepository {
             ps.setString(2, entity.getContractCode());
             ps.setObject(3, entity.getUserId());
             ps.setObject(4, entity.getBookingId());
-            ps.setObject(5, entity.getStaffId());
-            ps.setObject(6, entity.getCreatedDate());
-            ps.setObject(7, entity.getSignedDate());
-            ps.setObject(8, entity.getCompletedDate());
-            ps.setString(9, entity.getStatus());
-            ps.setBoolean(10, entity.isTermsAccepted());
-            ps.setObject(11, entity.getTermsAcceptedDate());
-            ps.setString(12, entity.getContractPDFUrl());
+            ps.setObject(5, entity.getCreatedDate());
+            ps.setObject(6, entity.getSignedDate());
+            ps.setObject(7, entity.getCompletedDate());
+            ps.setString(8, entity.getStatus());
+            ps.setBoolean(9, entity.isTermsAccepted());
+            ps.setObject(10, entity.getTermsAcceptedDate());
+            ps.setString(11, entity.getTermsVersion());
+            ps.setString(12, entity.getTermsFileUrl());
             ps.setString(13, entity.getSignatureData());
-            ps.setString(14, entity.getSignatureImageUrl());
-            ps.setString(15, entity.getSignatureMethod());
-            ps.setString(16, entity.getNotes());
-            ps.setString(17, entity.getCancellationReason());
+            ps.setString(14, entity.getSignatureMethod());
+            ps.setString(15, entity.getNotes());
+            ps.setString(16, entity.getCancellationReason());
             
             int affectedRows = ps.executeUpdate();
             if (affectedRows > 0) {
@@ -81,10 +80,10 @@ public class ContractRepository implements IContractRepository {
 
     @Override
     public boolean update(Contract entity) throws SQLException {
-        String sql = "UPDATE Contract SET ContractCode = ?, UserId = ?, BookingId = ?, StaffId = ?, " +
+        String sql = "UPDATE Contract SET ContractCode = ?, UserId = ?, BookingId = ?, " +
                     "CreatedDate = ?, SignedDate = ?, CompletedDate = ?, Status = ?, TermsAccepted = ?, " +
-                    "TermsAcceptedDate = ?, ContractPDFUrl = ?, SignatureData = ?, SignatureImageUrl = ?, " +
-                    "SignatureMethod = ?, Notes = ?, CancellationReason = ? WHERE ContractId = ?";
+                    "TermsAcceptedDate = ?, TermsVersion = ?, TermsFileUrl = ?, SignatureData = ?, SignatureMethod = ?, " +
+                    "Notes = ?, CancellationReason = ? WHERE ContractId = ?";
         
         try (Connection conn = dbContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -92,20 +91,19 @@ public class ContractRepository implements IContractRepository {
             ps.setString(1, entity.getContractCode());
             ps.setObject(2, entity.getUserId());
             ps.setObject(3, entity.getBookingId());
-            ps.setObject(4, entity.getStaffId());
-            ps.setObject(5, entity.getCreatedDate());
-            ps.setObject(6, entity.getSignedDate());
-            ps.setObject(7, entity.getCompletedDate());
-            ps.setString(8, entity.getStatus());
-            ps.setBoolean(9, entity.isTermsAccepted());
-            ps.setObject(10, entity.getTermsAcceptedDate());
-            ps.setString(11, entity.getContractPDFUrl());
+            ps.setObject(4, entity.getCreatedDate());
+            ps.setObject(5, entity.getSignedDate());
+            ps.setObject(6, entity.getCompletedDate());
+            ps.setString(7, entity.getStatus());
+            ps.setBoolean(8, entity.isTermsAccepted());
+            ps.setObject(9, entity.getTermsAcceptedDate());
+            ps.setString(10, entity.getTermsVersion());
+            ps.setString(11, entity.getTermsFileUrl());
             ps.setString(12, entity.getSignatureData());
-            ps.setString(13, entity.getSignatureImageUrl());
-            ps.setString(14, entity.getSignatureMethod());
-            ps.setString(15, entity.getNotes());
-            ps.setString(16, entity.getCancellationReason());
-            ps.setObject(17, entity.getContractId());
+            ps.setString(13, entity.getSignatureMethod());
+            ps.setString(14, entity.getNotes());
+            ps.setString(15, entity.getCancellationReason());
+            ps.setObject(16, entity.getContractId());
             
             int affectedRows = ps.executeUpdate();
             return affectedRows > 0;
@@ -245,16 +243,15 @@ public class ContractRepository implements IContractRepository {
         contract.setContractCode(rs.getString("ContractCode"));
         contract.setUserId(UUID.fromString(rs.getString("UserId")));
         contract.setBookingId(UUID.fromString(rs.getString("BookingId")));
-        contract.setStaffId(UUID.fromString(rs.getString("StaffId")));
         contract.setCreatedDate(rs.getObject("CreatedDate", LocalDateTime.class));
         contract.setSignedDate(rs.getObject("SignedDate", LocalDateTime.class));
         contract.setCompletedDate(rs.getObject("CompletedDate", LocalDateTime.class));
         contract.setStatus(rs.getString("Status"));
         contract.setTermsAccepted(rs.getBoolean("TermsAccepted"));
         contract.setTermsAcceptedDate(rs.getObject("TermsAcceptedDate", LocalDateTime.class));
-        contract.setContractPDFUrl(rs.getString("ContractPDFUrl"));
+        contract.setTermsVersion(rs.getString("TermsVersion"));
+        contract.setTermsFileUrl(rs.getString("TermsFileUrl"));
         contract.setSignatureData(rs.getString("SignatureData"));
-        contract.setSignatureImageUrl(rs.getString("SignatureImageUrl"));
         contract.setSignatureMethod(rs.getString("SignatureMethod"));
         contract.setNotes(rs.getString("Notes"));
         contract.setCancellationReason(rs.getString("CancellationReason"));

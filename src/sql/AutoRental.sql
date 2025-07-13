@@ -361,24 +361,32 @@ CREATE TABLE [BookingSurcharges] (
 GO
 
 CREATE TABLE [Contract] (
-    [ContractId] UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
+    [ContractId] UNIQUEIDENTIFIER NOT NULL,
+    [ContractCode] NVARCHAR(30) NOT NULL UNIQUE, -- Mã hợp đồng
+
     [UserId] UNIQUEIDENTIFIER NOT NULL, 
     [BookingId] UNIQUEIDENTIFIER NOT NULL, 
-    [ContractContent] NVARCHAR(MAX) NOT NULL, 
-    [PickupDateTime] DATETIME2 NOT NULL, -- Ngày bắt đầu thuê xe
-    [ReturnDateTime] DATETIME2 NOT NULL, -- Ngày kết thúc thuê xe
-    [TotalPrice] DECIMAL(10, 2) NOT NULL, -- Tổng giá trị hợp đồng
-    [DepositAmount] DECIMAL(10, 2) NOT NULL, -- Số tiền đặt cọc
-    [DepositStatus] VARCHAR(20) NOT NULL, -- Pending, Paid, Failed, Refunded
-    [Status] VARCHAR(20) NOT NULL, --DEFAULT 'Created', Created, Pending, Active, Completed, Cancelled, Terminated
-    [CompanyRepresentativeId] UNIQUEIDENTIFIER NOT NULL, -- ID của nhân viên duyệt
+    -- [StaffId] UNIQUEIDENTIFIER NOT NULL, -- ID của nhân viên duyệt
+    
     [CreatedDate] DATETIME2 NOT NULL DEFAULT GETDATE(), -- Ngày tạo hợp đồng
-    [ContractFile] NVARCHAR(MAX) NULL, -- Đường dẫn file hợp đồng
-    [ContractCode] NVARCHAR(20) NOT NULL, -- Mã hợp đồng
+    [SignedDate] DATETIME2 NULL, -- Ngày ký hợp đồng
+    [CompletedDate] DATETIME2 NULL, -- Ngày hoàn thành hợp đồng
+    [Status] VARCHAR(20) NOT NULL DEFAULT 'Created', -- Created, Pending, Active, Completed, Cancelled, Terminated
+    
+    [TermsAccepted] BIT NOT NULL DEFAULT 0, -- Đã chấp nhận điều khoản chưa
+    [TermsAcceptedDate] DATETIME2 NULL, -- Ngày chấp nhận điều khoản
+    [TermsVersion] NVARCHAR(10) NULL, -- Version điều khoản đã chấp nhận
+    [TermsFileUrl] NVARCHAR(500) NULL, -- Đường dẫn file Terms (PDF/HTML)
+
+    [SignatureData] NVARCHAR(MAX) NULL, -- Dữ liệu chữ ký (base64 hoặc JSON)
+    -- [SignatureImageUrl] NVARCHAR(MAX) NULL, -- Đường dẫn ảnh chữ ký
+    [SignatureMethod] VARCHAR(20) NULL, -- Canvas, Upload, Digital, Checkbox
+
+    [Notes] NVARCHAR(500) NULL, -- Ghi chú
+    [CancellationReason] NVARCHAR(500) NULL, -- Lý do hủy hợp đồng
     CONSTRAINT [PK_Contract] PRIMARY KEY ([ContractId]),
     CONSTRAINT [FK_Contract_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE,
-    CONSTRAINT [FK_Contract_BookingId] FOREIGN KEY ([BookingId]) REFERENCES [Booking]([BookingId]) ON DELETE NO ACTION,
-    CONSTRAINT [FK_Contract_CompanyRepresentativeId] FOREIGN KEY ([CompanyRepresentativeId]) REFERENCES [Users]([UserId])
+    CONSTRAINT [FK_Contract_BookingId] FOREIGN KEY ([BookingId]) REFERENCES [Booking]([BookingId]) ON DELETE NO ACTION
 );
 GO
 
