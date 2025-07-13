@@ -9,7 +9,6 @@ import java.util.UUID;
  * This object aggregates data from Booking, User, Car, and DriverLicense entities.
  */
 public class BookingInfoDTO {
-
     // Booking Information
     private UUID bookingId;
     private String bookingCode; // Friendly booking code like "BK-20240621-XYZ12"
@@ -18,7 +17,12 @@ public class BookingInfoDTO {
     private double totalAmount;
     private String status;
     private LocalDateTime createdDate;
-    private long duration;
+    
+    // *** THAY ĐỔI KIỂU DỮ LIỆU TỪ LONG SANG DOUBLE ***
+    private double duration; // Thay vì long duration
+
+    // *** THÊM FIELD MỚI CHO RENTAL TYPE ***
+    private String rentalType; // Loại thuê: "hourly", "daily", "monthly"
 
     // User (Customer) Information
     private String customerName;
@@ -41,9 +45,10 @@ public class BookingInfoDTO {
     private String carImage;
     private java.math.BigDecimal pricePerDay;
     private String cancelReason;
+
     // Để đồng bộ với BookingDTO
     private String fullName; // alias cho customerName
-    private String email;    // alias cho customerEmail
+    private String email; // alias cho customerEmail
     private String phoneNumber; // alias cho customerPhone
 
     // Constructors
@@ -51,7 +56,6 @@ public class BookingInfoDTO {
     }
 
     // --- Start of Getters and Setters ---
-
     public UUID getBookingId() {
         return bookingId;
     }
@@ -83,7 +87,7 @@ public class BookingInfoDTO {
     public void setReturnDateTime(LocalDateTime returnDateTime) {
         this.returnDateTime = returnDateTime;
     }
-    
+
     // --- NEW FORMATTING METHODS ---
     public String getFormattedPickupDateTime() {
         if (pickupDateTime == null) {
@@ -126,14 +130,81 @@ public class BookingInfoDTO {
         this.createdDate = createdDate;
     }
 
-    public long getDuration() {
+    // *** GETTER VÀ SETTER CHO DURATION KIỂU DOUBLE ***
+    public double getDuration() {
         return duration;
     }
 
-    public void setDuration(long duration) {
+    public void setDuration(double duration) {
         this.duration = duration;
     }
 
+    // *** THÊM METHOD FORMAT DURATION CHO HIỂN THỊ CÓ SỐ THẬP PHÂN ***
+    public String getFormattedDuration() {
+        if (duration <= 0) return "1 day";
+        
+        // Format duration theo rental type với số thập phân
+        if (rentalType != null) {
+            switch (rentalType.toLowerCase()) {
+                case "hourly":
+                    if (duration == Math.floor(duration)) {
+                        return String.format("%.0f hours", duration); // Không có thập phân
+                    } else {
+                        return String.format("%.1f hours", duration); // 1 chữ số thập phân
+                    }
+                case "daily":
+                    if (duration == Math.floor(duration)) {
+                        return String.format("%.0f days", duration); // Không có thập phân
+                    } else {
+                        return String.format("%.2f days", duration); // 2 chữ số thập phân
+                    }
+                case "monthly":
+                    if (duration == Math.floor(duration)) {
+                        return String.format("%.0f months", duration); // Không có thập phân
+                    } else {
+                        return String.format("%.2f months", duration); // 2 chữ số thập phân
+                    }
+                default:
+                    return String.format("%.2f days", duration);
+            }
+        }
+        
+        // Mặc định hiển thị days
+        if (duration == Math.floor(duration)) {
+            return String.format("%.0f days", duration);
+        } else {
+            return String.format("%.2f days", duration);
+        }
+    }
+
+    // *** GETTER VÀ SETTER CHO RENTAL TYPE MỚI ***
+    public String getRentalType() {
+        return rentalType;
+    }
+
+    public void setRentalType(String rentalType) {
+        this.rentalType = rentalType;
+    }
+
+    // *** THÊM METHOD FORMAT RENTAL TYPE CHO HIỂN THỊ ***
+    public String getFormattedRentalType() {
+        if (rentalType == null || rentalType.trim().isEmpty()) {
+            return "Daily"; // Mặc định
+        }
+        
+        switch (rentalType.toLowerCase()) {
+            case "hourly":
+                return "Per Hour";
+            case "daily":
+                return "Per Day";
+            case "monthly":
+                return "Per Month";
+            default:
+                return rentalType;
+        }
+    }
+
+    // ... các getter/setter khác giữ nguyên ...
     public String getCustomerName() {
         return customerName;
     }
@@ -234,6 +305,8 @@ public class BookingInfoDTO {
                 ", customerName='" + customerName + '\'' +
                 ", carModel='" + carModel + '\'' +
                 ", driverLicenseImageUrl='" + driverLicenseImageUrl + '\'' +
+                ", rentalType='" + rentalType + '\'' + // *** THÊM VÀO toString() ***
+                ", duration=" + duration + // *** THÊM DURATION VÀO toString() ***
                 '}';
     }
 }
