@@ -5,13 +5,14 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 import Model.DTO.Deposit.DepositPageDTO;
+import Model.Entity.User.User;
 import Service.Deposit.DepositService;
+import Utils.SessionUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 /**
  * Servlet xử lý trang deposit - đặt cọc
@@ -22,13 +23,6 @@ import jakarta.servlet.http.HttpSession;
 public class DepositServlet extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(DepositServlet.class.getName());
-    private static final String LOGIN_PAGE = "/pages/authen/SignIn.jsp";
-    private static final String DEPOSIT_PAGE = "/pages/booking-form/booking-form-deposit.jsp";
-    
-    // ========== CONSTANTS - HẰNG SỐ TÍNH TOÁN ==========
-    private static final double DEPOSIT_PERCENTAGE = 0.30; // 30% tiền cọc
-    private static final double VAT_PERCENTAGE = 0.10; // 10% VAT
-    private static final double INSURANCE_RATE = 40.0; // 40K/ngày bảo hiểm cơ bản
 
     private final DepositService depositService;
 
@@ -57,30 +51,29 @@ public class DepositServlet extends HttpServlet {
             response.getWriter().println("<h1>✅ DepositServlet Working!</h1>");
             response.getWriter().println("<p>Servlet mapping works correctly.</p>");
             response.getWriter().println("<p>BookingId: " + request.getParameter("bookingId") + "</p>");
-            response.getWriter().println("<p>Session userId: " + request.getSession().getAttribute("userId") + "</p>");
-            response.getWriter().println("<p>Session user: " + request.getSession().getAttribute("user") + "</p>");
+            response.getWriter().println("<p>Session user: " + SessionUtil.getSessionAttribute(request, "user") + "</p>");
             return;
         }
         
         try {
-            // 1. DEBUG SESSION
+            // 1. Kiểm tra đăng nhập - SỬ DỤNG PATTERN GIỐNG CÁC SERVLET KHÁC
+            User user = (User) SessionUtil.getSessionAttribute(request, "user");
+            if (user == null) {
+                response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp");
+                return;
+            }
+            
+            // 2. Lấy bookingId từ URL
             String bookingIdStr = request.getParameter("bookingId");
             if (bookingIdStr == null || bookingIdStr.trim().isEmpty()) {
                 request.setAttribute("errorMessage", "Thiếu bookingId trên URL!");
                 request.getRequestDispatcher("/pages/error.jsp").forward(request, response);
                 return;
             }
+            
             try {
-                // Lấy userId từ session
-                HttpSession session = request.getSession();
-                String userIdStr = (String) session.getAttribute("userId");
-                if (userIdStr == null) {
-                    request.setAttribute("errorMessage", "Bạn chưa đăng nhập hoặc phiên đăng nhập đã hết hạn!");
-                    request.getRequestDispatcher("/pages/error.jsp").forward(request, response);
-                    return;
-                }
                 java.util.UUID bookingId = java.util.UUID.fromString(bookingIdStr);
-                java.util.UUID userId = java.util.UUID.fromString(userIdStr);
+                java.util.UUID userId = user.getUserId(); // Lấy từ User object
                 
                 System.out.println("=== DEBUG DepositServlet ===");
                 System.out.println("BookingId từ URL: " + bookingIdStr);
@@ -130,12 +123,12 @@ public class DepositServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         
         try {
-            // 1. Kiểm tra đăng nhập
-            // User user = (User) SessionUtil.getSessionAttribute(request, "user"); // Removed as per new_code
-            // if (user == null) {
-            //     response.getWriter().write("{\"success\": false, \"message\": \"Chưa đăng nhập\"}");
-            //     return;
-            // }
+            // 1. Kiểm tra đăng nhập - SỬ DỤNG PATTERN GIỐNG CÁC SERVLET KHÁC
+            User user = (User) SessionUtil.getSessionAttribute(request, "user");
+            if (user == null) {
+                response.getWriter().write("{\"success\": false, \"message\": \"Chưa đăng nhập\"}");
+                return;
+            }
 
             // 2. Lấy action và bookingId
             String action = request.getParameter("action");
@@ -147,7 +140,7 @@ public class DepositServlet extends HttpServlet {
             }
 
             UUID bookingId = UUID.fromString(bookingIdParam);
-            UUID userId = UUID.fromString((String) request.getSession().getAttribute("userId")); // Assuming userId is in session
+            UUID userId = user.getUserId(); // Lấy từ User object
 
             // 3. Xử lý theo action
             switch (action) {
@@ -269,8 +262,6 @@ public class DepositServlet extends HttpServlet {
             response.getWriter().write("{\"success\": false, \"message\": \"Error recalculating costs\"}");
         }
     }
-
-
 
 }
  
