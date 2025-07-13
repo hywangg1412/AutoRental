@@ -11,8 +11,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800&display=swap" rel="stylesheet">
     <!-- ===== Include Styles ===== -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/userNav.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/nav.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/user-nav.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/user/change-password.css">
     <!-- ===== Custom Styles ===== -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/open-iconic-bootstrap.min.css">
@@ -30,7 +29,7 @@
 </head>
 <body>
     <!-- Header -->
-    <jsp:include page="/pages/includes/nav.jsp" />
+    <jsp:include page="/pages/includes/user-nav.jsp" />
     <div class="container">
         <div class="row g-5" style="margin-top: 80px;">
             <!-- Sidebar -->
@@ -58,7 +57,7 @@
                                 <i class="bi bi-trash text-dark"></i>
                                 Request account deletion
                             </a></li>
-                        <li><a href="${pageContext.request.contextPath}/logout" class="nav-link text-danger">
+                        <li><a href="#" class="nav-link text-danger logoutBtn">
                                 <i class="bi bi-box-arrow-right"></i>
                                 Log out
                             </a></li>
@@ -178,6 +177,7 @@
         </div>
     </div>
     <jsp:include page="/pages/includes/footer.jsp" />
+    <jsp:include page="/pages/includes/logout-confirm-modal.jsp" />
     <!-- Bootstrap JS & Custom Scripts giống UserAbout -->
     <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
     <script src="${pageContext.request.contextPath}/assets/js/jquery.min.js"></script>

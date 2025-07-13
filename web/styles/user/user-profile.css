@@ -393,16 +393,15 @@ input:disabled:active {
     text-overflow: ellipsis;
 }
 
-.modal.fade {
-    transition: opacity 0.7s cubic-bezier(.4,0,.2,1);
-}
+/* Zoom animation for all modals */
 .modal.fade .modal-dialog {
-    transition: opacity 0.4s cubic-bezier(0.4,0,0.2,1);
-    transform: none !important;
-    /* opacity: 0; */
+  transition: transform 0.18s cubic-bezier(0.4,0,0.2,1), opacity 0.15s cubic-bezier(0.4,0,0.2,1);
+  transform: scale(0.8);
+  opacity: 0;
 }
 .modal.fade.show .modal-dialog {
-    opacity: 1;
+  transform: scale(1);
+  opacity: 1;
 }
 
 .modal-content {
@@ -897,6 +896,10 @@ nav.ftco-navbar-light .nav-link {
 }
 .btn-unlink-social:hover i {
     color: #c82333;
+}
+
+.fa-bell, .fa-comment-dots {
+    color: #222 !important;
 }
 
 

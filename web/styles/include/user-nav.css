@@ -1,0 +1,614 @@
+nav .custom-login-btn,
+nav .custom-signup-btn {
+  min-width: 90px !important;
+  text-align: center !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 600 !important;
+  border-radius: 5px !important;
+  box-shadow: none !important;
+  outline: none !important;
+  border: 2px solid #1089ff !important;
+  background: #fff !important;
+  transition: background 0.2s, color 0.2s, border 0.2s !important;
+  padding: 0.25rem 1rem !important;
+  font-size: 1rem !important;
+  width: auto !important;
+  height: 38px !important;
+}
+nav .custom-login-btn {
+  color: #1089ff !important;
+  margin-right: 8px !important;
+  background: #fff !important;
+}
+nav .custom-login-btn:hover, nav .custom-login-btn:focus {
+  background-color: #1089ff !important;
+  color: #fff !important;
+  border-color: #1089ff !important;
+}
+nav .custom-signup-btn {
+  color: #fff !important;
+  background: #1089ff !important;
+  margin-left: 0 !important;
+}
+nav .custom-signup-btn:hover, nav .custom-signup-btn:focus {
+  background-color: #0056b3 !important;
+  border-color: #0056b3 !important;
+  color: #fff !important;
+}
+.vr {
+  width: 1px;
+  background-color: #dee2e6;
+  height: 28px;
+  align-self: center;
+  opacity: 1;
+  margin-left: 12px !important;
+  margin-right: 20px !important;
+}
+
+.username-link {
+  display: flex;
+  align-items: center;
+  padding-left: 0;
+  padding-right: 0;
+  font-weight: 400;
+  color: #fff !important;
+  transition: color 0.2s, background 0.2s;
+}
+
+/* User avatar styles */
+.user-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  transition: border-color 0.2s;
+}
+
+.user-avatar:hover {
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Dropdown styles - chỉ áp dụng cho navbar */
+.navbar .dropdown {
+  position: relative;
+}
+
+.navbar .dropdown-toggle {
+  background: none;
+  border: none;
+  color: white;
+  padding: 12px;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar .dropdown-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.navbar .dropdown-menu {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-10px);
+  transition: all 0.2s ease;
+}
+
+.navbar .dropdown.show .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.navbar .dropdown-menu::before {
+  display: none !important;
+}
+
+.navbar .dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  color: #333;
+  text-decoration: none;
+  border: none;
+  background: none;
+  text-align: left;
+  transition: background-color 0.2s;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.navbar .dropdown-item:hover {
+  background-color: #f8f9fa;
+  color: #333;
+  text-decoration: none;
+}
+
+.navbar .dropdown-item.text-danger:hover {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.navbar .dropdown-divider {
+  height: 1px;
+  background-color: #dee2e6;
+  margin: 8px 0;
+  border: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+  .navbar .username-link span {
+    display: none !important;
+  }
+  .navbar .dropdown-menu {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    border-radius: 12px 12px 0 0;
+    margin-top: 0;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+  .navbar .dropdown-menu::before {
+    display: none;
+  }
+  .navbar .dropdown-toggle {
+    padding: 10px;
+    min-width: 40px;
+    min-height: 40px;
+  }
+}
+
+.navbar .dropdown-toggle::after {
+  content: '';
+  border: none !important;
+  background: none !important;
+  box-shadow: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.navbar .dropdown.show .dropdown-menu {
+  animation: dropdownFadeIn 0.2s ease-out;
+}
+
+.navbar .dropdown-menu::before {
+  display: none !important;
+}
+
+.navbar .dropdown.show .dropdown-menu {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+.navbar .dropdown:hover .dropdown-menu,
+.navbar .dropdown-menu:hover {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+.navbar .dropdown:hover .dropdown-menu,
+.navbar .dropdown.show .dropdown-menu {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  transform: translateY(0);
+}
+
+.navbar .dropdown-menu:hover {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+.navbar .dropdown::before {
+  content: '';
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 100%;
+  height: 8px;
+  background: transparent;
+  z-index: 999;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .navbar .dropdown:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+}
+
+.ftco-navbar-light.scrolled .bi-bell, .ftco-navbar-light.scrolled .bi-chat-dots, .ftco-navbar-light.scrolled .username-link {
+    color: #222 !important;
+}
+
+.ftco-navbar-light.scrolled .username-link:hover, .ftco-navbar-light.scrolled .username-link:focus {
+  color: #01D28E !important;
+}
+
+.ms-3{
+  margin-left: 0 !important;
+}
+
+.bi.bi-bell,
+.bi.bi-chat-dots {
+  /* padding-left: 8px;
+  padding-right: 8px; */
+}
+
+.gap-3 {
+  gap: 1rem !important;
+}
+
+.bi-three-dots-vertical {
+  font-size: 1.4rem !important;
+  color: white !important;
+}
+
+.ftco-navbar-light.scrolled .bi-three-dots-vertical {
+  color: #222 !important;
+}
+
+.dropdown-toggle::after {
+  content: '';
+  border: none !important;
+  background: none !important;
+  box-shadow: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown.show .dropdown-menu {
+  animation: dropdownFadeIn 0.2s ease-out;
+}
+
+.dropdown-menu::before {
+  display: none !important;
+}
+
+.dropdown.show .dropdown-menu {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+
+.dropdown:hover .dropdown-menu,
+.dropdown-menu:hover {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+
+.dropdown:hover .dropdown-menu,
+.dropdown.show .dropdown-menu {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  transform: translateY(0);
+}
+
+.dropdown-menu:hover {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+.dropdown::before {
+  content: '';
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 100%;
+  height: 8px;
+  background: transparent;
+  z-index: 999;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dropdown:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+}
+
+.badge.rounded-pill.bg-danger {
+  font-size: 0.7rem;
+  top: 0;
+  right: 0;
+}
+
+.notification-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.notification-title {
+  font-weight: bold;
+  color: #222;
+  margin-bottom: 2px;
+  font-size: 1rem;
+  white-space: normal;
+  word-break: break-word;
+  flex: 1;
+}
+
+.dot-unread {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  background: #22c55e;
+  border-radius: 50%;
+  margin-left: 12px;
+  flex-shrink: 0;
+}
+
+.notification-item.read .dot-unread {
+  display: none;
+}
+
+/* Dropdown notification box */
+.navbar .dropdown-menu.dropdown-menu-end {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(60,60,60,0.18);
+  padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+  min-width: 350px;
+  max-width: 400px;
+  border: none;
+}
+
+/* Notification item */
+.navbar .notification-item {
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-bottom: 4px;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.navbar .notification-item.unread {
+  background: #f6fff8;
+}
+
+.navbar .notification-item.read {
+  background: #fff;
+}
+
+.navbar .notification-content {
+  flex: 1;
+  min-width: 0;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar .dot-unread {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  background: #22c55e;
+  border-radius: 50%;
+  margin-left: 16px;
+  flex-shrink: 0;
+}
+
+.navbar .notification-item.read .dot-unread {
+  display: none;
+}
+
+  /* .dropdown-item:active,
+  .dropdown-item:focus,
+  .dropdown-item:hover {
+    background-color: transparent !important;
+    color: inherit !important;
+  } */
+
+/* Sửa vấn đề notification count bị khuất */
+.notification-wrapper {
+  position: relative !important;
+  overflow: visible !important;
+}
+
+.notification-btn {
+  position: relative !important;
+  display: inline-block !important;
+  padding: 8px !important;
+  overflow: visible !important;
+}
+
+.notification-count {
+  position: absolute !important;
+  top: 6px !important;
+  right: 3px !important;
+  background: #dc3545 !important;
+  color: white !important;
+  border-radius: 50% !important;
+  min-width: 19px !important;
+  height: 19px !important;
+  font-size: 11px !important;
+  font-weight: bold !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  /* border: 2px solid white !important; */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  z-index: 1060 !important;
+  transform: translate(50%, -50%) !important;
+  line-height: 1 !important;
+}
+
+/* Đảm bảo icon bell không bị overflow */
+.notification-btn i.fa-bell {
+  border: none !important;
+  border-radius: 50%;
+  padding: 6px;
+  box-sizing: content-box;
+  color: #fff !important;
+  font-size: 1.2rem !important;
+  transition: border 0.2s;
+  position: relative;
+  z-index: 1;
+}
+
+/* Sửa cho navbar khi scroll */
+.ftco-navbar-light.scrolled .notification-btn i.fa-bell {
+  color: #222 !important;
+}
+
+.ftco-navbar-light.scrolled .notification-count {
+  border-color: #f8f9fa !important;
+}
+
+/* Responsive cho mobile */
+@media (max-width: 767.98px) {
+  .notification-count {
+    min-width: 18px !important;
+    height: 18px !important;
+    font-size: 10px !important;
+    top: 2px !important;
+    right: 2px !important;
+  }
+}
+
+/* Đảm bảo dropdown không bị ảnh hưởng */
+.dropdown-menu {
+  z-index: 1050 !important;
+}
+
+/* Fix cho trường hợp button bị clip */
+.notification-wrapper .btn {
+  overflow: visible !important;
+}
+
+/* Alternative positioning nếu vẫn bị lỗi */
+/* .notification-count-alt {
+  position: absolute !important;
+  top: -8px !important;
+  right: -8px !important;
+  background: #dc3545 !important;
+  color: white !important;
+  border-radius: 50% !important;
+  min-width: 20px !important;
+  height: 20px !important;
+  font-size: 11px !important;
+  font-weight: bold !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  border: 2px solid white !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  z-index: 1060 !important;
+  line-height: 1 !important;
+} */
+
+/* Đảm bảo parent container không bị overflow */
+.d-flex.align-items-center.gap-3 {
+  overflow: visible !important;
+}
+
+.navbar .d-flex {
+  overflow: visible !important;
+}
+
+.ftco-navbar-light.scrolled .notification-btn i.fa-bell,
+.ftco-navbar-light.scrolled .fa-comment-dots {
+  color: #222 !important;
+}
+
+.ftco-navbar-light.scrolled .notification-btn i.fa-bell,
+.ftco-navbar-light.scrolled .notification-btn ~ a i.fa-comment-dots {
+  color: #222 !important;
+}
+
+.ftco-navbar-light.scrolled .notification-count {
+  position: absolute !important;
+  top: 19px !important;
+  right: 4px !important;
+  background: #dc3545 !important;
+  color: white !important;
+  border-radius: 50% !important;
+  min-width: 19px !important;
+  height: 19px !important;
+  font-size: 11px !important;
+  font-weight: bold !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  /* border: 2px solid white !important; */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  z-index: 1060 !important;
+  transform: translate(50%, -50%) !important;
+  line-height: 1 !important;
+}
+
+
+
+
+

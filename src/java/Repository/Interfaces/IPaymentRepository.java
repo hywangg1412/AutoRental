@@ -1,7 +1,9 @@
 package Repository.Interfaces;
 
-import Model.Entity.Payment;
+import Model.Entity.Payment.Payment;
+import java.util.UUID;
 
-public interface IPaymentRepository extends Repository<Payment, Integer>{
+
+public interface IPaymentRepository extends Repository<Payment, UUID>{
     
 }

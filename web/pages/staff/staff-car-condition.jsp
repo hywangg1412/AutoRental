@@ -1,5 +1,5 @@
 <%-- Document : car-condition.jsp Created on : Jun 1, 2025, 11:00:54 AM Author :
-ACER --%> <%@page contentType="text/html" pageEncoding="UTF-8"%>
+ACER --%>
 <!DOCTYPE html>
 <html>
   <head>
@@ -20,6 +20,11 @@ ACER --%> <%@page contentType="text/html" pageEncoding="UTF-8"%>
     <link
       rel="stylesheet"
       href="${pageContext.request.contextPath}/styles/staff/staff-car-condition.css"
+    />
+    <!-- Notification CSS -->
+    <link
+      rel="stylesheet"
+      href="${pageContext.request.contextPath}/styles/staff/staff-notification.css"
     />
   </head>
   <body>

@@ -22,6 +22,8 @@
       rel="stylesheet"
       href="${pageContext.request.contextPath}/styles/staff/staff-car-availability.css"
     />
+    <!-- Notification CSS -->
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/staff/staff-notification.css">
   </head>
   <body>
     <div class="dashboard-container">

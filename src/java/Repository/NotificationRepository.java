@@ -1,5 +1,8 @@
 package Repository;
 
+import Config.DBContext;
+import Model.Entity.Notification;
+import Repository.Interfaces.INotificationRepository;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,10 +12,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import Config.DBContext;
-import Model.Entity.Notification;
-import Repository.Interfaces.INotificationRepository;
 
 
 public class NotificationRepository implements INotificationRepository {
@@ -165,6 +164,20 @@ public class NotificationRepository implements INotificationRepository {
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             System.out.println("Lỗi khi đánh dấu đã đọc tất cả notification: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    @Override
+    public boolean deleteNotificationById(UUID notificationId) {
+        String sql = "DELETE FROM Notification WHERE NotificationId = ?";
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, notificationId.toString());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi xóa notification: " + e.getMessage());
             e.printStackTrace();
             return false;
         }

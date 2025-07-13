@@ -542,9 +542,20 @@ nav.ftco-navbar-light .nav-link {
 .bi-three-dots-vertical,
 .dropdown-toggle[aria-labelledby="userDropdown"],
 #userDropdown,
-.dropdown,
-.dropdown-menu,
-.dropdown-toggle {
+/* .dropdown, */
+/* .dropdown-menu, */
+/* .dropdown-toggle, */
+.profile-sidebar .dropdown,
+.profile-sidebar .dropdown-menu,
+.profile-sidebar .dropdown-toggle,
+.sidebar-menu .dropdown,
+.sidebar-menu .dropdown-menu,
+.sidebar-menu .dropdown-toggle {
     display: none !important;
     visibility: hidden !important;
 }
+
+.fa-bell, .fa-comment-dots {
+    color: #222 !important;
+}
+
