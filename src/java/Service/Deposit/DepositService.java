@@ -18,7 +18,7 @@ import Model.Entity.Deposit.Insurance;
 import Model.Entity.Deposit.Terms;
 import Repository.Interfaces.IDeposit.IDepositRepository;
 import Repository.Interfaces.IDeposit.ITermsRepository;
-import Service.Interfaces.IDeposit.IDepositService;
+import Service.Interfaces.IDepositService;
 
 /**
  * Service xử lý logic đặt cọc - STYLE ĐỂ SINH VIÊN DỄ HIỂU
@@ -167,6 +167,7 @@ public class DepositService implements IDepositService {
         dto.setCustomerEmail(booking.getCustomerEmail());
         dto.setPickupDateTime(booking.getPickupDateTime());
         dto.setReturnDateTime(booking.getReturnDateTime());
+        dto.setRentalType(booking.getRentalType()); // THÊM DÒNG NÀY
         dto.setTermsAgreed(booking.isTermsAgreed());
         dto.setTermsAgreedAt(booking.getTermsAgreedAt());
         
@@ -201,6 +202,12 @@ public class DepositService implements IDepositService {
         if (booking.getPickupDateTime() != null && booking.getReturnDateTime() != null) {
             String rentalType = booking.getRentalType() != null ? booking.getRentalType() : "daily";
             
+            LOGGER.info("=== DURATION CALCULATION DEBUG ===");
+            LOGGER.info("Booking ID: " + booking.getBookingId());
+            LOGGER.info("Rental Type: " + rentalType);
+            LOGGER.info("Pickup: " + booking.getPickupDateTime());
+            LOGGER.info("Return: " + booking.getReturnDateTime());
+            
             // Sử dụng logic từ BookingService
             DurationResult durationResult = calculateDuration(
                 booking.getPickupDateTime(), 
@@ -211,13 +218,15 @@ public class DepositService implements IDepositService {
             // Set duration từ DurationResult
             dto.setDuration(durationResult.getBillingUnitsAsDouble());
             
-            LOGGER.info(String.format("Duration calculation: %s %s %s", 
+            LOGGER.info(String.format("Duration calculation result: %s %s %s", 
                 durationResult.getBillingUnits(), 
                 durationResult.getUnitType(),
                 durationResult.getNote() != null ? "(" + durationResult.getNote() + ")" : ""
             ));
+            LOGGER.info("=== END DURATION CALCULATION ===");
         } else {
             dto.setDuration(1.0); // Default 1 ngày
+            LOGGER.warning("Pickup or Return time is null, using default duration 1.0");
         }
     }
 
