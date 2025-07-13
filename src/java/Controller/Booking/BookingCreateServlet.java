@@ -2,13 +2,12 @@ package Controller.Booking;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
+import Model.DTO.DurationResult;
 import Model.Entity.Booking.Booking;
 import Model.Entity.Car.Car;
 import Model.Entity.User.DriverLicense;
@@ -17,7 +16,6 @@ import Repository.Car.CarRepository;
 import Service.Booking.BookingService;
 import Service.External.CloudinaryService;
 import Service.User.DriverLicenseService;
-import Service.User.UserService;
 import Utils.SessionUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -43,23 +41,22 @@ public class BookingCreateServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         try {
-            // Step 1: Check user login
+            // Step 1: Kiểm tra đăng nhập user
             User user = (User) SessionUtil.getSessionAttribute(request, "user");
             if (user == null) {
                 response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp?error=not_logged_in");
                 return;
             }
 
-            // Step 2: Get all required parameters from the form
+            // Step 2: Lấy tất cả tham số cần thiết từ form
             String carIdStr = request.getParameter("carId");
             String startDateStr = request.getParameter("startDate");
             String endDateStr = request.getParameter("endDate");
-            String rentalType = request.getParameter("rentalType");
+            String rentalType = request.getParameter("rentalType"); // Đã có sẵn
             String hasDriverLicenseParam = request.getParameter("hasDriverLicense");
 
-            // Step 3: Validate essential booking data
+            // Step 3: Validate dữ liệu đầu vào cơ bản
             if (carIdStr == null || carIdStr.trim().isEmpty()
                     || startDateStr == null || startDateStr.trim().isEmpty()
                     || endDateStr == null || endDateStr.trim().isEmpty()
@@ -67,61 +64,76 @@ public class BookingCreateServlet extends HttpServlet {
                 throw new IllegalArgumentException("Car ID, start date, end date and rental type are required.");
             }
 
+            // Validate rentalType phải là một trong các giá trị hợp lệ
+            if (!rentalType.equals("hourly") && !rentalType.equals("daily") && !rentalType.equals("monthly")) {
+                throw new IllegalArgumentException("Invalid rental type. Must be 'hourly', 'daily', or 'monthly'.");
+            }
+
             UUID carId = UUID.fromString(carIdStr);
             LocalDateTime pickupDateTime = LocalDateTime.parse(startDateStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
             LocalDateTime returnDateTime = LocalDateTime.parse(endDateStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
+// ✅ Thêm đoạn này sau khi đã có pickup/return
+            DateTimeFormatter isoFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+            request.setAttribute("pickupDefault", pickupDateTime.format(isoFormatter));
+            request.setAttribute("returnDefault", returnDateTime.format(isoFormatter));
+
+            // Validate thời gian
             if (pickupDateTime.isBefore(LocalDateTime.now().plusMinutes(5))) {
                 throw new IllegalArgumentException("Pickup date/time must be at least 5 minutes in the future.");
             }
+
             if (returnDateTime.isBefore(pickupDateTime)) {
                 throw new IllegalArgumentException("Return date/time must be after pickup date/time.");
             }
 
-            // Step 4: Get Car Details for Price Calculation
+            // Step 4: Lấy thông tin xe để tính giá
             Car car = carRepository.findById(carId);
             if (car == null) {
                 throw new IllegalArgumentException("Car with ID " + carIdStr + " not found.");
             }
 
-            // Step 5: Handle driver license logic (upload if new)
+            // Step 5: Xử lý logic bằng lái xe (upload nếu mới)
             boolean hasDriverLicense = "true".equals(hasDriverLicenseParam);
             if (!hasDriverLicense) {
-                // This method will throw an exception if validation fails
                 handleNewLicenseUpload(request, user);
             }
 
-            // Step 6: Create and Populate the Booking object
+            // Step 6: Tạo và điền thông tin Booking object
             Booking newBooking = new Booking();
             newBooking.setBookingId(UUID.randomUUID());
             newBooking.setUserId(user.getUserId());
             newBooking.setCarId(carId);
             newBooking.setPickupDateTime(pickupDateTime);
             newBooking.setReturnDateTime(returnDateTime);
+            // *** Lưu rentalType vào booking ***
+            newBooking.setRentalType(rentalType);
+            // *** THÊM DÒNG NÀY ***
             newBooking.setStatus("Pending");
             newBooking.setCreatedDate(LocalDateTime.now());
 
-            // Booking code sẽ được tạo tự động trong BookingService.prepareNewBooking()
-            // Set a default payment method, can be changed later
-            newBooking.setExpectedPaymentMethod("Pay at pickup");
+            // *** SỬA PHẦN PAYMENT METHOD ***
+            // Đặt payment method mặc định là "Pending" vì chưa chọn
+            // Sẽ được cập nhật ở bước contract/deposit
+            newBooking.setExpectedPaymentMethod("Pending");
 
-            // Calculate total amount on the server for security and accuracy
-            double totalAmount = calculateTotalAmount(car, pickupDateTime, returnDateTime, rentalType);
+            // Tính tổng tiền dựa trên rentalType đã lưu
+            double totalAmount = calculateTotalAmount(car, pickupDateTime, returnDateTime, rentalType, request);
             newBooking.setTotalAmount(totalAmount);
 
-            // Set other fields to null by default
+            // Set các field khác
             newBooking.setHandledBy(null);
             newBooking.setDiscountId(null);
             newBooking.setCancelReason(null);
 
-            // Lấy thông tin phone và address từ form booking
+            // Lấy thông tin khách hàng từ form
             String customerPhone = request.getParameter("customerPhone");
             String customerAddress = request.getParameter("customerAddress");
 
-            // Lấy driverLicense trước!
+            // Lấy thông tin bằng lái
             DriverLicense driverLicense = driverLicenseService.findByUserId(user.getUserId());
 
-            // Đóng băng customerName: ưu tiên fullName bằng lái, nếu không có thì lấy username, không lấy firstName/lastName
+            // Đóng băng tên khách hàng: ưu tiên fullName từ bằng lái
             String frozenName = null;
             if (driverLicense != null && driverLicense.getFullName() != null && !driverLicense.getFullName().trim().isEmpty()) {
                 frozenName = driverLicense.getFullName();
@@ -130,43 +142,28 @@ public class BookingCreateServlet extends HttpServlet {
             } else {
                 frozenName = "Unknown";
             }
+
             newBooking.setCustomerName(frozenName);
+            newBooking.setCustomerPhone(customerPhone != null ? customerPhone : user.getPhoneNumber());
+            newBooking.setCustomerEmail(user.getEmail());
+            newBooking.setCustomerAddress(customerAddress); // Thêm dòng này nếu chưa có
 
-            // Đóng băng thông tin khách hàng vào booking
-            newBooking.setCustomerPhone(customerPhone != null ? customerPhone : user.getPhoneNumber()); // Số điện thoại
-            newBooking.setCustomerEmail(user.getEmail()); // Email
-
-            // Đóng băng ảnh bằng lái xe vào booking
+            // Đóng băng ảnh bằng lái xe
             if (driverLicense != null) {
                 newBooking.setDriverLicenseImageUrl(driverLicense.getLicenseImage());
             } else {
                 newBooking.setDriverLicenseImageUrl(null);
             }
 
-            // Step 7: Save the booking to the database
+            // Step 7: Lưu booking vào database
             bookingService.add(newBooking);
-            // --- Gửi notification cho tất cả staff khi có booking mới ---
-            try {
-                UserService userService = new UserService();
-                java.util.UUID staffRoleId = java.util.UUID.fromString("550e8400-e29b-41d4-a716-446655440000"); // Staff roleId
-                java.util.List<Model.Entity.User.User> staffUsers = userService.findByRoleId(staffRoleId);
+            
+            // Gửi notification cho tất cả staff khi có booking mới
+            Service.NotificationService notificationService = new Service.NotificationService();
+            String message = "Bạn có một booking request mới.";
+            notificationService.sendNotificationToAllStaff(message);
 
-                Service.NotificationService notificationService = new Service.NotificationService();
-                String message = "Bạn có một booking request mới.";
-                for (Model.Entity.User.User staff : staffUsers) {
-                    Model.Entity.Notification notification = new Model.Entity.Notification(
-                            java.util.UUID.randomUUID(),
-                            staff.getUserId(),
-                            message,
-                            java.time.LocalDateTime.now()
-                    );
-                    notificationService.add(notification);
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                // Không làm fail booking nếu lỗi notification
-            }
-            // Step 8: Lấy lại booking từ DB để lấy totalAmount và các thông tin khác
+            // Step 8: Lấy lại booking từ DB và chuyển đến trang success
             Booking savedBooking = bookingService.findById(newBooking.getBookingId());
             request.setAttribute("booking", savedBooking);
             request.getRequestDispatcher("/pages/booking-form/booking-success.jsp").forward(request, response);
@@ -174,43 +171,56 @@ public class BookingCreateServlet extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
-            // Set a user-friendly error message to display on an error page
             request.setAttribute("error", "Failed to create booking: " + e.getMessage());
             request.getRequestDispatcher("/pages/error.jsp").forward(request, response);
         }
+
     }
 
-    private double calculateTotalAmount(Car car, LocalDateTime start, LocalDateTime end, String rentalType) {
-        Duration duration = Duration.between(start, end);
-        BigDecimal totalAmount = BigDecimal.ZERO;
+    // ========== TÍNH TOÁN GIÁ THUÊ ==========
+    
+    /**
+     * Tính tổng tiền thuê xe sử dụng logic từ BookingService
+     * Đồng bộ với JavaScript frontend để hiển thị nhất quán
+     */
+    private double calculateTotalAmount(Car car, LocalDateTime start, LocalDateTime end,
+            String rentalType, HttpServletRequest request) {
 
-        switch (rentalType) {
+        // Sử dụng BookingService để tính toán (đã đồng bộ với JS)
+        double totalAmount = bookingService.calculateTotalAmount(
+                start, end, rentalType,
+                car.getPricePerHour(),
+                car.getPricePerDay(),
+                car.getPricePerMonth()
+        );
+
+        // Lấy thông tin chi tiết duration để hiển thị trên JSP
+        DurationResult durationResult = bookingService.calculateDuration(start, end, rentalType);
+
+        // Gửi thông tin về JSP để hiển thị cho user
+        request.setAttribute("unitType", durationResult.getUnitType());
+        request.setAttribute("units", durationResult.getBillingUnitsAsDouble());
+        request.setAttribute("unitPrice", getUnitPriceAsDouble(car, rentalType));
+        request.setAttribute("totalAmount", totalAmount);
+        request.setAttribute("rentalNote", durationResult.getNote());
+
+        return totalAmount;
+    }
+
+    /**
+     * Helper method để lấy đơn giá theo loại thuê
+     */
+    private double getUnitPriceAsDouble(Car car, String rentalType) {
+        switch (rentalType.toLowerCase()) {
             case "hourly":
-                long hours = duration.toHours();
-                if (duration.toMinutesPart() > 0) {
-                    hours++; // Round up to the next hour
-                }
-                totalAmount = car.getPricePerHour().multiply(BigDecimal.valueOf(hours));
-                break;
+                return car.getPricePerHour().doubleValue();
             case "daily":
-                long days = duration.toDays();
-                if (duration.toHoursPart() > 0 || duration.toMinutesPart() > 0) {
-                    days++; // Round up to the next day
-                }
-                totalAmount = car.getPricePerDay().multiply(BigDecimal.valueOf(days));
-                break;
+                return car.getPricePerDay().doubleValue();
             case "monthly":
-                long months = duration.toDays() / 30; // Simple month calculation
-                if (duration.toDays() % 30 > 0) {
-                    months++; // Round up to the next month
-                }
-                totalAmount = car.getPricePerMonth().multiply(BigDecimal.valueOf(months));
-                break;
+                return car.getPricePerMonth().doubleValue();
             default:
-                throw new IllegalArgumentException("Invalid rental type: " + rentalType);
+                throw new IllegalArgumentException("Loại thuê không hợp lệ: " + rentalType);
         }
-
-        return totalAmount.doubleValue();
     }
 
     private void handleNewLicenseUpload(HttpServletRequest request, User user)
@@ -310,4 +320,5 @@ public class BookingCreateServlet extends HttpServlet {
             throw new Exception("Failed to upload license image: " + e.getMessage());
         }
     }
+
 }

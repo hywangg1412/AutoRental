@@ -7,9 +7,9 @@
 let carPriceData = {};
 
 // Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Clear any stale data from previous sessions to prevent errors
-    if(window.localStorage) {
+    if (window.localStorage) {
         window.localStorage.clear();
     }
     initializeForm();
@@ -26,13 +26,16 @@ function initializeForm() {
     const startDateInput = document.getElementById("startDate");
     const endDateInput = document.getElementById("endDate");
 
-    if(startDateInput) startDateInput.min = today;
-    if(endDateInput) endDateInput.min = today;
+    if (startDateInput)
+        startDateInput.min = today;
+    if (endDateInput)
+        endDateInput.min = today;
 
     // Add event listeners for price calculation
     document.getElementById("rentalType")?.addEventListener("change", calculatePrice);
-    document.getElementById("startDate")?.addEventListener("change", function() {
-        if(endDateInput) endDateInput.min = this.value;
+    document.getElementById("startDate")?.addEventListener("change", function () {
+        if (endDateInput)
+            endDateInput.min = this.value;
         calculatePrice();
     });
     document.getElementById("endDate")?.addEventListener("change", calculatePrice);
@@ -62,7 +65,7 @@ function setupLicenseUpload() {
 function handleLicenseImageUpload(e) {
     const file = e.target.files[0];
     const licenseImagePreview = document.getElementById("licenseImagePreview");
-    
+
     if (file && licenseImagePreview) {
         // Validate file type
         const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
@@ -80,7 +83,7 @@ function handleLicenseImageUpload(e) {
 
         // Create preview
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             licenseImagePreview.innerHTML = `
                 <img id="previewImg" src="${e.target.result}" alt="License Preview">
                 <button type="button" class="remove-image" onclick="removeLicenseImage()">
@@ -99,9 +102,10 @@ function handleLicenseImageUpload(e) {
 function removeLicenseImage() {
     const licenseImageInput = document.getElementById("licenseImageInput");
     const licenseImagePreview = document.getElementById("licenseImagePreview");
-    
-    if(licenseImageInput) licenseImageInput.value = "";
-    if(licenseImagePreview) {
+
+    if (licenseImageInput)
+        licenseImageInput.value = "";
+    if (licenseImagePreview) {
         licenseImagePreview.style.display = "none";
         licenseImagePreview.innerHTML = "";
     }
@@ -113,9 +117,9 @@ function setupFormValidation() {
     if (bookingForm) {
         // Remove any existing event listeners
         bookingForm.removeEventListener("submit", validateAndSubmitForm);
-        
+
         // Add new event listener
-        bookingForm.addEventListener("submit", function(e) {
+        bookingForm.addEventListener("submit", function (e) {
             validateAndSubmitForm(e);
         });
     }
@@ -128,67 +132,172 @@ function validateAndSubmitForm(e) {
         showAlert("Please fix the errors before submitting.", "error");
         return false;
     }
-    
+
     // Show loading state
     const submitBtn = e.target.querySelector('button[type="submit"]');
-    if(submitBtn) {
+    if (submitBtn) {
         const originalText = submitBtn.innerHTML;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
         submitBtn.disabled = true;
     }
-    
+
     // Form will submit normally if validation passes
     return true;
 }
 
 // Price calculation functionality
+//function calculatePrice() {
+//    const rentalType = document.getElementById("rentalType")?.value;
+//    const startDate = new Date(document.getElementById("startDate")?.value);
+//    const endDate = new Date(document.getElementById("endDate")?.value);
+//
+//    if (!rentalType || !startDate.getTime() || !endDate.getTime() || startDate >= endDate) {
+//        updatePriceDisplay(0, 0, "0 days");
+//        return;
+//    }
+//
+//    let duration = 0,
+//        unitPrice = 0,
+//        totalPrice = 0,
+//        durationText = "";
+//
+//    const timeDiff = endDate.getTime() - startDate.getTime();
+//
+//    switch (rentalType) {
+//        case "hourly":
+//            duration = Math.ceil(timeDiff / (1000 * 60 * 60));
+//            unitPrice = carPriceData.hourly || 0;
+//            durationText = `${duration} hour(s)`;
+//            break;
+//        case "daily":
+//            duration = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+//            unitPrice = carPriceData.daily || 0;
+//            durationText = `${duration} day(s)`;
+//            break;
+//        case "monthly":
+//            // A more accurate month calculation might be needed
+//            duration = Math.ceil(timeDiff / (1000 * 60 * 60 * 24 * 30)); 
+//            unitPrice = carPriceData.monthly || 0;
+//            durationText = `${duration} month(s)`;
+//            break;
+//        default:
+//            durationText = "0 days";
+//    }
+//
+//    totalPrice = duration * unitPrice;
+//    
+//    // Update the display for the user
+//    updatePriceDisplay(unitPrice, totalPrice, durationText);
+//
+//    // IMPORTANT: Update the hidden input fields for form submission
+//    const hiddenTotalAmount = document.getElementById("hiddenTotalAmount");
+//    const hiddenRentalType = document.getElementById("hiddenRentalType");
+//    
+//    if (hiddenTotalAmount) {
+//        hiddenTotalAmount.value = totalPrice;
+//    }
+//    if (hiddenRentalType) {
+//        hiddenRentalType.value = rentalType;
+//    }
+//}
+
+
+// Tạo đối tượng Date chính xác theo local (không bị lệch timezone)
+function parseLocalDateTime(inputId) {
+    const input = document.getElementById(inputId)?.value;
+    if (!input || !input.includes("T")) return null;
+
+    const [datePart, timePart] = input.split("T");
+    const [year, month, day] = datePart.split("-").map(Number);
+    const [hour, minute] = timePart.split(":").map(Number);
+
+    // ✅ Trả về Date object theo local, KHÔNG bị UTC lệch giờ
+    return new Date(year, month - 1, day, hour, minute);
+}
+
+
+
+
 function calculatePrice() {
     const rentalType = document.getElementById("rentalType")?.value;
-    const startDate = new Date(document.getElementById("startDate")?.value);
-    const endDate = new Date(document.getElementById("endDate")?.value);
+    const startDate = parseLocalDateTime("startDate");
+    const endDate = parseLocalDateTime("endDate");
+
+
+    console.log("✅ RAW input start:", document.getElementById("startDate").value);
+    console.log("✅ RAW input end:", document.getElementById("endDate").value);
+    console.log("✅ Parsed startDate:", startDate);
+    console.log("✅ Parsed endDate:", endDate);
+    console.log("⏱ Timezone offset (phút):", startDate.getTimezoneOffset());
+
+
+    const timeDiff = endDate.getTime() - startDate.getTime();
+    const totalHours = timeDiff / (1000 * 60 * 60);
+    const totalDays = totalHours / 24;
+    console.log("✅ Total hours:", totalHours);
+    console.log("✅ Total days:", totalDays);
+
 
     if (!rentalType || !startDate.getTime() || !endDate.getTime() || startDate >= endDate) {
-        updatePriceDisplay(0, 0, "0 days");
+        updatePriceDisplay(0, 0, "0");
         return;
     }
 
     let duration = 0,
-        unitPrice = 0,
-        totalPrice = 0,
-        durationText = "";
+            unitPrice = 0,
+            totalPrice = 0,
+            durationText = "";
 
-    const timeDiff = endDate.getTime() - startDate.getTime();
+//    const timeDiff = endDate.getTime() - startDate.getTime();
+    const diffMinutes = timeDiff / (1000 * 60);
+    const diffHours = diffMinutes / 60;
+    const diffDays = diffHours / 24;
 
     switch (rentalType) {
         case "hourly":
-            duration = Math.ceil(timeDiff / (1000 * 60 * 60));
+            const msHourly = endDate.getTime() - startDate.getTime();
+            let hours = msHourly / (1000 * 60 * 60);
+            hours = Math.ceil(hours);
+            duration = Math.max(hours, 4); // tối thiểu 4 giờ
             unitPrice = carPriceData.hourly || 0;
             durationText = `${duration} hour(s)`;
             break;
+
         case "daily":
-            duration = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+            const totalMs = endDate.getTime() - startDate.getTime();
+            const totalHours = totalMs / (1000 * 60 * 60);
+            duration = totalHours / 24;
+            duration = Math.max(duration, 0.5);
+            duration = Math.round(duration * 100) / 100;
             unitPrice = carPriceData.daily || 0;
-            durationText = `${duration} day(s)`;
+            durationText = `${duration.toFixed(2)} day(s)`;
             break;
+
         case "monthly":
-            // A more accurate month calculation might be needed
-            duration = Math.ceil(timeDiff / (1000 * 60 * 60 * 24 * 30)); 
+            const msMonthly = endDate.getTime() - startDate.getTime();
+            const days = msMonthly / (1000 * 60 * 60 * 24);
+            duration = days / 30;
+            duration = Math.max(duration, 0.5);
+            duration = Math.round(duration * 100) / 100;
             unitPrice = carPriceData.monthly || 0;
-            durationText = `${duration} month(s)`;
+            durationText = `${duration.toFixed(2)} month(s)`;
             break;
+
         default:
-            durationText = "0 days";
+            duration = 0;
+            durationText = "Invalid";
     }
 
-    totalPrice = duration * unitPrice;
-    
-    // Update the display for the user
+
+    totalPrice = Math.round(duration * unitPrice);
+
+    // ✅ Cập nhật giao diện cho người dùng
     updatePriceDisplay(unitPrice, totalPrice, durationText);
 
-    // IMPORTANT: Update the hidden input fields for form submission
+    // ✅ Cập nhật input ẩn để submit form
     const hiddenTotalAmount = document.getElementById("hiddenTotalAmount");
     const hiddenRentalType = document.getElementById("hiddenRentalType");
-    
+
     if (hiddenTotalAmount) {
         hiddenTotalAmount.value = totalPrice;
     }
@@ -197,14 +306,19 @@ function calculatePrice() {
     }
 }
 
+
+
 function updatePriceDisplay(unitPrice, totalPrice, duration) {
     const totalDurationElement = document.getElementById("totalDuration");
     const unitPriceElement = document.getElementById("unitPrice");
     const totalPriceElement = document.getElementById("totalPrice");
-    
-    if (totalDurationElement) totalDurationElement.textContent = duration;
-    if (unitPriceElement) unitPriceElement.textContent = `${unitPrice.toLocaleString()}K`;
-    if (totalPriceElement) totalPriceElement.textContent = `${totalPrice.toLocaleString()}K`;
+
+    if (totalDurationElement)
+        totalDurationElement.textContent = duration;
+    if (unitPriceElement)
+        unitPriceElement.textContent = `${unitPrice.toLocaleString()}K`;
+    if (totalPriceElement)
+        totalPriceElement.textContent = `${totalPrice.toLocaleString()}K`;
 }
 
 // Form validation
@@ -215,10 +329,10 @@ function validateForm() {
     }
 
     let isValid = true;
-    
+
     const existingAlerts = document.querySelectorAll('.alert.alert-danger');
     existingAlerts.forEach(alert => alert.remove());
-    
+
     const requiredFields = form.querySelectorAll("[required]");
     requiredFields.forEach(field => {
         field.style.borderColor = "";
@@ -234,11 +348,11 @@ function validateForm() {
     // --- DATE VALIDATION IMPROVEMENT ---
     const startDateInput = document.getElementById("startDate");
     const endDateInput = document.getElementById("endDate");
-    
+
     if (startDateInput && endDateInput) {
         const startDate = new Date(startDateInput.value);
         const endDate = new Date(endDateInput.value);
-        
+
         // Tạo một thời điểm đệm, ví dụ 5 phút sau thời điểm hiện tại
         const bufferTime = 5 * 60 * 1000; // 5 phút tính bằng mili giây
         const nowWithBuffer = new Date(new Date().getTime() + bufferTime);
@@ -266,7 +380,7 @@ function validateForm() {
             isValid = false;
         }
     }
-    
+
     if (!isValid) {
         showAlert("Please fill in all required fields correctly.", "error");
     }
@@ -277,7 +391,8 @@ function validateForm() {
 // Show alert message
 function showAlert(message, type = "info") {
     const formContainer = document.querySelector('.booking-form-container');
-    if (!formContainer) return;
+    if (!formContainer)
+        return;
 
     // Create new alert
     const alertDiv = document.createElement('div');
@@ -286,10 +401,10 @@ function showAlert(message, type = "info") {
         <i class="fas fa-${type === "error" ? "exclamation-triangle" : type === "success" ? "check-circle" : "info-circle"}"></i>
         <span>${message}</span>
     `;
-    
+
     // Make alert temporary
     alertDiv.style.marginBottom = '1rem';
-    
+
     // Insert alert at the top of the form
     formContainer.insertBefore(alertDiv, formContainer.querySelector('form'));
 
@@ -316,9 +431,9 @@ function goToDeposit() {
         formData.forEach((value, key) => {
             formObject[key] = value;
         });
-        
+
         sessionStorage.setItem("bookingFormData", JSON.stringify(formObject));
-        
+
         // This should point to the correct deposit page URL
         window.location.href = "/pages/booking-form/booking-form-deposit.jsp";
     } else {
@@ -342,3 +457,7 @@ function validatePhone(phone) {
     const phonePattern = /^[0-9]{10,11}$/;
     return phonePattern.test(phone.replace(/\s/g, ''));
 }
+
+// Khởi tạo Flatpickr cho cả startDate và endDate
+
+

@@ -23,7 +23,7 @@
         <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800&display=swap" rel="stylesheet">
 
         <!-- ===== Include Styles ===== -->
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/nav.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/include/user-nav.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/user/favorite-car.css">
 
         <!-- ===== Custom Styles ===== -->
@@ -48,7 +48,7 @@
     </head>
     <body>
         <!-- Header -->
-        <jsp:include page="/pages/includes/nav.jsp" />
+        <jsp:include page="/pages/includes/user-nav.jsp" />
 
         <div class="container">
             <div class="row g-5" style="margin-top: 80px">
@@ -77,7 +77,7 @@
                                     <i class="bi bi-trash text-dark"></i>
                                     Request account deletion
                                 </a></li>
-                            <li><a href="${pageContext.request.contextPath}/logout" class="nav-link text-danger">
+                            <li><a href="#" class="nav-link text-danger logoutBtn">
                                     <i class="bi bi-box-arrow-right"></i>
                                     Log out
                                 </a></li>
@@ -93,7 +93,7 @@
                                 <div class="main-content p-4 mt-1">
                                     <!-- Page Header -->
                                     <div class="mb-4">
-                                        <h1 class="h5 fw-semibold mb-0 text-dark">My Favorite Cars</h1>
+                                        <h1 class="h2 fw-semibold mb-0 text-dark">My Favorite Cars</h1>
                                     </div>
 
                                     <!-- Error Message -->
@@ -109,26 +109,31 @@
                                         <c:choose>
                                             <c:when test="${not empty favoriteCars}">
                                                 <c:forEach var="car" items="${favoriteCars}">
-                                                    <div class="favorite-car-card d-flex align-items-center p-4 mb-5 rounded shadow-sm bg-white">
+                                                    <div class="favorite-car-card d-flex align-items-stretch p-4 mb-4 rounded shadow-sm bg-white">
                                                         <div class="car-img-wrapper">
                                                             <img src="${pageContext.request.contextPath}${car.mainImageUrl}" class="car-img" alt="Car image">
                                                         </div>
-                                                        <div class="flex-grow-1 ps-3 pe-4">
-                                                            <div class="d-flex align-items-center mb-2">
-                                                                <div class="car-title-badge d-flex align-items-center">
-                                                                    <h5 class="mb-0 fw-bold me-3">${car.carModel}</h5>
-                                                                    <span class="badge status-badge ms-0 ${car.statusDisplay == 'Available' ? 'bg-success' : car.statusDisplay == 'Rented' ? 'bg-warning' : 'bg-danger'}">
-                                                                        ${car.statusDisplay}
-                                                                    </span>
+                                                        <div class="car-card-content flex-grow-1 ps-3 pe-4 d-flex flex-column justify-content-between">
+                                                            <!-- Top: Tên xe + trạng thái -->
+                                                            <div>
+                                                                <div class="d-flex align-items-center mb-2">
+                                                                    <div class="car-title-badge d-flex align-items-center">
+                                                                        <h5 class="mb-0 fw-bold me-3">${car.carModel}</h5>
+                                                                        <span class="badge status-badge ms-0 ${car.statusDisplay == 'Available' ? 'bg-success' : car.statusDisplay == 'Rented' ? 'bg-warning' : 'bg-danger'}">
+                                                                            ${car.statusDisplay}
+                                                                        </span>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="mb-3 text-muted small fs-7 d-flex align-items-center car-info-inline">
+                                                            <!-- Middle: Thông tin -->
+                                                            <div class="car-card-middle mb-2 text-muted small fs-7 d-flex align-items-center car-info-inline justify-content-start">
                                                                 <span class="me-3"><i class="bi bi-gear me-1"></i>${car.transmissionName}</span>
                                                                 <span class="me-3"><i class="bi bi-people me-1"></i>${car.seats} seats</span>
                                                                 <span><i class="bi bi-fuel-pump me-1"></i>${car.fuelTypeName}</span>
                                                             </div>
-                                                            <div class="d-flex align-items-center mb-2">
-                                                                <span class="price-new fw-bold fs-6 text-success me-3">
+                                                            <!-- Bottom: Giá -->
+                                                            <div>
+                                                                <span class="price-new fw-bold fs-6 text-success me-3" style="margin-bottom:0;">
                                                                     <fmt:formatNumber value="${car.pricePerDay}" type="number" pattern="#.###" /> VND/day
                                                                 </span>
                                                                 <span class="price-old text-muted text-decoration-line-through me-2" style="font-size: 1rem;">
@@ -136,7 +141,7 @@
                                                                 </span>
                                                             </div>
                                                         </div>
-                                                        <div class="d-flex flex-column align-items-center">
+                                                        <div class="d-flex flex-column align-items-end justify-content-start ms-3">
                                                             <form method="post" action="${pageContext.request.contextPath}/user/favorite-car">
                                                                 <input type="hidden" name="action" value="remove">
                                                                 <input type="hidden" name="carId" value="${car.carId}">
@@ -224,5 +229,7 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         <script src="${pageContext.request.contextPath}/scripts/user/UserAboutSidebar.js"></script>
+        <script src="${pageContext.request.contextPath}/scripts/user/favorite-car.js"></script>
+        <jsp:include page="/pages/includes/logout-confirm-modal.jsp" />
     </body>
 </html>

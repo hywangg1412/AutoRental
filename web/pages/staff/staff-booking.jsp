@@ -50,21 +50,11 @@
                             <i class="fas fa-clipboard-list"></i> Car Availability
                         </a>
                     </li>
-                    <!-- <li class="nav-item">
-                        <a class="nav-link" href="${pageContext.request.contextPath}/pages/staff/staff-damage-reports.jsp">
-                            <i class="fas fa-shield-alt"></i> Damage Reports
-                        </a>
-                    </li> -->
                     <li class="nav-item">
                         <a class="nav-link" href="${pageContext.request.contextPath}/pages/staff/staff-customer-support.jsp">
                             <i class="fas fa-comment"></i> Customer Feedback
                         </a>
                     </li>
-                    <!-- <li class="nav-item">
-                        <a class="nav-link" href="${pageContext.request.contextPath}/pages/staff/staff-profile.jsp">
-                            <i class="fas fa-users"></i> Profile
-                        </a>
-                    </li> -->
                 </ul>
                 <hr>
                 <ul class="nav flex-column">
@@ -104,6 +94,20 @@
                         <small class="text-muted">Manage and process rental requests</small>
                     </div>
                     <div class="card-body">
+                        <!-- Hiển thị thông báo success/error -->
+                        <c:if test="${not empty successMessage}">
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="fas fa-check-circle me-2"></i>${successMessage}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        </c:if>
+                        <c:if test="${not empty errorMessage}">
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fas fa-exclamation-circle me-2"></i>${errorMessage}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        </c:if>
+                        
                         <div class="d-flex flex-column flex-sm-row gap-3 mb-4">
                             <div class="input-group flex-grow-1">
                                 <span class="input-group-text"><i class="fas fa-search"></i></span>
@@ -135,7 +139,7 @@
                                         <c:when test="${not empty bookingRequests}">
                                             <c:forEach items="${bookingRequests}" var="booking">
                                                 <tr>
-                                                    <!-- =================== MODAL CHI TIẾT BOOKING =================== -->
+                                                    <!-- =================== MODAL CHI TIẾT BOOKING (KẾT HỢP CŨ + MỚI) =================== -->
                                             <div class="modal fade" id="modal-${booking.bookingId}" tabindex="-1" aria-labelledby="modalLabel-${booking.bookingId}" aria-hidden="true">
                                                 <div class="modal-dialog modal-lg">
                                                     <div class="modal-content">
@@ -188,8 +192,33 @@
                                                                     <p>${booking.returnDateTime}</p>
                                                                 </div>
                                                                 <div class="col-md-6">
+                                                                    <label class="form-label">Rental Type</label>
+                                                                    <c:choose>
+                                                                        <c:when test="${booking.rentalType == 'hourly'}">
+                                                                            <span class="badge rental-type hourly">
+                                                                                <i class="fas fa-clock me-1"></i>Hourly
+                                                                            </span>
+                                                                        </c:when>
+                                                                        <c:when test="${booking.rentalType == 'daily'}">
+                                                                            <span class="badge rental-type daily">
+                                                                                <i class="fas fa-calendar-day me-1"></i>Daily
+                                                                            </span>
+                                                                        </c:when>
+                                                                        <c:when test="${booking.rentalType == 'monthly'}">
+                                                                            <span class="badge rental-type monthly">
+                                                                                <i class="fas fa-calendar-alt me-1"></i>Monthly
+                                                                            </span>
+                                                                        </c:when>
+                                                                        <c:otherwise>
+                                                                            <span class="badge rental-type unknown">
+                                                                                <i class="fas fa-question-circle me-1"></i>${booking.rentalType}
+                                                                            </span>
+                                                                        </c:otherwise>
+                                                                    </c:choose>
+                                                                </div>
+                                                                <div class="col-md-6">
                                                                     <label class="form-label">Duration</label>
-                                                                    <p>${booking.duration} days</p>
+                                                                    <p>${booking.formattedDuration != null ? booking.formattedDuration : booking.duration} ${booking.rentalType == 'hourly' ? 'hours' : (booking.rentalType == 'monthly' ? 'months' : 'days')}</p>
                                                                 </div>
                                                                 <div class="col-md-6">
                                                                     <label class="form-label">Total Amount</label>
@@ -200,7 +229,33 @@
                                                             <h6 class="mb-3"><i class="fas fa-dollar-sign me-2"></i>Payment Information</h6>
                                                             <div class="mb-4">
                                                                 <label class="form-label">Deposit Status</label>
-                                                                <span class="badge badge-paid">${booking.depositStatus}</span>
+                                                                <c:choose>
+                                                                    <c:when test="${booking.depositStatus == 'Not Applicable'}">
+                                                                        <span class="badge deposit-status not-applicable">
+                                                                            <i class="fas fa-info-circle me-1"></i>Not Applicable
+                                                                        </span>
+                                                                    </c:when>
+                                                                    <c:when test="${booking.depositStatus == 'Awaiting Payment'}">
+                                                                        <span class="badge deposit-status awaiting-payment">
+                                                                            <i class="fas fa-clock me-1"></i>Awaiting Payment
+                                                                        </span>
+                                                                    </c:when>
+                                                                    <c:when test="${booking.depositStatus == 'Paid'}">
+                                                                        <span class="badge deposit-status paid">
+                                                                            <i class="fas fa-check-circle me-1"></i>Paid
+                                                                        </span>
+                                                                    </c:when>
+                                                                    <c:when test="${booking.depositStatus == 'Cancelled'}">
+                                                                        <span class="badge deposit-status cancelled">
+                                                                            <i class="fas fa-times-circle me-1"></i>Cancelled
+                                                                        </span>
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        <span class="badge deposit-status unknown">
+                                                                            <i class="fas fa-question-circle me-1"></i>${booking.depositStatus}
+                                                                        </span>
+                                                                    </c:otherwise>
+                                                                </c:choose>
                                                             </div>
                                                             <!-- Documents -->
                                                             <h6 class="mb-3"><i class="fas fa-file-alt me-2"></i>Documents</h6>
@@ -217,9 +272,48 @@
                                                             </div>
                                                             <div>
                                                                 <label class="form-label">Contract Status</label>
-                                                                <div class="d-flex align-items-center gap-2">
-                                                                    <span class="badge badge-pending">${booking.contractStatus}</span>
-                                                                </div>
+                                                                <c:choose>
+                                                                    <c:when test="${booking.contractStatus == 'Not Applicable'}">
+                                                                        <span class="badge contract-status not-applicable">
+                                                                            <i class="fas fa-info-circle me-1"></i>Not Applicable
+                                                                        </span>
+                                                                    </c:when>
+                                                                    <c:when test="${booking.contractStatus == 'Not Created'}">
+                                                                        <span class="badge contract-status not-created">
+                                                                            <i class="fas fa-file me-1"></i>Not Created
+                                                                        </span>
+                                                                    </c:when>
+                                                                    <c:when test="${booking.contractStatus == 'Ready to Sign'}">
+                                                                        <span class="badge contract-status ready-to-sign">
+                                                                            <i class="fas fa-pen me-1"></i>Ready to Sign
+                                                                        </span>
+                                                                    </c:when>
+                                                                    <c:when test="${booking.contractStatus == 'Signed'}">
+                                                                        <span class="badge contract-status signed">
+                                                                            <i class="fas fa-check-circle me-1"></i>Signed
+                                                                        </span>
+                                                                    </c:when>
+                                                                    <c:when test="${booking.contractStatus == 'Completed'}">
+                                                                        <span class="badge contract-status completed">
+                                                                            <i class="fas fa-flag-checkered me-1"></i>Completed
+                                                                        </span>
+                                                                    </c:when>
+                                                                    <c:when test="${booking.contractStatus == 'Cancelled'}">
+                                                                        <span class="badge contract-status cancelled">
+                                                                            <i class="fas fa-times-circle me-1"></i>Cancelled
+                                                                        </span>
+                                                                    </c:when>
+                                                                    <c:when test="${booking.contractStatus == 'Pending'}">
+                                                                        <span class="badge contract-status pending">
+                                                                            <i class="fas fa-clock me-1"></i>Pending
+                                                                        </span>
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        <span class="badge contract-status unknown">
+                                                                            <i class="fas fa-question-circle me-1"></i>${booking.contractStatus}
+                                                                        </span>
+                                                                    </c:otherwise>
+                                                                </c:choose>
                                                             </div>
                                                         </div>
                                                         <!-- ======= Modal Footer: Nút Accept/Reject/Close ======= -->
@@ -233,12 +327,16 @@
                                                                             data-booking-id="${booking.bookingId}">
                                                                         <i class="fas fa-times me-1"></i>Reject
                                                                     </button>
-                                                                    <!-- Nút Accept: gọi hàm acceptBooking đã có sẵn -->
-                                                                    <button id="btnAccept-${booking.bookingId}" type="button" class="btn btn-success"
-                                                                            onclick="acceptBooking('${booking.bookingId}')">
-                                                                        <i class="fas fa-check me-1"></i>Accept
-                                                                    </button>
+                                                                    <!-- Nút Accept: Form submit trực tiếp -->
+                                                                    <form action="${pageContext.request.contextPath}/staff/approve-booking" method="POST" style="display: inline;">
+                                                                        <input type="hidden" name="bookingId" value="${booking.bookingId}">
+                                                                        <input type="hidden" name="action" value="approve">
+                                                                        <button type="submit" class="btn btn-success">
+                                                                            <i class="fas fa-check me-1"></i>Accept
+                                                                        </button>
+                                                                    </form>
                                                                 </c:when>
+
                                                             </c:choose>
                                                             <!-- Nút Close luôn hiển thị -->
                                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -300,21 +398,25 @@
                                                             data-bs-target="#modal-${booking.bookingId}">
                                                         <i class="fas fa-eye"></i> View
                                                     </button>
-                                                    <c:if test="${booking.status == 'Pending'}">
-                                                        <form action="${pageContext.request.contextPath}/staff/approve-booking" method="POST" style="display: inline;">
-                                                            <input type="hidden" name="bookingId" value="${booking.bookingId}">
-                                                            <input type="hidden" name="action" value="approve">
-                                                            <button type="submit" class="btn btn-success btn-sm" title="Approve">
-                                                                <i class="fas fa-check"></i>
+                                                    <c:choose>
+                                                        <c:when test="${booking.status == 'Pending'}">
+                                                            <!-- Hiển thị nút Accept/Reject chỉ khi Pending -->
+                                                            <form action="${pageContext.request.contextPath}/staff/approve-booking" method="POST" style="display: inline;">
+                                                                <input type="hidden" name="bookingId" value="${booking.bookingId}">
+                                                                <input type="hidden" name="action" value="approve">
+                                                                <button type="submit" class="btn btn-success btn-sm" title="Accept Booking">
+                                                                    <i class="fas fa-check"></i> Accept
+                                                                </button>
+                                                            </form>
+                                                            <!-- Nút Reject: mở popup nhập lý do từ chối -->
+                                                            <button type="button" class="btn btn-danger btn-sm" title="Reject Booking"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#declineModal-${booking.bookingId}">
+                                                                <i class="fas fa-times"></i> Reject
                                                             </button>
-                                                        </form>
-                                                        <!-- Nút Reject: mở popup nhập lý do từ chối -->
-                                                        <button type="button" class="btn btn-danger btn-sm" title="Reject"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#declineModal-${booking.bookingId}">
-                                                            <i class="fas fa-times"></i>
-                                                        </button>
-                                                    </c:if>
+                                                        </c:when>
+
+                                                    </c:choose>
                                                 </div>
                                             </td>
                                             </tr>

@@ -1,4 +1,4 @@
-package Controller.Staff;
+package Controller.Notification;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -10,8 +10,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import Model.Entity.User.User;
 
-@WebServlet("/staff/notifications/count")
+@WebServlet("/notifications/count")
 public class NotificationCountServlet extends HttpServlet {
     private final NotificationService notificationService = new NotificationService();
 
@@ -22,28 +23,18 @@ public class NotificationCountServlet extends HttpServlet {
             request.setCharacterEncoding("UTF-8");
             response.setCharacterEncoding("UTF-8");
             
-            // Lấy userId của staff từ session
-            Object sessionValue = SessionUtil.getSessionAttribute(request, "userId");
-            UUID staffId = null;
+            // Lấy userId từ session
+            User user = (User) SessionUtil.getSessionAttribute(request, "user");
+            UUID userId = (user != null) ? user.getUserId() : null;
             
-            if (sessionValue instanceof UUID) {
-                staffId = (UUID) sessionValue;
-            } else if (sessionValue instanceof String) {
-                try {
-                    staffId = UUID.fromString((String) sessionValue);
-                } catch (IllegalArgumentException e) {
-                    System.out.println("Không thể chuyển đổi userId từ String sang UUID: " + e.getMessage());
-                }
-            }
-            
-            if (staffId == null) {
+            if (userId == null) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("{\"error\": \"User not logged in\"}");
                 return;
             }
             
             // Lấy số lượng thông báo chưa đọc
-            int unreadCount = notificationService.countUnreadByUserId(staffId);
+            int unreadCount = notificationService.countUnreadByUserId(userId);
             
             // Trả về dạng JSON
             response.setContentType("application/json");
