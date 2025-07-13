@@ -1,27 +1,37 @@
 document.addEventListener('DOMContentLoaded', function () {
     let bookingIdToCancel = null;
-    // Handle Return Car buttons (both in cards and modal)
+    let bookingIdToReturn = null;
+    // Khi ấn nút Return Car
     document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('btn-mytrip-green') || 
-            e.target.closest('.btn-mytrip-green') ||
-            e.target.id === 'modalReturnCarBtn') {
-            const bookingId = e.target.getAttribute('data-booking-id') || 
-                             e.target.closest('[data-booking-id]')?.getAttribute('data-booking-id');
-            const buttonText = e.target.textContent.trim();
-            
-            if (buttonText === 'Return Car') {
-                if (confirm('Are you sure you want to return this car?')) {
-                    // TODO: Call API or submit form to return car
-                    console.log('Return Car for booking: ' + bookingId);
-                }
-            } else if (buttonText === 'Book again') {
-                if (confirm('Do you want to book this car again?')) {
-                    // TODO: Redirect to booking page with car info
-                    console.log('Book again for booking: ' + bookingId);
-                    // window.location.href = '/pages/car-single?id=' + carId;
-                }
-            }
+        if (e.target.classList.contains('return-car-btn')) {
+            bookingIdToReturn = e.target.getAttribute('data-booking-id');
+            $('#returnCarModal').modal('show');
         }
+    });
+
+    // Khi xác nhận trả xe trong modal
+    document.getElementById('confirmReturnCarBtn').addEventListener('click', function() {
+        if (!bookingIdToReturn) return;
+        fetch(contextPath + '/booking/return-car-request', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'bookingId=' + encodeURIComponent(bookingIdToReturn)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('returnCarModalMessage').textContent = "Wait for confirmation from staff";
+                document.getElementById('returnCarModalMessage').classList.remove('d-none');
+                setTimeout(() => { location.reload(); }, 1500);
+            } else {
+                document.getElementById('returnCarModalMessage').textContent = data.message || "Có lỗi xảy ra!";
+                document.getElementById('returnCarModalMessage').classList.remove('d-none');
+            }
+        })
+        .catch(() => {
+            document.getElementById('returnCarModalMessage').textContent = "Có lỗi xảy ra!";
+            document.getElementById('returnCarModalMessage').classList.remove('d-none');
+        });
     });
 
     // Handle Cancel Booking buttons
@@ -163,5 +173,7 @@ document.addEventListener('DOMContentLoaded', function () {
             e.stopPropagation();
         });
     });
+
+    
 
 });

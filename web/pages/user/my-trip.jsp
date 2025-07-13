@@ -143,6 +143,9 @@
                                                                                         <c:when test="${trip.status eq 'ContractSigned'}">
                                                                                             <i class="bi bi-pencil-square"></i> Contract Signed
                                                                                         </c:when>
+                                                                                        <c:when test="${trip.status eq 'WAITING_RETURN_CONFIRM'}">
+                                                                                            <span class="badge bg-warning">Waiting return confirm</span>
+                                                                                        </c:when>
                                                                                         <c:otherwise>${trip.status}</c:otherwise>
                                                                                     </c:choose>
                                                                                 </span>
@@ -181,6 +184,22 @@
                                                                             <button class="btn-mytrip-action btn-mytrip-blue btn-sm return-car-btn" 
                                                                                     data-booking-id="${trip.bookingId}" 
                                                                                     data-car-model="${trip.carModel}" 
+                                                                                    data-license-plate="${trip.carLicensePlate}">
+                                                                                Return Car
+                                                                            </button>
+                                                                        </c:if>
+                                                                        <c:if test="${trip.status eq 'IN_PROGRESS'}">
+                                                                            <button class="btn-mytrip-action btn-mytrip-blue btn-sm return-car-btn"
+                                                                                    data-booking-id="${trip.bookingId}"
+                                                                                    data-car-model="${trip.carModel}"
+                                                                                    data-license-plate="${trip.carLicensePlate}">
+                                                                                Return Car
+                                                                            </button>
+                                                                        </c:if>
+                                                                        <c:if test="${trip.status eq 'WAITING_RETURN_CONFIRM'}">
+                                                                            <button class="btn-mytrip-action btn-mytrip-blue btn-sm return-car-btn"
+                                                                                    data-booking-id="${trip.bookingId}"
+                                                                                    data-car-model="${trip.carModel}"
                                                                                     data-license-plate="${trip.carLicensePlate}">
                                                                                 Return Car
                                                                             </button>
@@ -234,6 +253,9 @@
                                                                                             <c:when test="${booking.status eq 'Cancelled'}">
                                                                                                 <i class="bi bi-x-circle-fill"></i> Cancelled
                                                                                             </c:when>
+                                                                                            <c:when test="${booking.status == 'WAITING_RETURN_CONFIRM'}">
+                                                                                                <span class="badge bg-warning">Waiting return confirm</span>
+                                                                                            </c:when>
                                                                                             <c:otherwise>${booking.status}</c:otherwise>
                                                                                         </c:choose>
                                                                                     </span>
@@ -254,10 +276,6 @@
                                                                             <button class="btn-mytrip-action btn-detail btn-view-details" data-booking-id="${booking.bookingId}" data-car-model="${booking.carModel}" data-license-plate="${booking.carLicensePlate}" data-pickup="${booking.formattedPickupDateTime}" data-return="${booking.formattedReturnDateTime}" data-total-amount="${booking.totalAmount}" data-status="${booking.status}" data-booking-code="${booking.bookingCode}" data-bs-toggle="modal" data-bs-target="#myTripDetailModal">
                                                                                 View Details
                                                                             </button>
-                                                                            <a class="btn-mytrip-action btn-mytrip-green btn-sm"
-                                                                               href="${pageContext.request.contextPath}/customer/deposit?bookingId=${booking.bookingId}">
-                                                                               Continue to Payment
-                                                                            </a>
                                                                             <button class="btn-mytrip-action btn-mytrip-blue btn-sm" data-booking-id="${booking.bookingId}">Send review</button>
                                                                         </div>
                                                                     </div>
@@ -309,6 +327,9 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         <script src="${pageContext.request.contextPath}/scripts/user/UserAboutSidebar.js"></script>
+        <script>
+            var contextPath = '${pageContext.request.contextPath}';
+        </script>
         <script src="${pageContext.request.contextPath}/scripts/user/my-trip.js"></script>
 
         <div class="modal fade" id="myTripDetailModal" tabindex="-1" aria-labelledby="myTripDetailModalLabel" aria-hidden="true">
@@ -379,6 +400,26 @@
                   <button type="submit" class="btn btn-danger w-100" id="confirmCancelBookingBtn">Yes, Cancel Booking</button>
                   <button type="button" class="btn btn-secondary w-100 mt-2" data-bs-dismiss="modal">No, Keep Booking</button>
                 </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal xác nhận trả xe -->
+        <div class="modal fade" id="returnCarModal" tabindex="-1" aria-labelledby="returnCarModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="returnCarModalLabel">Return Car</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body text-center">
+                <p>Are you sure you want to return car?</p>
+                <div id="returnCarModalMessage" class="text-success d-none"></div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="confirmReturnCarBtn">Return Car</button>
               </div>
             </div>
           </div>
