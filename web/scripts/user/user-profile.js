@@ -370,18 +370,3 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     document.addEventListener('DOMContentLoaded', waitForBootstrap);
 })();
-
-window.addEventListener('beforeunload', function (e) {
-    console.log('beforeunload', isEditingUserInfo, isEditingDriverLicense);
-    if (isEditingUserInfo || isEditingDriverLicense) {
-        e.preventDefault();
-        e.returnValue = '';
-    }
-});
-
-document.addEventListener('DOMContentLoaded', function () {
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    tooltipTriggerList.forEach(function (tooltipTriggerEl) {
-        new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-});

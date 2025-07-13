@@ -47,7 +47,7 @@ public class ContractService implements IContractService {
                 entry.setCreatedDate(LocalDateTime.now());
             }
             if (entry.getStatus() == null) {
-                entry.setStatus(ContractStatusConstants.PENDING);
+                entry.setStatus(ContractStatusConstants.CREATED);
             }
             
             Contract addedContract = contractRepository.add(entry);
@@ -70,9 +70,9 @@ public class ContractService implements IContractService {
                 throw new NotFoundException("Contract not found");
             }
             
-            if (ContractStatusConstants.SIGNED.equals(existingContract.getStatus()) || 
+            if (ContractStatusConstants.ACTIVE.equals(existingContract.getStatus()) || 
                 ContractStatusConstants.COMPLETED.equals(existingContract.getStatus())) {
-                throw new EventException("Cannot delete signed or completed contract");
+                throw new EventException("Cannot delete active or completed contract");
             }
             
             return contractRepository.delete(id);
@@ -151,21 +151,15 @@ public class ContractService implements IContractService {
     }
 
     @Override
-    public boolean signContract(UUID contractId, String signatureData, String signatureImageUrl) throws Exception {
+    public boolean signContract(UUID contractId, String signatureData, String termsVersion, String termsFileUrl) throws Exception {
         try {
             Contract contract = findById(contractId);
             
-            if (!ContractStatusConstants.PENDING.equals(contract.getStatus())) {
-                throw new EventException("Contract cannot be signed in current status");
+            if (!contract.canBeSigned()) {
+                throw new EventException("Contract cannot be signed in current status: " + contract.getStatus());
             }
             
-            contract.setSignedDate(LocalDateTime.now());
-            contract.setStatus(ContractStatusConstants.SIGNED);
-            contract.setSignatureData(signatureData);
-            contract.setSignatureImageUrl(signatureImageUrl);
-            contract.setSignatureMethod("CANVAS");
-            contract.setTermsAccepted(true);
-            contract.setTermsAcceptedDate(LocalDateTime.now());
+            contract.sign(signatureData, "Canvas", termsVersion, termsFileUrl);
             
             return update(contract);
         } catch (Exception e) {
@@ -175,16 +169,50 @@ public class ContractService implements IContractService {
     }
 
     @Override
+    public boolean completeContract(UUID contractId) throws Exception {
+        try {
+            Contract contract = findById(contractId);
+            
+            if (!ContractStatusConstants.ACTIVE.equals(contract.getStatus())) {
+                throw new EventException("Only active contracts can be completed");
+            }
+            
+            contract.complete();
+            return update(contract);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error completing contract: " + contractId, e);
+            throw new EventException("Error completing contract: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public boolean cancelContract(UUID contractId, String reason) throws Exception {
+        try {
+            Contract contract = findById(contractId);
+            
+            if (ContractStatusConstants.COMPLETED.equals(contract.getStatus())) {
+                throw new EventException("Cannot cancel completed contract");
+            }
+            
+            contract.cancel(reason);
+            return update(contract);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error cancelling contract: " + contractId, e);
+            throw new EventException("Error cancelling contract: " + e.getMessage());
+        }
+    }
+
+    @Override
     public String generateUniqueContractCode() {
         String prefix = "CTR";
-        String timestamp = String.valueOf(System.currentTimeMillis());
-        String random = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        String timestamp = String.valueOf(System.currentTimeMillis()).substring(Math.max(0, String.valueOf(System.currentTimeMillis()).length() - 8));
+        String random = UUID.randomUUID().toString().substring(0, 6).toUpperCase();
         
         String contractCode = prefix + timestamp + random;
         
         try {
             while (contractRepository.isContractCodeExists(contractCode)) {
-                random = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+                random = UUID.randomUUID().toString().substring(0, 6).toUpperCase();
                 contractCode = prefix + timestamp + random;
             }
         } catch (Exception e) {
@@ -193,6 +221,4 @@ public class ContractService implements IContractService {
         
         return contractCode;
     }
-
-
 }
