@@ -110,6 +110,35 @@ public class PaymentConfig {
         }
     }
     
+    // Compatibility methods for existing PaymentService
+    public static String getTmnCode() {
+        return getVnpayTmnCode();
+    }
+    
+    public static String getHashSecret() {
+        return getVnpayHashSecret();
+    }
+    
+    public static String getPayUrl() {
+        return getVnpayPayUrl();
+    }
+    
+    public static String getReturnUrl() {
+        return getVnpayReturnUrl();
+    }
+    
+    public static String getCancelUrl() {
+        return getVnpayCancelUrl();
+    }
+    
+    public static String getErrorUrl() {
+        return getVnpayErrorUrl();
+    }
+    
+    public static String getApiUrl() {
+        return getVnpayApiUrl();
+    }
+    
     /**
      * Hiển thị thông tin cấu hình (ẩn sensitive data)
      */
