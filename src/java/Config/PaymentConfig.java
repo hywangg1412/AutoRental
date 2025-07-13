@@ -12,21 +12,57 @@ public class PaymentConfig {
     static {
         try {
             properties = new Properties();
-            InputStream inputStream = PaymentConfig.class.getClassLoader().getResourceAsStream("payment.properties");
+            InputStream inputStream = null;
             
+            // Thử các đường dẫn khác nhau
+            String[] paths = {
+                "payment.properties",
+                "/payment.properties",
+                "../payment.properties",
+                "../../payment.properties"
+            };
+            
+            for (String path : paths) {
+                inputStream = PaymentConfig.class.getClassLoader().getResourceAsStream(path);
+                if (inputStream != null) {
+                    System.out.println("Tìm thấy payment.properties tại: " + path);
+                    break;
+                }
+                
+                inputStream = PaymentConfig.class.getResourceAsStream(path);
+                if (inputStream != null) {
+                    System.out.println("Tìm thấy payment.properties tại: " + path + " (từ class)");
+                    break;
+                }
+            }
+            
+            // Nếu vẫn không tìm thấy, thử đọc từ file system
             if (inputStream == null) {
-                // Thử đọc từ root của project
-                inputStream = PaymentConfig.class.getResourceAsStream("/payment.properties");
+                try {
+                    java.io.File file = new java.io.File("payment.properties");
+                    if (file.exists()) {
+                        inputStream = new java.io.FileInputStream(file);
+                        System.out.println("Tìm thấy payment.properties tại: " + file.getAbsolutePath());
+                    } else {
+                        file = new java.io.File("src/java/payment.properties");
+                        if (file.exists()) {
+                            inputStream = new java.io.FileInputStream(file);
+                            System.out.println("Tìm thấy payment.properties tại: " + file.getAbsolutePath());
+                        }
+                    }
+                } catch (Exception ex) {
+                    System.err.println("Lỗi khi đọc từ file system: " + ex.getMessage());
+                }
             }
             
             if (inputStream == null) {
-                throw new RuntimeException("Không thể tìm thấy file payment.properties");
+                throw new RuntimeException("Không thể tìm thấy file payment.properties ở bất kỳ đâu");
             }
             
             properties.load(inputStream);
             inputStream.close();
             
-            System.out.println("Đã load thành công file payment.properties");
+            System.out.println("✅ Đã load thành công file payment.properties");
             
         } catch (IOException e) {
             System.err.println("Lỗi khi đọc file payment.properties: " + e.getMessage());
@@ -108,6 +144,35 @@ public class PaymentConfig {
             System.err.println("Cấu hình VNPay không hợp lệ: " + e.getMessage());
             return false;
         }
+    }
+    
+    // Compatibility methods for existing PaymentService
+    public static String getTmnCode() {
+        return getVnpayTmnCode();
+    }
+    
+    public static String getHashSecret() {
+        return getVnpayHashSecret();
+    }
+    
+    public static String getPayUrl() {
+        return getVnpayPayUrl();
+    }
+    
+    public static String getReturnUrl() {
+        return getVnpayReturnUrl();
+    }
+    
+    public static String getCancelUrl() {
+        return getVnpayCancelUrl();
+    }
+    
+    public static String getErrorUrl() {
+        return getVnpayErrorUrl();
+    }
+    
+    public static String getApiUrl() {
+        return getVnpayApiUrl();
     }
     
     /**
