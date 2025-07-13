@@ -24,10 +24,10 @@ import jakarta.servlet.http.HttpServletResponse;
  * Method: POST
  * 
  * Parameters:
- * - bookingId: ID của booking cần duyệt
- * - action: "approve" hoặc "reject"
- * - note: Ghi chú khi duyệt (optional)
- * - rejectionReason: Lý do từ chối (chỉ cần khi reject, optional)
+ * - bookingId: ID của booking cần duyệt (bắt buộc)
+ * - action: "approve" hoặc "reject" (bắt buộc)
+ * - note: Ghi chú khi duyệt (tùy chọn)
+ * - declineReason: Lý do từ chối (bắt buộc nếu reject)
  */
 @WebServlet(name = "BookingApprovalServlet", urlPatterns = {"/staff/approve-booking"})
 public class BookingApprovalServlet extends HttpServlet {
