@@ -9,6 +9,7 @@ public class CarListItemDTO {
     private String brandName;
     private BigDecimal pricePerDay;
     private BigDecimal pricePerHour;
+    private BigDecimal pricePerMonth;
     private String mainImageUrl;
     private String statusDisplay;
     private String statusCssClass;
@@ -55,6 +56,14 @@ public class CarListItemDTO {
 
     public void setPricePerHour(BigDecimal pricePerHour) {
         this.pricePerHour = pricePerHour;
+    }
+
+    public BigDecimal getPricePerMonth() {
+        return pricePerMonth;
+    }
+
+    public void setPricePerMonth(BigDecimal pricePerMonth) {
+        this.pricePerMonth = pricePerMonth;
     }
 
     public String getMainImageUrl() {
