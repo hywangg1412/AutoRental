@@ -6,6 +6,29 @@ VALUES
     ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', 'User', 'USER');
 GO
 
+-- Insert data into Insurance table
+INSERT INTO [Insurance] (InsuranceId, InsuranceName, InsuranceType, BaseRatePerDay, PercentageRate, CoverageAmount, ApplicableCarSeats, Description, IsActive) VALUES
+    (NEWID(), N'Civil liability insurance for 1-5 seat cars', 'TNDS', 10, NULL, 150000000, '1-5', N'Mandatory civil liability insurance for cars under 6 seats - 10 VND/day', 1),
+    (NEWID(), N'Civil liability insurance for 6-11 seat cars', 'TNDS', 15, NULL, 150000000, '6-11', N'Mandatory civil liability insurance for cars with 6-11 seats - 15 VND/day', 1),
+    (NEWID(), N'Civil liability insurance for 12+ seat cars', 'TNDS', 20, NULL, 150000000, '12+', N'Mandatory civil liability insurance for cars over 12 seats - 20 VND/day', 1),
+    (NEWID(), N'Physical damage insurance', 'VatChat', 0, 2.0, 500000000, NULL, N'Physical damage insurance 2% of car value/year', 1),
+    (NEWID(), N'Accident insurance', 'TaiNan', 5, NULL, 200000000, NULL, N'Accident insurance for people in the car - 5 VND/day', 1);
+GO
+
+-- Insert data into Discount table
+INSERT INTO [Discount] (DiscountId, DiscountName, Description, DiscountType, DiscountValue, StartDate, EndDate, IsActive, VoucherCode, MinOrderAmount, MaxDiscountAmount, UsageLimit, UsedCount, DiscountCategory) VALUES
+    (NEWID(), N'10% Off', N'10% off for orders over 2000 VND', 'Percent', 10, GETDATE(), DATEADD(MONTH, 6, GETDATE()), 1, 'SAVE10', 2000, 500, 1000, 0, 'Voucher'),
+    (NEWID(), N'50 VND Off', N'50 VND off for new customers', 'Fixed', 50, GETDATE(), DATEADD(MONTH, 3, GETDATE()), 1, 'FIRST50', 0, NULL, 500, 0, 'Voucher'),
+    (NEWID(), N'20% Weekend Discount', N'20% off for weekend bookings', 'Percent', 20, GETDATE(), DATEADD(MONTH, 12, GETDATE()), 1, 'WEEKEND20', 1000, 1000, NULL, 0, 'Voucher'),
+    (NEWID(), N'15% Student Discount', N'15% off for students', 'Percent', 15, GETDATE(), DATEADD(MONTH, 12, GETDATE()), 1, 'STUDENT15', 500, 300, NULL, 0, 'Voucher');
+GO
+
+INSERT INTO [Terms] (TermsId, Version, Title, ShortContent, FullContent, EffectiveDate, IsActive) VALUES 
+    (NEWID(), 'v1.0', N'Terms and Conditions', 
+    N'<h4>Basic Booking Deposit Terms</h4><ul><li><strong>Deposit:</strong> 30% of the total value, non-refundable if canceled</li><li><strong>Payment:</strong> Completed after staff approval</li><li><strong>Contract Signing:</strong> Required within 6 hours after deposit</li><li><strong>Final Payment:</strong> Remaining 70% upon contract signing</li><li><strong>Cancellation:</strong> Full deposit will be lost if the contract is not signed</li></ul><p><strong>Note:</strong> The deposit is non-refundable under any circumstances</p>',
+    N'Full terms and conditions for the AutoRental car rental system. Customers must agree to the following: 1. Deposit 30% of the total booking value, non-refundable if canceled. 2. Pay the remaining 70% upon contract signing. 3. The contract must be signed within 6 hours after the deposit. 4. Any damages caused by the customer must be compensated according to the regulations.', 
+    GETDATE(), 1);
+GO
 -- Brand
 INSERT INTO CarBrand (BrandId, BrandName) VALUES
 ('11111111-1111-1111-1111-111111111111', N'Toyota'),

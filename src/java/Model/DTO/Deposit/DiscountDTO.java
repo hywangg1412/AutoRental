@@ -1,0 +1,95 @@
+package Model.DTO.Deposit;
+
+/**
+ * DTO cho voucher/discount - chỉ lưu trữ thông tin, logic tính toán ở Service
+ */
+public class DiscountDTO {
+
+    private String voucherCode;          // Mã voucher
+    private String name;                 // Tên discount
+    private String discountType;         // "Percent" hoặc "Fixed"
+    private double discountValue;        // Giá trị giảm - DÙNG DOUBLE
+    private double minOrderAmount;       // Đơn hàng tối thiểu - DÙNG DOUBLE
+    private String description;          // Mô tả
+
+    // Constructors
+    public DiscountDTO() {
+    }
+
+    public DiscountDTO(String voucherCode, String name, String discountType,
+            double discountValue, double minOrderAmount, String description) {
+        this.voucherCode = voucherCode;
+        this.name = name;
+        this.discountType = discountType;
+        this.discountValue = discountValue;
+        this.minOrderAmount = minOrderAmount;
+        this.description = description;
+    }
+
+    // ========== GETTERS VÀ SETTERS - CHỈ LƯU TRỮ ==========
+    public String getVoucherCode() {
+        return voucherCode;
+    }
+
+    public void setVoucherCode(String voucherCode) {
+        this.voucherCode = voucherCode;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDiscountType() {
+        return discountType;
+    }
+
+    public void setDiscountType(String discountType) {
+        this.discountType = discountType;
+    }
+
+    /**
+     * Giá trị giảm giá - chỉ lưu trữ, logic tính toán ở Service
+     */
+    public double getDiscountValue() {
+        return discountValue;
+    }
+
+    public void setDiscountValue(double discountValue) {
+        this.discountValue = discountValue;
+    }
+
+    /**
+     * Số tiền đơn hàng tối thiểu - chỉ lưu trữ
+     */
+    public double getMinOrderAmount() {
+        return minOrderAmount;
+    }
+
+    public void setMinOrderAmount(double minOrderAmount) {
+        this.minOrderAmount = minOrderAmount;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public String toString() {
+        return "DiscountDTO{"
+                + "voucherCode='" + voucherCode + '\''
+                + ", name='" + name + '\''
+                + ", discountType='" + discountType + '\''
+                + ", discountValue=" + discountValue
+                + ", minOrderAmount=" + minOrderAmount
+                + ", description='" + description + '\''
+                + '}';
+    }
+}

@@ -32,7 +32,7 @@ public class DiscountServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // lay Discount nhi
+        // Set encoding
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
@@ -68,7 +68,7 @@ public class DiscountServlet extends HttpServlet {
             List<Discount> discounts = discountService.getAllDiscounts();
             LOGGER.info("Retrieved " + discounts.size() + " discounts");
             
-           
+            // Debug từng discount
             for (int i = 0; i < discounts.size(); i++) {
                 Discount d = discounts.get(i);
                 LOGGER.info("Discount " + i + ": ID=" + d.getDiscountId() + ", Name=" + d.getDiscountName());
@@ -187,7 +187,7 @@ public class DiscountServlet extends HttpServlet {
             LOGGER.log(Level.SEVERE, "Date parsing error during action: " + action, e);
         }
 
-        // reload lai discount cái 
+        // Reload discounts after processing
         try {
             List<Discount> discounts = discountService.getAllDiscounts();
             request.setAttribute("discounts", discounts);

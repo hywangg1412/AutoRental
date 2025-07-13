@@ -42,8 +42,6 @@ CREATE TABLE [Users] (
 );
 GO
 
-
-
 CREATE TABLE [DriverLicenses] (
     [LicenseId] UNIQUEIDENTIFIER NOT NULL,
     [UserId] UNIQUEIDENTIFIER NOT NULL,
@@ -242,32 +240,38 @@ CREATE TABLE [Discount] (
 GO
 
 CREATE TABLE [Booking] (
-    [BookingId] UNIQUEIDENTIFIER NOT NULL,
-    [UserId] UNIQUEIDENTIFIER NOT NULL,
-    [CarId] UNIQUEIDENTIFIER NULL,
-    [HandledBy] UNIQUEIDENTIFIER NULL,
-    [PickupDateTime] DATETIME2 NOT NULL,
-    [ReturnDateTime] DATETIME2 NOT NULL,
-    [TotalAmount] DECIMAL(10, 2) NOT NULL, --CHECK ([TotalAmount] >= 0),
-    [Status] VARCHAR(20) NOT NULL, --CHECK ([Status] IN ('Pending', 'Confirmed', 'Cancelled', 'Completed')) DEFAULT 'Pending',
-    [DiscountId] UNIQUEIDENTIFIER NULL,
-    [CreatedDate] DATETIME2 NOT NULL, --DEFAULT GETDATE(),
-    [CancelReason] NVARCHAR(255) NULL,
-    [BookingCode] NVARCHAR(20) NULL, --UNIQUE
-    [ExpectedPaymentMethod] NVARCHAR(50) NULL,
-    -- Thông tin khách hàng được "đóng băng" tại thời điểm booking
-    [CustomerName] NVARCHAR(255) NULL, -- Tên khách hàng tại thời điểm booking
-    [CustomerPhone] NVARCHAR(20) NULL, -- Số điện thoại khách hàng tại thời điểm booking
-    [CustomerAddress] NVARCHAR(500) NULL, -- Địa chỉ khách hàng tại thời điểm booking
-    [CustomerEmail] NVARCHAR(255) NULL, -- Email khách hàng tại thời điểm booking
-    [DriverLicenseImageUrl] NVARCHAR(500) NULL, -- Ảnh bằng lái xe tại thời điểm booking
-    CONSTRAINT [PK_Booking] PRIMARY KEY ([BookingId]),
-    CONSTRAINT [FK_Booking_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE,
-    CONSTRAINT [FK_Booking_CarId] FOREIGN KEY ([CarId]) REFERENCES [Car]([CarId]) ON DELETE SET NULL,
-    CONSTRAINT [FK_Booking_HandledBy] FOREIGN KEY ([HandledBy]) REFERENCES [Users]([UserId]) ON DELETE NO ACTION,
-    CONSTRAINT [FK_Booking_DiscountId] FOREIGN KEY ([DiscountId]) REFERENCES [Discount]([DiscountId]) ON DELETE SET NULL
+    BookingId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
+    UserId UNIQUEIDENTIFIER NOT NULL,
+    CarId UNIQUEIDENTIFIER NOT NULL,
+    HandledBy UNIQUEIDENTIFIER NULL,
+    PickupDateTime DATETIME2 NOT NULL,
+    ReturnDateTime DATETIME2 NOT NULL,
+    TotalAmount DECIMAL(10,2) NOT NULL,
+    Status NVARCHAR(20) NOT NULL DEFAULT 'Pending',
+    DiscountId UNIQUEIDENTIFIER NULL,
+    CreatedDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    CancelReason NVARCHAR(500) NULL,
+    BookingCode NVARCHAR(20) NOT NULL UNIQUE,
+    ExpectedPaymentMethod NVARCHAR(50) NULL,
+    RentalType NVARCHAR(10) NOT NULL DEFAULT 'daily',
+    CustomerName NVARCHAR(100) NULL,
+    CustomerPhone NVARCHAR(15) NULL,
+    CustomerAddress NVARCHAR(255) NULL,
+    CustomerEmail NVARCHAR(100) NULL,
+    DriverLicenseImageUrl NVARCHAR(500) NULL,
+    TermsAgreed BIT NOT NULL DEFAULT 0,
+    TermsAgreedAt DATETIME2 NULL,
+    TermsVersion NVARCHAR(10) NULL DEFAULT 'v1.0',
+    CONSTRAINT PK_Booking PRIMARY KEY (BookingId),
+    CONSTRAINT FK_Booking_Users FOREIGN KEY (UserId) REFERENCES [Users](UserId) ON DELETE CASCADE,
+    CONSTRAINT FK_Booking_Car FOREIGN KEY (CarId) REFERENCES [Car](CarId) ON DELETE NO ACTION,
+    CONSTRAINT FK_Booking_HandledBy FOREIGN KEY (HandledBy) REFERENCES [Users](UserId) ON DELETE NO ACTION,
+    CONSTRAINT FK_Booking_DiscountId FOREIGN KEY (DiscountId) REFERENCES [Discount](DiscountId) ON DELETE SET NULL,
+    CONSTRAINT CHK_Booking_RentalType CHECK (RentalType IN ('hourly', 'daily', 'monthly')),
+    CONSTRAINT CHK_Booking_Amount CHECK (TotalAmount >= 0)
 );
 GO
+
 
 CREATE TABLE [BookingApproval] (
     [ApprovalId] UNIQUEIDENTIFIER NOT NULL,
@@ -297,15 +301,62 @@ CREATE TABLE [SupportTickets] (
 );
 GO
 
+CREATE TABLE [Terms] (
+    TermsId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
+    Version NVARCHAR(10) NOT NULL UNIQUE,
+    Title NVARCHAR(200) NOT NULL,
+    ShortContent NVARCHAR(MAX) NULL,
+    FullContent NVARCHAR(MAX) NOT NULL,
+    EffectiveDate DATE NOT NULL,
+    IsActive BIT NOT NULL DEFAULT 1,
+    CreatedDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    CONSTRAINT PK_Terms PRIMARY KEY (TermsId)
+);
+GO
+
+CREATE TABLE [Insurance] (
+    InsuranceId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
+    InsuranceName NVARCHAR(100) NOT NULL,
+    InsuranceType NVARCHAR(50) NOT NULL,
+    BaseRatePerDay DECIMAL(10,2) NOT NULL,
+    PercentageRate DECIMAL(5,2) NULL,
+    CoverageAmount DECIMAL(15,2) NOT NULL,
+    ApplicableCarSeats NVARCHAR(50) NULL,
+    Description NVARCHAR(500) NULL,
+    IsActive BIT NOT NULL DEFAULT 1,
+    CreatedDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    CONSTRAINT PK_Insurance PRIMARY KEY (InsuranceId)
+);
+GO
+
+CREATE TABLE [BookingInsurance] (
+    BookingInsuranceId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
+    BookingId UNIQUEIDENTIFIER NOT NULL,
+    InsuranceId UNIQUEIDENTIFIER NOT NULL,
+    PremiumAmount DECIMAL(10,2) NOT NULL,
+    RentalDays DECIMAL(10,2) NOT NULL,
+    CarSeats INT NOT NULL,
+    EstimatedCarValue DECIMAL(15,2) NULL,
+    CreatedAt DATETIME2 NOT NULL DEFAULT GETDATE(),
+    CONSTRAINT PK_BookingInsurance PRIMARY KEY (BookingInsuranceId),
+    CONSTRAINT FK_BookingInsurance_Booking FOREIGN KEY (BookingId) REFERENCES [Booking](BookingId) ON DELETE CASCADE,
+    CONSTRAINT FK_BookingInsurance_Insurance FOREIGN KEY (InsuranceId) REFERENCES [Insurance](InsuranceId)
+);
+GO
+
 CREATE TABLE [BookingSurcharges] (
-    [SurchargeId] UNIQUEIDENTIFIER NOT NULL,
-    [BookingId] UNIQUEIDENTIFIER NOT NULL,
-    [SurchargeType] NVARCHAR(50) NOT NULL, -- 'LateReturn', 'OverMileage', ...
-    [Amount] DECIMAL(10,2) NOT NULL,
-    [Description] NVARCHAR(255) NULL,
-    [CreatedDate] DATETIME2 NOT NULL, --  DEFAULT GETDATE(),
-    CONSTRAINT [PK_BookingSurcharges] PRIMARY KEY ([SurchargeId]),
-    CONSTRAINT [FK_BookingSurcharges_BookingId] FOREIGN KEY ([BookingId]) REFERENCES [Booking]([BookingId]) ON DELETE CASCADE
+    SurchargeId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
+    BookingId UNIQUEIDENTIFIER NOT NULL,
+    SurchargeType NVARCHAR(50) NOT NULL,
+    Amount DECIMAL(10,2) NOT NULL,
+    Description NVARCHAR(255) NULL,
+    CreatedDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    SurchargeCategory NVARCHAR(50) NULL,
+    IsSystemGenerated BIT NOT NULL DEFAULT 0,
+    CONSTRAINT PK_BookingSurcharges PRIMARY KEY (SurchargeId),
+    CONSTRAINT FK_BookingSurcharges_Booking FOREIGN KEY (BookingId) REFERENCES [Booking](BookingId) ON DELETE CASCADE,
+    -- CONSTRAINT CHK_BookingSurcharges_Category CHECK (SurchargeCategory IN ('Tax', 'Insurance', 'Penalty', 'Service')) -- Comment để backend Java xử lý
+    CONSTRAINT CHK_BookingSurcharges_Amount CHECK (Amount >= 0)
 );
 GO
 
@@ -331,35 +382,27 @@ CREATE TABLE [Contract] (
 );
 GO
 
-CREATE TABLE [ContractCars] (
-    [ContractCarId] UNIQUEIDENTIFIER NOT NULL,
-    [ContractId] UNIQUEIDENTIFIER NOT NULL,
-    [CarId] UNIQUEIDENTIFIER NOT NULL,
-    [PricePerCar] DECIMAL(10,2) NULL, 
-    [DiscountId] UNIQUEIDENTIFIER NULL, 
-    CONSTRAINT [PK_ContractCars] PRIMARY KEY ([ContractCarId]),
-    CONSTRAINT [FK_ContractCars_ContractId] FOREIGN KEY ([ContractId]) REFERENCES [Contract]([ContractId]) ON DELETE CASCADE,
-    CONSTRAINT [FK_ContractCars_CarId] FOREIGN KEY ([CarId]) REFERENCES [Car]([CarId]) ON DELETE CASCADE,
-    CONSTRAINT [FK_ContractCars_DiscountId] FOREIGN KEY ([DiscountId]) REFERENCES [Discount]([DiscountId]) ON DELETE SET NULL
-);
-GO
-
 CREATE TABLE [Payment] (
-    [PaymentId] UNIQUEIDENTIFIER NOT NULL,
-    [ContractId] UNIQUEIDENTIFIER NOT NULL,
-    [PaymentDate] DATETIME2 NOT NULL, --DEFAULT GETDATE(),
-    [TotalAmount] DECIMAL(10, 2) NOT NULL, --CHECK ([TotalAmount] >= 0),
-    [PaymentStatus] VARCHAR(20) NOT NULL, --CHECK ([PaymentStatus] IN ('Pending', 'Completed', 'Failed')) DEFAULT 'Pending',
-    [PaymentMethod] VARCHAR(50) NOT NULL,
-    [PaymentType] VARCHAR(20) NOT NULL, --CHECK ([PaymentType] IN ('Deposit', 'FullPayment', 'PartialPayment')),
-    [TransactionId] NVARCHAR(100) NULL,
-    [UserId] UNIQUEIDENTIFIER NULL,
-    [Note] NVARCHAR(255) NULL,
-    [Currency] NVARCHAR(10) NULL,
-    [CreatedDate] DATETIME2 NOT NULL, --DEFAULT GETDATE(),
+    [PaymentId] UNIQUEIDENTIFIER NOT NULL,                -- ID của payment
+    [BookingId] UNIQUEIDENTIFIER NOT NULL,                -- Link tới booking
+    [ContractId] UNIQUEIDENTIFIER NULL,                   -- Link tới contract (chỉ có khi thanh toán 70% sau ký hợp đồng)
+    [Amount] DECIMAL(10,2) NOT NULL,                      -- Số tiền thanh toán (30% hoặc 70% tổng giá trị)
+    [PaymentMethod] NVARCHAR(50) NOT NULL,                -- Phương thức thanh toán (PayOS)
+    [PaymentStatus] NVARCHAR(20) NOT NULL DEFAULT 'Pending', -- Trạng thái: Pending, Completed, Failed, Cancelled
+    [PaymentType] VARCHAR(20) NOT NULL DEFAULT 'Deposit', -- Loại: Deposit (đặt cọc 30%) hoặc FullPayment (thanh toán 70%)
+    [TransactionId] NVARCHAR(100) NULL,                   -- Mã giao dịch từ PayOS
+    [PaymentDate] DATETIME2 NULL,                         -- Thời điểm thanh toán thành công
+    [UserId] UNIQUEIDENTIFIER NULL,                       -- Người thực hiện thanh toán
+    [Notes] NVARCHAR(500) NULL,                          -- Ghi chú thanh toán
+    [CreatedDate] DATETIME2 NOT NULL DEFAULT GETDATE(),   -- Ngày tạo payment
+
     CONSTRAINT [PK_Payment] PRIMARY KEY ([PaymentId]),
-    CONSTRAINT [FK_Payment_ContractId] FOREIGN KEY ([ContractId]) REFERENCES [Contract]([ContractId]) ON DELETE CASCADE,
-    CONSTRAINT [FK_Payment_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE NO ACTION
+    CONSTRAINT [FK_Payment_Booking] FOREIGN KEY ([BookingId]) 
+        REFERENCES [Booking]([BookingId]) ON DELETE CASCADE,
+    CONSTRAINT [FK_Payment_ContractId] FOREIGN KEY ([ContractId]) 
+        REFERENCES [Contract]([ContractId]) ON DELETE NO ACTION,
+    CONSTRAINT [FK_Payment_UserId] FOREIGN KEY ([UserId]) 
+        REFERENCES [Users]([UserId]) ON DELETE NO ACTION
 );
 GO
 
