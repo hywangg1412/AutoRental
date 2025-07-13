@@ -13,12 +13,8 @@ import Exception.InvalidDataException;
 import Exception.NotFoundException;
 import Model.Entity.Booking.Booking;
 import Model.Entity.Booking.BookingApproval;
-import Model.Entity.Booking.BookingInsurance;
-import Model.Entity.Deposit.Insurance;
 import Repository.Booking.BookingApprovalRepository;
-import Repository.Booking.BookingInsuranceRepository;
 import Repository.Booking.BookingRepository;
-import Repository.Deposit.InsuranceRepository;
 import Service.Interfaces.IBooking.IBookingApprovalService;
 
 /**
@@ -31,18 +27,8 @@ import Service.Interfaces.IBooking.IBookingApprovalService;
 public class BookingApprovalService implements IBookingApprovalService {
     
     private static final Logger LOGGER = Logger.getLogger(BookingApprovalService.class.getName());
-    
-    private final BookingApprovalRepository bookingApprovalRepository;
-    private final BookingRepository bookingRepository;
-    private final BookingInsuranceRepository bookingInsuranceRepository;
-    private final InsuranceRepository insuranceRepository;
-
-    public BookingApprovalService() {
-        this.bookingApprovalRepository = new BookingApprovalRepository();
-        this.bookingRepository = new BookingRepository();
-        this.bookingInsuranceRepository = new BookingInsuranceRepository();
-        this.insuranceRepository = new InsuranceRepository();
-    }
+    private final BookingApprovalRepository bookingApprovalRepository = new BookingApprovalRepository();
+    private final BookingRepository bookingRepository = new BookingRepository();
 
     /**
      * Staff duyệt booking (approve hoặc reject)
@@ -92,17 +78,6 @@ public class BookingApprovalService implements IBookingApprovalService {
             
             bookingRepository.update(booking);
 
-            // *** MỚI THÊM: Tự động tạo bảo hiểm khi duyệt thành Confirmed ***
-            if ("Approved".equals(approvalStatus)) {
-                try {
-                    createDefaultInsuranceForBooking(booking);
-                    LOGGER.log(Level.INFO, "Đã tạo bảo hiểm mặc định cho booking {0}", bookingId);
-                } catch (Exception e) {
-                    LOGGER.log(Level.WARNING, "Lỗi khi tạo bảo hiểm cho booking " + bookingId + ": " + e.getMessage(), e);
-                    // Không throw exception để không ảnh hưởng đến quá trình duyệt
-                }
-            }
-
             LOGGER.log(Level.INFO, "Staff {0} đã {1} booking {2}", 
                 new Object[]{staffId, approvalStatus, bookingId});
 
@@ -146,72 +121,6 @@ public class BookingApprovalService implements IBookingApprovalService {
     }
 
     // ========== CÁC METHOD CRUD CƠ BẢN (GIỮ LẠI ĐỂ TƯƠNG THÍCH) ==========
-
-    @Override
-    public BookingApproval processApproval(UUID bookingId, UUID staffId, String approvalStatus, 
-                                         String note, String rejectionReason) 
-                                         throws SQLException, NotFoundException, InvalidDataException {
-        try {
-            // 1. Kiểm tra booking có tồn tại không
-            Booking booking = bookingRepository.findById(bookingId);
-            if (booking == null) {
-                throw new NotFoundException("Không tìm thấy booking với ID: " + bookingId);
-            }
-
-            // 2. Kiểm tra booking có đang ở trạng thái Pending không
-            if (!"Pending".equals(booking.getStatus())) {
-                throw new InvalidDataException("Booking đã được xử lý, không thể duyệt lại. Trạng thái hiện tại: " + booking.getStatus());
-            }
-
-            // 3. Tạo record lịch sử duyệt
-            BookingApproval approval = new BookingApproval();
-            approval.setApprovalId(UUID.randomUUID());
-            approval.setBookingId(bookingId);
-            approval.setStaffId(staffId);
-            approval.setApprovalStatus(approvalStatus);
-            approval.setApprovalDate(LocalDateTime.now());
-            approval.setNote(note);
-            approval.setRejectionReason(rejectionReason);
-
-            // 4. Lưu vào bảng BookingApproval
-            BookingApproval savedApproval = bookingApprovalRepository.add(approval);
-
-            // 5. Cập nhật trạng thái booking
-            String newBookingStatus = "Approved".equals(approvalStatus) ? "Confirmed" : "Rejected";
-            booking.setStatus(newBookingStatus);
-            booking.setHandledBy(staffId);
-            
-            // Nếu reject, lưu lý do vào CancelReason
-            if ("Rejected".equals(approvalStatus) && rejectionReason != null) {
-                booking.setCancelReason("Staff rejected: " + rejectionReason);
-            }
-            
-            bookingRepository.update(booking);
-
-            // *** TỰ ĐỘNG TẠO BẢO HIỂM KHI DUYỆT THÀNH CONFIRMED ***
-            if ("Approved".equals(approvalStatus)) {
-                try {
-                    createDefaultInsuranceForBooking(booking);
-                    LOGGER.log(Level.INFO, "Đã tạo bảo hiểm mặc định cho booking {0}", bookingId);
-                } catch (Exception e) {
-                    LOGGER.log(Level.WARNING, "Lỗi khi tạo bảo hiểm cho booking " + bookingId + ": " + e.getMessage(), e);
-                    // Không throw exception để không ảnh hưởng đến quá trình duyệt
-                }
-            }
-
-            LOGGER.log(Level.INFO, "Staff {0} đã {1} booking {2}", 
-                new Object[]{staffId, approvalStatus, bookingId});
-
-            return savedApproval;
-
-        } catch (NotFoundException | InvalidDataException e) {
-            LOGGER.log(Level.WARNING, "Lỗi xử lý duyệt booking: " + e.getMessage(), e);
-            throw e;
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Lỗi database khi xử lý duyệt booking " + bookingId, e);
-            throw e;
-        }
-    }
 
     @Override
     public void display() throws EmptyDataException, EventException {
@@ -312,137 +221,6 @@ public class BookingApprovalService implements IBookingApprovalService {
         }
         if (!"Approved".equals(approval.getApprovalStatus()) && !"Rejected".equals(approval.getApprovalStatus())) {
             throw new InvalidDataException("ApprovalStatus phải là 'Approved' hoặc 'Rejected'");
-        }
-    }
-
-    /**
-     * TỰ ĐỘNG TẠO ĐỦ 3 LOẠI BẢO HIỂM CHO BOOKING MỚI ĐƯỢC DUYỆT
-     * - TNDS: Theo số chỗ xe
-     * - Vật chất: 0 (sẽ được DepositService tính toán)  
-     * - Tai nạn: Fixed rate
-     */
-    private void createDefaultInsuranceForBooking(Booking booking) throws SQLException {
-        try {
-            LOGGER.info("=== TẠO BẢO HIỂM MẶC ĐỊNH CHO BOOKING " + booking.getBookingId() + " ===");
-
-            // Tính số ngày thuê để tính phí
-            double rentalDays = calculateRentalDays(booking);
-            LOGGER.info("Số ngày thuê: " + rentalDays);
-
-            // Lấy thông tin xe để xác định số chỗ
-            int carSeats = getCarSeats(booking.getCarId());
-            LOGGER.info("Số chỗ xe: " + carSeats);
-
-            // Lấy tất cả loại bảo hiểm có sẵn
-            List<Insurance> availableInsurances = insuranceRepository.findAll();
-            LOGGER.info("Tìm thấy " + availableInsurances.size() + " loại bảo hiểm");
-
-            int insuranceCount = 0;
-
-            for (Insurance insurance : availableInsurances) {
-                if (!insurance.isActive()) continue;
-
-                BookingInsurance bookingInsurance = new BookingInsurance();
-                bookingInsurance.setBookingInsuranceId(UUID.randomUUID());
-                bookingInsurance.setBookingId(booking.getBookingId());
-                bookingInsurance.setInsuranceId(insurance.getInsuranceId());
-                bookingInsurance.setRentalDays(rentalDays);
-                bookingInsurance.setCarSeats(carSeats);
-                bookingInsurance.setEstimatedCarValue(booking.getTotalAmount() * 1000); // Ước tính giá xe
-                bookingInsurance.setCreatedAt(LocalDateTime.now());
-
-                // Tính phí theo loại bảo hiểm
-                double premiumAmount = calculateInsurancePremium(insurance, carSeats, booking.getTotalAmount(), rentalDays);
-                bookingInsurance.setPremiumAmount(premiumAmount);
-
-                // Lưu vào database
-                BookingInsurance saved = bookingInsuranceRepository.add(bookingInsurance);
-                if (saved != null) {
-                    insuranceCount++;
-                    LOGGER.info("Đã tạo bảo hiểm: " + insurance.getInsuranceName() + 
-                               " = " + premiumAmount + " (DB value)");
-                }
-            }
-
-            LOGGER.info("=== ĐÃ TẠO " + insuranceCount + " LOẠI BẢO HIỂM CHO BOOKING ===");
-
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Lỗi tạo bảo hiểm cho booking " + booking.getBookingId(), e);
-            throw e;
-        }
-    }
-
-    /**
-     * Tính phí bảo hiểm theo loại
-     */
-    private double calculateInsurancePremium(Insurance insurance, int carSeats, double bookingTotal, double rentalDays) {
-        try {
-            switch (insurance.getInsuranceType()) {
-                case "TNDS":
-                    // TNDS: Dựa theo số chỗ xe và số ngày
-                    if (carSeats <= 5) {
-                        return 10.0; // 10 VND/ngày cho xe ≤ 5 chỗ (DB value)
-                    } else if (carSeats <= 11) {
-                        return 15.0; // 15 VND/ngày cho xe 6-11 chỗ
-                    } else {
-                        return 20.0; // 20 VND/ngày cho xe 12+ chỗ
-                    }
-
-                case "TaiNan":
-                    // Tai nạn: Fixed rate
-                    return 5.0; // 5 VND/ngày (DB value)
-
-                case "VatChat":
-                    // Vật chất: Để 0, DepositService sẽ tính toán
-                    return 0.0;
-
-                default:
-                    LOGGER.warning("Loại bảo hiểm không xác định: " + insurance.getInsuranceType());
-                    return 0.0;
-            }
-        } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "Lỗi tính phí bảo hiểm cho " + insurance.getInsuranceName(), e);
-            return 0.0;
-        }
-    }
-
-    /**
-     * Tính số ngày thuê
-     */
-    private double calculateRentalDays(Booking booking) {
-        try {
-            if (booking.getPickupDateTime() == null || booking.getReturnDateTime() == null) {
-                return 1.0; // Default 1 ngày
-            }
-
-            java.time.Duration duration = java.time.Duration.between(
-                booking.getPickupDateTime(), 
-                booking.getReturnDateTime()
-            );
-
-            double totalHours = duration.toMinutes() / 60.0;
-            double days = totalHours / 24.0;
-
-            // Tối thiểu 0.5 ngày
-            return Math.max(days, 0.5);
-
-        } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "Lỗi tính số ngày thuê", e);
-            return 1.0;
-        }
-    }
-
-    /**
-     * Lấy số chỗ xe từ database
-     */
-    private int getCarSeats(UUID carId) {
-        try {
-            // Đơn giản hóa: Trả về 5 chỗ mặc định
-            // Có thể mở rộng sau để query từ bảng Car
-            return 5;
-        } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "Lỗi lấy thông tin xe", e);
-            return 5; // Default 5 chỗ
         }
     }
 }
