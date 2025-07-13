@@ -107,6 +107,7 @@ body {
 /* Header */
 .header {
   background-color: #ffffff;
+  padding: 1.5rem 2rem;
   border-bottom: 1px solid #e1e8ed;
   display: flex;
   justify-content: space-between;
@@ -133,8 +134,7 @@ body {
   font-size: 0.875rem;
 }
 
-/* Loại bỏ các CSS có thể xung đột với CSS thông báo */
-/* .header .btn-outline-secondary {
+.header .btn-outline-secondary {
   border-color: #e2e8f0;
   color: #4a5568;
 }
@@ -142,7 +142,7 @@ body {
 .header .btn-outline-secondary:hover {
   background-color: #f7fafc;
   border-color: #cbd5e0;
-} */
+}
 
 .header .bg-primary {
   background-color: #3b82f6 !important;
@@ -439,7 +439,7 @@ body {
 .btn-sm {
   padding: 0.375rem 0.75rem;
   font-size: 0.8rem;
-  min-width: 37px; /* Ensure consistent button width */
+  min-width: 80px; /* Ensure consistent button width */
   text-align: center;
 }
 
@@ -642,6 +642,192 @@ body {
   gap: 0.5rem;
 }
 
-hr{
-  margin: 0 !important;
+
+.deposit-status.not-applicable {
+    background-color: #f8fafc !important;
+    color: #64748b !important;
+    border: 1px solid #e2e8f0 !important;
 }
+
+.deposit-status.awaiting-payment {
+    background-color: #fef3c7 !important;
+    color: #d97706 !important;
+    border: 1px solid #fbbf24 !important;
+    animation: pulse 2s infinite !important;
+}
+
+.deposit-status.paid {
+    background-color: #f0fff4 !important;
+    color: #38a169 !important;
+    border: 1px solid #9ae6b4 !important;
+}
+
+.deposit-status.cancelled {
+    background-color: #fed7d7 !important;
+    color: #e53e3e !important;
+    border: 1px solid #feb2b2 !important;
+}
+
+.deposit-status.unknown {
+    background-color: #faf5ff !important;
+    color: #805ad5 !important;
+    border: 1px solid #d6bcfa !important;
+}
+
+/* CSS cho contract status */
+.contract-status.not-applicable {
+    background-color: #f8fafc !important;
+    color: #64748b !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+.contract-status.not-created {
+    background-color: #f7fafc !important;
+    color: #4a5568 !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+.contract-status.ready-to-sign {
+    background-color: #fef3c7 !important;
+    color: #d97706 !important;
+    border: 1px solid #fbbf24 !important;
+}
+
+.contract-status.signed {
+    background-color: #f0fff4 !important;
+    color: #38a169 !important;
+    border: 1px solid #9ae6b4 !important;
+}
+
+.contract-status.completed {
+    background-color: #f0fff4 !important;
+    color: #38a169 !important;
+    border: 1px solid #9ae6b4 !important;
+}
+
+.contract-status.cancelled {
+    background-color: #fed7d7 !important;
+    color: #e53e3e !important;
+    border: 1px solid #feb2b2 !important;
+}
+
+.contract-status.unknown {
+    background-color: #faf5ff !important;
+    color: #805ad5 !important;
+    border: 1px solid #d6bcfa !important;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* CSS cho rental type badges */
+.rental-type.hourly {
+    background-color: #e6fffa !important;
+    color: #319795 !important;
+    border: 1px solid #81e6d9 !important;
+}
+
+.rental-type.daily {
+    background-color: #f0fff4 !important;
+    color: #38a169 !important;
+    border: 1px solid #9ae6b4 !important;
+}
+
+.rental-type.monthly {
+    background-color: #faf5ff !important;
+    color: #805ad5 !important;
+    border: 1px solid #d6bcfa !important;
+}
+
+.badge.rental-type.hourly {
+    background-color: #e6fffa !important;
+    color: #319795 !important;
+    border: 1px solid #81e6d9 !important;
+}
+.badge.rental-type.daily {
+    background-color: #f0fff4 !important;
+    color: #38a169 !important;
+    border: 1px solid #9ae6b4 !important;
+}
+.badge.rental-type.monthly {
+    background-color: #faf5ff !important;
+    color: #805ad5 !important;
+    border: 1px solid #d6bcfa !important;
+}
+
+.badge.deposit-status.not-applicable { background-color: #f8fafc !important; color: #64748b !important; border: 1px solid #e2e8f0 !important; }
+.badge.deposit-status.awaiting-payment { background-color: #fef3c7 !important; color: #d97706 !important; border: 1px solid #fbbf24 !important; animation: pulse 2s infinite !important; }
+.badge.deposit-status.paid { background-color: #f0fff4 !important; color: #38a169 !important; border: 1px solid #9ae6b4 !important; }
+.badge.deposit-status.cancelled { background-color: #fed7d7 !important; color: #e53e3e !important; border: 1px solid #feb2b2 !important; }
+.badge.deposit-status.unknown { background-color: #faf5ff !important; color: #805ad5 !important; border: 1px solid #d6bcfa !important; }
+
+.badge.contract-status.not-applicable { background-color: #f8fafc !important; color: #64748b !important; border: 1px solid #e2e8f0 !important; }
+.badge.contract-status.not-created { background-color: #f7fafc !important; color: #4a5568 !important; border: 1px solid #e2e8f0 !important; }
+.badge.contract-status.ready-to-sign { background-color: #fef3c7 !important; color: #d97706 !important; border: 1px solid #fbbf24 !important; }
+.badge.contract-status.signed { background-color: #f0fff4 !important; color: #38a169 !important; border: 1px solid #9ae6b4 !important; }
+.badge.contract-status.completed { background-color: #f0fff4 !important; color: #38a169 !important; border: 1px solid #9ae6b4 !important; }
+.badge.contract-status.cancelled { background-color: #fed7d7 !important; color: #e53e3e !important; border: 1px solid #feb2b2 !important; }
+.badge.contract-status.unknown { background-color: #faf5ff !important; color: #805ad5 !important; border: 1px solid #d6bcfa !important; }
+
+
+/* CSS cho deposit status badges 
+.deposit-status.paid {
+    background-color: #f0fff4;
+    color: #38a169;
+    border: 1px solid #9ae6b4;
+}
+
+.deposit-status.required {
+    background-color: #fef5e7;
+    color: #d69e2e;
+    border: 1px solid #f6e05e;
+}
+
+.deposit-status.not-required {
+    background-color: #f7fafc;
+    color: #4a5568;
+    border: 1px solid #e2e8f0;
+}
+
+.deposit-status.na {
+    background-color: #fed7d7;
+    color: #c53030;
+    border: 1px solid #feb2b2;
+}
+
+.deposit-status.unknown {
+    background-color: #faf5ff;
+    color: #805ad5;
+    border: 1px solid #d6bcfa;
+}
+
+
+ CSS cho deposit status - giống booking status 
+.deposit-status.paid {
+    background-color: #f0fff4;
+    color: #38a169;
+    border: 1px solid #9ae6b4;
+}
+
+.deposit-status.required {
+    background-color: #fef5e7;
+    color: #d69e2e;
+    border: 1px solid #f6e05e;
+}
+
+.deposit-status.not-required {
+    background-color: #f7fafc;
+    color: #4a5568;
+    border: 1px solid #e2e8f0;
+}
+
+.deposit-status.na {
+    background-color: #fed7d7;
+    color: #c53030;
+    border: 1px solid #feb2b2;
+}*/
+
+/* CSS cho deposit status */
+
