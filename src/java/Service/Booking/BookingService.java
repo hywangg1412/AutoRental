@@ -371,4 +371,8 @@ public class BookingService implements IBookingService {
                    ", SĐT: " + booking.getCustomerPhone() + 
                    ", Email: " + booking.getCustomerEmail());
     }
+
+    public void updateBookingStatus(UUID bookingId, String status) throws SQLException {
+        bookingRepository.updateBookingStatus(bookingId, status);
+    }
 }

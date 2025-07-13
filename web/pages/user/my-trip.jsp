@@ -140,6 +140,9 @@
                                                                                         <c:when test="${trip.status eq 'Cancelled'}">
                                                                                             <i class="bi bi-x-circle-fill"></i> Cancelled
                                                                                         </c:when>
+                                                                                        <c:when test="${trip.status eq 'ContractSigned'}">
+                                                                                            <i class="bi bi-pencil-square"></i> Contract Signed
+                                                                                        </c:when>
                                                                                         <c:otherwise>${trip.status}</c:otherwise>
                                                                                     </c:choose>
                                                                                 </span>
@@ -170,9 +173,17 @@
                                                                         </c:if>
                                                                         <c:if test="${trip.status eq 'DepositPaid'}">
                                                                             <a class="btn-mytrip-action btn-mytrip-green btn-sm"
-                                                                               href="${pageContext.request.contextPath}/customer/contract?bookingId=${trip.bookingId}">
+                                                                               href="${pageContext.request.contextPath}/contract/create?bookingId=${trip.bookingId}">
                                                                                Sign Contract
                                                                             </a>
+                                                                        </c:if>
+                                                                        <c:if test="${trip.status eq 'ContractSigned'}">
+                                                                            <button class="btn-mytrip-action btn-mytrip-blue btn-sm return-car-btn" 
+                                                                                    data-booking-id="${trip.bookingId}" 
+                                                                                    data-car-model="${trip.carModel}" 
+                                                                                    data-license-plate="${trip.carLicensePlate}">
+                                                                                Return Car
+                                                                            </button>
                                                                         </c:if>
                                                                     </div>
                                                                 </div>
@@ -346,16 +357,31 @@
                 <div class="mytrip-modal-value fw-bold" id="modalTotalAmount"></div>
               </div>
               <div class="modal-footer border-0 pt-0 d-flex flex-column gap-2">
-                <a class="btn btn-success w-100 py-2"
-                   id="modalContinuePaymentBtn"
-                   href="#">
-                   Continue to Payment
-                </a>
               </div>
             </div>
           </div>
         </div>
 
         <jsp:include page="/pages/includes/logout-confirm-modal.jsp" />
+
+        <!-- Cancel Booking Confirmation Modal -->
+        <div class="modal fade" id="cancelBookingModal" tabindex="-1" aria-labelledby="cancelBookingModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content custom-modal-content">
+              <div class="modal-header border-0 pb-0 justify-content-end">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body text-center pt-0">
+                <h2 class="modal-title fw-bold mb-3" id="cancelBookingModalLabel" style="font-size: 2rem;">Cancel Booking</h2>
+                <div class="mb-4" style="font-size: 1.1rem;">Are you sure you want to cancel this booking?</div>
+                <form id="cancelBookingForm" method="post" action="${pageContext.request.contextPath}/user/booking-cancel">
+                  <input type="hidden" name="bookingId" id="cancelBookingIdInput" value="">
+                  <button type="submit" class="btn btn-danger w-100" id="confirmCancelBookingBtn">Yes, Cancel Booking</button>
+                  <button type="button" class="btn btn-secondary w-100 mt-2" data-bs-dismiss="modal">No, Keep Booking</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
     </body>
 </html>

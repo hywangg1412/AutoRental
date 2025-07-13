@@ -1,7 +1,7 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
-    String contractId = request.getParameter("contractId");
+    String bookingId = (String) request.getAttribute("bookingId");
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -39,132 +39,135 @@
 
     <div class="container signature-container" style="margin-top: 100px;">
         <h2 class="mb-4 text-center">Sign Your Contract</h2>
-        
-        <!-- Rental Terms & Conditions -->
-        <div class="mb-3">
-            <label class="form-label fw-bold" style="font-size: 1.15rem;">Rental Terms & Conditions</label>
-            <div class="terms-box">
-                <div class="terms-content">
-                    <div class="terms-section collapsible-section">
-                        <div class="terms-header">
-                            <div class="terms-icon">1</div>
-                            <button type="button" class="terms-title-btn" aria-expanded="false">
-                                Renter's Responsibilities
-                                <span class="collapse-arrow"><i class="bi bi-chevron-down"></i></span>
-                            </button>
+        <form id="signForm" method="post" action="${pageContext.request.contextPath}/contract/sign">
+            <input type="hidden" name="bookingId" value="<%= bookingId %>">
+            <!-- Rental Terms & Conditions -->
+            <div class="mb-3">
+                <label class="form-label fw-bold" style="font-size: 1.15rem;">Rental Terms & Conditions</label>
+                <div class="terms-box">
+                    <div class="terms-content">
+                        <div class="terms-section collapsible-section">
+                            <div class="terms-header">
+                                <div class="terms-icon">1</div>
+                                <button type="button" class="terms-title-btn" aria-expanded="false">
+                                    Renter's Responsibilities
+                                    <span class="collapse-arrow"><i class="bi bi-chevron-down"></i></span>
+                                </button>
+                            </div>
+                            <div class="terms-body collapse">
+                                <ul>
+                                    <li>Return the car on time as agreed in the contract.</li>
+                                    <li>Keep the car in the same condition as received (except for normal wear and tear).</li>
+                                    <li>Be responsible for all traffic violations during the rental period.</li>
+                                    <li>Pay all rental fees and any additional charges (if any) in full.</li>
+                                    <li>Hold a valid driver's license and meet the age requirements.</li>
+                                </ul>
+                            </div>
                         </div>
-                        <div class="terms-body collapse">
-                            <ul>
-                                <li>Return the car on time as agreed in the contract.</li>
-                                <li>Keep the car in the same condition as received (except for normal wear and tear).</li>
-                                <li>Be responsible for all traffic violations during the rental period.</li>
-                                <li>Pay all rental fees and any additional charges (if any) in full.</li>
-                                <li>Hold a valid driver's license and meet the age requirements.</li>
-                            </ul>
+                        <div class="terms-section collapsible-section">
+                            <div class="terms-header">
+                                <div class="terms-icon">2</div>
+                                <button type="button" class="terms-title-btn" aria-expanded="false">
+                                    Usage Regulations
+                                    <span class="collapse-arrow"><i class="bi bi-chevron-down"></i></span>
+                                </button>
+                            </div>
+                            <div class="terms-body collapse">
+                                <ul>
+                                    <li>No smoking or drinking alcohol while driving.</li>
+                                    <li>Do not transport prohibited or hazardous goods.</li>
+                                    <li>Do not use the car for illegal purposes.</li>
+                                    <li>Mileage is limited according to the rental package (extra charges apply for excess mileage).</li>
+                                    <li>Only drivers named in the contract are allowed to drive the car.</li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                    <div class="terms-section collapsible-section">
-                        <div class="terms-header">
-                            <div class="terms-icon">2</div>
-                            <button type="button" class="terms-title-btn" aria-expanded="false">
-                                Usage Regulations
-                                <span class="collapse-arrow"><i class="bi bi-chevron-down"></i></span>
-                            </button>
+                        <div class="terms-section collapsible-section">
+                            <div class="terms-header">
+                                <div class="terms-icon">3</div>
+                                <button type="button" class="terms-title-btn" aria-expanded="false">
+                                    Fees and Payments
+                                    <span class="collapse-arrow"><i class="bi bi-chevron-down"></i></span>
+                                </button>
+                            </div>
+                            <div class="terms-body collapse">
+                                <ul>
+                                    <li>Late return: 50,000 VND/hour (within the day), 200,000 VND/day (over 6 hours late).</li>
+                                    <li>Cleaning fee: 100,000 - 300,000 VND depending on the level.</li>
+                                    <li>Excess mileage: 3,000 VND/km for manual cars, 5,000 VND/km for automatic cars.</li>
+                                    <li>Lost key: 500,000 VND.</li>
+                                    <li>Damage due to renter's fault: Actual repair cost.</li>
+                                </ul>
+                            </div>
                         </div>
-                        <div class="terms-body collapse">
-                            <ul>
-                                <li>No smoking or drinking alcohol while driving.</li>
-                                <li>Do not transport prohibited or hazardous goods.</li>
-                                <li>Do not use the car for illegal purposes.</li>
-                                <li>Mileage is limited according to the rental package (extra charges apply for excess mileage).</li>
-                                <li>Only drivers named in the contract are allowed to drive the car.</li>
-                            </ul>
+                        <div class="terms-section collapsible-section">
+                            <div class="terms-header">
+                                <div class="terms-icon">4</div>
+                                <button type="button" class="terms-title-btn" aria-expanded="false">
+                                    Insurance and Accidents
+                                    <span class="collapse-arrow"><i class="bi bi-chevron-down"></i></span>
+                                </button>
+                            </div>
+                            <div class="terms-body collapse">
+                                <ul>
+                                    <li>The car is covered by compulsory civil liability insurance.</li>
+                                    <li>Minor accidents (&lt; 2 million VND): The renter pays the cost.</li>
+                                    <li>Major accidents: According to insurance policy, the renter pays 20% of the cost.</li>
+                                    <li>Report any incidents to the company within 30 minutes.</li>
+                                    <li>Do not leave the scene without instructions from the company.</li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                    <div class="terms-section collapsible-section">
-                        <div class="terms-header">
-                            <div class="terms-icon">3</div>
-                            <button type="button" class="terms-title-btn" aria-expanded="false">
-                                Fees and Payments
-                                <span class="collapse-arrow"><i class="bi bi-chevron-down"></i></span>
-                            </button>
+                        <div class="terms-section collapsible-section">
+                            <div class="terms-header">
+                                <div class="terms-icon">5</div>
+                                <button type="button" class="terms-title-btn" aria-expanded="false">
+                                    Other Terms
+                                    <span class="collapse-arrow"><i class="bi bi-chevron-down"></i></span>
+                                </button>
+                            </div>
+                            <div class="terms-body collapse">
+                                <ul>
+                                    <li>The company reserves the right to repossess the car in case of serious violations.</li>
+                                    <li>The renter may cancel the contract at least 24 hours in advance (10% cancellation fee applies).</li>
+                                    <li>All disputes will be resolved at the competent Court.</li>
+                                    <li>The contract is valid once signed and the deposit is paid.</li>
+                                    <li>Customer information is kept confidential in accordance with the law.</li>
+                                </ul>
+                            </div>
                         </div>
-                        <div class="terms-body collapse">
-                            <ul>
-                                <li>Late return: 50,000 VND/hour (within the day), 200,000 VND/day (over 6 hours late).</li>
-                                <li>Cleaning fee: 100,000 - 300,000 VND depending on the level.</li>
-                                <li>Excess mileage: 3,000 VND/km for manual cars, 5,000 VND/km for automatic cars.</li>
-                                <li>Lost key: 500,000 VND.</li>
-                                <li>Damage due to renter's fault: Actual repair cost.</li>
-                            </ul>
+                        <div class="alert alert-info mt-3 mb-2">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Note:</strong> Please read all terms carefully before signing.
+                            For any questions, please contact our hotline: <strong>1900-xxxx</strong>
                         </div>
-                    </div>
-                    <div class="terms-section collapsible-section">
-                        <div class="terms-header">
-                            <div class="terms-icon">4</div>
-                            <button type="button" class="terms-title-btn" aria-expanded="false">
-                                Insurance and Accidents
-                                <span class="collapse-arrow"><i class="bi bi-chevron-down"></i></span>
-                            </button>
-                        </div>
-                        <div class="terms-body collapse">
-                            <ul>
-                                <li>The car is covered by compulsory civil liability insurance.</li>
-                                <li>Minor accidents (&lt; 2 million VND): The renter pays the cost.</li>
-                                <li>Major accidents: According to insurance policy, the renter pays 20% of the cost.</li>
-                                <li>Report any incidents to the company within 30 minutes.</li>
-                                <li>Do not leave the scene without instructions from the company.</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="terms-section collapsible-section">
-                        <div class="terms-header">
-                            <div class="terms-icon">5</div>
-                            <button type="button" class="terms-title-btn" aria-expanded="false">
-                                Other Terms
-                                <span class="collapse-arrow"><i class="bi bi-chevron-down"></i></span>
-                            </button>
-                        </div>
-                        <div class="terms-body collapse">
-                            <ul>
-                                <li>The company reserves the right to repossess the car in case of serious violations.</li>
-                                <li>The renter may cancel the contract at least 24 hours in advance (10% cancellation fee applies).</li>
-                                <li>All disputes will be resolved at the competent Court.</li>
-                                <li>The contract is valid once signed and the deposit is paid.</li>
-                                <li>Customer information is kept confidential in accordance with the law.</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="alert alert-info mt-3 mb-2">
-                        <i class="fas fa-info-circle me-2"></i>
-                        <strong>Note:</strong> Please read all terms carefully before signing.
-                        For any questions, please contact our hotline: <strong>1900-xxxx</strong>
                     </div>
                 </div>
+                <!-- Checkbox phần dưới giữ nguyên -->
+                <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" id="acceptTerms" name="acceptTerms">
+                    <label class="form-check-label" for="acceptTerms">
+                        I have read, understood, and agree to all the terms & conditions above
+                    </label>
+                </div>
+                <div class="form-check mt-2">
+                    <input class="form-check-input" type="checkbox" id="confirmInfo" name="confirmInfo">
+                    <label class="form-check-label" for="confirmInfo">
+                        I confirm that the personal information and documents provided are accurate
+                    </label>
+                </div>
+                <!-- Vùng ký -->
+                <canvas id="signature-pad" width="400" height="180"></canvas>
+                <input type="hidden" name="signatureData" id="signatureData">
+                <input type="hidden" name="termsVersion" value="v1.0">
+                <input type="hidden" name="termsFileUrl" value="${pageContext.request.contextPath}/terms/current">
+                <div class="d-flex justify-content-center gap-3 mt-3">
+                    <button id="clearBtn" type="button" class="btn btn-secondary btn-sign">Clear</button>
+                    <button id="signBtn" type="submit" class="btn btn-primary btn-sign" disabled>Sign</button>
+                </div>
+                <div id="signStatus" class="mt-3 text-center"></div>
             </div>
-            <!-- Checkbox phần dưới giữ nguyên -->
-            <div class="form-check mt-3">
-                <input class="form-check-input" type="checkbox" id="acceptTerms">
-                <label class="form-check-label" for="acceptTerms">
-                    I have read, understood, and agree to all the terms & conditions above
-                </label>
-            </div>
-            <div class="form-check mt-2">
-                <input class="form-check-input" type="checkbox" id="confirmInfo">
-                <label class="form-check-label" for="confirmInfo">
-                    I confirm that the personal information and documents provided are accurate
-                </label>
-            </div>
-        </div>
-
-        <!-- Vùng ký -->
-        <canvas id="signature-pad" width="400" height="180"></canvas>
-        <div class="d-flex justify-content-center gap-3 mt-3">
-            <button id="clearBtn" class="btn btn-secondary btn-sign">Clear</button>
-            <button id="signBtn" class="btn btn-primary btn-sign" disabled>Sign</button>
-        </div>
-        <input type="hidden" id="contractId" value="<%= contractId %>">
-        <div id="signStatus" class="mt-3 text-center"></div>
+        </form>
     </div>
 
     <%@include file="../includes/footer.jsp" %>
