@@ -157,7 +157,10 @@
                                                                             View Details
                                                                         </button>
                                                                         <c:if test="${trip.status eq BookingStatusConstants.CONFIRMED || trip.status eq BookingStatusConstants.IN_PROGRESS}">
-                                                                            <button class="btn-mytrip-action btn-mytrip-green btn-sm" data-booking-id="${trip.bookingId}">Return Car</button>
+                                                                            <a class="btn-mytrip-action btn-mytrip-green btn-sm"
+                                                                               href="${pageContext.request.contextPath}/customer/deposit?bookingId=${trip.bookingId}">
+                                                                               Continue to Payment
+                                                                            </a>
                                                                         </c:if>
                                                                         <c:if test="${trip.status eq BookingStatusConstants.PENDING}">
                                                                             <button class="btn-mytrip-action btn-mytrip-red btn-sm" data-booking-id="${trip.bookingId}">Cancel Booking</button>
@@ -230,7 +233,10 @@
                                                                         <button class="btn-mytrip-action btn-detail btn-view-details" data-booking-id="${booking.bookingId}" data-car-model="${booking.carModel}" data-license-plate="${booking.carLicensePlate}" data-pickup="${booking.formattedPickupDateTime}" data-return="${booking.formattedReturnDateTime}" data-total-amount="${booking.totalAmount}" data-status="${booking.status}" data-booking-code="${booking.bookingCode}" data-bs-toggle="modal" data-bs-target="#myTripDetailModal">
                                                                             View Details
                                                                         </button>
-                                                                        <button class="btn-mytrip-action btn-mytrip-green btn-sm" data-booking-id="${booking.bookingId}">Book again</button>
+                                                                        <a class="btn-mytrip-action btn-mytrip-green btn-sm"
+                                                                           href="${pageContext.request.contextPath}/customer/deposit?bookingId=${booking.bookingId}">
+                                                                           Continue to Payment
+                                                                        </a>
                                                                         <button class="btn-mytrip-action btn-mytrip-blue btn-sm" data-booking-id="${booking.bookingId}">Send review</button>
                                                                     </div>
                                                                 </div>
@@ -329,7 +335,11 @@
                 <div class="mytrip-modal-value fw-bold" id="modalTotalAmount"></div>
               </div>
               <div class="modal-footer border-0 pt-0 d-flex flex-column gap-2">
-                <button class="btn btn-success w-100 py-2" id="modalReturnCarBtn">Return Car</button>
+                <a class="btn btn-success w-100 py-2"
+                   id="modalContinuePaymentBtn"
+                   href="#">
+                   Continue to Payment
+                </a>
               </div>
             </div>
           </div>
