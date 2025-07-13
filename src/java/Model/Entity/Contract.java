@@ -11,35 +11,33 @@ public class Contract {
     private String contractCode;
     private UUID userId;
     private UUID bookingId;
-    private UUID staffId;
     private LocalDateTime createdDate;
     private LocalDateTime signedDate;
     private LocalDateTime completedDate;
     private String status; 
     private boolean termsAccepted;
     private LocalDateTime termsAcceptedDate;
-    private String contractPDFUrl;
+    private String termsVersion;
+    private String termsFileUrl;
     private String signatureData; 
-    private String signatureImageUrl;
     private String signatureMethod; 
     private String notes;
     private String cancellationReason;
 
-    public Contract(UUID contractId, String contractCode, UUID userId, UUID bookingId, UUID staffId, LocalDateTime createdDate, LocalDateTime signedDate, LocalDateTime completedDate, String status, boolean termsAccepted, LocalDateTime termsAcceptedDate, String contractPDFUrl, String signatureData, String signatureImageUrl, String signatureMethod, String notes, String cancellationReason) {
+    public Contract(UUID contractId, String contractCode, UUID userId, UUID bookingId, LocalDateTime createdDate, LocalDateTime signedDate, LocalDateTime completedDate, String status, boolean termsAccepted, LocalDateTime termsAcceptedDate, String termsVersion, String termsFileUrl, String signatureData, String signatureMethod, String notes, String cancellationReason) {
         this.contractId = contractId;
         this.contractCode = contractCode;
         this.userId = userId;
         this.bookingId = bookingId;
-        this.staffId = staffId;
         this.createdDate = createdDate;
         this.signedDate = signedDate;
         this.completedDate = completedDate;
         this.status = status;
         this.termsAccepted = termsAccepted;
         this.termsAcceptedDate = termsAcceptedDate;
-        this.contractPDFUrl = contractPDFUrl;
+        this.termsVersion = termsVersion;
+        this.termsFileUrl = termsFileUrl;
         this.signatureData = signatureData;
-        this.signatureImageUrl = signatureImageUrl;
         this.signatureMethod = signatureMethod;
         this.notes = notes;
         this.cancellationReason = cancellationReason;
@@ -78,14 +76,6 @@ public class Contract {
 
     public void setBookingId(UUID bookingId) {
         this.bookingId = bookingId;
-    }
-
-    public UUID getStaffId() {
-        return staffId;
-    }
-
-    public void setStaffId(UUID staffId) {
-        this.staffId = staffId;
     }
 
     public LocalDateTime getCreatedDate() {
@@ -136,12 +126,20 @@ public class Contract {
         this.termsAcceptedDate = termsAcceptedDate;
     }
 
-    public String getContractPDFUrl() {
-        return contractPDFUrl;
+    public String getTermsVersion() {
+        return termsVersion;
     }
 
-    public void setContractPDFUrl(String contractPDFUrl) {
-        this.contractPDFUrl = contractPDFUrl;
+    public void setTermsVersion(String termsVersion) {
+        this.termsVersion = termsVersion;
+    }
+
+    public String getTermsFileUrl() {
+        return termsFileUrl;
+    }
+
+    public void setTermsFileUrl(String termsFileUrl) {
+        this.termsFileUrl = termsFileUrl;
     }
 
     public String getSignatureData() {
@@ -150,14 +148,6 @@ public class Contract {
 
     public void setSignatureData(String signatureData) {
         this.signatureData = signatureData;
-    }
-
-    public String getSignatureImageUrl() {
-        return signatureImageUrl;
-    }
-
-    public void setSignatureImageUrl(String signatureImageUrl) {
-        this.signatureImageUrl = signatureImageUrl;
     }
 
     public String getSignatureMethod() {
@@ -200,12 +190,14 @@ public class Contract {
         return ContractStatusConstants.CREATED.equals(status) || ContractStatusConstants.PENDING.equals(status);
     }
 
-    public void sign(String signatureData, String signatureMethod) {
+    public void sign(String signatureData, String signatureMethod, String termsVersion, String termsFileUrl) {
         this.signedDate = LocalDateTime.now();
         this.signatureData = signatureData;
         this.signatureMethod = signatureMethod;
         this.termsAccepted = true;
         this.termsAcceptedDate = LocalDateTime.now();
+        this.termsVersion = termsVersion;
+        this.termsFileUrl = termsFileUrl;
         this.status = ContractStatusConstants.ACTIVE;
     }
 
@@ -226,7 +218,6 @@ public class Contract {
                 ", contractCode='" + contractCode + '\'' +
                 ", userId=" + userId +
                 ", bookingId=" + bookingId +
-                ", staffId=" + staffId +
                 ", status='" + status + '\'' +
                 ", signedDate=" + signedDate +
                 ", completedDate=" + completedDate +

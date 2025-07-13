@@ -9,37 +9,11 @@ document.getElementById('clearBtn').onclick = function() {
     signaturePad.clear();
 };
 
-document.getElementById('signBtn').onclick = function() {
-    const contractId = document.getElementById('contractId').value;
-    const statusDiv = document.getElementById('signStatus');
-    statusDiv.innerHTML = '';
-    if (signaturePad.isEmpty()) {
-        statusDiv.innerHTML = '<span class="text-danger">Please provide your signature before signing.</span>';
-        return;
-    }
-    const signatureData = signaturePad.toDataURL();
-    fetch(window.contextPath + '/contract/sign/' + contractId, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'signatureData=' + encodeURIComponent(signatureData)
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            statusDiv.innerHTML = '<span class="text-success">Contract signed successfully!</span>';
-            setTimeout(() => window.location.href = window.contextPath + '/pages/user/contract-list.jsp', 1200);
-        } else {
-            statusDiv.innerHTML = '<span class="text-danger">Failed to sign contract.</span>';
-        }
-    })
-    .catch(() => {
-        statusDiv.innerHTML = '<span class="text-danger">Error occurred while signing contract.</span>';
-    });
-};
-
 const acceptTerms = document.getElementById('acceptTerms');
 const confirmInfo = document.getElementById('confirmInfo');
 const signBtn = document.getElementById('signBtn');
+const signForm = document.getElementById('signForm');
+const statusDiv = document.getElementById('signStatus');
 
 function updateSignBtnState() {
     signBtn.disabled = !(acceptTerms.checked && confirmInfo.checked);
@@ -49,6 +23,20 @@ acceptTerms.addEventListener('change', updateSignBtnState);
 confirmInfo.addEventListener('change', updateSignBtnState);
 
 updateSignBtnState();
+
+// Khi submit form
+signForm.onsubmit = function(e) {
+    statusDiv.innerHTML = '';
+    if (signaturePad.isEmpty()) {
+        statusDiv.innerHTML = '<span class="text-danger">Please provide your signature before signing.</span>';
+        e.preventDefault();
+        return false;
+    }
+    // Gán dữ liệu chữ ký vào input hidden
+    document.getElementById('signatureData').value = signaturePad.toDataURL();
+    // Cho phép submit form (POST truyền thống)
+    return true;
+};
 
 // Collapse/Expand logic for terms
 document.querySelectorAll('.terms-title-btn').forEach(function(btn) {
