@@ -18,7 +18,7 @@ import Model.Entity.Deposit.Insurance;
 import Model.Entity.Deposit.Terms;
 import Repository.Interfaces.IDeposit.IDepositRepository;
 import Repository.Interfaces.IDeposit.ITermsRepository;
-import Service.Interfaces.IDepositService;
+import Service.Interfaces.IDeposit.IDepositService;
 
 /**
  * Service xử lý logic đặt cọc - STYLE ĐỂ SINH VIÊN DỄ HIỂU

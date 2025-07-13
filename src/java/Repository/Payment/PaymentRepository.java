@@ -85,7 +85,7 @@ public class PaymentRepository implements IPaymentRepository {
 
     @Override
     public Payment getPaymentByBookingId(UUID bookingId) throws SQLException {
-        String sql = "SELECT * FROM Payment WHERE BookingId = ? ORDER BY CreatedDate DESC";
+        String sql = "SELECT * FROM Payment WHERE [BookingId] = ? ORDER BY [CreatedDate] DESC";
         
         try (Connection conn = db.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {

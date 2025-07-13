@@ -42,8 +42,6 @@ CREATE TABLE [Users] (
 );
 GO
 
-
-
 CREATE TABLE [DriverLicenses] (
     [LicenseId] UNIQUEIDENTIFIER NOT NULL,
     [UserId] UNIQUEIDENTIFIER NOT NULL,
@@ -313,6 +311,21 @@ CREATE TABLE [Terms] (
     IsActive BIT NOT NULL DEFAULT 1,
     CreatedDate DATETIME2 NOT NULL DEFAULT GETDATE(),
     CONSTRAINT PK_Terms PRIMARY KEY (TermsId)
+);
+GO
+
+CREATE TABLE [Insurance] (
+    InsuranceId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
+    InsuranceName NVARCHAR(100) NOT NULL,
+    InsuranceType NVARCHAR(50) NOT NULL,
+    BaseRatePerDay DECIMAL(10,2) NOT NULL,
+    PercentageRate DECIMAL(5,2) NULL,
+    CoverageAmount DECIMAL(15,2) NOT NULL,
+    ApplicableCarSeats NVARCHAR(50) NULL,
+    Description NVARCHAR(500) NULL,
+    IsActive BIT NOT NULL DEFAULT 1,
+    CreatedDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    CONSTRAINT PK_Insurance PRIMARY KEY (InsuranceId)
 );
 GO
 
