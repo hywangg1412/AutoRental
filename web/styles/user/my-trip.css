@@ -531,7 +531,8 @@ nav.ftco-navbar-light .nav-link {
 }
 
 .status-badge.status-Pending { background: #fbbf24; color: #fff; }
-.status-badge.status-Confirmed { background: #10b981; color: #fff; }
+.status-badge.status-Confirmed { background: #f59e0b; color: #fff; }
+.status-badge.status-DepositPaid { background: #10b981; color: #fff; }
 .status-badge.status-IN_PROGRESS { background: #2563eb; color: #fff; }
 .status-badge.status-Completed { background: #6b7280; color: #fff; }
 .status-badge.status-Cancelled { background: #dc2626; color: #fff; }
