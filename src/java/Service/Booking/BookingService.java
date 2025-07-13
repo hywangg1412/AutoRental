@@ -1,6 +1,9 @@
 package Service.Booking;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -11,10 +14,11 @@ import Exception.EmptyDataException;
 import Exception.EventException;
 import Exception.InvalidDataException;
 import Exception.NotFoundException;
+import Model.Constants.BookingStatusConstants;
+import Model.DTO.DurationResult;
 import Model.Entity.Booking.Booking;
 import Repository.Booking.BookingRepository;
 import Service.Interfaces.IBooking.IBookingService;
-import Model.Constants.BookingStatusConstants;
 
 public class BookingService implements IBookingService {
     private static final Logger LOGGER = Logger.getLogger(BookingService.class.getName());
@@ -24,25 +28,39 @@ public class BookingService implements IBookingService {
         BookingStatusConstants.PENDING,
         BookingStatusConstants.CONFIRMED,
         BookingStatusConstants.CANCELLED,
-        BookingStatusConstants.COMPLETED
+        BookingStatusConstants.COMPLETED,
+        BookingStatusConstants.AWAITING_PAYMENT,
+        BookingStatusConstants.DEPOSIT_PAID,
+        BookingStatusConstants.CONTRACT_SIGNED,
+        BookingStatusConstants.FULLY_PAID,
+        BookingStatusConstants.IN_PROGRESS,
+        BookingStatusConstants.REJECTED
     };
     private static final String DEFAULT_STATUS = BookingStatusConstants.PENDING;
+    
+    // ==========  HẰNG SỐ TÍNH TOÁN ==========
+    private static final double MIN_HOURLY_DURATION = 4.0; // Tối thiểu 4 giờ thuê (theo quy định công ty)
+    private static final double MIN_DAILY_DURATION = 0.5;  // Tối thiểu 0.5 ngày thuê (12 tiếng)
+    private static final double MIN_MONTHLY_DURATION = 0.5; // Tối thiểu 0.5 tháng thuê (15 ngày)
+    private static final int DAYS_PER_MONTH = 30; // Quy ước 1 tháng = 30 ngày
 
     public BookingService() {
         this.bookingRepository = new BookingRepository();
     }
 
+    // ========== CRUD METHODS - CÁC PHƯƠNG THỨC CƠ BẢN ==========
+    
     @Override
     public void display() throws EmptyDataException, EventException {
         try {
             List<Booking> bookings = bookingRepository.findAll();
             if (bookings.isEmpty()) {
-                throw new EmptyDataException("No bookings found.");
+                throw new EmptyDataException("Không tìm thấy booking nào.");
             }
             bookings.forEach(booking -> LOGGER.info(booking.toString()));
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error displaying bookings", e);
-            throw new EventException("Error displaying bookings: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Lỗi hiển thị danh sách bookings", e);
+            throw new EventException("Lỗi hiển thị bookings: " + e.getMessage());
         }
     }
 
@@ -53,19 +71,8 @@ public class BookingService implements IBookingService {
             prepareNewBooking(entry);
             return bookingRepository.add(entry);
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error adding booking", e);
-            throw new EventException("Error adding booking: " + e.getMessage());
-        }
-    }
-
-    @Override
-    public boolean delete(UUID id) throws EventException, NotFoundException {
-        try {
-            validateBookingExists(id);
-            return bookingRepository.delete(id);
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error deleting booking", e);
-            throw new EventException("Error deleting booking: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Lỗi thêm booking", e);
+            throw new EventException("Lỗi thêm booking: " + e.getMessage());
         }
     }
 
@@ -76,32 +83,45 @@ public class BookingService implements IBookingService {
             validateBooking(entry);
             return bookingRepository.update(entry);
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error updating booking", e);
-            throw new EventException("Error updating booking: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Lỗi cập nhật booking", e);
+            throw new EventException("Lỗi cập nhật booking: " + e.getMessage());
         } catch (InvalidDataException e) {
-            LOGGER.log(Level.SEVERE, "Invalid booking data", e);
-            throw new EventException("Invalid booking data: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Dữ liệu booking không hợp lệ", e);
+            throw new EventException("Dữ liệu booking không hợp lệ: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public boolean delete(UUID id) throws EventException, NotFoundException {
+        try {
+            validateBookingExists(id);
+            return bookingRepository.delete(id);
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Lỗi xóa booking", e);
+            throw new EventException("Lỗi xóa booking: " + e.getMessage());
         }
     }
 
     @Override
     public Booking findById(UUID id) throws NotFoundException {
         if (id == null) {
-            throw new NotFoundException("Booking ID cannot be null");
+            throw new NotFoundException("ID booking không được null");
         }
         
         try {
             Booking booking = bookingRepository.findById(id);
             if (booking == null) {
-                throw new NotFoundException("Booking not found with ID: " + id);
+                throw new NotFoundException("Không tìm thấy booking với ID: " + id);
             }
             return booking;
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error finding booking with ID: " + id, e);
-            throw new RuntimeException("Error finding booking: " + e.getMessage(), e);
+            LOGGER.log(Level.SEVERE, "Lỗi tìm booking với ID: " + id, e);
+            throw new RuntimeException("Lỗi tìm booking: " + e.getMessage(), e);
         }
     }
 
+    // ========== QUERY METHODS - CÁC PHƯƠNG THỨC TRUỲ VẤN ==========
+    
     @Override
     public List<Booking> findByStatus(String status) throws SQLException {
         return bookingRepository.findByStatus(status);
@@ -112,11 +132,21 @@ public class BookingService implements IBookingService {
     }
 
     @Override
+    public List<Booking> findAll() {
+        try {
+            return bookingRepository.findAll();
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Lỗi lấy danh sách booking", ex);
+            return null;
+        }
+    }
+
+    @Override
     public int countAllBookings() {
         try {
             return bookingRepository.findAll().size();
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error counting all bookings", e);
+            LOGGER.log(Level.SEVERE, "Lỗi đếm tổng bookings", e);
             return 0;
         }
     }
@@ -126,64 +156,181 @@ public class BookingService implements IBookingService {
         try {
             return bookingRepository.findByStatus(status).size();
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error counting bookings by status: " + status, e);
+            LOGGER.log(Level.SEVERE, "Lỗi đếm bookings theo status: " + status, e);
             return 0;
         }
     }
 
-    public List<Booking> findAll() {
-        try {
-            return bookingRepository.findAll();
-        } catch (SQLException ex) {
-            Logger.getLogger(BookingService.class.getName()).log(Level.SEVERE, null, ex);
+    // ========== CÁC PHƯƠNG THỨC TÍNH TOÁN ==========
+    
+    /**
+     * Tính tổng số tiền thuê xe dựa trên thời gian và loại thuê
+     * Logic tương thích với JavaScript frontend (booking-form-detail.js)
+     * 
+     * @param start Thời gian bắt đầu thuê
+     * @param end Thời gian kết thúc thuê
+     * @param rentalType Loại thuê: "hourly", "daily", "monthly"
+     * @param hourlyPrice Giá theo giờ (BigDecimal)
+     * @param dailyPrice Giá theo ngày (BigDecimal)
+     * @param monthlyPrice Giá theo tháng (BigDecimal)
+     * @return Tổng tiền dạng double (đã làm tròn như Math.round trong JS)
+     */
+    public double calculateTotalAmount(LocalDateTime start, LocalDateTime end, String rentalType,
+            BigDecimal hourlyPrice, BigDecimal dailyPrice, BigDecimal monthlyPrice) {
+
+        // Tính duration theo quy tắc tối thiểu
+        DurationResult durationResult = calculateDuration(start, end, rentalType);
+        BigDecimal unitPrice;
+
+        // Chọn đơn giá theo loại thuê
+        switch (rentalType.toLowerCase()) {
+            case "hourly":
+                unitPrice = hourlyPrice;
+                break;
+            case "daily":
+                unitPrice = dailyPrice;
+                break;
+            case "monthly":
+                unitPrice = monthlyPrice;
+                break;
+            default:
+                throw new IllegalArgumentException("Loại thuê không hợp lệ: " + rentalType);
         }
-        return null;
+
+        // Tính tổng tiền: duration * unitPrice, làm tròn như JavaScript
+        BigDecimal totalAmount = unitPrice.multiply(durationResult.getBillingUnits())
+                .setScale(0, RoundingMode.HALF_UP);
+
+        return totalAmount.doubleValue(); // Trả về double để lưu vào database
     }
+
+    /**
+     * Tính thời gian thuê theo loại thuê với quy tắc tối thiểu
+     * Đảm bảo logic tương thích 100% với JavaScript frontend
+     *
+     * @param start Thời gian bắt đầu thuê
+     * @param end Thời gian kết thúc thuê  
+     * @param rentalType Loại thuê: "hourly", "daily", "monthly"
+     * @return DurationResult chứa thông tin thời gian đã áp dụng quy tắc tối thiểu
+     */
+    public DurationResult calculateDuration(LocalDateTime start, LocalDateTime end, String rentalType) {
+        if (start == null || end == null) {
+            throw new IllegalArgumentException("Thời gian bắt đầu và kết thúc không được null");
+        }
+
+        if (end.isBefore(start)) {
+            throw new IllegalArgumentException("Thời gian kết thúc phải sau thời gian bắt đầu");
+        }
+
+        Duration duration = Duration.between(start, end);
+
+        switch (rentalType.toLowerCase()) {
+            case "hourly":
+                return calculateHourlyDuration(duration);
+            case "daily":
+                return calculateDailyDuration(duration);
+            case "monthly":
+                return calculateMonthlyDuration(duration);
+            default:
+                throw new IllegalArgumentException("Loại thuê không hợp lệ: " + rentalType);
+        }
+    }
+
+    // ========== CÁC PHƯƠNG THỨC HELPER TÍNH TOÁN ==========
+    
+    /**
+     * Tính duration theo giờ - ĐỒNG BỘ VỚI JAVASCRIPT
+     * JS logic: Math.ceil(hours), tối thiểu 4 giờ
+     */
+    private DurationResult calculateHourlyDuration(Duration duration) {
+        double actualHours = duration.toMinutes() / 60.0;
+        // Làm tròn lên như JavaScript Math.ceil
+        double ceilHours = Math.ceil(actualHours);
+        // Áp dụng quy tắc tối thiểu 4 giờ
+        double billingHours = Math.max(ceilHours, MIN_HOURLY_DURATION);
+
+        return new DurationResult(
+                BigDecimal.valueOf(billingHours).setScale(2, RoundingMode.HALF_UP),
+                "hour",
+                actualHours < MIN_HOURLY_DURATION ? "Tối thiểu 4 giờ được áp dụng" : null
+        );
+    }
+
+    /**
+     * Tính duration theo ngày - ĐỒNG BỘ VỚI JAVASCRIPT  
+     * JS logic: totalHours/24, tối thiểu 0.5 ngày, làm tròn 2 chữ số
+     */
+    private DurationResult calculateDailyDuration(Duration duration) {
+        double totalHours = duration.toMinutes() / 60.0;
+        double actualDays = totalHours / 24.0;
+        // Áp dụng quy tắc tối thiểu 0.5 ngày
+        double billingDays = Math.max(actualDays, MIN_DAILY_DURATION);
+        // Làm tròn 2 chữ số như JavaScript Math.round(x * 100) / 100
+        billingDays = Math.round(billingDays * 100.0) / 100.0;
+
+        return new DurationResult(
+                BigDecimal.valueOf(billingDays).setScale(2, RoundingMode.HALF_UP),
+                "day",
+                actualDays < MIN_DAILY_DURATION ? "Tối thiểu 0.5 ngày được áp dụng" : null
+        );
+    }
+
+    /**
+     * Tính duration theo tháng - ĐỒNG BỘ VỚI JAVASCRIPT
+     * JS logic: days/30, tối thiểu 0.5 tháng, làm tròn 2 chữ số
+     */
+    private DurationResult calculateMonthlyDuration(Duration duration) {
+        double totalDays = duration.toHours() / 24.0;
+        double actualMonths = totalDays / DAYS_PER_MONTH;
+        // Áp dụng quy tắc tối thiểu 0.5 tháng
+        double billingMonths = Math.max(actualMonths, MIN_MONTHLY_DURATION);
+        // Làm tròn 2 chữ số như JavaScript Math.round(x * 100) / 100
+        billingMonths = Math.round(billingMonths * 100.0) / 100.0;
+
+        return new DurationResult(
+                BigDecimal.valueOf(billingMonths).setScale(2, RoundingMode.HALF_UP),
+                "month",
+                actualMonths < MIN_MONTHLY_DURATION ? "Tối thiểu 0.5 tháng được áp dụng" : null
+        );
+    }
+
+    // ========== VALIDATION METHODS - CÁC PHƯƠNG THỨC KIỂM TRA ==========
 
     private void validateBooking(Booking booking) throws InvalidDataException {
         if (booking == null) {
-            throw new InvalidDataException("Booking cannot be null");
+            throw new InvalidDataException("Booking không được null");
         }
         
-        validateRequiredFields(booking);
-        validateDates(booking);
-        validateAmount(booking);
-        validateStatus(booking);
-    }
-
-    private void validateRequiredFields(Booking booking) throws InvalidDataException {
+        // Kiểm tra các trường bắt buộc
         if (booking.getUserId() == null) {
-            throw new InvalidDataException("User ID is required");
+            throw new InvalidDataException("User ID là bắt buộc");
         }
         if (booking.getCarId() == null) {
-            throw new InvalidDataException("Car ID is required");
+            throw new InvalidDataException("Car ID là bắt buộc");
         }
-    }
-
-    private void validateDates(Booking booking) throws InvalidDataException {
+        
+        // Kiểm tra thời gian
         if (booking.getPickupDateTime() == null) {
-            throw new InvalidDataException("Pickup date/time is required");
+            throw new InvalidDataException("Thời gian nhận xe là bắt buộc");
         }
         if (booking.getReturnDateTime() == null) {
-            throw new InvalidDataException("Return date/time is required");
+            throw new InvalidDataException("Thời gian trả xe là bắt buộc");
         }
         if (booking.getPickupDateTime().isAfter(booking.getReturnDateTime())) {
-            throw new InvalidDataException("Pickup date/time must be before return date/time");
+            throw new InvalidDataException("Thời gian nhận xe phải trước thời gian trả xe");
         }
         if (booking.getPickupDateTime().isBefore(LocalDateTime.now())) {
-            throw new InvalidDataException("Pickup date/time cannot be in the past");
+            throw new InvalidDataException("Thời gian nhận xe không thể ở quá khứ");
         }
-    }
-
-    private void validateAmount(Booking booking) throws InvalidDataException {
+        
+        // Kiểm tra số tiền
         if (booking.getTotalAmount() < 0) {
-            throw new InvalidDataException("Total amount cannot be negative");
+            throw new InvalidDataException("Tổng tiền không thể âm");
         }
-    }
-
-    private void validateStatus(Booking booking) throws InvalidDataException {
+        
+        // Kiểm tra status
         if (booking.getStatus() != null && !isValidStatus(booking.getStatus())) {
-            throw new InvalidDataException("Invalid booking status. Must be one of: " + String.join(", ", VALID_STATUSES));
+            throw new InvalidDataException("Status booking không hợp lệ. Phải là một trong: " + String.join(", ", VALID_STATUSES));
         }
     }
 
@@ -198,13 +345,16 @@ public class BookingService implements IBookingService {
 
     private void validateBookingExists(UUID id) throws NotFoundException, SQLException {
         if (bookingRepository.findById(id) == null) {
-            throw new NotFoundException("Booking not found with ID: " + id);
+            throw new NotFoundException("Không tìm thấy booking với ID: " + id);
         }
     }
 
+    // ========== PREPARATION METHOD - PHƯƠNG THỨC CHUẨN BỊ ==========
+    
     private void prepareNewBooking(Booking booking) {
-        LOGGER.info("Preparing new booking with ID: " + booking.getBookingId());
+        LOGGER.info("Chuẩn bị booking mới với ID: " + booking.getBookingId());
         
+        // Set thời gian tạo và status mặc định
         booking.setCreatedDate(LocalDateTime.now());
         if (booking.getStatus() == null || booking.getStatus().isEmpty()) {
             booking.setStatus(DEFAULT_STATUS);
@@ -212,27 +362,13 @@ public class BookingService implements IBookingService {
         
         // Tự động tạo booking code nếu chưa có
         if (booking.getBookingCode() == null || booking.getBookingCode().trim().isEmpty()) {
-            String generatedCode = Repository.Booking.BookingRepository.generateBookingCode();
+            String generatedCode = BookingRepository.generateBookingCode();
             booking.setBookingCode(generatedCode);
-            LOGGER.info("Generated booking code: " + generatedCode);
-        } else {
-            LOGGER.info("Using existing booking code: " + booking.getBookingCode());
+            LOGGER.info("Đã tạo booking code: " + generatedCode);
         }
         
-        // Đảm bảo booking code không bao giờ null
-        if (booking.getBookingCode() == null || booking.getBookingCode().trim().isEmpty()) {
-            String generatedCode = Repository.Booking.BookingRepository.generateBookingCode();
-            booking.setBookingCode(generatedCode);
-            LOGGER.warning("Booking code was null/empty, generated new code: " + generatedCode);
-        }
-        
-        LOGGER.info("Final booking code: " + booking.getBookingCode());
-        
-        // Log thông tin đóng băng để debug
-        LOGGER.info("Frozen customer info - Name: " + booking.getCustomerName() + 
-                   ", Phone: " + booking.getCustomerPhone() + 
-                   ", Email: " + booking.getCustomerEmail() + 
-                   ", Address: " + booking.getCustomerAddress());
+        LOGGER.info("Thông tin khách hàng - Tên: " + booking.getCustomerName() + 
+                   ", SĐT: " + booking.getCustomerPhone() + 
+                   ", Email: " + booking.getCustomerEmail());
     }
 }
-
