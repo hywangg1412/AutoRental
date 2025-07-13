@@ -97,10 +97,11 @@ public class UserBookingListServlet extends HttpServlet {
                 }
                 if (BookingStatusConstants.PENDING.equals(booking.getStatus()) || 
                     BookingStatusConstants.CONFIRMED.equals(booking.getStatus()) || 
-                    BookingStatusConstants.IN_PROGRESS.equals(booking.getStatus())) {
+                    BookingStatusConstants.IN_PROGRESS.equals(booking.getStatus()) ||
+                    BookingStatusConstants.DEPOSIT_PAID.equals(booking.getStatus())) {
                     currentTrips.add(dto);
                 } else {
-                    pastTrips.add(dto);
+                    // pastTrips.add(dto);
                 }
             }
             
