@@ -1,4 +1,4 @@
-package Controller.Payment;
+package Controller.Deposit;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -7,13 +7,14 @@ import java.util.UUID;
 import com.google.gson.Gson;
 
 import Model.DTO.PaymentDTO;
+import Model.Entity.User.User;
 import Service.Payment.PaymentService;
+import Utils.SessionUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 @WebServlet(name = "PaymentServlet", urlPatterns = {"/api/payment/*"})
 public class PaymentServlet extends HttpServlet {
@@ -93,16 +94,15 @@ public class PaymentServlet extends HttpServlet {
         System.out.println("=== handleCreatePayment START ===");
         System.out.println("Query String: " + request.getQueryString());
         
-        HttpSession session = request.getSession();
-        String userIdStr = (String) session.getAttribute("userId");
-        System.out.println("User ID từ session: " + userIdStr);
-        
-        if (userIdStr == null) {
+        // SỬ DỤNG PATTERN GIỐNG CÁC SERVLET KHÁC
+        User user = (User) SessionUtil.getSessionAttribute(request, "user");
+        if (user == null) {
             System.out.println("ERROR: User chưa đăng nhập");
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Bạn chưa đăng nhập hoặc phiên đăng nhập đã hết hạn!");
             return;
         }
-        UUID userId = UUID.fromString(userIdStr);
+        UUID userId = user.getUserId();
+        System.out.println("User ID từ User object: " + userId);
         
         // Lấy bookingId từ query parameter
         String bookingId = request.getParameter("bookingId");
