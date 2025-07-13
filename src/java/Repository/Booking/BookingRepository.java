@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -17,24 +18,27 @@ import Model.Entity.Booking.Booking;
 import Repository.Interfaces.IBooking.IBookingRepository;
 
 public class BookingRepository implements IBookingRepository {
+
     private static final Logger LOGGER = Logger.getLogger(BookingRepository.class.getName());
     private final DBContext dbContext;
-    
-    private static final String SQL_INSERT = 
-        "INSERT INTO Booking (BookingId, UserId, CarId, HandledBy, PickupDateTime, ReturnDateTime, " +
-        "TotalAmount, Status, DiscountId, CreatedDate, CancelReason, BookingCode, ExpectedPaymentMethod, " +
-        "CustomerName, CustomerPhone, CustomerAddress, CustomerEmail, DriverLicenseImageUrl) " +
-        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    
+
+    private static final String SQL_INSERT
+            = "INSERT INTO Booking (BookingId, UserId, CarId, HandledBy, PickupDateTime, ReturnDateTime, "
+            + "TotalAmount, Status, DiscountId, CreatedDate, CancelReason, BookingCode, ExpectedPaymentMethod, "
+            + "CustomerName, CustomerPhone, CustomerAddress, CustomerEmail, DriverLicenseImageUrl, RentalType, "
+            + "TermsAgreed, TermsAgreedAt, TermsVersion) "
+            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
     private static final String SQL_FIND_BY_ID = "SELECT * FROM Booking WHERE BookingId = ?";
-    
-    private static final String SQL_UPDATE = 
-        "UPDATE Booking SET UserId = ?, CarId = ?, HandledBy = ?, PickupDateTime = ?, " +
-        "ReturnDateTime = ?, TotalAmount = ?, Status = ?, DiscountId = ?, CreatedDate = ?, " +
-        "CancelReason = ?, BookingCode = ?, ExpectedPaymentMethod = ?, " +
-        "CustomerName = ?, CustomerPhone = ?, CustomerAddress = ?, CustomerEmail = ?, DriverLicenseImageUrl = ? " +
-        "WHERE BookingId = ?";
-    
+
+    private static final String SQL_UPDATE
+            = "UPDATE Booking SET UserId = ?, CarId = ?, HandledBy = ?, PickupDateTime = ?, "
+            + "ReturnDateTime = ?, TotalAmount = ?, Status = ?, DiscountId = ?, CreatedDate = ?, "
+            + "CancelReason = ?, BookingCode = ?, ExpectedPaymentMethod = ?, "
+            + "CustomerName = ?, CustomerPhone = ?, CustomerAddress = ?, CustomerEmail = ?, "
+            + "DriverLicenseImageUrl = ?, RentalType = ?, TermsAgreed = ?, TermsAgreedAt = ?, TermsVersion = ? "
+            + "WHERE BookingId = ?";
+
     private static final String SQL_DELETE = "DELETE FROM Booking WHERE BookingId = ?";
     private static final String SQL_FIND_ALL = "SELECT * FROM Booking";
     private static final String SQL_UPDATE_STATUS = "UPDATE Booking SET Status = ? WHERE BookingId = ?";
@@ -49,17 +53,11 @@ public class BookingRepository implements IBookingRepository {
         if (entity == null) {
             throw new IllegalArgumentException("Booking entity cannot be null");
         }
-        
         LOGGER.info("Adding booking with ID: " + entity.getBookingId());
-        LOGGER.info("Booking code before insert: " + entity.getBookingCode());
-        
-        try (Connection conn = dbContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(SQL_INSERT)) {
-            
+        try (Connection conn = dbContext.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_INSERT)) {
             setBookingParameters(ps, entity);
             int affectedRows = ps.executeUpdate();
             LOGGER.info("Insert affected rows: " + affectedRows);
-            
             return entity;
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Error adding booking: " + e.getMessage(), e);
@@ -72,10 +70,9 @@ public class BookingRepository implements IBookingRepository {
         if (Id == null) {
             throw new IllegalArgumentException("Booking ID cannot be null");
         }
-        
-        try (Connection conn = dbContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(SQL_FIND_BY_ID)) {
-            
+
+        try (Connection conn = dbContext.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_FIND_BY_ID)) {
+
             ps.setObject(1, Id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -94,10 +91,9 @@ public class BookingRepository implements IBookingRepository {
         if (entity == null || entity.getBookingId() == null) {
             throw new IllegalArgumentException("Booking entity and ID cannot be null");
         }
-        
-        try (Connection conn = dbContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(SQL_UPDATE)) {
-            
+
+        try (Connection conn = dbContext.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_UPDATE)) {
+
             ps.setObject(1, entity.getUserId());
             ps.setObject(2, entity.getCarId());
             ps.setObject(3, entity.getHandledBy());
@@ -115,8 +111,17 @@ public class BookingRepository implements IBookingRepository {
             ps.setString(15, entity.getCustomerAddress());
             ps.setString(16, entity.getCustomerEmail());
             ps.setString(17, entity.getDriverLicenseImageUrl());
-            ps.setObject(18, entity.getBookingId());
+            ps.setString(18, entity.getRentalType());
             
+            // *** THÊM CÁC FIELD MỚI CHO DEPOSIT ***
+            ps.setBoolean(19, entity.isTermsAgreed());
+            ps.setTimestamp(20, entity.getTermsAgreedAt() != null
+                    ? Timestamp.valueOf(entity.getTermsAgreedAt()) : null);
+            ps.setString(21, entity.getTermsVersion());
+            
+            // *** WHERE CLAUSE - BookingId phải là parameter cuối cùng ***
+            ps.setObject(22, entity.getBookingId());
+
             int affectedRows = ps.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
@@ -130,10 +135,9 @@ public class BookingRepository implements IBookingRepository {
         if (Id == null) {
             throw new IllegalArgumentException("Booking ID cannot be null");
         }
-        
-        try (Connection conn = dbContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(SQL_DELETE)) {
-            
+
+        try (Connection conn = dbContext.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_DELETE)) {
+
             ps.setObject(1, Id);
             int affectedRows = ps.executeUpdate();
             return affectedRows > 0;
@@ -146,11 +150,9 @@ public class BookingRepository implements IBookingRepository {
     @Override
     public List<Booking> findAll() throws SQLException {
         List<Booking> bookings = new ArrayList<>();
-        
-        try (Connection conn = dbContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(SQL_FIND_ALL);
-             ResultSet rs = ps.executeQuery()) {
-            
+
+        try (Connection conn = dbContext.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_FIND_ALL); ResultSet rs = ps.executeQuery()) {
+
             while (rs.next()) {
                 bookings.add(mapResultSetToBooking(rs));
             }
@@ -160,28 +162,26 @@ public class BookingRepository implements IBookingRepository {
             throw e;
         }
     }
- 
+
     @Override
     public List<Booking> findByStatus(String status) throws SQLException {
         List<Booking> bookings = new ArrayList<>();
         String sql = "SELECT * FROM Booking WHERE Status = ?";
-        try (Connection conn = dbContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = dbContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, status);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     bookings.add(mapResultSetToBooking(rs));
                 }
             }
-        }   
+        }
         return bookings;
     }
 
     @Override
     public List<Booking> findByUserId(UUID userId) throws SQLException {
         List<Booking> bookings = new ArrayList<>();
-        try (Connection conn = dbContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(SQL_FIND_BY_USER_ID)) {
+        try (Connection conn = dbContext.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_FIND_BY_USER_ID)) {
             ps.setObject(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -200,13 +200,12 @@ public class BookingRepository implements IBookingRepository {
         if (bookingId == null || status == null || status.trim().isEmpty()) {
             throw new IllegalArgumentException("Booking ID and status cannot be null or empty");
         }
-        
-        try (Connection conn = dbContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(SQL_UPDATE_STATUS)) {
-            
+
+        try (Connection conn = dbContext.getConnection(); PreparedStatement ps = conn.prepareStatement(SQL_UPDATE_STATUS)) {
+
             ps.setString(1, status);
             ps.setObject(2, bookingId);
-            
+
             int affectedRows = ps.executeUpdate();
             if (affectedRows == 0) {
                 LOGGER.log(Level.WARNING, "No booking found with ID {0} to update status.", bookingId);
@@ -221,8 +220,6 @@ public class BookingRepository implements IBookingRepository {
 
     private void setBookingParameters(PreparedStatement ps, Booking entity) throws SQLException {
         LOGGER.info("Setting booking parameters...");
-        LOGGER.info("BookingCode parameter: " + entity.getBookingCode());
-        
         ps.setObject(1, entity.getBookingId());
         ps.setObject(2, entity.getUserId());
         ps.setObject(3, entity.getCarId());
@@ -241,8 +238,15 @@ public class BookingRepository implements IBookingRepository {
         ps.setString(16, entity.getCustomerAddress());
         ps.setString(17, entity.getCustomerEmail());
         ps.setString(18, entity.getDriverLicenseImageUrl());
-        
-        LOGGER.info("All parameters set successfully");
+        ps.setString(19, entity.getRentalType());
+
+        // *** THÊM CÁC FIELD MỚI CHO DEPOSIT ***
+        ps.setBoolean(20, entity.isTermsAgreed());
+        ps.setTimestamp(21, entity.getTermsAgreedAt() != null
+                ? Timestamp.valueOf(entity.getTermsAgreedAt()) : null);
+        ps.setString(22, entity.getTermsVersion());
+
+        LOGGER.info("All parameters set successfully including deposit fields");
     }
 
     private Booking mapResultSetToBooking(ResultSet rs) throws SQLException {
@@ -265,12 +269,72 @@ public class BookingRepository implements IBookingRepository {
         booking.setCustomerAddress(rs.getString("CustomerAddress"));
         booking.setCustomerEmail(rs.getString("CustomerEmail"));
         booking.setDriverLicenseImageUrl(rs.getString("DriverLicenseImageUrl"));
+        booking.setRentalType(rs.getString("RentalType"));
+
+        // *** THÊM CÁC FIELD MỚI CHO DEPOSIT ***
+        booking.setTermsAgreed(rs.getBoolean("TermsAgreed"));
+        booking.setTermsAgreedAt(rs.getTimestamp("TermsAgreedAt") != null
+                ? rs.getTimestamp("TermsAgreedAt").toLocalDateTime() : null);
+        booking.setTermsVersion(rs.getString("TermsVersion"));
+
         return booking;
     }
+
+    public boolean updateTermsAgreement(UUID bookingId, boolean agreed, String termsVersion) throws SQLException {
+        String sql = "UPDATE Booking SET TermsAgreed = ?, TermsAgreedAt = ?, TermsVersion = ? WHERE BookingId = ?";
+
+        try (Connection conn = dbContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setBoolean(1, agreed);
+            ps.setTimestamp(2, agreed ? Timestamp.valueOf(LocalDateTime.now()) : null);
+            ps.setString(3, agreed ? termsVersion : null);
+            ps.setObject(4, bookingId);
+
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error updating terms agreement for booking: " + bookingId, e);
+            throw e;
+        }
+    }
+
+    /**
+     * Cập nhật tổng tiền booking sau khi thanh toán deposit thành công
+     * Mục đích: Đóng băng giá tiền booking để tránh thay đổi giá trong tương lai
+     * 
+     * @param bookingId ID của booking cần cập nhật
+     * @param finalTotalAmount Tổng tiền cuối cùng từ deposit (bao gồm thuế VAT và các phí khác)
+     * @return true nếu cập nhật thành công
+     * @throws SQLException nếu có lỗi database
+     */
+    public boolean updateBookingTotalAmount(UUID bookingId, double finalTotalAmount) throws SQLException {
+        String sql = "UPDATE Booking SET TotalAmount = ? WHERE BookingId = ?";
+
+        try (Connection conn = dbContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setDouble(1, finalTotalAmount);
+            ps.setObject(2, bookingId);
+
+            int affectedRows = ps.executeUpdate();
+            
+            if (affectedRows > 0) {
+                LOGGER.info("✅ Đã cập nhật TotalAmount cho booking " + bookingId + " = " + finalTotalAmount + " (DB value)");
+                LOGGER.info("💰 Giá tiền booking đã được đóng băng, không thay đổi khi giá thuê xe tăng trong tương lai");
+                return true;
+            } else {
+                LOGGER.warning("⚠️ Không tìm thấy booking " + bookingId + " để cập nhật TotalAmount");
+                return false;
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "❌ Lỗi cập nhật TotalAmount cho booking: " + bookingId, e);
+            throw e;
+        }
+    }
+
     public static String generateBookingCode() {
-    String datePart = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd"));
-    String randomPart = UUID.randomUUID().toString().substring(0, 5).toUpperCase();
-    return "BK-" + datePart + "-" + randomPart;
+        String datePart = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String randomPart = UUID.randomUUID().toString().substring(0, 5).toUpperCase();
+        return "BK-" + datePart + "-" + randomPart;
     }
 
     // Lấy danh sách booking theo phân trang (offset, limit)
@@ -278,8 +342,7 @@ public class BookingRepository implements IBookingRepository {
         List<Booking> bookings = new ArrayList<>();
         // SQL Server: dùng OFFSET ... FETCH NEXT ...
         String sql = "SELECT * FROM Booking ORDER BY CreatedDate DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
-        try (Connection conn = dbContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = dbContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, offset);
             ps.setInt(2, limit);
             try (ResultSet rs = ps.executeQuery()) {
