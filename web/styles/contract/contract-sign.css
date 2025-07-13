@@ -1,0 +1,256 @@
+body {
+    background-color: #f5f5f5 !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Navbar Styles - Same as user-profile */
+.ftco-navbar-light {
+    background: #fff !important;
+    background-color: #fff !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    top: 0 !important;
+}
+
+.ftco-navbar-light .navbar-nav > .nav-item > .nav-link{
+    color: #222 !important;
+}
+
+nav.ftco-navbar-light .navbar-brand,
+nav.ftco-navbar-light .nav-link {
+    color: #222 !important;
+}
+
+.ftco-navbar-light .nav-link:hover,
+.ftco-navbar-light .nav-link:focus,
+.ftco-navbar-light .bi-bell:hover,
+.ftco-navbar-light .bi-chat-dots:hover {
+    color: #01D28E !important;
+}
+
+.bi-bell, .bi-chat-dots {
+    color: #222 !important;
+    padding : 0 !important;
+}
+
+/* Signature Container Styles */
+.signature-container {
+    max-width: 1100px;
+    width: 100%;
+    margin: 40px auto 0 auto;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+    padding: 48px 48px 40px 48px;
+}
+
+/* Đảm bảo canvas không responsive */
+#signature-pad {
+    display: block;
+    margin: 0 auto 16px auto;
+    background: #f8f9fa;
+    border: 2px dashed #bbb;
+    border-radius: 6px;
+    cursor: crosshair;
+    box-sizing: border-box; /* Đảm bảo border không làm lệch vùng vẽ */
+    /* KHÔNG đặt width/height ở đây! */
+}
+
+.btn-sign {
+    min-width: 100px;
+}
+
+/* Footer Styles */
+.ftco-footer {
+    margin-top: 2rem !important;
+    font-size: 16px !important;
+    background: #000 !important;
+    padding: 3em 0 !important;
+}
+
+.bi-three-dots-vertical {
+    color: #222 !important;
+}
+
+.signature-container .form-check-label {
+    color: #aaa !important;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.signature-container .form-check-input:checked + .form-check-label {
+    color: #181818 !important;
+}
+
+.signature-container .form-check-input:focus {
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+.signature-container h2 {
+    font-weight: 700 !important;
+    color: #181818 !important;
+    letter-spacing: -0.5px;
+}
+
+.terms-box {
+    background: #f8fafc;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 28px 24px 18px 24px;
+    max-height: 340px;
+    overflow-y: auto;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.terms-content {
+    color: #232323;
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+.terms-section {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+}
+
+.terms-icon {
+    min-width: 38px;
+    min-height: 38px;
+    background: #01D28E;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.25rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+    box-shadow: 0 2px 8px rgba(1,210,142,0.08);
+}
+
+.terms-title {
+    font-size: 1.13rem;
+    font-weight: 600;
+    color: #01D28E;
+    margin-bottom: 4px;
+}
+
+.terms-section ul {
+    margin-bottom: 0;
+    padding-left: 1.2em;
+}
+
+.terms-section li {
+    color: #232323;
+    font-size: 1.01rem;
+    margin-bottom: 0.25em;
+}
+
+.terms-box,
+.terms-content,
+.terms-section,
+.terms-section ul,
+.terms-section li,
+.terms-title {
+    font-family: 'Poppins', 'Segoe UI', Arial, sans-serif !important;
+}
+
+.terms-content {
+    color: #232323;
+    font-size: 1.08rem;
+    line-height: 1.75;
+    font-weight: 500;
+}
+
+.terms-title {
+    font-size: 1rem;
+    font-weight: 650;
+    color: #01D28E;
+    margin-bottom: 4px;
+    letter-spacing: -0.2px;
+}
+
+.terms-section li {
+    color: #232323;
+    font-size: 1.04rem;
+    margin-bottom: 0.25em;
+    font-weight: 500;
+}
+
+.terms-section ul {
+    margin-bottom: 0;
+    padding-left: 1.2em;
+}
+
+.terms-icon {
+    min-width: 38px;
+    min-height: 38px;
+    background: #01D28E;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.25rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+    box-shadow: 0 2px 8px rgba(1,210,142,0.08);
+    font-family: 'Poppins', 'Segoe UI', Arial, sans-serif !important;
+}
+
+.terms-section {
+    border-radius: 8px;
+    transition: background 0.2s;
+    margin-bottom: 18px;
+}
+
+.terms-section:hover, .terms-section.active {
+    background: #f0fdf4;
+}
+
+.terms-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    padding: 8px 0;
+}
+
+.terms-title-btn {
+    background: none;
+    border: none;
+    color: #01D28E;
+    font-size: 1.13rem;
+    font-weight: 650;
+    text-align: left;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    outline: none;
+    transition: color 0.2s;
+}
+
+.terms-title-btn:focus {
+    color: #019e6b;
+}
+
+.collapse-arrow {
+    margin-left: 8px;
+    font-size: 1.1rem;
+    transition: transform 0.2s;
+}
+
+.terms-title-btn[aria-expanded="true"] .collapse-arrow {
+    transform: rotate(180deg);
+}
+
+.terms-body {
+    padding-left: 54px;
+    padding-bottom: 8px;
+    transition: max-height 0.3s, opacity 0.3s;
+}
