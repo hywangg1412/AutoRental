@@ -537,6 +537,15 @@ nav.ftco-navbar-light .nav-link {
 .status-badge.status-Completed { background: #6b7280; color: #fff; }
 .status-badge.status-Cancelled { background: #dc2626; color: #fff; }
 .status-badge.status-ContractSigned { background: #6366f1; color: #fff; }
+.status-badge.status-waiting-return {
+    background: #38bdf8;
+    color: #fff;
+}
+
+.status-badge.status-reject {
+    background: var(--danger-red);
+    color: #fff;
+}
 
 .modal-content {
     border-radius: 18px !important;
@@ -801,4 +810,14 @@ hr.mytrip-divider {
   color: #fff !important;
   box-shadow: 0 4px 16px rgba(34,197,94,0.15);
   transform: translateY(-1px);
+}
+
+.badge.status-badge {
+    font-size: 0.82rem !important;
+    font-weight: 500 !important;
+    padding: 0.18em 0.55em !important;
+    letter-spacing: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    transition: all 0.2s ease;
 }
