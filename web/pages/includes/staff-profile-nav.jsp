@@ -26,7 +26,7 @@
           <div class="d-flex align-items-center justify-content-between w-100">
             <div class="d-flex align-items-center gap-3">
               <a href="#" class="nav-link p-0 text-dark"><i class="bi bi-bell" style="font-size: 1.2rem !important; color: white;"></i></a>
-              <a href="#" class="nav-link p-0 text-dark"><i class="bi bi-chat-dots" style="font-size: 1.2rem !important; color: white;"></i></a>
+              <a href="https://app.chative.io/livechat/sf710f470-09a6-11f0-926a-8f700bde510b/inbox" class="nav-link p-0 text-dark"><i class="bi bi-chat-dots" style="font-size: 1.2rem !important; color: white;"></i></a>
               <a href="${pageContext.request.contextPath}/staff/profile" class="user-avatar">
                 <img src="${not empty sessionScope.user.avatarUrl ? sessionScope.user.avatarUrl : pageContext.request.contextPath.concat('/assets/images/default-avatar.png')}" 
                      alt="User Avatar" 
