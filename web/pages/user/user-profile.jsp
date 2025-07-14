@@ -420,11 +420,8 @@
             const phoneError = document.getElementById('phoneError');
             const phone = phoneInput.value.trim();
             
-            // Remove all non-digit characters
             const cleanPhone = phone.replace(/\D/g, '');
             
-            // Vietnamese phone number validation
-            // Must start with 0 and have 10-11 digits
             const phoneRegex = /^0[0-9]{9,10}$/;
             
             if (!phone) {
