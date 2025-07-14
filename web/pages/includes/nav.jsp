@@ -19,7 +19,7 @@
     <div class="collapse navbar-collapse" id="ftco-nav">
       <ul class="navbar-nav ml-auto">
         <li class="nav-item"><a href="${pageContext.request.contextPath}/pages/home" class="nav-link">Home</a></li>
-        <li class="nav-item"><a href="${pageContext.request.contextPath}/pages/about.jsp" class="nav-link">About</a></li>
+        <!-- <li class="nav-item"><a href="${pageContext.request.contextPath}/pages/about.jsp" class="nav-link">About</a></li> -->
         <!-- <li class="nav-item"><a href="services.jsp" class="nav-link">Services</a></li> -->
         <!-- <li class="nav-item"><a href="pricing.jsp" class="nav-link">Pricing</a></li> -->
         <li class="nav-item"><a href="${pageContext.request.contextPath}/pages/car" class="nav-link">Cars</a></li>
