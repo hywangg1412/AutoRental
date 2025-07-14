@@ -98,7 +98,7 @@
                   </c:choose>
                 </ul>
               </div>
-              <a href="#" class="nav-link p-0 text-dark"><i class="fas fa-comment-dots" style="font-size: 1.2rem !important; color: white;"></i></a>
+              <a href="https://www.facebook.com/share/16hwvT4v4y/" class="nav-link p-0 text-dark"><i class="fas fa-comment-dots" style="font-size: 1.2rem !important; color: white;"></i></a>
               <a href="${pageContext.request.contextPath}/user/profile" class="user-avatar">
                 <img src="${not empty sessionScope.user.avatarUrl ? sessionScope.user.avatarUrl : pageContext.request.contextPath.concat('/assets/images/default-avatar.png')}" 
                      alt="User Avatar" 
