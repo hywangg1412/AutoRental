@@ -20,6 +20,7 @@ import Model.Entity.Role.Role;
 import Service.User.UserService;
 import Service.Role.RoleService;
 import Repository.Booking.BookingRepository;
+import java.util.stream.Collectors;
 
 @WebServlet(name = "UserManagementServlet", urlPatterns = {"/admin/user-management"})
 public class UserManagementServlet extends HttpServlet {
@@ -39,58 +40,21 @@ public class UserManagementServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
         try {
-            // Get filter parameters
-            String roleFilter = request.getParameter("role");
-            String statusFilter = request.getParameter("status");
-            String searchTerm = request.getParameter("search");
-            
-            // Use optimized repository method
-            List<User> users = userService.getUsersWithFilters(roleFilter, statusFilter, searchTerm);
-            
-            System.out.println("Filtered user count: " + users.size());
-            
-            for (User user : users) {
-                try {
-                    // Get role name
-                    if (user.getRoleId() != null) {
-                        Role role = roleService.findById(user.getRoleId());
-                        if (role != null) {
-                            request.setAttribute("role_" + user.getUserId(), role.getRoleName());
+            String editId = request.getParameter("edit");
+            if (editId != null && !editId.isEmpty()) {
+                User editUser = userService.findById(UUID.fromString(editId));
+                request.setAttribute("editUser", editUser);
                         }
-                    }
-                    
-                    // Get booking count
-                    List<Booking> userBookings = bookingRepository.findByUserId(user.getUserId());
-                    request.setAttribute("bookingCount_" + user.getUserId(), userBookings.size());
-                    
-                    // Calculate total spent (sum of all booking amounts)
-                    double totalSpent = userBookings.stream()
-                            .mapToDouble(booking -> booking.getTotalAmount())
-                            .sum();
-                    request.setAttribute("totalSpent_" + user.getUserId(), totalSpent);
-                    
-                } catch (Exception e) {
-                    LOGGER.log(Level.WARNING, "Error getting additional info for user: " + user.getUserId(), e);
-                    // Set default values if there's an error
-                    request.setAttribute("role_" + user.getUserId(), "Unknown");
-                    request.setAttribute("bookingCount_" + user.getUserId(), 0);
-                    request.setAttribute("totalSpent_" + user.getUserId(), 0.0);
-                }
-            }
-            
-            request.setAttribute("users", users);
-            
-            request.getRequestDispatcher("/pages/admin/manage-users.jsp").forward(request, response);
-            
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error fetching users", e);
-            request.setAttribute("error", "Error loading users: " + e.getMessage());
+            List<User> users = userService.getAllUsers();
+            UUID userRoleId = UUID.fromString("6BA7B810-9DAD-11D1-80B4-00C04FD430C8");
+            List<User> filteredUsers = users.stream()
+                .filter(u -> userRoleId.equals(u.getRoleId()))
+                .collect(Collectors.toList());
+            request.setAttribute("users", filteredUsers);
             request.getRequestDispatcher("/pages/admin/manage-users.jsp").forward(request, response);
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Unexpected error in user management", e);
-            request.setAttribute("error", "Unexpected error: " + e.getMessage());
+            request.setAttribute("error", "Lỗi tải dữ liệu: " + e.getMessage());
             request.getRequestDispatcher("/pages/admin/manage-users.jsp").forward(request, response);
         }
     }
@@ -98,7 +62,54 @@ public class UserManagementServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Handle POST requests if needed in the future
-        doGet(request, response);
+        String action = request.getParameter("action");
+        try {
+            if ("add".equals(action)) {
+                User user = new User();
+                user.setUserId(UUID.randomUUID());
+                user.setUsername(request.getParameter("username"));
+                user.setFirstName(request.getParameter("firstName"));
+                user.setLastName(request.getParameter("lastName"));
+                user.setEmail(request.getParameter("email"));
+                user.setPhoneNumber(request.getParameter("phoneNumber"));
+                user.setGender(request.getParameter("gender"));
+                user.setStatus(request.getParameter("status"));
+                user.setRoleId(UUID.fromString("6BA7B810-9DAD-11D1-80B4-00C04FD430C8"));
+                user.setPasswordHash(request.getParameter("passwordHash"));
+                user.setCreatedDate(java.time.LocalDateTime.now());
+                String userDOB = request.getParameter("userDOB");
+                if (userDOB != null && !userDOB.isEmpty()) {
+                    user.setUserDOB(java.time.LocalDate.parse(userDOB));
+                }
+                userService.add(user);
+                request.setAttribute("success", "Thêm user thành công!");
+            } else if ("update".equals(action)) {
+                String userId = request.getParameter("userId");
+                User user = userService.findById(UUID.fromString(userId));
+                if (user != null) {
+                    user.setUsername(request.getParameter("username"));
+                    user.setFirstName(request.getParameter("firstName"));
+                    user.setLastName(request.getParameter("lastName"));
+                    user.setEmail(request.getParameter("email"));
+                    user.setPhoneNumber(request.getParameter("phoneNumber"));
+                    user.setGender(request.getParameter("gender"));
+                    user.setStatus(request.getParameter("status"));
+                    user.setRoleId(UUID.fromString("6BA7B810-9DAD-11D1-80B4-00C04FD430C8"));
+                    String userDOB = request.getParameter("userDOB");
+                    if (userDOB != null && !userDOB.isEmpty()) {
+                        user.setUserDOB(java.time.LocalDate.parse(userDOB));
+                    }
+                    userService.update(user);
+                    request.setAttribute("success", "Cập nhật user thành công!");
+                }
+            } else if ("delete".equals(action)) {
+                String userId = request.getParameter("userId");
+                userService.delete(UUID.fromString(userId));
+                request.setAttribute("success", "Xoá user thành công!");
+            }
+        } catch (Exception e) {
+            request.setAttribute("error", "Lỗi thao tác: " + e.getMessage());
+        }
+        response.sendRedirect(request.getContextPath() + "/admin/user-management");
     }
 }
