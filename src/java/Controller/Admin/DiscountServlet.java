@@ -2,6 +2,7 @@ package Controller.Admin;
 
 import Model.Entity.Discount;
 import Service.DiscountService;
+import Repository.UserVoucherUsageRepository;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -19,6 +20,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.HashMap;
+import java.util.Map;
 
 @WebServlet("/discount")
 public class DiscountServlet extends HttpServlet {
@@ -74,8 +77,21 @@ public class DiscountServlet extends HttpServlet {
                 LOGGER.info("Discount " + i + ": ID=" + d.getDiscountId() + ", Name=" + d.getDiscountName());
             }
             
+            // Lấy số user đã dùng cho từng voucher
+            UserVoucherUsageRepository usageRepo = new UserVoucherUsageRepository();
+            Map<UUID, Integer> userUsedCountMap = new HashMap<>();
+            for (Discount d : discounts) {
+                int count = 0;
+                try {
+                    count = usageRepo.countUsersUsedVoucher(d.getDiscountId());
+                } catch (Exception ex) {
+                    LOGGER.warning("Không lấy được số user đã dùng cho voucher " + d.getDiscountId());
+                }
+                userUsedCountMap.put(d.getDiscountId(), count);
+            }
             request.setAttribute("discounts", discounts);
-            LOGGER.info("Set discounts attribute to request");
+            request.setAttribute("userUsedCountMap", userUsedCountMap);
+            LOGGER.info("Set discounts and userUsedCountMap attribute to request");
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to fetch discounts", e);
             request.setAttribute("error", "Lỗi cơ sở dữ liệu: " + e.getMessage());
