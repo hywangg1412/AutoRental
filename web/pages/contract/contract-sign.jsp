@@ -116,23 +116,27 @@
                         margin: 5px auto;
                     }
                 }
+
                 .btn-sign-contract {
                     background: #7edfa0;
                     color: #fff;
                     border: none;
                     border-radius: 6px;
-                    box-shadow: 0 2px 8px rgba(126,223,160,0.12);
+                    box-shadow: 0 2px 8px rgba(126, 223, 160, 0.12);
                     transition: background 0.2s, box-shadow 0.2s;
                     font-size: 1.08rem;
                     font-weight: 600;
                     letter-spacing: 0.5px;
                     text-transform: none;
                 }
-                .btn-sign-contract:hover, .btn-sign-contract:focus {
+
+                .btn-sign-contract:hover,
+                .btn-sign-contract:focus {
                     background: #5fd48b;
-                    box-shadow: 0 4px 16px rgba(126,223,160,0.18);
+                    box-shadow: 0 4px 16px rgba(126, 223, 160, 0.18);
                     color: #fff;
                 }
+
                 .btn-clear-signature {
                     background: #e0e0e0;
                     color: #333;
@@ -143,10 +147,13 @@
                     transition: background 0.2s, color 0.2s;
                     text-transform: none;
                 }
-                .btn-clear-signature:hover, .btn-clear-signature:focus {
+
+                .btn-clear-signature:hover,
+                .btn-clear-signature:focus {
                     background: #bdbdbd;
                     color: #111;
                 }
+
                 .btn-sign-equal {
                     width: 120px;
                     height: 40px;
@@ -157,9 +164,11 @@
                     font-weight: 600;
                     padding: 0;
                 }
+
                 .signature-method-group {
                     margin-bottom: 18px;
                 }
+
                 .signature-method-option {
                     border: 2px solid #e0e0e0;
                     border-radius: 8px;
@@ -177,15 +186,19 @@
                     min-width: 0;
                     white-space: nowrap;
                 }
+
                 .signature-method-option input[type="radio"] {
                     accent-color: #7edfa0;
                     margin-right: 8px;
                 }
-                .signature-method-option.selected, .signature-method-option:hover {
+
+                .signature-method-option.selected,
+                .signature-method-option:hover {
                     border: 2px solid #7edfa0;
                     background: #eafff2;
                     color: #2e7d32;
                 }
+
                 .upload-area {
                     width: 400px;
                     height: 180px;
@@ -200,6 +213,7 @@
                     margin-right: auto;
                     display: flex;
                 }
+
                 .upload-label {
                     color: #888;
                     font-size: 1.1rem;
@@ -245,19 +259,26 @@
                         </div>
                         <!-- Phần canvas, upload ảnh và nhập chữ ký -->
                         <div id="drawSignatureBox">
-                            <canvas id="signature-pad" width="400" height="180" style="border:2px dashed #ccc; background:#fafbfc; margin-bottom:16px;"></canvas>
+                            <canvas id="signature-pad" width="400" height="180"
+                                style="border:2px dashed #ccc; background:#fafbfc; margin-bottom:16px;"></canvas>
                         </div>
                         <div id="uploadSignatureBox" style="display:none;">
-                            <div class="upload-area" style="width:400px; height:180px; border:2px dashed #ccc; background:#fafbfc; display:flex; align-items:center; justify-content:center; margin-bottom:16px;">
+                            <div class="upload-area"
+                                style="width:400px; height:180px; border:2px dashed #ccc; background:#fafbfc; display:flex; align-items:center; justify-content:center; margin-bottom:16px;">
                                 <input type="file" id="signatureImageInput" accept="image/*" style="display:none;">
-                                <label for="signatureImageInput" class="upload-label" style="cursor:pointer; color:#888; font-size:1.1rem;">Click to upload signature image</label>
-                                <img id="signatureImagePreview" src="" alt="Signature Preview" style="display:none; max-width:100%; max-height:100%; object-fit:contain;" />
+                                <label for="signatureImageInput" class="upload-label"
+                                    style="cursor:pointer; color:#888; font-size:1.1rem;">Click to upload signature
+                                    image</label>
+                                <img id="signatureImagePreview" src="" alt="Signature Preview"
+                                    style="display:none; max-width:100%; max-height:100%; object-fit:contain;" />
                             </div>
                         </div>
                         <div id="typeSignatureBox" style="display:none;">
-                            <input type="text" id="typedSignatureInput" class="form-control mb-2" maxlength="50" placeholder="Enter your name as signature...">
+                            <input type="text" id="typedSignatureInput" class="form-control mb-2" maxlength="50"
+                                placeholder="Enter your name as signature...">
                             <!-- <div id="typedSignaturePreview" style="min-height:40px; font-family: 'Poppins', cursive, sans-serif; font-size:2rem; color:#2e7d32; border:1px dashed #7edfa0; border-radius:6px; background:#eafff2; padding:8px 16px; text-align:center; letter-spacing:2px;"></div> -->
-                            <input type="text" id="typedFullNameInput" class="form-control mt-2" maxlength="50" placeholder="Enter your full name...">
+                            <input type="text" id="typedFullNameInput" class="form-control mt-2" maxlength="50"
+                                placeholder="Enter your full name...">
                         </div>
                         <input type="hidden" name="signatureData" id="signatureData">
                         <input type="hidden" name="fullName" id="fullNameHidden">
@@ -266,8 +287,10 @@
                         <input type="hidden" name="termsFileUrl"
                             value="${pageContext.request.contextPath}/terms/current">
                         <div class="d-flex justify-content-center gap-3 mt-3">
-                            <button type="button" id="clearBtn" class="btn btn-clear-signature btn-sign-equal">Clear</button>
-                            <button type="submit" id="signBtn" class="btn btn-sign-contract btn-sign-equal">Sign</button>
+                            <button type="button" id="clearBtn"
+                                class="btn btn-clear-signature btn-sign-equal">Clear</button>
+                            <button type="submit" id="signBtn"
+                                class="btn btn-sign-contract btn-sign-equal">Sign</button>
                         </div>
                         <div id="signStatus" class="mt-3 text-center"></div>
                     </form>
@@ -348,21 +371,27 @@
                                 });
                             });
                             // Preview ảnh chữ ký
-                            document.getElementById('signatureImageInput').addEventListener('change', function(e) {
+                            document.getElementById('signatureImageInput').addEventListener('change', function (e) {
                                 const file = e.target.files[0];
                                 const preview = document.getElementById('signatureImagePreview');
                                 if (file) {
                                     const reader = new FileReader();
-                                    reader.onload = function(evt) {
+                                    reader.onload = function (evt) {
                                         preview.src = evt.target.result;
                                         preview.style.display = 'block';
                                         document.querySelector('.upload-label').style.display = 'none';
+                                        // Gửi ảnh base64 sang contract-template để hiển thị
+                                        const iframe = document.getElementById('contractTemplateFrame');
+                                        if (iframe && iframe.contentWindow) {
+                                            iframe.contentWindow.postMessage({ type: 'UPDATE_SIGNATURE_IMAGE', signatureImage: evt.target.result }, '*');
+                                        }
                                     };
                                     reader.readAsDataURL(file);
                                 } else {
                                     preview.src = '';
                                     preview.style.display = 'none';
                                     document.querySelector('.upload-label').style.display = 'block';
+                                    // Không gửi gì sang contract-template ở đây
                                 }
                             });
                             // Đã ẩn preview chữ ký nhập
@@ -416,7 +445,21 @@
                                         iframe.contentWindow.postMessage({ type: 'UPDATE_SIGNATURE_IMAGE', signatureImage: '' }, '*');
                                     }
                                 }
-                                // Nếu có logic clear cho draw/upload thì giữ nguyên phía dưới (contract-sign.js)
+                                if (method === 'upload') {
+                                    // Xóa input file
+                                    document.getElementById('signatureImageInput').value = '';
+                                    // Ẩn preview ảnh
+                                    document.getElementById('signatureImagePreview').src = '';
+                                    document.getElementById('signatureImagePreview').style.display = 'none';
+                                    // Hiện lại label upload
+                                    document.querySelector('.upload-label').style.display = 'block';
+                                    // Gửi ảnh rỗng sang contract-template
+                                    const iframe = document.getElementById('contractTemplateFrame');
+                                    if (iframe && iframe.contentWindow) {
+                                        iframe.contentWindow.postMessage({ type: 'UPDATE_SIGNATURE_IMAGE', signatureImage: '' }, '*');
+                                    }
+                                }
+                                // Nếu có logic clear cho draw thì giữ nguyên phía dưới (contract-sign.js)
                             });
                             // Gửi chữ ký realtime sang iframe contract template
                             document.getElementById('typedSignatureInput').addEventListener('input', function (e) {
@@ -440,6 +483,37 @@
                                 }
                             });
                         });
+                        var canvasDraw = document.getElementById('signature-pad');
+                        if (canvasDraw && window.SignaturePad) {
+                            var signaturePadDraw = new window.SignaturePad(canvasDraw);
+                            function sendDrawSignatureToIframe() {
+                                if (document.getElementById('signatureMethodHidden').value !== 'draw') return;
+                                if (!signaturePadDraw.isEmpty()) {
+                                    var dataUrl = signaturePadDraw.toDataURL();
+                                    const iframe = document.getElementById('contractTemplateFrame');
+                                    if (iframe && iframe.contentWindow) {
+                                        iframe.contentWindow.postMessage({ type: 'UPDATE_SIGNATURE_IMAGE', signatureImage: dataUrl }, '*');
+                                    }
+                                } else {
+                                    const iframe = document.getElementById('contractTemplateFrame');
+                                    if (iframe && iframe.contentWindow) {
+                                        iframe.contentWindow.postMessage({ type: 'UPDATE_SIGNATURE_IMAGE', signatureImage: '' }, '*');
+                                    }
+                                }
+                            }
+                            canvasDraw.addEventListener('mouseup', sendDrawSignatureToIframe);
+                            canvasDraw.addEventListener('touchend', sendDrawSignatureToIframe);
+                            canvasDraw.addEventListener('mouseleave', sendDrawSignatureToIframe);
+                            document.getElementById('clearBtn').addEventListener('click', function () {
+                                if (document.getElementById('signatureMethodHidden').value === 'draw') {
+                                    signaturePadDraw.clear();
+                                    const iframe = document.getElementById('contractTemplateFrame');
+                                    if (iframe && iframe.contentWindow) {
+                                        iframe.contentWindow.postMessage({ type: 'UPDATE_SIGNATURE_IMAGE', signatureImage: '' }, '*');
+                                    }
+                                }
+                            });
+                        }
                     </script>
         </body>
 
