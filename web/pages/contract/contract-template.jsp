@@ -131,6 +131,8 @@
             <div class="signature-label">Chữ ký:</div>
             <div class="signature-name" id="realtime-signature"><%= request.getAttribute("userSignature") != null ? request.getAttribute("userSignature") : "" %></div>
             <img id="realtime-signature-image" style="max-width: 220px; max-height: 80px; display: none; margin: 0 auto;" />
+            <canvas id="direct-signature-pad" width="220" height="80" style="display:none; border:1px dashed #aaa; background:#fafbfc;"></canvas>
+            <button type="button" id="clearDirectSignature" style="display:none; margin-top:8px;">Clear</button>
             <div id="realtime-fullname"><%= request.getAttribute("userFullName") != null ? request.getAttribute("userFullName") : "" %></div>
         </div>
     </div>
@@ -158,8 +160,32 @@
     .contract-page { box-shadow: none; margin: 0; }
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.6/dist/signature_pad.umd.min.js"></script>
 <script>
+var signaturePad;
+document.addEventListener('DOMContentLoaded', function() {
+    var canvas = document.getElementById('direct-signature-pad');
+    var clearBtn = document.getElementById('clearDirectSignature');
+    if (canvas && window.SignaturePad) {
+        signaturePad = new window.SignaturePad(canvas);
+        clearBtn.addEventListener('click', function() {
+            signaturePad.clear();
+        });
+    }
+});
 window.addEventListener('message', function (event) {
+    if (event.data && event.data.type === 'SWITCH_SIGNATURE_METHOD') {
+        var method = event.data.method;
+        var img = document.getElementById('realtime-signature-image');
+        var sig = document.getElementById('realtime-signature');
+        if (method === 'draw') {
+            if(img) img.style.display = 'block';
+            if(sig) sig.style.display = 'none';
+        } else {
+            if(img) img.style.display = 'none';
+            if(sig) sig.style.display = '';
+        }
+    }
     if (event.data && event.data.type === 'UPDATE_SIGNATURE') {
         var sig = document.getElementById('realtime-signature');
         if(sig) sig.textContent = event.data.signature || '';
