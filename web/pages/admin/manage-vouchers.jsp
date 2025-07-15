@@ -33,7 +33,7 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </head>
   <body>
-     <div class="admin-layout">
+    <div class="admin-layout">
       <!-- Sidebar -->
       <div class="sidebar" id="sidebar">
         <div
@@ -107,7 +107,7 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
           </a>
           <a
             href="${pageContext.request.contextPath}/pages/admin/manage-cars.jsp"
-            class="nav-item "
+            class="nav-item"
           >
             <svg class="nav-item-icon" fill="currentColor" viewBox="0 0 24 24">
               <path
@@ -193,22 +193,6 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
                   <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
                 </svg>
               </button>
-              <div class="search-box">
-                <svg
-                  class="search-icon"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
-                  />
-                </svg>
-                <input
-                  type="text"
-                  class="search-input"
-                  placeholder="Search..."
-                />
-              </div>
             </div>
             <div class="header-right">
               <button class="notification-btn">
@@ -225,9 +209,18 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
                 <span class="notification-badge">3</span>
               </button>
               <div class="user-profile">
-                <div class="user-avatar">QH</div>
+                <div class="user-avatar">
+                  <img
+                    src="${not empty sessionScope.user.avatarUrl ? sessionScope.user.avatarUrl : pageContext.request.contextPath.concat('/assets/images/default-avatar.png')}"
+                    alt="User Avatar"
+                    width="32"
+                    height="32"
+                    class="rounded-circle"
+                    onerror="this.onerror=null;this.src='${pageContext.request.contextPath}/assets/images/default-avatar.png';"
+                  />
+                </div>
                 <div class="user-details">
-                  <h4>Quang Huy</h4>
+                  <h4>${sessionScope.user.username}</h4>
                   <p>Administrator</p>
                 </div>
               </div>
@@ -344,6 +337,7 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
                         <th>End Date</th>
                         <th>Active</th>
                         <th>Created Date</th>
+                        <th>Số user đã dùng</th>
                         <th>Actions</th>
                       </tr>
                     </thead>
@@ -380,6 +374,11 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
                               <fmt:formatDate
                                 value="${discount.createdDate}"
                                 pattern="yyyy-MM-dd"
+                              />
+                            </td>
+                            <td>
+                              <c:out
+                                value="${userUsedCountMap[discount.discountId]}"
                               />
                             </td>
                             <td>

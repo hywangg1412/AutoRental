@@ -30,7 +30,7 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
       href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap"
       rel="stylesheet"
     />
-     <link
+    <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
@@ -102,7 +102,7 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
 
         <nav class="sidebar-nav">
           <a
-            href="${pageContext.request.contextPath}/pages/admin/admin-dashboard.jsp"
+            href="${pageContext.request.contextPath}/admin/dashboard"
             class="nav-item"
           >
             <svg class="nav-item-icon" fill="currentColor" viewBox="0 0 24 24">
@@ -124,8 +124,8 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
             Users
           </a>
           <a
-            href="${pageContext.request.contextPath}/pages/admin/manage-cars.jsp"
-            class="nav-item "
+            href="${pageContext.request.contextPath}/manageCarsServlet"
+            class="nav-item"
           >
             <svg class="nav-item-icon" fill="currentColor" viewBox="0 0 24 24">
               <path
@@ -168,7 +168,7 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
             Contract Details
           </a>
           <a
-            href="${pageContext.request.contextPath}/pages/admin/manage-vouchers.jsp"
+            href="${pageContext.request.contextPath}/discount"
             class="nav-item"
           >
             <svg class="nav-item-icon" fill="currentColor" viewBox="0 0 24 24">
@@ -211,22 +211,6 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
                   <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
                 </svg>
               </button>
-              <div class="search-box">
-                <svg
-                  class="search-icon"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
-                  />
-                </svg>
-                <input
-                  type="text"
-                  class="search-input"
-                  placeholder="Search..."
-                />
-              </div>
             </div>
             <div class="header-right">
               <button class="notification-btn">
@@ -243,9 +227,18 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
                 <span class="notification-badge">3</span>
               </button>
               <div class="user-profile">
-                <div class="user-avatar">QH</div>
+                <div class="user-avatar">
+                  <img
+                    src="${not empty sessionScope.user.avatarUrl ? sessionScope.user.avatarUrl : pageContext.request.contextPath.concat('/assets/images/default-avatar.png')}"
+                    alt="User Avatar"
+                    width="32"
+                    height="32"
+                    class="rounded-circle"
+                    onerror="this.onerror=null;this.src='${pageContext.request.contextPath}/assets/images/default-avatar.png';"
+                  />
+                </div>
                 <div class="user-details">
-                  <h4>Quang Huy</h4>
+                  <h4>${sessionScope.user.username}</h4>
                   <p>Administrator</p>
                 </div>
               </div>
@@ -359,19 +352,6 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
           </div>
           <!-- Filter Bar -->
           <div class="filter-bar">
-            <div class="search-box">
-              <svg class="search-icon" fill="currentColor" viewBox="0 0 24 24">
-                <path
-                  d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
-                />
-              </svg>
-              <input
-                type="text"
-                class="search-input"
-                placeholder="Search staff..."
-                id="searchStaff"
-              />
-            </div>
             <select
               class="form-select"
               id="statusFilter"
@@ -624,7 +604,7 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
           ">Female</option>" +
           '<option value="Other"' +
           (gender === "Other" ? " selected" : "") +
-          ">Other</option>";
+          ">Other</option>';
 
         const modalHTML =
           '<div id="dynamicEditModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 1000; display: flex; align-items: center; justify-content: center;">' +
