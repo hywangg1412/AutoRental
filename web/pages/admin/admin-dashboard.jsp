@@ -5,7 +5,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" %> <%@ taglib prefix="fn"
 uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -16,6 +16,27 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="${pageContext.request.contextPath}/css/admin-style.css"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+     <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
     <link
       rel="stylesheet"
       href="${pageContext.request.contextPath}/styles/admin/admin-style.css"
@@ -29,9 +50,30 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
       href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap"
       rel="stylesheet"
     />
+    <style>
+      .stats-table th,
+      .stats-table td {
+        text-align: center;
+        vertical-align: middle;
+      }
+      .chart-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 32px;
+        justify-content: center;
+        margin-top: 32px;
+      }
+      .chart-box {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 2px 8px #0001;
+        padding: 24px;
+        min-width: 340px;
+      }
+    </style>
   </head>
-  <body>
-    <div class="admin-layout">
+  <body style="background: #f4f6fa">
+      <div class="admin-layout">
       <!-- Sidebar -->
       <div class="sidebar" id="sidebar">
         <div
@@ -82,7 +124,7 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
 
         <nav class="sidebar-nav">
           <a
-            href="${pageContext.request.contextPath}/pages/admin/admin-dashboard.jsp"
+            href="${pageContext.request.contextPath}/admin/dashboard"
             class="nav-item active"
           >
             <svg class="nav-item-icon" fill="currentColor" viewBox="0 0 24 24">
@@ -138,7 +180,7 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
           </a>
           <a
             href="${pageContext.request.contextPath}/pages/admin/contract-details.jsp"
-            class="nav-item"
+            class="nav-item "
           >
             <svg class="nav-item-icon" fill="currentColor" viewBox="0 0 24 24">
               <path
@@ -148,7 +190,7 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
             Contract Details
           </a>
           <a
-            href="${pageContext.request.contextPath}/pages/admin/manage-vouchers.jsp"
+            href="${pageContext.request.contextPath}/discount"
             class="nav-item"
           >
             <svg class="nav-item-icon" fill="currentColor" viewBox="0 0 24 24">
@@ -191,22 +233,6 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
                   <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
                 </svg>
               </button>
-              <div class="search-box">
-                <svg
-                  class="search-icon"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
-                  />
-                </svg>
-                <input
-                  type="text"
-                  class="search-input"
-                  placeholder="Search..."
-                />
-              </div>
             </div>
             <div class="header-right">
               <button class="notification-btn">
@@ -223,291 +249,280 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
                 <span class="notification-badge">3</span>
               </button>
               <div class="user-profile">
-                <div class="user-avatar">QH</div>
+                <div class="user-avatar">
+                  <img
+                    src="${not empty sessionScope.user.avatarUrl ? sessionScope.user.avatarUrl : pageContext.request.contextPath.concat('/assets/images/default-avatar.png')}"
+                    alt="User Avatar"
+                    width="32"
+                    height="32"
+                    class="rounded-circle"
+                    onerror="this.onerror=null;this.src='${pageContext.request.contextPath}/assets/images/default-avatar.png';"
+                  />
+                </div>
                 <div class="user-details">
-                  <h4>Quang Huy</h4>
+                  <h4>${sessionScope.user.username}</h4>
                   <p>Administrator</p>
                 </div>
               </div>
             </div>
           </div>
         </header>
+    <div class="container py-4">
+      <h1 class="mb-4">Tổng quan hệ thống AutoRental</h1>
+      <table class="table table-bordered stats-table">
+        <thead class="table-dark">
+          <tr>
+            <th></th>
+            <th>Tổng</th>
+            <th>Active</th>
+            <th>Banned</th>
+            <th>Disabled/Inactive</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>User</th>
+            <td>${userCount}</td>
+            <td>${userActive}</td>
+            <td>${userBanned}</td>
+            <td>${userDisabled}</td>
+          </tr>
+          <tr>
+            <th>Staff</th>
+            <td>${staffCount}</td>
+            <td>${staffActive}</td>
+            <td>${staffBanned}</td>
+            <td>${staffDisabled}</td>
+          </tr>
+          <tr>
+            <th>Voucher</th>
+            <td>${voucherCount}</td>
+            <td>${voucherActive}</td>
+            <td colspan="2">${voucherInactive}</td>
+          </tr>
+          <tr>
+            <th>Car</th>
+            <td colspan="4">${carCount}</td>
+          </tr>
+        </tbody>
+      </table>
 
-        <!-- Page Content -->
-        <main class="page-content">
-          <div class="page-header">
-            <h1 class="page-title">Dashboard</h1>
-            <p class="page-description">
-              Welcome to AutoRental Admin Dashboard
-            </p>
-          </div>
+      <div class="chart-container">
+        <div class="chart-box">
+          <h5>So sánh tổng số lượng</h5>
+          <canvas id="barChart" width="350" height="300"></canvas>
+        </div>
+        <div class="chart-box">
+          <h5>Tỷ lệ trạng thái User</h5>
+          <canvas id="userPie" width="300" height="300"></canvas>
+        </div>
+        <div class="chart-box">
+          <h5>Tỷ lệ trạng thái Staff</h5>
+          <canvas id="staffPie" width="300" height="300"></canvas>
+        </div>
+        <div class="chart-box">
+          <h5>Tỷ lệ trạng thái Voucher</h5>
+          <canvas id="voucherPie" width="300" height="300"></canvas>
+        </div>
+      </div>
 
-          <!-- Stats Cards -->
-          <div class="stats-grid">
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="stat-title">Total Revenue</span>
-                <svg
-                  class="stat-icon green"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91 2.28.6 4.18 1.58 4.18 3.91 0 1.82-1.33 2.96-3.12 3.16z"
-                  />
-                </svg>
-              </div>
-              <div class="stat-value">$324,500</div>
-              <div class="stat-change positive">+12% from last month</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="stat-title">Active Bookings</span>
-                <svg
-                  class="stat-icon blue"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
-                  />
-                </svg>
-              </div>
-              <div class="stat-value">156</div>
-              <div class="stat-change positive">+8% from last week</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="stat-title">Total Cars</span>
-                <svg
-                  class="stat-icon purple"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99z"
-                  />
-                </svg>
-              </div>
-              <div class="stat-value">243</div>
-              <div class="stat-change negative">-2% from last month</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="stat-title">Available Cars</span>
-                <svg
-                  class="stat-icon orange"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
-                  />
-                </svg>
-              </div>
-              <div class="stat-value">89</div>
-              <div class="stat-change positive">+15% from last week</div>
-            </div>
-          </div>
+      <h2 class="mt-5 mb-3">Thống kê theo tháng (12 tháng gần nhất)</h2>
+      <div class="chart-container">
+        <div class="chart-box" style="flex: 2; min-width: 600px">
+          <h5>Biểu đồ so sánh User, Car, Voucher theo tháng</h5>
+          <canvas id="monthBarChart" width="600" height="350"></canvas>
+        </div>
+      </div>
 
-          <!-- Recent Bookings Table -->
-          <div class="card">
-            <div class="card-header">
-              <div class="flex items-center justify-between">
-                <div>
-                  <h2 class="card-title">Recent Bookings</h2>
-                  <p class="card-description">Latest car rental bookings</p>
-                </div>
-                <a
-                  href="${pageContext.request.contextPath}/BookingApprovalListServlet"
-                  class="btn btn-primary"
-                  >View All</a
-                >
-              </div>
-            </div>
-            <div class="card-content">
-              <div class="table-container">
-                <table class="data-table">
-                  <thead>
-                    <tr>
-                      <th>Booking ID</th>
-                      <th>Customer</th>
-                      <th>Car</th>
-                      <th>Duration</th>
-                      <th>Amount</th>
-                      <th>Status</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td><span class="font-medium">#BK-001</span></td>
-                      <td>
-                        <div>
-                          <div class="font-medium">John Doe</div>
-                          <div class="text-sm">john@example.com</div>
-                        </div>
-                      </td>
-                      <td>
-                        <div>
-                          <div class="font-medium">Toyota Corolla</div>
-                          <div class="text-sm">Economy</div>
-                        </div>
-                      </td>
-                      <td>3 days</td>
-                      <td class="font-medium">$135</td>
-                      <td><span class="badge success">Confirmed</span></td>
-                      <td>
-                        <div class="flex items-center gap-4">
-                          <button class="btn-ghost">
-                            <svg
-                              width="16"
-                              height="16"
-                              fill="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5z"
-                              />
-                            </svg>
-                          </button>
-                          <button class="btn-ghost">
-                            <svg
-                              width="16"
-                              height="16"
-                              fill="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><span class="font-medium">#BK-002</span></td>
-                      <td>
-                        <div>
-                          <div class="font-medium">Jane Smith</div>
-                          <div class="text-sm">jane@example.com</div>
-                        </div>
-                      </td>
-                      <td>
-                        <div>
-                          <div class="font-medium">Honda Civic</div>
-                          <div class="text-sm">Compact</div>
-                        </div>
-                      </td>
-                      <td>5 days</td>
-                      <td class="font-medium">$225</td>
-                      <td><span class="badge warning">Pending</span></td>
-                      <td>
-                        <div class="flex items-center gap-4">
-                          <button class="btn-ghost">
-                            <svg
-                              width="16"
-                              height="16"
-                              fill="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5z"
-                              />
-                            </svg>
-                          </button>
-                          <button class="btn-ghost">
-                            <svg
-                              width="16"
-                              height="16"
-                              fill="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><span class="font-medium">#BK-003</span></td>
-                      <td>
-                        <div>
-                          <div class="font-medium">Mike Johnson</div>
-                          <div class="text-sm">mike@example.com</div>
-                        </div>
-                      </td>
-                      <td>
-                        <div>
-                          <div class="font-medium">BMW X5</div>
-                          <div class="text-sm">SUV</div>
-                        </div>
-                      </td>
-                      <td>7 days</td>
-                      <td class="font-medium">$490</td>
-                      <td><span class="badge info">Active</span></td>
-                      <td>
-                        <div class="flex items-center gap-4">
-                          <button class="btn-ghost">
-                            <svg
-                              width="16"
-                              height="16"
-                              fill="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5z"
-                              />
-                            </svg>
-                          </button>
-                          <button class="btn-ghost">
-                            <svg
-                              width="16"
-                              height="16"
-                              fill="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </main>
+      <div class="chart-container">
+        <div class="chart-box" style="flex: 2; min-width: 600px">
+          <h5>Biểu đồ doanh thu các tháng</h5>
+          <canvas id="revenueLineChart" width="600" height="350"></canvas>
+        </div>
       </div>
     </div>
-
+    <script type="application/json" id="monthLabelsJson">
+      ${monthLabelsJson}
+    </script>
+    <script type="application/json" id="userByMonthJson">
+      ${userByMonthJson}
+    </script>
+    <script type="application/json" id="carByMonthJson">
+      ${carByMonthJson}
+    </script>
+    <script type="application/json" id="voucherByMonthJson">
+      ${voucherByMonthJson}
+    </script>
+    <script type="application/json" id="revenueByMonthJson">
+      ${revenueByMonthJson}
+    </script>
     <script>
-      function toggleSidebar() {
-        const sidebar = document.getElementById("sidebar");
-        sidebar.classList.toggle("open");
-      }
-
-      // Close sidebar when clicking outside on mobile
-      document.addEventListener("click", function (event) {
-        const sidebar = document.getElementById("sidebar");
-        const isClickInsideSidebar = sidebar.contains(event.target);
-        const isToggleButton = event.target.closest(".btn-ghost");
-
-        if (
-          !isClickInsideSidebar &&
-          !isToggleButton &&
-          window.innerWidth <= 1024
-        ) {
-          sidebar.classList.remove("open");
+      // Bar chart: Tổng số User, Staff, Car, Voucher
+      new Chart(document.getElementById('barChart'), {
+        type: 'bar',
+        data: {
+          labels: ['User', 'Staff', 'Car', 'Voucher'],
+          datasets: [{
+            label: 'Số lượng',
+            data: [${userCount}, ${staffCount}, ${carCount}, ${voucherCount}],
+            backgroundColor: [
+              'rgba(54, 162, 235, 0.8)',
+              'rgba(255, 99, 132, 0.8)',
+              'rgba(75, 192, 192, 0.8)',
+              'rgba(255, 206, 86, 0.8)'
+            ],
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: { enabled: true }
+          },
+          scales: {
+            y: { beginAtZero: true }
+          }
+        }
+      });
+      // Pie chart: User
+      new Chart(document.getElementById('userPie'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Active', 'Banned', 'Disabled'],
+          datasets: [{
+            data: [${userActive}, ${userBanned}, ${userDisabled}],
+            backgroundColor: [
+              'rgba(54, 162, 235, 0.8)',
+              'rgba(255, 99, 132, 0.8)',
+              'rgba(201, 203, 207, 0.8)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          plugins: {
+            legend: { position: 'bottom' },
+            tooltip: { enabled: true }
+          }
+        }
+      });
+      // Pie chart: Staff
+      new Chart(document.getElementById('staffPie'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Active', 'Banned', 'Disabled'],
+          datasets: [{
+            data: [${staffActive}, ${staffBanned}, ${staffDisabled}],
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.8)',
+              'rgba(54, 162, 235, 0.8)',
+              'rgba(201, 203, 207, 0.8)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          plugins: {
+            legend: { position: 'bottom' },
+            tooltip: { enabled: true }
+          }
+        }
+      });
+      // Pie chart: Voucher
+      new Chart(document.getElementById('voucherPie'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Active', 'Inactive'],
+          datasets: [{
+            data: [${voucherActive}, ${voucherInactive}],
+            backgroundColor: [
+              'rgba(255, 206, 86, 0.8)',
+              'rgba(201, 203, 207, 0.8)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          plugins: {
+            legend: { position: 'bottom' },
+            tooltip: { enabled: true }
+          }
+        }
+      });
+      // Biểu đồ so sánh theo tháng
+      const monthLabels = JSON.parse(document.getElementById('monthLabelsJson').innerHTML.trim());
+      const userByMonth = JSON.parse(document.getElementById('userByMonthJson').innerHTML.trim());
+      const carByMonth = JSON.parse(document.getElementById('carByMonthJson').innerHTML.trim());
+      const voucherByMonth = JSON.parse(document.getElementById('voucherByMonthJson').innerHTML.trim());
+      new Chart(document.getElementById('monthBarChart'), {
+        type: 'bar',
+        data: {
+          labels: monthLabels,
+          datasets: [
+            {
+              label: 'User',
+              data: userByMonth,
+              backgroundColor: 'rgba(54, 162, 235, 0.8)'
+            },
+            {
+              label: 'Car',
+              data: carByMonth,
+              backgroundColor: 'rgba(75, 192, 192, 0.8)'
+            },
+            {
+              label: 'Voucher',
+              data: voucherByMonth,
+              backgroundColor: 'rgba(255, 206, 86, 0.8)'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'top' },
+            tooltip: { enabled: true }
+          },
+          scales: {
+            y: { beginAtZero: true }
+          }
+        }
+      });
+      const revenueByMonth = JSON.parse(document.getElementById('revenueByMonthJson').innerHTML.trim());
+      // Vẽ biểu đồ doanh thu các tháng
+      new Chart(document.getElementById('revenueLineChart'), {
+        type: 'line',
+        data: {
+          labels: monthLabels,
+          datasets: [{
+            label: 'Doanh thu (VND)',
+            data: revenueByMonth,
+            borderColor: 'rgba(255, 99, 132, 1)',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            tension: 0.3,
+            fill: true,
+            pointRadius: 4,
+            pointBackgroundColor: 'rgba(255, 99, 132, 1)'
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'top' },
+            tooltip: { enabled: true }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) {
+                  return value.toLocaleString('vi-VN') + ' VND';
+                }
+              }
+            }
+          }
         }
       });
     </script>
-  
   </body>
 </html>
