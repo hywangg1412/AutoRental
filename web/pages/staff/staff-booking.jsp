@@ -308,6 +308,16 @@
                                                                             <i class="fas fa-clock me-1"></i>Pending
                                                                         </span>
                                                                     </c:when>
+                                                                    <c:when test="${booking.status == 'WAITING_RETURN_CONFIRM'}">
+                                                                        <span class="badge contract-status waiting-return-confirm">
+                                                                            <i class="fas fa-clock me-1"></i>Chờ xác nhận trả xe
+                                                                        </span>
+                                                                    </c:when>
+                                                                    <c:when test="${booking.status == 'RETURN_REJECTED'}">
+                                                                        <span class="badge contract-status return-rejected">
+                                                                            <i class="fas fa-times-circle me-1"></i>Từ chối trả xe
+                                                                        </span>
+                                                                    </c:when>
                                                                     <c:otherwise>
                                                                         <span class="badge contract-status unknown">
                                                                             <i class="fas fa-question-circle me-1"></i>${booking.contractStatus}
@@ -336,7 +346,13 @@
                                                                         </button>
                                                                     </form>
                                                                 </c:when>
-
+                                                                <c:when test="${booking.status == 'WAITING_RETURN_CONFIRM'}">
+                                                                    <form action="${pageContext.request.contextPath}/staff/return-car-approval" method="POST" style="display:inline;">
+                                                                        <input type="hidden" name="bookingId" value="${booking.bookingId}" />
+                                                                        <input type="hidden" name="action" value="approve" />
+                                                                        <button type="submit" class="btn btn-success btn-sm">Xác nhận trả xe</button>
+                                                                    </form>
+                                                                </c:when>
                                                             </c:choose>
                                                             <!-- Nút Close luôn hiển thị -->
                                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -381,6 +397,12 @@
                                                         <span class="badge badge-completed">
                                                             <i class="fas fa-flag-checkered me-1"></i>Completed
                                                         </span>
+                                                    </c:when>
+                                                    <c:when test="${booking.status == 'WAITING_RETURN_CONFIRM'}">
+                                                        <span class="badge bg-warning">Chờ xác nhận trả xe</span>
+                                                    </c:when>
+                                                    <c:when test="${booking.status == 'RETURN_REJECTED'}">
+                                                        <span class="badge bg-danger">Từ chối trả xe</span>
                                                     </c:when>
                                                     <c:otherwise>
                                                         <span class="badge bg-secondary">${booking.status}</span>
