@@ -22,4 +22,9 @@ public class FormatUtils {
         if (dateStr == null || dateStr.trim().isEmpty()) return null;
         return LocalDate.parse(dateStr, DATE_FORMATTER);
     }
+
+    public static String formatDisplayDate(LocalDate date) {
+        if (date == null) return "";
+        return date.format(DATE_FORMATTER);
+    }
 }

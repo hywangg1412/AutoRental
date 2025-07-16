@@ -694,58 +694,8 @@ input:disabled:active {
     color: #fff;
 }
 
-/* Toast Custom Styles */
-.toast {
-    border-radius: 10px !important;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.12), 0 1.5px 4px rgba(0,0,0,0.08);
-    font-family: 'Poppins', Arial, sans-serif;
-    font-size: 1.05rem;
-    padding: 1rem 1.5rem;
-    min-width: 320px;
-    max-width: 400px;
-    margin-bottom: 1.2rem;
-    opacity: 1;
-    transition: box-shadow 0.2s, transform 0.2s;
-    background: #01d28e !important;
-
-}
-.toast.bg-danger {
-    background: linear-gradient(90deg, #e74c3c 0%, #c0392b 100%);
-}
-.toast .toast-body {
-    font-weight: 500;
-    letter-spacing: 0.01em;
-    display: flex;
-    align-items: center;
-}
-.toast .fa-check-circle, .toast .fa-exclamation-circle {
-    font-size: 1.3em;
-    margin-right: 0.7em;
-}
-.toast .btn-close {
-    filter: invert(1);
-    opacity: 0.7;
-    transition: opacity 0.2s;
-}
-.toast .btn-close:hover {
-    opacity: 1;
-}
-
-
-@keyframes slideOutRight {
-    0% {
-        opacity: 1;
-        transform: translateX(0);
-    }
-    100% {
-        opacity: 0;
-        transform: translateX(120%);
-    }
-}
-
-.toast.slide-out {
-    animation: slideOutRight 0.7s forwards;
-}
+/* Toast Custom Styles - Đã tắt để dùng style mặc định của Bootstrap
+*/
 
 .ftco-navbar-light {
     background: #fff !important;
@@ -901,6 +851,43 @@ nav.ftco-navbar-light .nav-link {
 .fa-bell, .fa-comment-dots {
     color: #222 !important;
 }
+
+.input-error, .is-invalid {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.1rem rgba(220,38,38,0.08);
+}
+.error-message {
+    color: #dc3545;
+    font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-top: 2px;
+    margin-bottom: 0;
+    overflow: hidden;
+    transition: max-height 0.25s cubic-bezier(0.4,0,0.2,1), opacity 0.25s cubic-bezier(0.4,0,0.2,1);
+    max-height: 0;
+    opacity: 0;
+    padding-left: 2px;
+}
+.error-message.show {
+    max-height: 40px;
+    opacity: 1;
+    margin-bottom: 6px;
+}
+
+#citizenIdBlock .citizen-id-img-preview {
+    width: 100%;
+    max-width: 320px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 2px solid #e0e0e0;
+    display: block;
+    margin: 0 auto;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(60,60,60,0.06);
+}
+
 
 
 
