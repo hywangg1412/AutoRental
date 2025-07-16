@@ -277,19 +277,127 @@
                                                         <label class="form-label text-muted">Driver's License Number</label>
                                                         <input type="text" class="form-control driver-license-input" name="licenseNumber" id="licenseNumber"
                                                                value="${driverLicense != null ? driverLicense.licenseNumber : ''}" disabled required>
-                                                        <div class="invalid-feedback" id="licenseNumberError"></div>
+                                                        <div class="error-message" id="licenseNumberError"></div>
                                                     </div>
                                                     <div class="mb-4">
                                                         <label class="form-label text-muted">Full name</label>
                                                         <input type="text" class="form-control driver-license-input" name="fullName" id="fullName"
                                                                value="${driverLicense != null ? driverLicense.fullName : ''}" disabled required>
-                                                        <div class="invalid-feedback" id="fullNameError"></div>
+                                                        <div class="error-message" id="fullNameError"></div>
                                                     </div>
                                                     <div class="mb-4">
                                                         <label class="form-label text-muted">Date of birth</label>
                                                         <input type="date" class="form-control driver-license-input" name="dob" id="dob"
                                                                value="${driverLicense != null ? driverLicense.dob : ''}" disabled required>
-                                                        <div class="invalid-feedback" id="dobError"></div>
+                                                        <div class="error-message" id="dobError"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <!-- Citizen ID Block -->
+                                    <div class="citizen-id-block p-4 bg-white rounded shadow-sm mt-4">
+                                        <div class="d-flex justify-content-between align-items-center mb-4">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <h2 class="h5 fw-semibold mb-0">Citizen ID (CCCD)</h2>
+                                            </div>
+                                            <div class="citizen-id-actions">
+                                                <button type="button" class="btn btn-outline-secondary btn-edit" id="editCitizenIdBtn">
+                                                    <i class="bi bi-pencil me-1"></i>Edit
+                                                </button>
+                                                <div class="d-flex gap-2">
+                                                    <button type="button" class="btn btn-cancel d-none" id="cancelCitizenIdBtn">Cancel</button>
+                                                    <button type="button" class="btn btn-save d-none" id="saveCitizenIdBtn">Update</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <form id="citizenIdInfoForm" action="${pageContext.request.contextPath}/user/update-citizen-id" method="post" enctype="multipart/form-data">
+                                            <div class="row g-5">
+                                                <div class="col-md-5">
+                                                    <h6 class="citizen-id-label">CCCD Front Image <span class="text-danger">*</span></h6>
+                                                    <label class="citizen-id-upload-area" style="width:100%;display:block;cursor:pointer;position:relative;">
+                                                        <c:choose>
+                                                            <c:when test="${not empty citizenId.image}">
+                                                                <img id="citizenIdImg" src="${citizenId.image}"
+                                                                     alt="Citizen ID Image"
+                                                                     class="citizen-id-img-preview">
+                                                                <span class="citizen-id-upload-icon">
+                                                                    <i class="bi bi-camera-fill"></i>
+                                                                </span>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <div class="upload-area-empty">
+                                                                    <div class="upload-icon">
+                                                                        <i class="bi bi-upload"></i>
+                                                                    </div>
+                                                                    <div class="upload-text">Click to upload CCCD front image</div>
+                                                                </div>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                        <input type="file" name="citizenIdImage" accept="image/*" style="display:none;" id="citizenIdImageInput" required>
+                                                    </label>
+                                                    <c:if test="${not empty citizenIdImageError}">
+                                                        <div class="error-message" id="citizenIdImageError">${citizenIdImageError}</div>
+                                                    </c:if>
+
+                                                    <!-- Thêm phần upload ảnh mặt sau -->
+                                                    <h6 class="citizen-id-label mt-4">CCCD Back Image <span class="text-danger">*</span></h6>
+                                                    <label class="citizen-id-upload-area" style="width:100%;display:block;cursor:pointer;position:relative;">
+                                                        <c:choose>
+                                                            <c:when test="${not empty citizenId.backImage}">
+                                                                <img id="citizenIdBackImg" src="${citizenId.backImage}"
+                                                                     alt="Citizen ID Back Image"
+                                                                     class="citizen-id-img-preview">
+                                                                <span class="citizen-id-upload-icon">
+                                                                    <i class="bi bi-camera-fill"></i>
+                                                                </span>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <div class="upload-area-empty">
+                                                                    <div class="upload-icon">
+                                                                        <i class="bi bi-upload"></i>
+                                                                    </div>
+                                                                    <div class="upload-text">Click to upload CCCD back image</div>
+                                                                </div>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                        <input type="file" name="citizenIdBackImage" accept="image/*" style="display:none;" id="citizenIdBackImageInput" required>
+                                                    </label>
+                                                    <c:if test="${not empty citizenIdBackImageError}">
+                                                        <div class="error-message" id="citizenIdBackImageError">${citizenIdBackImageError}</div>
+                                                    </c:if>
+                                                </div>
+                                                <div class="col-md-7">
+                                                    <h6 class="text-muted mb-4">General Information</h6>
+                                                    <div class="mb-4">
+                                                        <label class="form-label text-muted">Citizen ID Number <span class="text-danger">*</span></label>
+                                                        <input type="text" class="form-control citizen-id-input" name="citizenIdNumber" id="citizenIdNumber"
+                                                               value="${citizenId != null ? citizenId.number : ''}" maxlength="12" pattern="\d{12}" required disabled>
+                                                        <div class="error-message" id="citizenIdNumberError"></div>
+                                                    </div>
+                                                    <div class="mb-4">
+                                                        <label class="form-label text-muted">Full name <span class="text-danger">*</span></label>
+                                                        <input type="text" class="form-control citizen-id-input" name="citizenFullName" id="citizenFullName"
+                                                               value="${citizenId != null ? citizenId.fullName : ''}" required disabled>
+                                                        <div class="error-message" id="citizenFullNameError"></div>
+                                                    </div>
+                                                    <div class="mb-4">
+                                                        <label class="form-label text-muted">Date of birth <span class="text-danger">*</span></label>
+                                                        <input type="text" class="form-control citizen-id-input" name="citizenDob" id="citizenDob"
+                                                               value="${citizenId != null ? citizenId.dob : ''}" required disabled placeholder="dd/mm/yyyy">
+                                                        <div class="error-message" id="citizenDobError"></div>
+                                                    </div>
+                                                    <div class="mb-4">
+                                                        <label class="form-label text-muted">Issue date <span class="text-danger">*</span></label>
+                                                        <input type="text" class="form-control citizen-id-input" name="citizenIssueDate" id="citizenIssueDate"
+                                                               value="${citizenId != null ? citizenId.issueDate : ''}" required disabled placeholder="dd/mm/yyyy">
+                                                        <div class="error-message" id="citizenIssueDateError"></div>
+                                                    </div>
+                                                    <div class="mb-4">
+                                                        <label class="form-label text-muted">Place of issue <span class="text-danger">*</span></label>
+                                                        <input type="text" class="form-control citizen-id-input" name="citizenPlaceOfIssue" id="citizenPlaceOfIssue"
+                                                               value="${citizenId != null ? citizenId.placeOfIssue : ''}" required disabled>
+                                                        <div class="error-message" id="citizenPlaceOfIssueError"></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -487,9 +595,33 @@
             if (!validatePhoneNumber()) {
                 e.preventDefault();
             }
-            // KHÔNG gọi showToast khi submit thành công, chỉ để servlet xử lý và redirect
         });
         </script>
         <jsp:include page="/pages/includes/logout-confirm-modal.jsp" />
+        <script>
+$(function() {
+    // Khởi tạo datepicker cho các trường ngày với định dạng dd/mm/yyyy
+    $('#citizenDob, #citizenIssueDate, #dob').datepicker({
+        format: 'dd/mm/yyyy',
+        autoclose: true,
+        todayHighlight: true,
+        orientation: 'bottom'
+    });
+
+    // Xử lý nút Edit/Cancel cho Citizen ID
+    $('#editCitizenIdBtn').on('click', function() {
+        $('#citizenIdNumber, #citizenFullName, #citizenDob, #citizenIssueDate, #citizenPlaceOfIssue').prop('disabled', false);
+        $('#citizenIdImageInput, #citizenIdBackImageInput').prop('disabled', false);
+        $('#cancelCitizenIdBtn, #saveCitizenIdBtn').removeClass('d-none');
+        $('#editCitizenIdBtn').addClass('d-none');
+    });
+    $('#cancelCitizenIdBtn').on('click', function() {
+        $('#citizenIdNumber, #citizenFullName, #citizenDob, #citizenIssueDate, #citizenPlaceOfIssue').prop('disabled', true);
+        $('#citizenIdImageInput, #citizenIdBackImageInput').prop('disabled', true);
+        $('#cancelCitizenIdBtn, #saveCitizenIdBtn').addClass('d-none');
+        $('#editCitizenIdBtn').removeClass('d-none');
+    });
+});
+</script>
     </body>
 </html> 
