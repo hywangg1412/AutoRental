@@ -902,6 +902,29 @@ nav.ftco-navbar-light .nav-link {
     color: #222 !important;
 }
 
+.input-error, .is-invalid {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.1rem rgba(220,38,38,0.08);
+}
+.error-message {
+    color: #dc3545;
+    font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-top: 2px;
+    margin-bottom: 0;
+    overflow: hidden;
+    transition: max-height 0.25s cubic-bezier(0.4,0,0.2,1), opacity 0.25s cubic-bezier(0.4,0,0.2,1);
+    max-height: 0;
+    opacity: 0;
+    padding-left: 2px;
+}
+.error-message.show {
+    max-height: 40px;
+    opacity: 1;
+    margin-bottom: 6px;
+}
+
 
 
 
