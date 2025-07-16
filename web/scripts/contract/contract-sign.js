@@ -9,8 +9,8 @@ document.addEventListener('DOMContentLoaded', function () {
         };
     }
     // Enable/disable nút Sign dựa vào checkbox
-    const acceptTerms = document.getElementById('acceptTerms');
-    const signBtn = document.getElementById('signBtn');
+const acceptTerms = document.getElementById('acceptTerms');
+const signBtn = document.getElementById('signBtn');
     if (acceptTerms && signBtn) {
         acceptTerms.addEventListener('change', function () {
             signBtn.disabled = !acceptTerms.checked;
@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     // Đã ẩn preview chữ ký nhập
     // Khi submit form: lấy ảnh base64 nếu upload, nếu không thì lấy canvas hoặc text
-    const signForm = document.getElementById('signForm');
+const signForm = document.getElementById('signForm');
     if (signForm) {
         signForm.addEventListener('submit', function (e) {
             const method = document.getElementById('signatureMethodHidden').value;
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     return;
                 }
                 if (!fullName) {
-                    e.preventDefault();
+        e.preventDefault();
                     document.getElementById('signStatus').textContent = 'Please enter your full name.';
                     return;
                 }
