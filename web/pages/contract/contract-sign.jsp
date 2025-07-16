@@ -260,6 +260,9 @@
                     style="max-width: 600px; margin: -10px auto 0 auto; background: #fff; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,0,0,0.08); padding: 32px 28px 28px 28px;">
                     <form id="signForm" method="post" action="${pageContext.request.contextPath}/contract/sign">
                         <input type="hidden" name="bookingId" value="<%= bookingId %>">
+                        <input type="hidden" name="signatureMethod" id="signatureMethodHidden" value="draw">
+                        <input type="hidden" name="signatureData" id="signatureData">
+                        <input type="hidden" name="fullName" id="fullNameHidden">
                         <div class="form-check mt-3">
                             <input class="form-check-input" type="checkbox" id="acceptTerms" name="acceptTerms">
                             <label class="form-check-label" for="acceptTerms">
@@ -302,9 +305,6 @@
                                 placeholder="Enter your full name...">
                             <div id="typedFullNameError" class="sign-error" style="min-height:22px;"></div>
                         </div>
-                        <input type="hidden" name="signatureData" id="signatureData">
-                        <input type="hidden" name="fullName" id="fullNameHidden">
-                        <input type="hidden" name="signatureMethod" id="signatureMethodHidden" value="draw">
                         <input type="hidden" name="termsVersion" value="v1.0">
                         <input type="hidden" name="termsFileUrl"
                             value="${pageContext.request.contextPath}/terms/current">
