@@ -34,7 +34,6 @@
     </head>
     <body>
         <!-- Include Toast Notification -->
-        <jsp:include page="/pages/includes/toast-notification.jsp" />
         
         <!-- Header -->
         <jsp:include page="/pages/includes/user-nav.jsp" />
@@ -74,7 +73,7 @@
                     </div>
                 </div>
                 <!-- Main content -->
-                <div class="col-lg-9 col-md-8">
+                <div class="col-lg-8 col-md-8">
                     <div class="main-content">
                         <div class="container mt-4">
                             <div class="row g-5">
@@ -243,6 +242,7 @@
                                             </div>
                                         </div>
                                         <form id="driverLicenseInfoForm" action="${pageContext.request.contextPath}/user/update-driver-license" method="post" enctype="multipart/form-data" onsubmit="return false;">
+                                            <input type="hidden" name="action" value="updateInfo" />
                                             <div class="row g-5">
                                                 <div class="col-md-5">
                                                     <h6 class="driver-license-label">Image</h6>
@@ -265,7 +265,7 @@
                                                                 </div>
                                                             </c:otherwise>
                                                         </c:choose>
-                                                        <input type="file" name="licenseImage" accept="image/*" style="display:none;" id="licenseImageInput">
+                                                        <input type="file" name="licenseImage" accept="image/*" style="display:none;" id="licenseImageInput" disabled>
                                                     </label>
                                                     <c:if test="${not empty licenseImageError}">
                                                         <div class="text-danger">${licenseImageError}</div>
@@ -296,7 +296,7 @@
                                         </form>
                                     </div>
                                     <!-- Citizen ID Block -->
-                                    <div class="citizen-id-block p-4 bg-white rounded shadow-sm mt-4">
+                                    <div class="citizen-id-block p-4 bg-white rounded shadow-sm mt-4" id="citizenIdBlock">
                                         <div class="d-flex justify-content-between align-items-center mb-4">
                                             <div class="d-flex align-items-center gap-3">
                                                 <h2 class="h5 fw-semibold mb-0">Citizen ID (CCCD)</h2>
@@ -317,8 +317,8 @@
                                                     <h6 class="citizen-id-label">CCCD Front Image <span class="text-danger">*</span></h6>
                                                     <label class="citizen-id-upload-area" style="width:100%;display:block;cursor:pointer;position:relative;">
                                                         <c:choose>
-                                                            <c:when test="${not empty citizenId.image}">
-                                                                <img id="citizenIdImg" src="${citizenId.image}"
+                                                            <c:when test="${not empty citizenId.citizenIdImageUrl}">
+                                                                <img id="citizenIdImg" src="${citizenId.citizenIdImageUrl}"
                                                                      alt="Citizen ID Image"
                                                                      class="citizen-id-img-preview">
                                                                 <span class="citizen-id-upload-icon">
@@ -334,7 +334,7 @@
                                                                 </div>
                                                             </c:otherwise>
                                                         </c:choose>
-                                                        <input type="file" name="citizenIdImage" accept="image/*" style="display:none;" id="citizenIdImageInput" required>
+                                                        <input type="file" name="citizenIdImage" accept="image/*" style="display:none;" id="citizenIdImageInput" required disabled>
                                                     </label>
                                                     <c:if test="${not empty citizenIdImageError}">
                                                         <div class="error-message" id="citizenIdImageError">${citizenIdImageError}</div>
@@ -344,8 +344,8 @@
                                                     <h6 class="citizen-id-label mt-4">CCCD Back Image <span class="text-danger">*</span></h6>
                                                     <label class="citizen-id-upload-area" style="width:100%;display:block;cursor:pointer;position:relative;">
                                                         <c:choose>
-                                                            <c:when test="${not empty citizenId.backImage}">
-                                                                <img id="citizenIdBackImg" src="${citizenId.backImage}"
+                                                            <c:when test="${not empty citizenId.citizenIdBackImageUrl}">
+                                                                <img id="citizenIdBackImg" src="${citizenId.citizenIdBackImageUrl}"
                                                                      alt="Citizen ID Back Image"
                                                                      class="citizen-id-img-preview">
                                                                 <span class="citizen-id-upload-icon">
@@ -361,7 +361,7 @@
                                                                 </div>
                                                             </c:otherwise>
                                                         </c:choose>
-                                                        <input type="file" name="citizenIdBackImage" accept="image/*" style="display:none;" id="citizenIdBackImageInput" required>
+                                                        <input type="file" name="citizenIdBackImage" accept="image/*" style="display:none;" id="citizenIdBackImageInput" required disabled>
                                                     </label>
                                                     <c:if test="${not empty citizenIdBackImageError}">
                                                         <div class="error-message" id="citizenIdBackImageError">${citizenIdBackImageError}</div>
@@ -372,7 +372,7 @@
                                                     <div class="mb-4">
                                                         <label class="form-label text-muted">Citizen ID Number <span class="text-danger">*</span></label>
                                                         <input type="text" class="form-control citizen-id-input" name="citizenIdNumber" id="citizenIdNumber"
-                                                               value="${citizenId != null ? citizenId.number : ''}" maxlength="12" pattern="\d{12}" required disabled>
+                                                               value="${citizenId != null ? citizenId.citizenIdNumber : ''}" maxlength="12" pattern="\d{12}" required disabled>
                                                         <div class="error-message" id="citizenIdNumberError"></div>
                                                     </div>
                                                     <div class="mb-4">
@@ -383,20 +383,18 @@
                                                     </div>
                                                     <div class="mb-4">
                                                         <label class="form-label text-muted">Date of birth <span class="text-danger">*</span></label>
-                                                        <input type="text" class="form-control citizen-id-input" name="citizenDob" id="citizenDob"
-                                                               value="${citizenId != null ? citizenId.dob : ''}" required disabled placeholder="dd/mm/yyyy">
-                                                        <div class="error-message" id="citizenDobError"></div>
+                                                        <input type="text" class="form-control citizen-id-input" name="citizenDob" id="citizenDob" placeholder="dd/MM/yyyy" maxlength="10" autocomplete="off" value="${citizenId != null && citizenId.dob != null ? FormatUtils.formatDisplayDate(citizenId.dob) : (citizenId != null && citizenId.dob != null ? citizenId.dob : '')}" <c:if test="${not editCitizenId}">disabled</c:if>>
+                                                        <span id="citizenDobError" class="text-danger"></span>
                                                     </div>
                                                     <div class="mb-4">
                                                         <label class="form-label text-muted">Issue date <span class="text-danger">*</span></label>
-                                                        <input type="text" class="form-control citizen-id-input" name="citizenIssueDate" id="citizenIssueDate"
-                                                               value="${citizenId != null ? citizenId.issueDate : ''}" required disabled placeholder="dd/mm/yyyy">
-                                                        <div class="error-message" id="citizenIssueDateError"></div>
+                                                        <input type="text" class="form-control citizen-id-input" name="citizenIssueDate" id="citizenIssueDate" placeholder="dd/MM/yyyy" maxlength="10" autocomplete="off" value="${citizenId != null && citizenId.citizenIdIssuedDate != null ? FormatUtils.formatDisplayDate(citizenId.citizenIdIssuedDate) : (citizenId != null && citizenId.citizenIdIssuedDate != null ? citizenId.citizenIdIssuedDate : '')}" <c:if test="${not editCitizenId}">disabled</c:if>>
+                                                        <span id="citizenIssueDateError" class="text-danger"></span>
                                                     </div>
                                                     <div class="mb-4">
                                                         <label class="form-label text-muted">Place of issue <span class="text-danger">*</span></label>
                                                         <input type="text" class="form-control citizen-id-input" name="citizenPlaceOfIssue" id="citizenPlaceOfIssue"
-                                                               value="${citizenId != null ? citizenId.placeOfIssue : ''}" required disabled>
+                                                               value="${citizenId != null ? citizenId.citizenIdIssuedPlace : ''}" required disabled>
                                                         <div class="error-message" id="citizenPlaceOfIssueError"></div>
                                                     </div>
                                                 </div>
@@ -623,5 +621,36 @@ $(function() {
     });
 });
 </script>
+        <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer" style="z-index: 12000;">
+  <!-- Toast test static đã bị ẩn -->
+  <c:if test="${not empty success}">
+    <div class="toast align-items-center show"
+         role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="4000" id="serverToast"
+         style="background: #f5f7fa !important; border: 1.5px solid #e0e0e0; box-shadow: 0 4px 24px rgba(60,60,60,0.10); border-radius: 14px; min-width: 260px; max-width: 380px; padding: 0;">
+      <div class="d-flex align-items-center" style="padding: 0.7rem 1.1rem 0.7rem 1rem;">
+        <div class="toast-body small"
+             style="font-size: 0.92rem; color: #222 !important; font-weight: 600; letter-spacing: 0.01em; flex: 1;">
+          <i class="bi bi-check-circle-fill me-2" style="color: #4caf50; font-size: 1.1em; vertical-align: -2px;"></i>
+          ${success}
+        </div>
+        <!-- Nút close đã bị ẩn -->
+      </div>
+    </div>
+  </c:if>
+  <c:if test="${not empty error}">
+    <div class="toast align-items-center show"
+         role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="4000" id="serverToast"
+         style="background: #f5f7fa !important; border: 1.5px solid #e0e0e0; box-shadow: 0 4px 24px rgba(60,60,60,0.10); border-radius: 14px; min-width: 260px; max-width: 380px; padding: 0;">
+      <div class="d-flex align-items-center" style="padding: 0.7rem 1.1rem 0.7rem 1rem;">
+        <div class="toast-body small"
+             style="font-size: 0.92rem; color: #d32f2f !important; font-weight: 600; letter-spacing: 0.01em; flex: 1;">
+          <i class="bi bi-x-circle-fill me-2" style="color: #d32f2f; font-size: 1.1em; vertical-align: -2px;"></i>
+          ${error}
+        </div>
+        <!-- Nút close đã bị ẩn -->
+      </div>
+    </div>
+  </c:if>
+</div>
     </body>
 </html> 
