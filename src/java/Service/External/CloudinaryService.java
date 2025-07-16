@@ -63,6 +63,15 @@ public class CloudinaryService {
         return getImageUrlAfterUpload(uploadResult);
     }
 
+    public Map uploadFileToFolder(byte[] fileBytes, String folderName, String fileName) throws IOException {
+        Map options = ObjectUtils.asMap(
+            "folder", folderName,
+            "resource_type", "raw",
+            "public_id", fileName
+        );
+        return cloudinary.uploader().upload(fileBytes, options);
+    }
+
     private static byte[] toByteArray(InputStream in) throws IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         int nRead;

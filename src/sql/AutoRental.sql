@@ -55,6 +55,19 @@ CREATE TABLE [DriverLicenses] (
 );
 GO
 
+CREATE TABLE [CitizenIdCards] (
+    [Id] UNIQUEIDENTIFIER NOT NULL,
+    [UserId] UNIQUEIDENTIFIER NOT NULL UNIQUE, -- UNIQUE để đảm bảo 1-1
+    [CitizenIdNumber] NVARCHAR(20) NOT NULL,
+    [CitizenIdImageUrl] NVARCHAR(500) NULL,
+    [CitizenIdIssuedDate] DATE NULL,
+    [CitizenIdIssuedPlace] NVARCHAR(100) NULL,
+    [CreatedDate] DATETIME2 NOT NULL DEFAULT GETDATE(),
+    CONSTRAINT [PK_CitizenIdCards] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_CitizenIdCards_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE
+);
+GO
+
 CREATE TABLE [PasswordResetTokens] (
     [Id] UNIQUEIDENTIFIER NOT NULL,
     [Token] NVARCHAR(255) NOT NULL,
@@ -184,35 +197,6 @@ CREATE TABLE [CarMaintenanceHistory] (
     CONSTRAINT [PK_CarMaintenanceHistory] PRIMARY KEY ([MaintenanceId]),
     CONSTRAINT [FK_CarMaintenanceHistory_CarId] FOREIGN KEY ([CarId]) REFERENCES [Car]([CarId]) ON DELETE CASCADE,
     CONSTRAINT [FK_CarMaintenanceHistory_StaffId] FOREIGN KEY ([StaffId]) REFERENCES [Users]([UserId]) ON DELETE SET NULL
-);
-GO
-
-CREATE TABLE [CarRentalPricingRule] (
-    [RuleId] UNIQUEIDENTIFIER NOT NULL,
-    [CarId] UNIQUEIDENTIFIER NULL, -- NULL: áp dụng cho tất cả xe, hoặc chỉ định xe cụ thể
-    [RuleType] NVARCHAR(50) NOT NULL, -- 'Holiday', 'Weekend', 'Special', 'Demand'
-    [StartDate] DATE NOT NULL,
-    [EndDate] DATE NOT NULL,
-    [PricePerDay] DECIMAL(10,2) NULL, -- Giá cố định nếu có
-    [PriceMultiplier] DECIMAL(5,2) NULL, -- Hệ số nhân giá (ví dụ: 1.2 = tăng 20%)
-    [MinBookings] INT NULL, -- Số booking tối thiểu để áp dụng rule (cho rule theo nhu cầu)
-    [Description] NVARCHAR(255) NULL,
-    CONSTRAINT [PK_CarRentalPricingRule] PRIMARY KEY ([RuleId]),
-    CONSTRAINT [FK_CarRentalPricingRule_CarId] FOREIGN KEY ([CarId]) REFERENCES [Car]([CarId]) ON DELETE SET NULL
-);
-GO
-
-CREATE TABLE [CarRentalPriceHistory] (
-    [PriceId] UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
-    [CarId] UNIQUEIDENTIFIER NOT NULL,
-    [StartDate] DATE NOT NULL,
-    [EndDate] DATE NULL, -- NULL nghĩa là còn hiệu lực đến hiện tại
-    [PricePerHour] DECIMAL(10,2) NOT NULL,
-    [PricePerDay] DECIMAL(10,2) NOT NULL,
-    [PricePerMonth] DECIMAL(10,2) NOT NULL,
-    [Note] NVARCHAR(255) NULL,
-    CONSTRAINT [PK_CarRentalPriceHistory] PRIMARY KEY ([PriceId]),
-    CONSTRAINT [FK_CarRentalPriceHistory_CarId] FOREIGN KEY ([CarId]) REFERENCES [Car]([CarId]) ON DELETE CASCADE
 );
 GO
 
@@ -375,18 +359,41 @@ CREATE TABLE [Contract] (
     
     [TermsAccepted] BIT NOT NULL DEFAULT 0, -- Đã chấp nhận điều khoản chưa
     [TermsAcceptedDate] DATETIME2 NULL, -- Ngày chấp nhận điều khoản
-    [TermsVersion] NVARCHAR(10) NULL, -- Version điều khoản đã chấp nhận
-    [TermsFileUrl] NVARCHAR(500) NULL, -- Đường dẫn file Terms (PDF/HTML)
+    -- [TermsVersion] NVARCHAR(10) NULL, -- Version điều khoản đã chấp nhận
+    -- [TermsFileUrl] NVARCHAR(500) NULL, -- Đường dẫn file Terms (PDF/HTML)
 
     [SignatureData] NVARCHAR(MAX) NULL, -- Dữ liệu chữ ký (base64 hoặc JSON)
-    -- [SignatureImageUrl] NVARCHAR(MAX) NULL, -- Đường dẫn ảnh chữ ký
     [SignatureMethod] VARCHAR(20) NULL, -- Canvas, Upload, Digital, Checkbox
+
+    [ContractPdfUrl] NVARCHAR(500) NULL,         -- Link file PDF hợp đồng đã ký
+    [ContractFileType] VARCHAR(20) NULL,         -- Loại file hợp đồng (PDF, HTML, ...)
+    [PdfUploadedDate] DATETIME2 NULL,            -- Thời điểm upload file PDF
+    [SignerFullName] NVARCHAR(100) NULL,         -- Họ tên người ký
 
     [Notes] NVARCHAR(500) NULL, -- Ghi chú
     [CancellationReason] NVARCHAR(500) NULL, -- Lý do hủy hợp đồng
     CONSTRAINT [PK_Contract] PRIMARY KEY ([ContractId]),
     CONSTRAINT [FK_Contract_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE,
     CONSTRAINT [FK_Contract_BookingId] FOREIGN KEY ([BookingId]) REFERENCES [Booking]([BookingId]) ON DELETE NO ACTION
+);
+GO
+
+CREATE TABLE [ContractDocuments] (
+    [DocumentId] UNIQUEIDENTIFIER NOT NULL,
+    [ContractId] UNIQUEIDENTIFIER NOT NULL,
+    [DriverLicenseImageUrl] NVARCHAR(500) NULL,
+    [CitizenIdImageUrl] NVARCHAR(500) NULL,
+    [DriverLicenseNumber] NVARCHAR(50) NULL,
+    [CitizenIdNumber] NVARCHAR(50) NULL,
+    [DriverLicenseIssuedDate] DATE NULL,
+    [CitizenIdIssuedDate] DATE NULL,
+    [DriverLicenseIssuedPlace] NVARCHAR(100) NULL,
+    [CitizenIdIssuedPlace] NVARCHAR(100) NULL,
+    [DriverLicenseImageHash] NVARCHAR(128) NULL,
+    [CitizenIdImageHash] NVARCHAR(128) NULL,
+    [CreatedDate] DATETIME2 NOT NULL DEFAULT GETDATE(),
+    CONSTRAINT [PK_ContractDocuments] PRIMARY KEY ([DocumentId]),
+    CONSTRAINT [FK_ContractDocuments_ContractId] FOREIGN KEY ([ContractId]) REFERENCES [Contract]([ContractId]) ON DELETE CASCADE
 );
 GO
 
