@@ -60,7 +60,7 @@ CREATE TABLE [CitizenIdCards] (
     [UserId] UNIQUEIDENTIFIER NOT NULL UNIQUE, -- 1-1 với Users
     [CitizenIdNumber] NVARCHAR(12) NOT NULL,
     [FullName] NVARCHAR(100) NOT NULL,
-    [DateOfBirth] DATE NOT NULL,
+    [DOB] DATE NOT NULL,
     [CitizenIdImageUrl] NVARCHAR(500) NOT NULL,         -- Ảnh mặt trước
     [CitizenIdBackImageUrl] NVARCHAR(500) NOT NULL,     -- Ảnh mặt sau
     [CitizenIdIssuedDate] DATE NOT NULL,

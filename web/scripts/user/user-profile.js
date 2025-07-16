@@ -288,8 +288,43 @@ function validateForm(form, validationRules) {
     return !hasError;
 }
 
+// === BOOTSTRAP TOAST ===
+function showBootstrapToast({title = 'Thông báo', message = '', delay = 3000, icon = null}) {
+    const toastContainer = document.getElementById('toastContainer');
+    if (!toastContainer) return;
+    const toast = document.createElement('div');
+    toast.className = 'toast align-items-center';
+    toast.setAttribute('role', 'alert');
+    toast.setAttribute('aria-live', 'assertive');
+    toast.setAttribute('aria-atomic', 'true');
+    toast.setAttribute('data-bs-delay', delay);
+    toast.innerHTML = `
+      <div class="toast-header">
+        ${icon ? `<img src="${icon}" class="rounded me-2" alt="icon" style="width:20px;height:20px;">` : ''}
+        <strong class="me-auto">${title}</strong>
+        <small class="text-body-secondary">just now</small>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body">
+        ${message}
+      </div>
+    `;
+    toastContainer.appendChild(toast);
+    const bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
+    toast.addEventListener('hidden.bs.toast', () => {
+        toast.remove();
+    });
+}
+
 // Main initialization
 document.addEventListener('DOMContentLoaded', function() {
+    var serverToast = document.getElementById('serverToast');
+    if (serverToast) {
+        var bsToast = new bootstrap.Toast(serverToast);
+        bsToast.show();
+    }
+
     let isEditingUserInfo = false;
     let isEditingDriverLicense = false;
 
@@ -372,6 +407,9 @@ document.addEventListener('DOMContentLoaded', function() {
         driverLicenseElements.editBtn.addEventListener('click', function() {
             storeOriginalValues();
             driverLicenseElements.inputs.forEach(input => input.element.disabled = false);
+            // Enable file input when editing
+            const licenseImageInput = document.getElementById('licenseImageInput');
+            if (licenseImageInput) licenseImageInput.disabled = false;
             driverLicenseElements.cancelBtn.classList.remove('d-none');
             driverLicenseElements.saveBtn.classList.remove('d-none');
             driverLicenseElements.saveBtn.disabled = true;
@@ -381,6 +419,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         driverLicenseElements.cancelBtn.addEventListener('click', function() {
             resetToOriginalValues();
+            // Disable file input when cancel
+            const licenseImageInput = document.getElementById('licenseImageInput');
+            if (licenseImageInput) licenseImageInput.disabled = true;
             driverLicenseElements.cancelBtn.classList.add('d-none');
             driverLicenseElements.saveBtn.classList.add('d-none');
             driverLicenseElements.editBtn.classList.remove('d-none');
@@ -416,20 +457,316 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (data) {
                         const result = JSON.parse(data);
                         if (result.success) {
-                            showToast('Driver license information updated successfully!', 'success');
+                            // Xóa các lệnh showBootstrapToast trong fetch cập nhật driver license
+                            // giữ lại logic cập nhật UI, không show toast ở đây
                             driverLicenseElements.inputs.forEach(input => input.element.disabled = true);
                             driverLicenseElements.editBtn.classList.remove('d-none');
                             driverLicenseElements.cancelBtn.classList.add('d-none');
                             driverLicenseElements.saveBtn.classList.add('d-none');
                             isEditingDriverLicense = false;
                         } else {
-                            showToast(result.message || 'Failed to update information', 'error');
+                            showBootstrapToast(result.message || 'Failed to update information', 'error');
                         }
                     }
                 })
                 .catch(error => {
-                    showToast('Failed to update information. Please try again.', 'error');
+                    showBootstrapToast('Failed to update information. Please try again.', 'error');
                 });
+            }
+        });
+    }
+
+    // Citizen ID Form
+    const citizenIdElements = {
+        editBtn: document.getElementById('editCitizenIdBtn'),
+        cancelBtn: document.getElementById('cancelCitizenIdBtn'),
+        saveBtn: document.getElementById('saveCitizenIdBtn'),
+        form: document.getElementById('citizenIdInfoForm'),
+        inputs: [
+            document.getElementById('citizenIdNumber'),
+            document.getElementById('citizenFullName'),
+            document.getElementById('citizenDob'),
+            document.getElementById('citizenIssueDate'),
+            document.getElementById('citizenPlaceOfIssue'),
+            document.getElementById('citizenIdImageInput'),
+            document.getElementById('citizenIdBackImageInput')
+        ]
+    };
+
+    if (citizenIdElements.editBtn && citizenIdElements.form) {
+        let originalValues = {};
+        function storeOriginalValues() {
+            citizenIdElements.inputs.forEach(input => {
+                if (input) originalValues[input.id] = input.value;
+            });
+        }
+        function resetToOriginalValues() {
+            citizenIdElements.inputs.forEach(input => {
+                if (input) {
+                    input.value = originalValues[input.id];
+                    input.disabled = true;
+                }
+            });
+            // Disable file inputs when cancel
+            const citizenIdImageInput = document.getElementById('citizenIdImageInput');
+            const citizenIdBackImageInput = document.getElementById('citizenIdBackImageInput');
+            if (citizenIdImageInput) citizenIdImageInput.disabled = true;
+            if (citizenIdBackImageInput) citizenIdBackImageInput.disabled = true;
+            citizenIdElements.saveBtn.classList.add('d-none');
+            citizenIdElements.cancelBtn.classList.add('d-none');
+            citizenIdElements.editBtn.classList.remove('d-none');
+        }
+        citizenIdElements.editBtn.addEventListener('click', function() {
+            storeOriginalValues();
+            citizenIdElements.inputs.forEach(input => { if (input) input.disabled = false; });
+            // Enable file inputs when editing
+            const citizenIdImageInput = document.getElementById('citizenIdImageInput');
+            const citizenIdBackImageInput = document.getElementById('citizenIdBackImageInput');
+            if (citizenIdImageInput) citizenIdImageInput.disabled = false;
+            if (citizenIdBackImageInput) citizenIdBackImageInput.disabled = false;
+            citizenIdElements.saveBtn.classList.remove('d-none');
+            citizenIdElements.cancelBtn.classList.remove('d-none');
+            citizenIdElements.editBtn.classList.add('d-none');
+        });
+        citizenIdElements.cancelBtn.addEventListener('click', function() {
+            resetToOriginalValues();
+        });
+        citizenIdElements.saveBtn.addEventListener('click', function(e) {
+            const citizenIdImageInput = document.getElementById('citizenIdImageInput');
+            const citizenIdBackImageInput = document.getElementById('citizenIdBackImageInput');
+            // Kiểm tra: mỗi mặt chỉ cần có ảnh cũ hoặc ảnh mới
+            const hasFrontImage = (citizenIdImageInput && citizenIdImageInput.files.length > 0) || !!document.getElementById('citizenIdImg');
+            const hasBackImage = (citizenIdBackImageInput && citizenIdBackImageInput.files.length > 0) || !!document.getElementById('citizenIdBackImg');
+            if (!hasFrontImage || !hasBackImage) {
+                if (typeof showBootstrapToast === 'function') {
+                    showBootstrapToast({message: 'Both front and back images are required', title: 'Error'});
+                } else {
+                    alert('Both front and back images are required');
+                }
+                return; // Không submit form
+            }
+            if (citizenIdImageInput) citizenIdImageInput.disabled = false;
+            if (citizenIdBackImageInput) citizenIdBackImageInput.disabled = false;
+            citizenIdElements.form.submit();
+        });
+    }
+
+    // --- Đảm bảo gửi đúng action khi cập nhật bằng lái xe ---
+    const saveBtn = document.getElementById('saveDriverLicenseBtn');
+    const licenseImageInput = document.getElementById('licenseImageInput');
+    const driverLicenseForm = document.getElementById('driverLicenseInfoForm');
+    const actionInput = driverLicenseForm ? driverLicenseForm.querySelector('input[name="action"]') : null;
+    if (saveBtn && driverLicenseForm && licenseImageInput && actionInput) {
+        saveBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (licenseImageInput.files && licenseImageInput.files.length > 0) {
+                actionInput.value = 'uploadImage';
+            } else {
+                actionInput.value = 'updateInfo';
+            }
+            driverLicenseForm.submit();
+        });
+    }
+
+    // === IMAGE PREVIEW ===
+    // Giữ lại duy nhất hàm setupImageUploadPreview và các lệnh gọi hàm này, xóa các đoạn preview ảnh, enable/disable input file, reset preview cũ cho driver license và citizen id
+    function setupImageUploadPreview({inputId, areaClass, imgId, emptyHtml, editBtnId, cancelBtnId, saveBtnId}) {
+        const input = document.getElementById(inputId);
+        const uploadArea = input ? input.closest(areaClass) : null;
+        const saveBtn = saveBtnId ? document.getElementById(saveBtnId) : null;
+        let originalImgSrc = null;
+
+        if (input && uploadArea) {
+            // Lưu lại src gốc khi load trang (nếu có ảnh)
+            const img = uploadArea.querySelector(`#${imgId}`);
+            originalImgSrc = img ? img.src : null;
+
+            input.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        let img = uploadArea.querySelector(`#${imgId}`);
+                        if (!img) {
+                            // Nếu chưa có img, xóa upload-area-empty và tạo img mới
+                            const emptyDiv = uploadArea.querySelector('.upload-area-empty');
+                            if (emptyDiv) emptyDiv.remove();
+                            img = document.createElement('img');
+                            img.id = imgId;
+                            img.className = input.classList.contains('citizen-id-input') ? 'citizen-id-img-preview' : 'driver-license-img-preview';
+                            img.alt = 'Image Preview';
+                            uploadArea.prepend(img);
+                        }
+                        img.src = e.target.result;
+                    };
+                    reader.readAsDataURL(this.files[0]);
+                }
+                if (saveBtn) {
+                    if (this.files && this.files[0]) {
+                        saveBtn.disabled = false;
+                    } else {
+                        saveBtn.disabled = true;
+                    }
+                }
+            });
+
+            // Khi bấm Edit: enable input file
+            const editBtn = document.getElementById(editBtnId);
+            if (editBtn) {
+                editBtn.addEventListener('click', function() {
+                    input.disabled = false;
+                });
+            }
+
+            // Khi bấm Cancel: reset preview về trạng thái ban đầu
+            const cancelBtn = document.getElementById(cancelBtnId);
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', function() {
+                    input.value = '';
+                    let img = uploadArea.querySelector(`#${imgId}`);
+                    if (originalImgSrc) {
+                        // Nếu có ảnh gốc, reset lại src
+                        if (!img) {
+                            img = document.createElement('img');
+                            img.id = imgId;
+                            img.className = input.classList.contains('citizen-id-input') ? 'citizen-id-img-preview' : 'driver-license-img-preview';
+                            img.alt = 'Image Preview';
+                            uploadArea.prepend(img);
+                        }
+                        img.src = originalImgSrc;
+                    } else {
+                        // Nếu không có ảnh gốc, hiện lại upload-area-empty
+                        if (img) img.remove();
+                        if (!uploadArea.querySelector('.upload-area-empty')) {
+                            const emptyDiv = document.createElement('div');
+                            emptyDiv.className = 'upload-area-empty';
+                            emptyDiv.innerHTML = emptyHtml;
+                            uploadArea.prepend(emptyDiv);
+                        }
+                    }
+                    input.disabled = true;
+                    if (saveBtn) saveBtn.disabled = true;
+                });
+            }
+        }
+    }
+
+    // Áp dụng cho từng loại ảnh:
+    setupImageUploadPreview({
+        inputId: 'licenseImageInput',
+        areaClass: '.driver-license-upload-area',
+        imgId: 'driverLicenseImg',
+        emptyHtml: `
+            <div class="upload-icon"><i class="bi bi-upload"></i></div>
+            <div class="upload-text">Click to upload</div>
+        `,
+        editBtnId: 'editDriverLicenseBtn',
+        cancelBtnId: 'cancelDriverLicenseBtn',
+        saveBtnId: 'saveDriverLicenseBtn'
+    });
+
+    setupImageUploadPreview({
+        inputId: 'citizenIdImageInput',
+        areaClass: '.citizen-id-upload-area',
+        imgId: 'citizenIdImg',
+        emptyHtml: `
+            <div class="upload-icon"><i class="bi bi-upload"></i></div>
+            <div class="upload-text">Click to upload CCCD front image</div>
+        `,
+        editBtnId: 'editCitizenIdBtn',
+        cancelBtnId: 'cancelCitizenIdBtn'
+    });
+
+    setupImageUploadPreview({
+        inputId: 'citizenIdBackImageInput',
+        areaClass: '.citizen-id-upload-area',
+        imgId: 'citizenIdBackImg',
+        emptyHtml: `
+            <div class="upload-icon"><i class="bi bi-upload"></i></div>
+            <div class="upload-text">Click to upload CCCD back image</div>
+        `,
+        editBtnId: 'editCitizenIdBtn',
+        cancelBtnId: 'cancelCitizenIdBtn'
+    });
+
+    // === VALIDATE CITIZEN ID FORM ===
+    // Regex rules
+    const citizenIdNumberRegex = /^\d{12}$/;
+    const citizenNameRegex = /^[\p{L} ]+$/u;
+    const citizenPlaceRegex = /^[\p{L} ]+$/u;
+    const dateRegex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+
+    // Validate function for CCCD
+    function validateCitizenIdFields() {
+        let valid = true;
+        const idInput = document.getElementById('citizenIdNumber');
+        const idError = document.getElementById('citizenIdNumberError');
+        const nameInput = document.getElementById('citizenFullName');
+        const nameError = document.getElementById('citizenFullNameError');
+        const placeInput = document.getElementById('citizenPlaceOfIssue');
+        const placeError = document.getElementById('citizenPlaceOfIssueError');
+        const dobInput = document.getElementById('citizenDob');
+        const dobError = document.getElementById('citizenDobError');
+        const issueDateInput = document.getElementById('citizenIssueDate');
+        const issueDateError = document.getElementById('citizenIssueDateError');
+
+        // ID number
+        if (!citizenIdNumberRegex.test(idInput.value.trim())) {
+            errorManager.showError(idInput, idError, 'ID number must be exactly 12 digits');
+            valid = false;
+        } else {
+            errorManager.clearError(idInput, idError);
+        }
+        // Full name
+        if (!citizenNameRegex.test(nameInput.value.trim())) {
+            errorManager.showError(nameInput, nameError, 'Full name must not contain numbers or special characters');
+            valid = false;
+        } else {
+            errorManager.clearError(nameInput, nameError);
+        }
+        // Place of issue
+        if (!citizenPlaceRegex.test(placeInput.value.trim())) {
+            errorManager.showError(placeInput, placeError, 'Place of issue must not contain numbers or special characters');
+            valid = false;
+        } else {
+            errorManager.clearError(placeInput, placeError);
+        }
+        // Date of birth
+        if (!dateRegex.test(dobInput.value.trim())) {
+            errorManager.showError(dobInput, dobError, 'Date of birth must be in dd/MM/yyyy format');
+            valid = false;
+        } else {
+            errorManager.clearError(dobInput, dobError);
+        }
+        // Issue date
+        if (!dateRegex.test(issueDateInput.value.trim())) {
+            errorManager.showError(issueDateInput, issueDateError, 'Issue date must be in dd/MM/yyyy format');
+            valid = false;
+        } else {
+            errorManager.clearError(issueDateInput, issueDateError);
+        }
+        return valid;
+    }
+
+    // Real-time validation for CCCD fields
+    ['citizenIdNumber', 'citizenFullName', 'citizenPlaceOfIssue', 'citizenDob', 'citizenIssueDate'].forEach(function(id) {
+        const input = document.getElementById(id);
+        const errorDiv = document.getElementById(id + 'Error');
+        if (input && errorDiv) {
+            input.addEventListener('input', function() {
+                validateCitizenIdFields();
+            });
+            input.addEventListener('blur', function() {
+                validateCitizenIdFields();
+            });
+        }
+    });
+
+    // Chặn submit nếu có lỗi
+    const citizenIdForm = document.getElementById('citizenIdInfoForm');
+    if (citizenIdForm) {
+        citizenIdForm.addEventListener('submit', function(e) {
+            if (!validateCitizenIdFields()) {
+                e.preventDefault();
             }
         });
     }
