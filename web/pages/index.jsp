@@ -191,7 +191,7 @@
                                         <div class="text">
                                             <div class="car-title-row">
                                                 <h2 class="mb-0" style="font-size: 1.25rem;">
-                                                    <a href="car-single.jsp?id=${car.carId}">${car.carModel}</a>
+                                                    <a href="${pageContext.request.contextPath}/pages/car-single?id=${car.carId}">${car.carModel}</a>
                                                 </h2>
                                                 <span class="car-status-inline ${car.statusCssClass}">${car.statusDisplay}</span>
                                             </div>
@@ -204,7 +204,7 @@
                                                 </p>
                                             </div>
                                             <p class="d-flex mb-0 d-block">
-                                                <a href="pages/booking.jsp?id=${car.carId}"
+                                                <a href="${pageContext.request.contextPath}/pages/booking-form/booking-form-cart.jsp?id=${car.carId}"
                                                    class="btn btn-book-now py-2 mr-1">Book now</a>
                                                 <a href="${pageContext.request.contextPath}/pages/car-single?id=${car.carId}"
                                                    class="btn btn-details py-2 mr-1">Details</a>
@@ -237,7 +237,7 @@
 
                             <p>AutoRental is the leading car rental system in Da Nang city, offering customers a fast, convenient, and safe car rental experience. We proudly provide a wide range of modern vehicles to meet all your travel needs—whether for tourism, business, or family trips.</p>
                             <p>With a professional and dedicated team and 24/7 customer support, AutoRental is committed to delivering maximum satisfaction to our clients. Let us accompany you on every journey to explore the beauty of Da Nang and its surroundings. Book your car today to enjoy high-quality service, reasonable prices, and many attractive offers!</p>
-                            <p><a href="#" class="btn btn-primary py-3 px-4">Search Vehicle</a></p>
+                            <p><a href="${pageContext.request.contextPath}/pages/car" class="btn btn-primary py-3 px-4">Search Vehicle</a></p>
                         </div>
                     </div>
                 </div>
@@ -440,7 +440,7 @@
         </section>
 
         <!-- 8. Blog/News -->
-        <section class="ftco-section">
+        <!-- <section class="ftco-section">
             <div class="container">
                 <div class="row justify-content-center mb-5">
                     <div class="col-md-7 heading-section text-center ftco-animate">
@@ -505,7 +505,7 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </section> -->
 
         <!-- 9. Call to Action (Become a Driver) -->
         <!-- <section class="ftco-section ftco-intro" style="background-image: url('${pageContext.request.contextPath}/assets/images/bg_3.jpg');">

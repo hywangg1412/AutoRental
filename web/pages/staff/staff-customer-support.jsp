@@ -256,7 +256,7 @@
         </div>
 
         <!-- Live Chat Support Section -->
-        <div class="card">
+        <!-- <div class="card">
           <div class="card-header">
             <h5 class="card-title mb-0">Live Chat Support</h5>
             <small class="text-muted"
@@ -318,7 +318,7 @@
           </div>
         </div>
       </section>
-    </div>
+    </div> -->
 
     <!-- Reply Modal -->
     <div

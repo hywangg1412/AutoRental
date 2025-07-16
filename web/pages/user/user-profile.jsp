@@ -1,11 +1,5 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%
-    String successMessage = (String) session.getAttribute("success");
-    String errorMessage = (String) session.getAttribute("error");
-    session.removeAttribute("success");
-    session.removeAttribute("error");
-%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -36,35 +30,12 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/flaticon.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/icomoon.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/common/toast.css">
+
     </head>
     <body>
-        <!-- Toast Container -->
-        <div class="toast-container position-fixed bottom-0 end-0 p-3">
-            <% if (successMessage != null) { %>
-            <div class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        <i class="fas fa-check-circle me-2"></i>
-                        <%= successMessage %>
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-            </div>
-            <% } %>
-            
-            <% if (errorMessage != null) { %>
-            <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        <i class="fas fa-exclamation-circle me-2"></i>
-                        <%= errorMessage %>
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-            </div>
-            <% } %>
-        </div>
+        <!-- Include Toast Notification -->
+        <jsp:include page="/pages/includes/toast-notification.jsp" />
+        
         <!-- Header -->
         <jsp:include page="/pages/includes/user-nav.jsp" />
 
@@ -167,10 +138,12 @@
                                                     <div class="info-row d-flex align-items-center justify-content-between mb-1" style="font-size:0.97rem;">
                                                         <span class="text-muted">Phone</span>
                                                         <span class="d-flex align-items-center gap-1">
-                                                            <span class="badge ${profile.phoneNumber != null ? 'badge-verified' : 'badge-not-verified'}">
-                                                                <i class="bi ${profile.phoneNumber != null ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill'} me-1"></i>
-                                                                ${profile.phoneNumber != null ? 'Verified' : 'Not verified'}
-                                                            </span>
+                                                            <c:if test="${profile.phoneNumber != null}">
+                                                                <span class="badge badge-verified">
+                                                                    <i class="bi bi-check-circle-fill me-1"></i>
+                                                                    Verified
+                                                                </span>
+                                                            </c:if>
                                                             <span class="fw-semibold" style="font-size:0.97rem;">${profile.phoneNumber != null ? profile.phoneNumber : 'Not added'}</span>
                                                             <a href="#" class="ms-1 text-muted d-flex align-items-center" style="font-size:1em;" data-bs-toggle="modal" data-bs-target="#editPhoneModal"><i class="bi bi-pencil"></i></a>
                                                         </span>
@@ -421,17 +394,102 @@
                 <h2 class="modal-title w-100 text-center" id="editPhoneModalLabel" style="font-size:1rem;font-weight:700;">Update Phone Number</h2>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
-              <form id="updatePhoneForm" action="${pageContext.request.contextPath}/user/update-phone" method="post">
+              <form id="updatePhoneForm" action="${pageContext.request.contextPath}/user/update-phone" method="post" onsubmit="return validatePhoneNumber()">
                 <div class="modal-body">
-                  <input type="text" class="form-control" name="phone" placeholder="" value="${profile.phoneNumber != null ? profile.phoneNumber : ''}" required>
+                  <div class="mb-3">
+                    <label class="form-label">Phone Number</label>
+                    <input type="text" class="form-control" id="phoneInput" name="phone" 
+                           placeholder="Enter Vietnamese phone number (e.g., 0123456789)" 
+                           value="${profile.phoneNumber != null ? profile.phoneNumber : ''}" 
+                           required>
+                    <div class="invalid-feedback" id="phoneError"></div>
+                    <small class="form-text text-muted">Format: 10-11 digits starting with 0 (e.g., 0123456789, 0987654321)</small>
+                  </div>
                 </div>
                 <div class="modal-footer border-0 pt-0">
-                    <button type="submit" class="btn btn-save-modal">Update</button>
+                    <button type="submit" class="btn btn-save-modal" id="updatePhoneBtn">Update</button>
                 </div>
               </form>
             </div>
           </div>
         </div>
+
+        <script>
+        function validatePhoneNumber() {
+            const phoneInput = document.getElementById('phoneInput');
+            const phoneError = document.getElementById('phoneError');
+            const phone = phoneInput.value.trim();
+            
+            const cleanPhone = phone.replace(/\D/g, '');
+            
+            const phoneRegex = /^0[0-9]{9,10}$/;
+            
+            if (!phone) {
+                phoneInput.classList.add('is-invalid');
+                phoneError.textContent = 'Phone number is required';
+                if (typeof showToast === 'function') {
+                    showToast('Phone number is required', 'error');
+                }
+                return false;
+            }
+            
+            if (!phoneRegex.test(cleanPhone)) {
+                phoneInput.classList.add('is-invalid');
+                phoneError.textContent = 'Please enter a valid Vietnamese phone number (10-11 digits starting with 0)';
+                if (typeof showToast === 'function') {
+                    showToast('Please enter a valid Vietnamese phone number (10-11 digits starting with 0)', 'error');
+                }
+                return false;
+            }
+            
+            // Update the input value with clean phone number
+            phoneInput.value = cleanPhone;
+            phoneInput.classList.remove('is-invalid');
+            phoneInput.classList.add('is-valid');
+            phoneError.textContent = '';
+            // KHÔNG gọi showToast khi hợp lệ để tránh hiện toast trong modal
+            return true;
+        }
+        
+        // Real-time validation
+        document.getElementById('phoneInput').addEventListener('input', function() {
+            const phoneInput = this;
+            const phoneError = document.getElementById('phoneError');
+            const phone = phoneInput.value.trim();
+            
+            // Remove all non-digit characters for validation
+            const cleanPhone = phone.replace(/\D/g, '');
+            
+            // Vietnamese phone number validation
+            const phoneRegex = /^0[0-9]{9,10}$/;
+            
+            phoneInput.classList.remove('is-valid', 'is-invalid');
+            phoneError.textContent = '';
+            
+            if (phone && !phoneRegex.test(cleanPhone)) {
+                phoneInput.classList.add('is-invalid');
+                phoneError.textContent = 'Please enter a valid Vietnamese phone number (10-11 digits starting with 0)';
+            } else if (phone && phoneRegex.test(cleanPhone)) {
+                phoneInput.classList.add('is-valid');
+            }
+        });
+        
+        // Clear validation when modal is closed
+        document.getElementById('editPhoneModal').addEventListener('hidden.bs.modal', function() {
+            const phoneInput = document.getElementById('phoneInput');
+            const phoneError = document.getElementById('phoneError');
+            phoneInput.classList.remove('is-valid', 'is-invalid');
+            phoneError.textContent = '';
+        });
+        
+        // Handle form submission with toast feedback
+        document.getElementById('updatePhoneForm').addEventListener('submit', function(e) {
+            if (!validatePhoneNumber()) {
+                e.preventDefault();
+            }
+            // KHÔNG gọi showToast khi submit thành công, chỉ để servlet xử lý và redirect
+        });
+        </script>
         <jsp:include page="/pages/includes/logout-confirm-modal.jsp" />
     </body>
 </html> 

@@ -99,10 +99,12 @@ public class UserBookingListServlet extends HttpServlet {
                     BookingStatusConstants.CONFIRMED.equals(booking.getStatus()) || 
                     BookingStatusConstants.IN_PROGRESS.equals(booking.getStatus()) ||
                     BookingStatusConstants.DEPOSIT_PAID.equals(booking.getStatus()) ||
-                    BookingStatusConstants.CONTRACT_SIGNED.equals(booking.getStatus())) {
+                    BookingStatusConstants.CONTRACT_SIGNED.equals(booking.getStatus()) ||
+                    BookingStatusConstants.WAITING_RETURN_CONFIRM.equals(booking.getStatus())) 
+                    {
                     currentTrips.add(dto);
                 } else {
-                    // pastTrips.add(dto);
+                     pastTrips.add(dto);
                 }
             }
             

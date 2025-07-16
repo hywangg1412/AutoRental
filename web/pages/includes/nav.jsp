@@ -19,7 +19,7 @@
     <div class="collapse navbar-collapse" id="ftco-nav">
       <ul class="navbar-nav ml-auto">
         <li class="nav-item"><a href="${pageContext.request.contextPath}/pages/home" class="nav-link">Home</a></li>
-        <li class="nav-item"><a href="${pageContext.request.contextPath}/pages/about.jsp" class="nav-link">About</a></li>
+        <!-- <li class="nav-item"><a href="${pageContext.request.contextPath}/pages/about.jsp" class="nav-link">About</a></li> -->
         <!-- <li class="nav-item"><a href="services.jsp" class="nav-link">Services</a></li> -->
         <!-- <li class="nav-item"><a href="pricing.jsp" class="nav-link">Pricing</a></li> -->
         <li class="nav-item"><a href="${pageContext.request.contextPath}/pages/car" class="nav-link">Cars</a></li>
@@ -98,7 +98,7 @@
                   </c:choose>
                 </ul>
               </div>
-              <a href="#" class="nav-link p-0 text-dark"><i class="fas fa-comment-dots" style="font-size: 1.2rem !important; color: white;"></i></a>
+              <a href="https://www.facebook.com/share/16hwvT4v4y/" class="nav-link p-0 text-dark"><i class="fas fa-comment-dots" style="font-size: 1.2rem !important; color: white;"></i></a>
               <a href="${pageContext.request.contextPath}/user/profile" class="user-avatar">
                 <img src="${not empty sessionScope.user.avatarUrl ? sessionScope.user.avatarUrl : pageContext.request.contextPath.concat('/assets/images/default-avatar.png')}" 
                      alt="User Avatar" 
