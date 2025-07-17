@@ -15,10 +15,10 @@ import java.util.logging.Logger;
 import Service.Role.RoleService;
 import Model.Entity.Role.Role;
 
-@WebServlet(name = "GoogleUnlinkServlet", urlPatterns = {"/google-unlink"})
-public class GoogleUnlinkServlet extends HttpServlet {
-    
-    private static final Logger LOGGER = Logger.getLogger(GoogleUnlinkServlet.class.getName());
+@WebServlet(name = "SocialUnlinkServlet", urlPatterns = {"/user/social-unlink"})
+public class SocialUnlinkServlet extends HttpServlet {
+
+    private static final Logger LOGGER = Logger.getLogger(SocialUnlinkServlet.class.getName());
     private UserLoginsService userLoginsService;
     private RoleService roleService;
 
@@ -36,6 +36,12 @@ public class GoogleUnlinkServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp");
             return;
         }
+        String provider = request.getParameter("provider");
+        if (provider == null || (!provider.equals("facebook") && !provider.equals("google"))) {
+            SessionUtil.setSessionAttribute(request, "error", "Invalid provider.");
+            response.sendRedirect(request.getContextPath() + "/user/profile");
+            return;
+        }
         String profileRedirect = "/user/profile";
         try {
             Role userRole = roleService.findById(currentUser.getRoleId());
@@ -46,20 +52,17 @@ public class GoogleUnlinkServlet extends HttpServlet {
             // Nếu lỗi khi lấy role, giữ nguyên profileRedirect là /user/profile
         }
         try {
-            // Find and remove Google login record for this user
-            UserLogins googleLogin = userLoginsService.findByUserIdAndProvider(currentUser.getUserId(), "google");
-            if (googleLogin != null) {
-                // Delete by composite key (LoginProvider, ProviderKey)
-                userLoginsService.deleteByProviderAndKey(googleLogin.getLoginProvider(), googleLogin.getProviderKey());
-                SessionUtil.setSessionAttribute(request, "success", "Google account unlinked successfully!");
+            UserLogins login = userLoginsService.findByUserIdAndProvider(currentUser.getUserId(), provider);
+            if (login != null) {
+                userLoginsService.deleteByProviderAndKey(login.getLoginProvider(), login.getProviderKey());
+                SessionUtil.setSessionAttribute(request, "success", provider.substring(0, 1).toUpperCase() + provider.substring(1) + " account unlinked successfully!");
             } else {
-                SessionUtil.setSessionAttribute(request, "error", "No Google account found to unlink.");
+                SessionUtil.setSessionAttribute(request, "error", "No " + provider + " account found to unlink.");
             }
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error unlinking Google account", e);
-            SessionUtil.setSessionAttribute(request, "error", "Failed to unlink Google account. Please try again.");
+            LOGGER.log(Level.SEVERE, "Error unlinking " + provider + " account", e);
+            SessionUtil.setSessionAttribute(request, "error", "Failed to unlink " + provider + " account. Please try again.");
         }
-        
         response.sendRedirect(request.getContextPath() + profileRedirect);
     }
 
@@ -80,4 +83,4 @@ public class GoogleUnlinkServlet extends HttpServlet {
         }
         response.sendRedirect(request.getContextPath() + profileRedirect);
     }
-} 
+}
