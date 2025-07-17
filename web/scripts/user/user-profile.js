@@ -83,6 +83,11 @@ const ValidationRules = {
         future: 'Date of birth cannot be in the future',
         age: 'You must be at least 18 years old'
     },
+    citizenDob: {
+        required: 'Date of birth is required',
+        future: 'Date of birth cannot be in the future',
+        age: 'You must be at least 14 years old to register a Citizen ID'
+    },
     gender: {
         required: 'Gender is required.'
     }
@@ -317,6 +322,119 @@ function showBootstrapToast({title = 'Thông báo', message = '', delay = 3000, 
     });
 }
 
+// ==== BEGIN: JS chuyển từ user-profile.jsp sang file này ====
+
+// Phone number validation rules
+const phoneValidationRules = {
+    required: 'Phone number is required',
+    format: 'Please enter a valid Vietnamese phone number (10-11 digits starting with 0)',
+    invalid: 'Phone number can only contain digits'
+};
+
+function validatePhoneNumber() {
+    const phoneInput = document.getElementById('phoneInput');
+    const phoneError = document.getElementById('phoneError');
+    const phone = phoneInput.value.trim();
+    phoneInput.classList.remove('is-valid', 'is-invalid');
+    phoneError.textContent = '';
+    phoneError.classList.remove('show');
+    if (!phone) {
+        phoneInput.classList.add('is-invalid');
+        phoneError.textContent = phoneValidationRules.required;
+        phoneError.classList.add('show');
+        return false;
+    }
+    if (!/^\d+$/.test(phone)) {
+        phoneInput.classList.add('is-invalid');
+        phoneError.textContent = phoneValidationRules.invalid;
+        phoneError.classList.add('show');
+        return false;
+    }
+    const phoneRegex = /^0[0-9]{9,10}$/;
+    if (!phoneRegex.test(phone)) {
+        phoneInput.classList.add('is-invalid');
+        phoneError.textContent = phoneValidationRules.format;
+        phoneError.classList.add('show');
+        return false;
+    }
+    phoneInput.classList.add('is-valid');
+    phoneError.textContent = '';
+    phoneError.classList.remove('show');
+    return true;
+}
+
+// Real-time validation with input restrictions for phone
+const phoneInputEl = document.getElementById('phoneInput');
+if (phoneInputEl) {
+    phoneInputEl.addEventListener('keydown', function(e) {
+        const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Home', 'End'];
+        if (!e.ctrlKey && !e.metaKey && !e.altKey && 
+            e.key.length === 1 && !/[0-9]/.test(e.key)) {
+            e.preventDefault();
+            const phoneError = document.getElementById('phoneError');
+            this.classList.add('is-invalid');
+            phoneError.textContent = phoneValidationRules.invalid;
+            phoneError.classList.add('show');
+        }
+    });
+    phoneInputEl.addEventListener('input', function() {
+        const phoneInput = this;
+        const phoneError = document.getElementById('phoneError');
+        const phone = phoneInput.value.trim();
+        const cleanPhone = phone.replace(/\D/g, '');
+        if (phone !== cleanPhone) {
+            phoneInput.value = cleanPhone;
+        }
+        phoneInput.classList.remove('is-valid', 'is-invalid');
+        phoneError.textContent = '';
+        phoneError.classList.remove('show');
+        if (cleanPhone) {
+            const phoneRegex = /^0[0-9]{9,10}$/;
+            if (phoneRegex.test(cleanPhone)) {
+                phoneInput.classList.add('is-valid');
+                phoneError.textContent = '';
+                phoneError.classList.remove('show');
+            } else {
+                phoneInput.classList.add('is-invalid');
+                phoneError.textContent = phoneValidationRules.format;
+                phoneError.classList.add('show');
+            }
+        }
+    });
+}
+
+const editPhoneModal = document.getElementById('editPhoneModal');
+if (editPhoneModal) {
+    editPhoneModal.addEventListener('hidden.bs.modal', function() {
+        const phoneInput = document.getElementById('phoneInput');
+        const phoneError = document.getElementById('phoneError');
+        phoneInput.classList.remove('is-valid', 'is-invalid');
+        phoneError.textContent = '';
+        phoneError.classList.remove('show');
+    });
+}
+const updatePhoneForm = document.getElementById('updatePhoneForm');
+if (updatePhoneForm) {
+    updatePhoneForm.addEventListener('submit', function(e) {
+        if (!validatePhoneNumber()) {
+            e.preventDefault();
+            return false;
+        }
+    });
+}
+
+// Khởi tạo datepicker cho các trường ngày với định dạng dd/mm/yyyy
+if (typeof $ !== 'undefined' && $.fn.datepicker) {
+    $('#citizenDob, #citizenIssueDate, #dob').datepicker({
+        format: 'dd/mm/yyyy',
+        autoclose: true,
+        todayHighlight: true,
+        orientation: 'bottom'
+    });
+}
+
+// ==== END: JS chuyển từ user-profile.jsp sang file này ====
+
 // Main initialization
 document.addEventListener('DOMContentLoaded', function() {
     var serverToast = document.getElementById('serverToast');
@@ -415,6 +533,12 @@ document.addEventListener('DOMContentLoaded', function() {
             driverLicenseElements.saveBtn.disabled = true;
             driverLicenseElements.editBtn.classList.add('d-none');
             isEditingDriverLicense = true;
+            
+            // Thêm class edit-mode cho driver license block
+            const driverLicenseBlock = document.querySelector('.driver-license-block');
+            if (driverLicenseBlock) {
+                driverLicenseBlock.classList.add('edit-mode');
+            }
         });
 
         driverLicenseElements.cancelBtn.addEventListener('click', function() {
@@ -426,6 +550,12 @@ document.addEventListener('DOMContentLoaded', function() {
             driverLicenseElements.saveBtn.classList.add('d-none');
             driverLicenseElements.editBtn.classList.remove('d-none');
             isEditingDriverLicense = false;
+            
+            // Xóa class edit-mode khi cancel
+            const driverLicenseBlock = document.querySelector('.driver-license-block');
+            if (driverLicenseBlock) {
+                driverLicenseBlock.classList.remove('edit-mode');
+            }
         });
 
         // Real-time validation
@@ -464,6 +594,12 @@ document.addEventListener('DOMContentLoaded', function() {
                             driverLicenseElements.cancelBtn.classList.add('d-none');
                             driverLicenseElements.saveBtn.classList.add('d-none');
                             isEditingDriverLicense = false;
+                            
+                            // Xóa class edit-mode khi save thành công
+                            const driverLicenseBlock = document.querySelector('.driver-license-block');
+                            if (driverLicenseBlock) {
+                                driverLicenseBlock.classList.remove('edit-mode');
+                            }
                         } else {
                             showBootstrapToast(result.message || 'Failed to update information', 'error');
                         }
@@ -527,9 +663,39 @@ document.addEventListener('DOMContentLoaded', function() {
             citizenIdElements.saveBtn.classList.remove('d-none');
             citizenIdElements.cancelBtn.classList.remove('d-none');
             citizenIdElements.editBtn.classList.add('d-none');
+            
+            // Thêm class edit-mode cho citizen ID block
+            const citizenIdBlock = document.querySelector('.citizen-id-block');
+            if (citizenIdBlock) {
+                citizenIdBlock.classList.add('edit-mode');
+            }
+            
+            // Khởi tạo lại datepicker cho các trường date
+            setTimeout(() => {
+                if (typeof $ !== 'undefined' && $.fn.datepicker) {
+                    $('#citizenDob, #citizenIssueDate').datepicker('destroy');
+                    $('#citizenDob, #citizenIssueDate').datepicker({
+                        format: 'dd/mm/yyyy',
+                        autoclose: true,
+                        todayHighlight: true,
+                        orientation: 'bottom'
+                    });
+                }
+            }, 100);
         });
         citizenIdElements.cancelBtn.addEventListener('click', function() {
             resetToOriginalValues();
+            
+            // Xóa class edit-mode khi cancel
+            const citizenIdBlock = document.querySelector('.citizen-id-block');
+            if (citizenIdBlock) {
+                citizenIdBlock.classList.remove('edit-mode');
+            }
+            
+            // Hủy datepicker khi cancel
+            if (typeof $ !== 'undefined' && $.fn.datepicker) {
+                $('#citizenDob, #citizenIssueDate').datepicker('destroy');
+            }
         });
         citizenIdElements.saveBtn.addEventListener('click', function(e) {
             const citizenIdImageInput = document.getElementById('citizenIdImageInput');
@@ -547,6 +713,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             if (citizenIdImageInput) citizenIdImageInput.disabled = false;
             if (citizenIdBackImageInput) citizenIdBackImageInput.disabled = false;
+            
+            // Xóa class edit-mode khi save
+            const citizenIdBlock = document.querySelector('.citizen-id-block');
+            if (citizenIdBlock) {
+                citizenIdBlock.classList.remove('edit-mode');
+            }
+            
+            // Hủy datepicker khi save
+            if (typeof $ !== 'undefined' && $.fn.datepicker) {
+                $('#citizenDob, #citizenIssueDate').datepicker('destroy');
+            }
+            
             citizenIdElements.form.submit();
         });
     }
@@ -588,7 +766,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         let img = uploadArea.querySelector(`#${imgId}`);
                         if (!img) {
                             // Nếu chưa có img, xóa upload-area-empty và tạo img mới
-                            const emptyDiv = uploadArea.querySelector('.upload-area-empty');
+                            const emptyDiv = uploadArea.querySelector('.upload-area-empty, .citizen-id-upload-empty');
                             if (emptyDiv) emptyDiv.remove();
                             img = document.createElement('img');
                             img.id = imgId;
@@ -614,6 +792,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (editBtn) {
                 editBtn.addEventListener('click', function() {
                     input.disabled = false;
+                    // Thêm class edit-mode cho block chứa
+                    const block = input.closest('.driver-license-block, .citizen-id-block');
+                    if (block) {
+                        block.classList.add('edit-mode');
+                    }
                 });
             }
 
@@ -636,15 +819,21 @@ document.addEventListener('DOMContentLoaded', function() {
                     } else {
                         // Nếu không có ảnh gốc, hiện lại upload-area-empty
                         if (img) img.remove();
-                        if (!uploadArea.querySelector('.upload-area-empty')) {
+                        if (!uploadArea.querySelector('.upload-area-empty, .citizen-id-upload-empty')) {
                             const emptyDiv = document.createElement('div');
-                            emptyDiv.className = 'upload-area-empty';
+                            emptyDiv.className = input.classList.contains('citizen-id-input') ? 'citizen-id-upload-empty' : 'upload-area-empty';
                             emptyDiv.innerHTML = emptyHtml;
                             uploadArea.prepend(emptyDiv);
                         }
                     }
                     input.disabled = true;
                     if (saveBtn) saveBtn.disabled = true;
+                    
+                    // Xóa class edit-mode khi cancel
+                    const block = input.closest('.driver-license-block, .citizen-id-block');
+                    if (block) {
+                        block.classList.remove('edit-mode');
+                    }
                 });
             }
         }
@@ -670,7 +859,7 @@ document.addEventListener('DOMContentLoaded', function() {
         imgId: 'citizenIdImg',
         emptyHtml: `
             <div class="upload-icon"><i class="bi bi-upload"></i></div>
-            <div class="upload-text">Click to upload CCCD front image</div>
+            <div class="citizen-id-upload-text">Click to upload CCCD front image</div>
         `,
         editBtnId: 'editCitizenIdBtn',
         cancelBtnId: 'cancelCitizenIdBtn'
@@ -682,7 +871,7 @@ document.addEventListener('DOMContentLoaded', function() {
         imgId: 'citizenIdBackImg',
         emptyHtml: `
             <div class="upload-icon"><i class="bi bi-upload"></i></div>
-            <div class="upload-text">Click to upload CCCD back image</div>
+            <div class="citizen-id-upload-text">Click to upload CCCD back image</div>
         `,
         editBtnId: 'editCitizenIdBtn',
         cancelBtnId: 'cancelCitizenIdBtn'
@@ -735,14 +924,55 @@ document.addEventListener('DOMContentLoaded', function() {
             errorManager.showError(dobInput, dobError, 'Date of birth must be in dd/MM/yyyy format');
             valid = false;
         } else {
-            errorManager.clearError(dobInput, dobError);
+            // Validate age 18+
+            const dobValue = dobInput.value.trim();
+            if (dobValue) {
+                const [day, month, year] = dobValue.split('/');
+                const birthDate = new Date(year, month - 1, day);
+                const today = new Date();
+                
+                if (birthDate > today) {
+                    errorManager.showError(dobInput, dobError, 'Date of birth cannot be in the future');
+                    valid = false;
+                } else {
+                    let age = today.getFullYear() - birthDate.getFullYear();
+                    const monthDiff = today.getMonth() - birthDate.getMonth();
+                    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                        age--;
+                    }
+                    
+                    if (age < 14) {
+                        errorManager.showError(dobInput, dobError, ValidationRules.citizenDob.age);
+                        valid = false;
+                    } else {
+                        errorManager.clearError(dobInput, dobError);
+                    }
+                }
+            } else {
+                errorManager.clearError(dobInput, dobError);
+            }
         }
         // Issue date
         if (!dateRegex.test(issueDateInput.value.trim())) {
             errorManager.showError(issueDateInput, issueDateError, 'Issue date must be in dd/MM/yyyy format');
             valid = false;
         } else {
-            errorManager.clearError(issueDateInput, issueDateError);
+            const issueValue = issueDateInput.value.trim();
+            if (issueValue) {
+                const [day, month, year] = issueValue.split('/');
+                const issueDate = new Date(year, month - 1, day);
+                const today = new Date();
+                today.setHours(0,0,0,0);
+                issueDate.setHours(0,0,0,0);
+                if (issueDate > today) {
+                    errorManager.showError(issueDateInput, issueDateError, 'Issue date cannot be in the future');
+                    valid = false;
+                } else {
+                    errorManager.clearError(issueDateInput, issueDateError);
+                }
+            } else {
+                errorManager.clearError(issueDateInput, issueDateError);
+            }
         }
         return valid;
     }
@@ -767,6 +997,109 @@ document.addEventListener('DOMContentLoaded', function() {
         citizenIdForm.addEventListener('submit', function(e) {
             if (!validateCitizenIdFields()) {
                 e.preventDefault();
+            }
+        });
+    }
+
+    // Xử lý nút Save cho Citizen ID
+    const saveCitizenIdBtn = document.getElementById('saveCitizenIdBtn');
+    if (saveCitizenIdBtn) {
+        saveCitizenIdBtn.addEventListener('click', function() {
+            if (validateCitizenIdFields()) {
+                citizenIdForm.submit();
+            }
+        });
+    }
+
+    // Modal Update Information
+    const updateUserInfoForm = document.getElementById('updateUserInfoForm');
+    if (updateUserInfoForm) {
+        const dobInput = updateUserInfoForm.querySelector('input[name="dob"]');
+        const dobError = document.createElement('div');
+        dobError.className = 'error-message';
+        dobError.id = 'dobError';
+        dobInput.parentNode.appendChild(dobError);
+
+        dobInput.addEventListener('input', function() {
+            // Parse dd/MM/yyyy
+            const value = dobInput.value.trim();
+            let errorMsg = null;
+            if (!value) {
+                errorMsg = ValidationRules.dob.required;
+            } else {
+                const parts = value.split('/');
+                if (parts.length === 3) {
+                    const day = parseInt(parts[0], 10);
+                    const month = parseInt(parts[1], 10) - 1;
+                    const year = parseInt(parts[2], 10);
+                    const birthDate = new Date(year, month, day);
+                    const today = new Date();
+                    if (isNaN(birthDate.getTime())) {
+                        errorMsg = 'Invalid date format!';
+                    } else if (birthDate > today) {
+                        errorMsg = ValidationRules.dob.future;
+                    } else {
+                        let age = today.getFullYear() - birthDate.getFullYear();
+                        if (
+                            today.getMonth() < birthDate.getMonth() ||
+                            (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())
+                        ) {
+                            age--;
+                        }
+                        if (age < 18) {
+                            errorMsg = ValidationRules.dob.age;
+                        }
+                    }
+                } else {
+                    errorMsg = 'Invalid date format!';
+                }
+            }
+            if (errorMsg) {
+                errorManager.showError(dobInput, dobError, errorMsg);
+            } else {
+                errorManager.clearError(dobInput, dobError);
+            }
+        });
+
+        updateUserInfoForm.addEventListener('submit', function(e) {
+            const value = dobInput.value.trim();
+            let errorMsg = null;
+            if (!value) {
+                errorMsg = ValidationRules.dob.required;
+            } else {
+                const parts = value.split('/');
+                if (parts.length === 3) {
+                    const day = parseInt(parts[0], 10);
+                    const month = parseInt(parts[1], 10) - 1;
+                    const year = parseInt(parts[2], 10);
+                    const birthDate = new Date(year, month, day);
+                    const today = new Date();
+                    if (isNaN(birthDate.getTime())) {
+                        errorMsg = 'Invalid date format!';
+                    } else if (birthDate > today) {
+                        errorMsg = ValidationRules.dob.future;
+                    } else {
+                        let age = today.getFullYear() - birthDate.getFullYear();
+                        if (
+                            today.getMonth() < birthDate.getMonth() ||
+                            (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())
+                        ) {
+                            age--;
+                        }
+                        if (age < 18) {
+                            errorMsg = ValidationRules.dob.age;
+                        }
+                    }
+                } else {
+                    errorMsg = 'Invalid date format!';
+                }
+            }
+            if (errorMsg) {
+                errorManager.showError(dobInput, dobError, errorMsg);
+                e.preventDefault();
+                return false;
+            } else {
+                errorManager.clearError(dobInput, dobError);
             }
         });
     }

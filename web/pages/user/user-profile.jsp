@@ -1,5 +1,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="Utils.FormatUtils" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -128,7 +129,7 @@
                                                         <div class="text-muted mb-1" style="font-size:0.93rem;">Gender</div>
                                                     </div>
                                                     <div>
-                                                        <div style="font-size:0.97rem;">${profile.userDOB != null ? profile.userDOB : '--/--/----'}</div>
+                                                        <div style="font-size:0.97rem;">${profile.userDOBFormatted != null ? profile.userDOBFormatted : '--/--/----'}</div>
                                                         <div style="font-size:0.97rem;">${profile.gender != null ? profile.gender : 'Not specified'}</div>
                                                     </div>
                                                 </div>
@@ -137,12 +138,6 @@
                                                     <div class="info-row d-flex align-items-center justify-content-between mb-1" style="font-size:0.97rem;">
                                                         <span class="text-muted">Phone</span>
                                                         <span class="d-flex align-items-center gap-1">
-                                                            <c:if test="${profile.phoneNumber != null}">
-                                                                <span class="badge badge-verified">
-                                                                    <i class="bi bi-check-circle-fill me-1"></i>
-                                                                    Verified
-                                                                </span>
-                                                            </c:if>
                                                             <span class="fw-semibold" style="font-size:0.97rem;">${profile.phoneNumber != null ? profile.phoneNumber : 'Not added'}</span>
                                                             <a href="#" class="ms-1 text-muted d-flex align-items-center" style="font-size:1em;" data-bs-toggle="modal" data-bs-target="#editPhoneModal"><i class="bi bi-pencil"></i></a>
                                                         </span>
@@ -287,8 +282,8 @@
                                                     </div>
                                                     <div class="mb-4">
                                                         <label class="form-label text-muted">Date of birth</label>
-                                                        <input type="date" class="form-control driver-license-input" name="dob" id="dob"
-                                                               value="${driverLicense != null ? driverLicense.dob : ''}" disabled required>
+                                                        <input type="text" class="form-control driver-license-input" name="dob" id="dob"
+                                                               placeholder="dd/MM/yyyy" maxlength="10" autocomplete="off" value="${driverLicense != null && driverLicense.dob != null ? FormatUtils.formatDisplayDate(driverLicense.dob) : ''}" required disabled>
                                                         <div class="error-message" id="dobError"></div>
                                                     </div>
                                                 </div>
@@ -315,7 +310,7 @@
                                             <div class="row g-5">
                                                 <div class="col-md-5">
                                                     <h6 class="citizen-id-label">CCCD Front Image <span class="text-danger">*</span></h6>
-                                                    <label class="citizen-id-upload-area" style="width:100%;display:block;cursor:pointer;position:relative;">
+                                                    <label class="citizen-id-upload-area">
                                                         <c:choose>
                                                             <c:when test="${not empty citizenId.citizenIdImageUrl}">
                                                                 <img id="citizenIdImg" src="${citizenId.citizenIdImageUrl}"
@@ -326,15 +321,15 @@
                                                                 </span>
                                                             </c:when>
                                                             <c:otherwise>
-                                                                <div class="upload-area-empty">
+                                                                <div class="citizen-id-upload-empty">
                                                                     <div class="upload-icon">
                                                                         <i class="bi bi-upload"></i>
                                                                     </div>
-                                                                    <div class="upload-text">Click to upload CCCD front image</div>
+                                                                    <div class="citizen-id-upload-text">Click to upload CCCD front image</div>
                                                                 </div>
                                                             </c:otherwise>
                                                         </c:choose>
-                                                        <input type="file" name="citizenIdImage" accept="image/*" style="display:none;" id="citizenIdImageInput" required disabled>
+                                                        <input type="file" name="citizenIdImage" accept="image/*" style="display:none;" id="citizenIdImageInput" class="citizen-id-input" required disabled>
                                                     </label>
                                                     <c:if test="${not empty citizenIdImageError}">
                                                         <div class="error-message" id="citizenIdImageError">${citizenIdImageError}</div>
@@ -342,7 +337,7 @@
 
                                                     <!-- Thêm phần upload ảnh mặt sau -->
                                                     <h6 class="citizen-id-label mt-4">CCCD Back Image <span class="text-danger">*</span></h6>
-                                                    <label class="citizen-id-upload-area" style="width:100%;display:block;cursor:pointer;position:relative;">
+                                                    <label class="citizen-id-upload-area">
                                                         <c:choose>
                                                             <c:when test="${not empty citizenId.citizenIdBackImageUrl}">
                                                                 <img id="citizenIdBackImg" src="${citizenId.citizenIdBackImageUrl}"
@@ -353,15 +348,15 @@
                                                                 </span>
                                                             </c:when>
                                                             <c:otherwise>
-                                                                <div class="upload-area-empty">
+                                                                <div class="citizen-id-upload-empty">
                                                                     <div class="upload-icon">
                                                                         <i class="bi bi-upload"></i>
                                                                     </div>
-                                                                    <div class="upload-text">Click to upload CCCD back image</div>
+                                                                    <div class="citizen-id-upload-text">Click to upload CCCD back image</div>
                                                                 </div>
                                                             </c:otherwise>
                                                         </c:choose>
-                                                        <input type="file" name="citizenIdBackImage" accept="image/*" style="display:none;" id="citizenIdBackImageInput" required disabled>
+                                                        <input type="file" name="citizenIdBackImage" accept="image/*" style="display:none;" id="citizenIdBackImageInput" class="citizen-id-input" required disabled>
                                                     </label>
                                                     <c:if test="${not empty citizenIdBackImageError}">
                                                         <div class="error-message" id="citizenIdBackImageError">${citizenIdBackImageError}</div>
@@ -383,12 +378,12 @@
                                                     </div>
                                                     <div class="mb-4">
                                                         <label class="form-label text-muted">Date of birth <span class="text-danger">*</span></label>
-                                                        <input type="text" class="form-control citizen-id-input" name="citizenDob" id="citizenDob" placeholder="dd/MM/yyyy" maxlength="10" autocomplete="off" value="${citizenId != null && citizenId.dob != null ? FormatUtils.formatDisplayDate(citizenId.dob) : (citizenId != null && citizenId.dob != null ? citizenId.dob : '')}" <c:if test="${not editCitizenId}">disabled</c:if>>
+                                                        <input type="text" class="form-control citizen-id-input" name="citizenDob" id="citizenDob" placeholder="dd/MM/yyyy" maxlength="10" autocomplete="off" value="${citizenId != null && citizenId.dob != null ? FormatUtils.formatDisplayDate(citizenId.dob) : ''}" disabled>
                                                         <span id="citizenDobError" class="text-danger"></span>
                                                     </div>
                                                     <div class="mb-4">
                                                         <label class="form-label text-muted">Issue date <span class="text-danger">*</span></label>
-                                                        <input type="text" class="form-control citizen-id-input" name="citizenIssueDate" id="citizenIssueDate" placeholder="dd/MM/yyyy" maxlength="10" autocomplete="off" value="${citizenId != null && citizenId.citizenIdIssuedDate != null ? FormatUtils.formatDisplayDate(citizenId.citizenIdIssuedDate) : (citizenId != null && citizenId.citizenIdIssuedDate != null ? citizenId.citizenIdIssuedDate : '')}" <c:if test="${not editCitizenId}">disabled</c:if>>
+                                                        <input type="text" class="form-control citizen-id-input" name="citizenIssueDate" id="citizenIssueDate" placeholder="dd/MM/yyyy" maxlength="10" autocomplete="off" value="${citizenId != null && citizenId.citizenIdIssuedDate != null ? FormatUtils.formatDisplayDate(citizenId.citizenIdIssuedDate) : ''}" disabled>
                                                         <span id="citizenIssueDateError" class="text-danger"></span>
                                                     </div>
                                                     <div class="mb-4">
@@ -431,196 +426,9 @@
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
         <script src="${pageContext.request.contextPath}/assets/js/google-map.js"></script>
         <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
-
-
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- <script src="${pageContext.request.contextPath}/scripts/user/UserAboutSidebar.js"></script> -->
-        <!-- <script src="${pageContext.request.contextPath}/scripts/user/userAbout.js"></script> -->
         <script src="${pageContext.request.contextPath}/scripts/user/user-profile.js"></script>
-        <!-- Modal: Update User Info -->
-        <div class="modal fade" id="editUserInfoModal" tabindex="-1" aria-labelledby="editUserInfoModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h2 class="modal-title fs-4" id="editUserInfoModalLabel">Update Information</h2>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <form id="updateUserInfoForm" action="${pageContext.request.contextPath}/user/update-info" method="POST">
-                <input type="hidden" name="fromUpdateUserInfo" value="true" />
-                <div class="modal-body">
-                  <div class="mb-3">
-                    <label class="form-label">Username</label>
-                    <input type="text" class="form-control" name="username" value="${not empty profile_username ? profile_username : profile.username}" required>
-                    <c:if test="${not empty usernameError}">
-                      <div class="text-danger">${usernameError}</div>
-                    </c:if>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Date of birth</label>
-                    <input type="text" class="form-control" id="dob" name="dob"
-                           value="${not empty profile_userDOB ? profile_userDOB : (not empty profile.userDOB ? profile.userDOB : '')}"
-                           placeholder="dd/MM/yyyy" autocomplete="off">
-                    <c:if test="${not empty dobError}">
-                      <div class="text-danger">${dobError}</div>
-                    </c:if>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Gender</label>
-                    <select class="form-select" name="gender">
-                      <option value="Male" ${((not empty profile_gender ? profile_gender : profile.gender) == 'Male') ? 'selected' : ''}>Male</option>
-                      <option value="Female" ${((not empty profile_gender ? profile_gender : profile.gender) == 'Female') ? 'selected' : ''}>Female</option>
-                    </select>
-                    <c:if test="${not empty genderError}">
-                      <div class="text-danger">${genderError}</div>
-                    </c:if>
-                  </div>
-                </div>
-                <div class="modal-footer">
-                  <button type="submit" class="btn btn-save-modal">Update</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-
-        <c:if test="${not empty dobError && param.fromUpdateUserInfo == 'true'}">
-          <script>
-            document.addEventListener("DOMContentLoaded", function() {
-              var myModal = new bootstrap.Modal(document.getElementById('editUserInfoModal'));
-              myModal.show();
-            });
-          </script>
-        </c:if>
-
-        <!-- Modal: Update Phone Number -->
-        <div class="modal fade" id="editPhoneModal" tabindex="-1" aria-labelledby="editPhoneModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h2 class="modal-title w-100 text-center" id="editPhoneModalLabel" style="font-size:1rem;font-weight:700;">Update Phone Number</h2>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <form id="updatePhoneForm" action="${pageContext.request.contextPath}/user/update-phone" method="post" onsubmit="return validatePhoneNumber()">
-                <div class="modal-body">
-                  <div class="mb-3">
-                    <label class="form-label">Phone Number</label>
-                    <input type="text" class="form-control" id="phoneInput" name="phone" 
-                           placeholder="Enter Vietnamese phone number (e.g., 0123456789)" 
-                           value="${profile.phoneNumber != null ? profile.phoneNumber : ''}" 
-                           required>
-                    <div class="invalid-feedback" id="phoneError"></div>
-                    <small class="form-text text-muted">Format: 10-11 digits starting with 0 (e.g., 0123456789, 0987654321)</small>
-                  </div>
-                </div>
-                <div class="modal-footer border-0 pt-0">
-                    <button type="submit" class="btn btn-save-modal" id="updatePhoneBtn">Update</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-
-        <script>
-        function validatePhoneNumber() {
-            const phoneInput = document.getElementById('phoneInput');
-            const phoneError = document.getElementById('phoneError');
-            const phone = phoneInput.value.trim();
-            
-            const cleanPhone = phone.replace(/\D/g, '');
-            
-            const phoneRegex = /^0[0-9]{9,10}$/;
-            
-            if (!phone) {
-                phoneInput.classList.add('is-invalid');
-                phoneError.textContent = 'Phone number is required';
-                if (typeof showToast === 'function') {
-                    showToast('Phone number is required', 'error');
-                }
-                return false;
-            }
-            
-            if (!phoneRegex.test(cleanPhone)) {
-                phoneInput.classList.add('is-invalid');
-                phoneError.textContent = 'Please enter a valid Vietnamese phone number (10-11 digits starting with 0)';
-                if (typeof showToast === 'function') {
-                    showToast('Please enter a valid Vietnamese phone number (10-11 digits starting with 0)', 'error');
-                }
-                return false;
-            }
-            
-            // Update the input value with clean phone number
-            phoneInput.value = cleanPhone;
-            phoneInput.classList.remove('is-invalid');
-            phoneInput.classList.add('is-valid');
-            phoneError.textContent = '';
-            // KHÔNG gọi showToast khi hợp lệ để tránh hiện toast trong modal
-            return true;
-        }
-        
-        // Real-time validation
-        document.getElementById('phoneInput').addEventListener('input', function() {
-            const phoneInput = this;
-            const phoneError = document.getElementById('phoneError');
-            const phone = phoneInput.value.trim();
-            
-            // Remove all non-digit characters for validation
-            const cleanPhone = phone.replace(/\D/g, '');
-            
-            // Vietnamese phone number validation
-            const phoneRegex = /^0[0-9]{9,10}$/;
-            
-            phoneInput.classList.remove('is-valid', 'is-invalid');
-            phoneError.textContent = '';
-            
-            if (phone && !phoneRegex.test(cleanPhone)) {
-                phoneInput.classList.add('is-invalid');
-                phoneError.textContent = 'Please enter a valid Vietnamese phone number (10-11 digits starting with 0)';
-            } else if (phone && phoneRegex.test(cleanPhone)) {
-                phoneInput.classList.add('is-valid');
-            }
-        });
-        
-        // Clear validation when modal is closed
-        document.getElementById('editPhoneModal').addEventListener('hidden.bs.modal', function() {
-            const phoneInput = document.getElementById('phoneInput');
-            const phoneError = document.getElementById('phoneError');
-            phoneInput.classList.remove('is-valid', 'is-invalid');
-            phoneError.textContent = '';
-        });
-        
-        // Handle form submission with toast feedback
-        document.getElementById('updatePhoneForm').addEventListener('submit', function(e) {
-            if (!validatePhoneNumber()) {
-                e.preventDefault();
-            }
-        });
-        </script>
         <jsp:include page="/pages/includes/logout-confirm-modal.jsp" />
-        <script>
-$(function() {
-    // Khởi tạo datepicker cho các trường ngày với định dạng dd/mm/yyyy
-    $('#citizenDob, #citizenIssueDate, #dob').datepicker({
-        format: 'dd/mm/yyyy',
-        autoclose: true,
-        todayHighlight: true,
-        orientation: 'bottom'
-    });
-
-    // Xử lý nút Edit/Cancel cho Citizen ID
-    $('#editCitizenIdBtn').on('click', function() {
-        $('#citizenIdNumber, #citizenFullName, #citizenDob, #citizenIssueDate, #citizenPlaceOfIssue').prop('disabled', false);
-        $('#citizenIdImageInput, #citizenIdBackImageInput').prop('disabled', false);
-        $('#cancelCitizenIdBtn, #saveCitizenIdBtn').removeClass('d-none');
-        $('#editCitizenIdBtn').addClass('d-none');
-    });
-    $('#cancelCitizenIdBtn').on('click', function() {
-        $('#citizenIdNumber, #citizenFullName, #citizenDob, #citizenIssueDate, #citizenPlaceOfIssue').prop('disabled', true);
-        $('#citizenIdImageInput, #citizenIdBackImageInput').prop('disabled', true);
-        $('#cancelCitizenIdBtn, #saveCitizenIdBtn').addClass('d-none');
-        $('#editCitizenIdBtn').removeClass('d-none');
-    });
-});
-</script>
         <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer" style="z-index: 12000;">
   <!-- Toast test static đã bị ẩn -->
   <c:if test="${not empty success}">

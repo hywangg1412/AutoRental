@@ -7,6 +7,7 @@ public class UserProfileDTO {
 
     private String username;
     private LocalDate userDOB;
+    private String userDOBFormatted; // Thêm field để lưu ngày tháng đã format
     private String gender;
     private String phoneNumber;
     private String email;
@@ -64,6 +65,14 @@ public class UserProfileDTO {
 
     public void setUserDOB(LocalDate userDOB) {
         this.userDOB = userDOB;
+    }
+
+    public String getUserDOBFormatted() {
+        return userDOBFormatted;
+    }
+
+    public void setUserDOBFormatted(String userDOBFormatted) {
+        this.userDOBFormatted = userDOBFormatted;
     }
 
     public String getGender() {
