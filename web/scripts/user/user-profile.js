@@ -324,102 +324,150 @@ function showBootstrapToast({title = 'Thông báo', message = '', delay = 3000, 
 
 // ==== BEGIN: JS chuyển từ user-profile.jsp sang file này ====
 
-// Phone number validation rules
+// --- PHONE NUMBER VALIDATION WITH ANIMATION ---
 const phoneValidationRules = {
     required: 'Phone number is required',
-    format: 'Please enter a valid Vietnamese phone number (10-11 digits starting with 0)',
+    format: 'Phone number must be 10-11 digits starting with 0',
     invalid: 'Phone number can only contain digits'
 };
 
-function validatePhoneNumber() {
+function validatePhoneInputRealtime() {
     const phoneInput = document.getElementById('phoneInput');
     const phoneError = document.getElementById('phoneError');
-    const phone = phoneInput.value.trim();
-    phoneInput.classList.remove('is-valid', 'is-invalid');
-    phoneError.textContent = '';
-    phoneError.classList.remove('show');
-    if (!phone) {
-        phoneInput.classList.add('is-invalid');
-        phoneError.textContent = phoneValidationRules.required;
-        phoneError.classList.add('show');
-        return false;
-    }
-    if (!/^\d+$/.test(phone)) {
-        phoneInput.classList.add('is-invalid');
-        phoneError.textContent = phoneValidationRules.invalid;
-        phoneError.classList.add('show');
-        return false;
-    }
-    const phoneRegex = /^0[0-9]{9,10}$/;
-    if (!phoneRegex.test(phone)) {
-        phoneInput.classList.add('is-invalid');
-        phoneError.textContent = phoneValidationRules.format;
-        phoneError.classList.add('show');
-        return false;
-    }
-    phoneInput.classList.add('is-valid');
-    phoneError.textContent = '';
-    phoneError.classList.remove('show');
-    return true;
-}
+    if (!phoneInput || !phoneError) return;
 
-// Real-time validation with input restrictions for phone
-const phoneInputEl = document.getElementById('phoneInput');
-if (phoneInputEl) {
-    phoneInputEl.addEventListener('keydown', function(e) {
-        const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Home', 'End'];
-        if (!e.ctrlKey && !e.metaKey && !e.altKey && 
-            e.key.length === 1 && !/[0-9]/.test(e.key)) {
+    // Chặn nhập quá 11 số
+    phoneInput.addEventListener('keydown', function (e) {
+        const allowedKeys = [
+            'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Home', 'End',
+            'Control', 'Meta', 'Shift', 'Alt', 'Escape', 'Enter'
+        ];
+        // Cho phép các phím điều hướng, xóa, chọn, dán, copy, cut
+        if (
+            allowedKeys.includes(e.key) ||
+            (e.ctrlKey || e.metaKey) // Cho phép Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+        ) {
+            return;
+        }
+        // Nếu đã đủ 11 số và không phải đang chọn để ghi đè thì chặn nhập thêm
+        const value = phoneInput.value;
+        const selection = phoneInput.selectionEnd - phoneInput.selectionStart;
+        const isReplacing = selection > 0;
+        const cleanValue = value.replace(/\D/g, '');
+        if (cleanValue.length >= 11 && !isReplacing) {
             e.preventDefault();
-            const phoneError = document.getElementById('phoneError');
-            this.classList.add('is-invalid');
-            phoneError.textContent = phoneValidationRules.invalid;
-            phoneError.classList.add('show');
+        }
+        // Chỉ cho nhập số
+        if (e.key.length === 1 && !/\d/.test(e.key)) {
+            e.preventDefault();
         }
     });
-    phoneInputEl.addEventListener('input', function() {
-        const phoneInput = this;
-        const phoneError = document.getElementById('phoneError');
-        const phone = phoneInput.value.trim();
-        const cleanPhone = phone.replace(/\D/g, '');
-        if (phone !== cleanPhone) {
-            phoneInput.value = cleanPhone;
+
+    // Khi paste, chỉ cho phép dán nếu tổng số sau khi dán không vượt quá 11 số
+    phoneInput.addEventListener('paste', function (e) {
+        let paste = (e.clipboardData || window.clipboardData).getData('text');
+        let cleanPaste = paste.replace(/\D/g, '');
+        let current = phoneInput.value.replace(/\D/g, '');
+        let selection = phoneInput.selectionEnd - phoneInput.selectionStart;
+        let maxAllowed = 11 - (current.length - selection);
+        if (cleanPaste.length > maxAllowed) {
+            e.preventDefault();
         }
-        phoneInput.classList.remove('is-valid', 'is-invalid');
-        phoneError.textContent = '';
-        phoneError.classList.remove('show');
-        if (cleanPhone) {
-            const phoneRegex = /^0[0-9]{9,10}$/;
-            if (phoneRegex.test(cleanPhone)) {
-                phoneInput.classList.add('is-valid');
-                phoneError.textContent = '';
-                phoneError.classList.remove('show');
-            } else {
-                phoneInput.classList.add('is-invalid');
-                phoneError.textContent = phoneValidationRules.format;
-                phoneError.classList.add('show');
+    });
+
+    phoneInput.addEventListener('input', function () {
+        let value = phoneInput.value.trim();
+        let errorMsg = null;
+        // Kiểm tra lỗi ký tự đặc biệt
+        if (/[^\dA-Za-z]/.test(value)) {
+            errorMsg = 'Phone number cannot contain special characters';
+        } else if (/[A-Za-z]/.test(value)) {
+            errorMsg = 'Phone number cannot contain letters';
+        } else {
+            // Chỉ cho nhập số
+            let cleanValue = value.replace(/\D/g, '');
+            if (value !== cleanValue) {
+                phoneInput.value = cleanValue;
+            }
+            if (!cleanValue) {
+                errorMsg = phoneValidationRules.required;
+            } else if (!/^0\d{9,10}$/.test(cleanValue)) {
+                errorMsg = phoneValidationRules.format;
             }
         }
+        if (errorMsg) {
+            errorManager.showError(phoneInput, phoneError, errorMsg);
+        } else {
+            errorManager.clearError(phoneInput, phoneError);
+        }
+    });
+
+    // Đảm bảo khi paste cũng không vượt quá 11 số
+    phoneInput.addEventListener('paste', function (e) {
+        let paste = (e.clipboardData || window.clipboardData).getData('text');
+        let cleanPaste = paste.replace(/\D/g, '');
+        if (cleanPaste.length > 11) {
+            cleanPaste = cleanPaste.slice(0, 11);
+        }
+        setTimeout(() => {
+            let value = phoneInput.value.replace(/\D/g, '');
+            if (value.length > 11) {
+                phoneInput.value = value.slice(0, 11);
+            }
+        }, 0);
+    });
+
+    phoneInput.addEventListener('blur', function () {
+        // Khi blur, validate lại
+        const value = phoneInput.value.trim();
+        let errorMsg = null;
+        if (!value) {
+            errorMsg = phoneValidationRules.required;
+        } else if (!/^0\d{9,10}$/.test(value)) {
+            errorMsg = phoneValidationRules.format;
+        }
+        if (errorMsg) {
+            errorManager.showError(phoneInput, phoneError, errorMsg);
+        } else {
+            errorManager.clearError(phoneInput, phoneError);
+        }
     });
 }
 
-const editPhoneModal = document.getElementById('editPhoneModal');
-if (editPhoneModal) {
-    editPhoneModal.addEventListener('hidden.bs.modal', function() {
-        const phoneInput = document.getElementById('phoneInput');
-        const phoneError = document.getElementById('phoneError');
-        phoneInput.classList.remove('is-valid', 'is-invalid');
-        phoneError.textContent = '';
-        phoneError.classList.remove('show');
-    });
-}
-const updatePhoneForm = document.getElementById('updatePhoneForm');
-if (updatePhoneForm) {
-    updatePhoneForm.addEventListener('submit', function(e) {
-        if (!validatePhoneNumber()) {
+function validatePhoneInputOnSubmit() {
+    const phoneInput = document.getElementById('phoneInput');
+    const phoneError = document.getElementById('phoneError');
+    const updatePhoneForm = document.getElementById('updatePhoneForm');
+    if (!phoneInput || !phoneError || !updatePhoneForm) return;
+
+    updatePhoneForm.addEventListener('submit', function (e) {
+        const value = phoneInput.value.trim();
+        let errorMsg = null;
+        if (!value) {
+            errorMsg = phoneValidationRules.required;
+        } else if (!/^0\d{9,10}$/.test(value)) {
+            errorMsg = phoneValidationRules.format;
+        }
+        if (errorMsg) {
+            errorManager.showError(phoneInput, phoneError, errorMsg);
             e.preventDefault();
             return false;
+        } else {
+            errorManager.clearError(phoneInput, phoneError);
         }
+    });
+}
+
+// Reset lỗi khi đóng modal
+function resetPhoneInputOnModalClose() {
+    const phoneInput = document.getElementById('phoneInput');
+    const phoneError = document.getElementById('phoneError');
+    const editPhoneModal = document.getElementById('editPhoneModal');
+    if (!phoneInput || !phoneError || !editPhoneModal) return;
+
+    editPhoneModal.addEventListener('hidden.bs.modal', function () {
+        errorManager.clearError(phoneInput, phoneError);
+        phoneInput.value = phoneInput.defaultValue || '';
     });
 }
 
@@ -1124,4 +1172,8 @@ document.addEventListener('DOMContentLoaded', function() {
             };
         });
     });
+
+    validatePhoneInputRealtime();
+    validatePhoneInputOnSubmit();
+    resetPhoneInputOnModalClose();
 });
