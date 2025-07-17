@@ -41,7 +41,8 @@
 
             <body>
                 <!-- Include Toast Notification -->
-
+                <jsp:include page="/pages/includes/toast-notification.jsp" />
+                
                 <!-- Header -->
                 <jsp:include page="/pages/includes/user-nav.jsp" />
 
@@ -585,6 +586,9 @@
                 <script src="${pageContext.request.contextPath}/assets/js/google-map.js"></script>
                 <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+                
+                <!-- Đảm bảo contextPath cho JS -->
+                <script>window.contextPath = '${pageContext.request.contextPath}';</script>
                 <script src="${pageContext.request.contextPath}/scripts/user/user-profile.js"></script>
                 <jsp:include page="/pages/includes/logout-confirm-modal.jsp" />
                 <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"
