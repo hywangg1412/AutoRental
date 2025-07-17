@@ -517,15 +517,55 @@ document.addEventListener('DOMContentLoaded', function() {
             if (updateBtn) updateBtn.disabled = hasError;
         }
 
-        // Validate realtime cho username
+        // Validate realtime cho username (bổ sung check trùng username qua API)
         if (usernameInput && usernameError) {
+            let lastCheckedUsername = '';
+            let usernameCheckTimeout = null;
             usernameInput.addEventListener('input', function() {
-                if (usernameInput.value.trim() === '') {
+                const value = usernameInput.value.trim();
+                if (value === '') {
                     errorManager.showError(usernameInput, usernameError, ValidationRules.username.required);
-                } else {
-                    errorManager.clearError(usernameInput, usernameError);
+                    checkUserInfoFormValidity();
+                    return;
                 }
-                checkUserInfoFormValidity();
+                if (value.length < 3 || value.length > 30) {
+                    errorManager.showError(usernameInput, usernameError, ValidationRules.username.length);
+                    checkUserInfoFormValidity();
+                    return;
+                }
+                if (!ValidationRules.username.pattern.test(value)) {
+                    errorManager.showError(usernameInput, usernameError, ValidationRules.username.format);
+                    checkUserInfoFormValidity();
+                    return;
+                }
+                // Kiểm tra trùng username qua API (debounce)
+                if (usernameCheckTimeout) clearTimeout(usernameCheckTimeout);
+                usernameCheckTimeout = setTimeout(() => {
+                    if (value === lastCheckedUsername) return;
+                    lastCheckedUsername = value;
+                    // Lấy userId hiện tại nếu có (từ biến JS hoặc hidden input)
+                    let userId = '';
+                    if (window.currentUserId) userId = window.currentUserId;
+                    else {
+                        const userIdInput = document.querySelector('input[name="userId"]');
+                        if (userIdInput) userId = userIdInput.value;
+                    }
+                    fetch(`${window.contextPath || ''}/user/check-username?username=${encodeURIComponent(value)}${userId ? `&userId=${encodeURIComponent(userId)}` : ''}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.exists) {
+                                errorManager.showError(usernameInput, usernameError, 'Username is already taken by another user.');
+                            } else {
+                                errorManager.clearError(usernameInput, usernameError);
+                            }
+                            checkUserInfoFormValidity();
+                        })
+                        .catch(() => {
+                            // Nếu lỗi API, không chặn người dùng
+                            errorManager.clearError(usernameInput, usernameError);
+                            checkUserInfoFormValidity();
+                        });
+                }, 400);
             });
         }
 
@@ -1271,4 +1311,62 @@ document.addEventListener('DOMContentLoaded', function() {
     validatePhoneInputRealtime();
     validatePhoneInputOnSubmit();
     resetPhoneInputOnModalClose();
+});
+
+// ===== Real-time Username Duplicate Check =====
+$(document).ready(function () {
+    // Lấy contextPath từ biến toàn cục (nếu có)
+    var contextPath = window.contextPath || '';
+    const $usernameInput = $('#editUserInfoModal input[name="username"]');
+    const $usernameError = $('#usernameError');
+    let usernameTimeout = null;
+
+    $usernameInput.on('input', function () {
+        clearTimeout(usernameTimeout);
+        const username = $(this).val().trim();
+        $usernameError.text('');
+        // Kiểm tra validate local trước
+        const localError = validationManager.validateUsername(this);
+        if (localError) {
+            $usernameError.text(localError);
+            $(this).addClass('is-invalid');
+            return;
+        } else {
+            $(this).removeClass('is-invalid');
+        }
+        // Gửi AJAX kiểm tra trùng username
+        usernameTimeout = setTimeout(function () {
+            $.ajax({
+                url: contextPath + '/user/check-username',
+                method: 'POST',
+                data: { username },
+                success: function (res) {
+                    // Nếu response là JSON string, parse
+                    let data = res;
+                    if (typeof res === 'string') {
+                        try { data = JSON.parse(res); } catch (e) { data = {}; }
+                    }
+                    if (data.exists) {
+                        $usernameError.text('Username đã tồn tại.');
+                        $usernameInput.addClass('is-invalid');
+                    } else {
+                        $usernameError.text('');
+                        $usernameInput.removeClass('is-invalid');
+                    }
+                },
+                error: function () {
+                    $usernameError.text('Lỗi kiểm tra username.');
+                    $usernameInput.addClass('is-invalid');
+                }
+            });
+        }, 400);
+    });
+
+    // Ngăn submit nếu có lỗi username
+    $('#updateUserInfoForm').on('submit', function (e) {
+        if ($usernameError.text().length > 0) {
+            e.preventDefault();
+            $usernameInput.addClass('is-invalid');
+        }
+    });
 });
