@@ -662,14 +662,12 @@
                                         <input type="text" class="form-control" name="username"
                                             value="${not empty profile_username ? profile_username : profile.username}"
                                             required>
-                                        <c:if test="${not empty usernameError}">
-                                            <div class="text-danger">${usernameError}</div>
-                                        </c:if>
+                                        <div class="error-message" id="usernameError"></div>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Date of birth</label>
                                         <input type="text" class="form-control" id="dob" name="dob"
-                                            value="${not empty profile_userDOB ? profile_userDOB : (not empty profile.userDOB ? profile.userDOB : '')}"
+                                            value="${not empty profile_userDOB ? profile_userDOB : (not empty profile.userDOB ? FormatUtils.formatDisplayDate(profile.userDOB) : '')}"
                                             placeholder="dd/MM/yyyy" autocomplete="off">
                                         <c:if test="${not empty dobError}">
                                             <div class="text-danger">${dobError}</div>
