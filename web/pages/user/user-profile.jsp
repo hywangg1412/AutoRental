@@ -163,7 +163,8 @@
                                                                             <i class="bi bi-check-circle-fill me-1"></i>
                                                                             ${not empty profile.facebookAccountName ? profile.facebookAccountName : 'Connected'}
                                                                         </span>
-                                                                        <form action="${pageContext.request.contextPath}/facebook-unlink" method="post" style="display: inline;" onsubmit="return confirm('Are you sure you want to unlink your Facebook account?')">
+                                                                        <form action="${pageContext.request.contextPath}/user/social-unlink" method="post" style="display: inline;">
+                                                                            <input type="hidden" name="provider" value="facebook">
                                                                             <button type="submit"
                                                                                     class="btn btn-outline-danger btn-unlink-social d-flex align-items-center gap-1 px-3 py-1"
                                                                                     style="font-size:0.95em; border-radius: 20px; border-width: 2px; font-weight: 500;"
@@ -177,7 +178,7 @@
                                                                     </div>
                                                                 </c:when>
                                                                 <c:otherwise>
-                                                                    <a href="${pageContext.request.contextPath}/facebook-link" class="add-link d-flex align-items-center" style="font-size:0.97em;">
+                                                                    <a href="${pageContext.request.contextPath}/user/social-link?provider=facebook" class="add-link d-flex align-items-center" style="font-size:0.97em;">
                                                                         <i class="bi bi-link-45deg me-1"></i>Add link
                                                                     </a>
                                                                 </c:otherwise>
@@ -194,7 +195,8 @@
                                                                             <i class="bi bi-check-circle-fill me-1"></i>
                                                                             ${not empty profile.googleAccountName ? profile.googleAccountName : 'Connected'}
                                                                         </span>
-                                                                        <form action="${pageContext.request.contextPath}/google-unlink" method="post" style="display: inline;" onsubmit="return confirm('Are you sure you want to unlink your Google account?')">
+                                                                        <form action="${pageContext.request.contextPath}/user/social-unlink" method="post" style="display: inline;">
+                                                                            <input type="hidden" name="provider" value="google">
                                                                             <button type="submit"
                                                                                     class="btn btn-outline-danger btn-unlink-social d-flex align-items-center gap-1 px-3 py-1"
                                                                                     style="font-size:0.95em; border-radius: 20px; border-width: 2px; font-weight: 500;"
@@ -208,7 +210,7 @@
                                                                     </div>
                                                                 </c:when>
                                                                 <c:otherwise>
-                                                                    <a href="${pageContext.request.contextPath}/google-link" class="add-link d-flex align-items-center" style="font-size:0.97em;">
+                                                                    <a href="${pageContext.request.contextPath}/user/social-link?provider=google" class="add-link d-flex align-items-center" style="font-size:0.97em;">
                                                                         <i class="bi bi-link-45deg me-1"></i>Add link
                                                                     </a>
                                                                 </c:otherwise>
@@ -432,7 +434,7 @@
         <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer" style="z-index: 12000;">
   <!-- Toast test static đã bị ẩn -->
   <c:if test="${not empty success}">
-    <div class="toast align-items-center show"
+    <div class="toast align-items-center fade show"
          role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="4000" id="serverToast"
          style="background: #f5f7fa !important; border: 1.5px solid #e0e0e0; box-shadow: 0 4px 24px rgba(60,60,60,0.10); border-radius: 14px; min-width: 260px; max-width: 380px; padding: 0;">
       <div class="d-flex align-items-center" style="padding: 0.7rem 1.1rem 0.7rem 1rem;">
@@ -446,7 +448,7 @@
     </div>
   </c:if>
   <c:if test="${not empty error}">
-    <div class="toast align-items-center show"
+    <div class="toast align-items-center fade show"
          role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="4000" id="serverToast"
          style="background: #f5f7fa !important; border: 1.5px solid #e0e0e0; box-shadow: 0 4px 24px rgba(60,60,60,0.10); border-radius: 14px; min-width: 260px; max-width: 380px; padding: 0;">
       <div class="d-flex align-items-center" style="padding: 0.7rem 1.1rem 0.7rem 1rem;">
@@ -459,6 +461,23 @@
       </div>
     </div>
   </c:if>
+</div>
+<!-- Modal xác nhận unlink social -->
+<div class="modal fade" id="confirmUnlinkModal" tabindex="-1" aria-labelledby="confirmUnlinkModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width:350px;">
+    <div class="modal-content" style="border-radius: 14px; padding: 1.2rem 1.2rem 1rem 1.2rem; min-height:320px;">
+      <div class="modal-header border-0 pb-0">
+        <h2 class="modal-title w-100 text-center" id="confirmUnlinkModalLabel" style="font-size:1.2rem;font-weight:700;">Confirmation</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="font-size:1.1rem;"></button>
+      </div>
+      <div class="modal-body text-center" style="font-size:1rem;">
+        Are you sure you want to unlink your current <span id="unlinkProviderName" style="font-weight:600;"></span> account?
+      </div>
+      <div class="modal-footer border-0 pt-0 d-flex justify-content-center">
+        <button type="button" class="btn btn-success btn-save-modal" id="confirmUnlinkBtn" style="min-width:140px;font-size:1rem !important;">Continue</button>
+      </div>
+    </div>
+  </div>
 </div>
     </body>
 </html> 
