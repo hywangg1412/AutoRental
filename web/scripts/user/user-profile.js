@@ -1103,4 +1103,25 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // Unlink social (Facebook/Google)
+    document.querySelectorAll('form[action$="social-unlink"]').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const providerInput = this.querySelector('input[name="provider"]');
+            const provider = providerInput ? providerInput.value : '';
+            document.getElementById('unlinkProviderName').textContent = provider.charAt(0).toUpperCase() + provider.slice(1);
+            const modal = new bootstrap.Modal(document.getElementById('confirmUnlinkModal'));
+            modal.show();
+
+            // Xử lý nút xác nhận
+            const confirmBtn = document.getElementById('confirmUnlinkBtn');
+            // Xóa event cũ nếu có
+            confirmBtn.onclick = null;
+            confirmBtn.onclick = () => {
+                modal.hide();
+                this.submit();
+            };
+        });
+    });
 });
