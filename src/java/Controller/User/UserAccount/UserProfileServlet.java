@@ -59,6 +59,10 @@ public class UserProfileServlet extends HttpServlet {
         UserProfileDTO profile = new UserProfileDTO();
         profile.setUsername(user.getUsername());
         profile.setUserDOB(user.getUserDOB());
+        // Format userDOB to dd/MM/yyyy string for display
+        if (user.getUserDOB() != null) {
+            profile.setUserDOBFormatted(user.getUserDOB().format(formatter));
+        }
         profile.setGender(user.getGender());
         profile.setPhoneNumber(user.getPhoneNumber());
         profile.setEmail(user.getEmail());

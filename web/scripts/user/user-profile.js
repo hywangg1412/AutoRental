@@ -83,6 +83,11 @@ const ValidationRules = {
         future: 'Date of birth cannot be in the future',
         age: 'You must be at least 18 years old'
     },
+    citizenDob: {
+        required: 'Date of birth is required',
+        future: 'Date of birth cannot be in the future',
+        age: 'You must be at least 14 years old to register a Citizen ID'
+    },
     gender: {
         required: 'Gender is required.'
     }
@@ -317,6 +322,166 @@ function showBootstrapToast({title = 'Thông báo', message = '', delay = 3000, 
     });
 }
 
+// ==== BEGIN: JS chuyển từ user-profile.jsp sang file này ====
+
+// --- PHONE NUMBER VALIDATION WITH ANIMATION ---
+const phoneValidationRules = {
+    required: 'Phone number is required',
+    format: 'Phone number must be 10-11 digits starting with 0',
+    invalid: 'Phone number can only contain digits'
+};
+
+function validatePhoneInputRealtime() {
+    const phoneInput = document.getElementById('phoneInput');
+    const phoneError = document.getElementById('phoneError');
+    if (!phoneInput || !phoneError) return;
+
+    // Chặn nhập quá 11 số
+    phoneInput.addEventListener('keydown', function (e) {
+        const allowedKeys = [
+            'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Home', 'End',
+            'Control', 'Meta', 'Shift', 'Alt', 'Escape', 'Enter'
+        ];
+        // Cho phép các phím điều hướng, xóa, chọn, dán, copy, cut
+        if (
+            allowedKeys.includes(e.key) ||
+            (e.ctrlKey || e.metaKey) // Cho phép Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+        ) {
+            return;
+        }
+        // Nếu đã đủ 11 số và không phải đang chọn để ghi đè thì chặn nhập thêm
+        const value = phoneInput.value;
+        const selection = phoneInput.selectionEnd - phoneInput.selectionStart;
+        const isReplacing = selection > 0;
+        const cleanValue = value.replace(/\D/g, '');
+        if (cleanValue.length >= 11 && !isReplacing) {
+            e.preventDefault();
+        }
+        // Chỉ cho nhập số
+        if (e.key.length === 1 && !/\d/.test(e.key)) {
+            e.preventDefault();
+        }
+    });
+
+    // Khi paste, chỉ cho phép dán nếu tổng số sau khi dán không vượt quá 11 số
+    phoneInput.addEventListener('paste', function (e) {
+        let paste = (e.clipboardData || window.clipboardData).getData('text');
+        let cleanPaste = paste.replace(/\D/g, '');
+        let current = phoneInput.value.replace(/\D/g, '');
+        let selection = phoneInput.selectionEnd - phoneInput.selectionStart;
+        let maxAllowed = 11 - (current.length - selection);
+        if (cleanPaste.length > maxAllowed) {
+            e.preventDefault();
+        }
+    });
+
+    phoneInput.addEventListener('input', function () {
+        let value = phoneInput.value.trim();
+        let errorMsg = null;
+        // Kiểm tra lỗi ký tự đặc biệt
+        if (/[^\dA-Za-z]/.test(value)) {
+            errorMsg = 'Phone number cannot contain special characters';
+        } else if (/[A-Za-z]/.test(value)) {
+            errorMsg = 'Phone number cannot contain letters';
+        } else {
+            // Chỉ cho nhập số
+            let cleanValue = value.replace(/\D/g, '');
+            if (value !== cleanValue) {
+                phoneInput.value = cleanValue;
+            }
+            if (!cleanValue) {
+                errorMsg = phoneValidationRules.required;
+            } else if (!/^0\d{9,10}$/.test(cleanValue)) {
+                errorMsg = phoneValidationRules.format;
+            }
+        }
+        if (errorMsg) {
+            errorManager.showError(phoneInput, phoneError, errorMsg);
+        } else {
+            errorManager.clearError(phoneInput, phoneError);
+        }
+    });
+
+    // Đảm bảo khi paste cũng không vượt quá 11 số
+    phoneInput.addEventListener('paste', function (e) {
+        let paste = (e.clipboardData || window.clipboardData).getData('text');
+        let cleanPaste = paste.replace(/\D/g, '');
+        if (cleanPaste.length > 11) {
+            cleanPaste = cleanPaste.slice(0, 11);
+        }
+        setTimeout(() => {
+            let value = phoneInput.value.replace(/\D/g, '');
+            if (value.length > 11) {
+                phoneInput.value = value.slice(0, 11);
+            }
+        }, 0);
+    });
+
+    phoneInput.addEventListener('blur', function () {
+        // Khi blur, validate lại
+        const value = phoneInput.value.trim();
+        let errorMsg = null;
+        if (!value) {
+            errorMsg = phoneValidationRules.required;
+        } else if (!/^0\d{9,10}$/.test(value)) {
+            errorMsg = phoneValidationRules.format;
+        }
+        if (errorMsg) {
+            errorManager.showError(phoneInput, phoneError, errorMsg);
+        } else {
+            errorManager.clearError(phoneInput, phoneError);
+        }
+    });
+}
+
+function validatePhoneInputOnSubmit() {
+    const phoneInput = document.getElementById('phoneInput');
+    const phoneError = document.getElementById('phoneError');
+    const updatePhoneForm = document.getElementById('updatePhoneForm');
+    if (!phoneInput || !phoneError || !updatePhoneForm) return;
+
+    updatePhoneForm.addEventListener('submit', function (e) {
+        const value = phoneInput.value.trim();
+        let errorMsg = null;
+        if (!value) {
+            errorMsg = phoneValidationRules.required;
+        } else if (!/^0\d{9,10}$/.test(value)) {
+            errorMsg = phoneValidationRules.format;
+        }
+        if (errorMsg) {
+            errorManager.showError(phoneInput, phoneError, errorMsg);
+            e.preventDefault();
+            return false;
+        } else {
+            errorManager.clearError(phoneInput, phoneError);
+        }
+    });
+}
+
+// Reset lỗi khi đóng modal
+function resetPhoneInputOnModalClose() {
+    const phoneInput = document.getElementById('phoneInput');
+    const phoneError = document.getElementById('phoneError');
+    const editPhoneModal = document.getElementById('editPhoneModal');
+    if (!phoneInput || !phoneError || !editPhoneModal) return;
+
+    editPhoneModal.addEventListener('hidden.bs.modal', function () {
+        errorManager.clearError(phoneInput, phoneError);
+        phoneInput.value = phoneInput.defaultValue || '';
+    });
+}
+
+// Khởi tạo datepicker cho các trường ngày với định dạng dd/mm/yyyy
+if (typeof $ !== 'undefined' && $.fn.datepicker) {
+    $('#citizenDob, #citizenIssueDate, #dob').datepicker({
+        format: 'dd/mm/yyyy',
+        autoclose: true,
+        todayHighlight: true,
+        orientation: 'bottom'
+    });
+}
+
+
 // Main initialization
 document.addEventListener('DOMContentLoaded', function() {
     var serverToast = document.getElementById('serverToast');
@@ -336,6 +501,81 @@ document.addEventListener('DOMContentLoaded', function() {
             { field: 'dob', type: 'dob' },
             { field: 'gender', type: 'gender' }
         ];
+        const updateBtn = userInfoForm.querySelector('button[type="submit"], .btn-save-modal');
+        const usernameInput = userInfoForm.querySelector('input[name="username"]');
+        const usernameError = userInfoForm.querySelector('#usernameError') || usernameInput.parentElement.querySelector('.text-danger, .error-message');
+
+        function checkUserInfoFormValidity() {
+            let hasError = false;
+            userInfoRules.forEach(rule => {
+                const input = userInfoForm.querySelector(`[name="${rule.field}"]`);
+                const errorDiv = userInfoForm.querySelector(`#${rule.field}Error`) || input.parentElement.querySelector('.text-danger, .error-message');
+                if ((errorDiv && errorDiv.textContent.trim() !== '') || (input && input.classList.contains('is-invalid'))) {
+                    hasError = true;
+                }
+            });
+            if (updateBtn) updateBtn.disabled = hasError;
+        }
+
+        // Validate realtime cho username (bổ sung check trùng username qua API)
+        if (usernameInput && usernameError) {
+            let lastCheckedUsername = '';
+            let usernameCheckTimeout = null;
+            usernameInput.addEventListener('input', function() {
+                const value = usernameInput.value.trim();
+                if (value === '') {
+                    errorManager.showError(usernameInput, usernameError, ValidationRules.username.required);
+                    checkUserInfoFormValidity();
+                    return;
+                }
+                if (value.length < 3 || value.length > 30) {
+                    errorManager.showError(usernameInput, usernameError, ValidationRules.username.length);
+                    checkUserInfoFormValidity();
+                    return;
+                }
+                if (!ValidationRules.username.pattern.test(value)) {
+                    errorManager.showError(usernameInput, usernameError, ValidationRules.username.format);
+                    checkUserInfoFormValidity();
+                    return;
+                }
+                // Kiểm tra trùng username qua API (debounce)
+                if (usernameCheckTimeout) clearTimeout(usernameCheckTimeout);
+                usernameCheckTimeout = setTimeout(() => {
+                    if (value === lastCheckedUsername) return;
+                    lastCheckedUsername = value;
+                    // Lấy userId hiện tại nếu có (từ biến JS hoặc hidden input)
+                    let userId = '';
+                    if (window.currentUserId) userId = window.currentUserId;
+                    else {
+                        const userIdInput = document.querySelector('input[name="userId"]');
+                        if (userIdInput) userId = userIdInput.value;
+                    }
+                    fetch(`${window.contextPath || ''}/user/check-username?username=${encodeURIComponent(value)}${userId ? `&userId=${encodeURIComponent(userId)}` : ''}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.exists) {
+                                errorManager.showError(usernameInput, usernameError, 'Username is already taken by another user.');
+                            } else {
+                                errorManager.clearError(usernameInput, usernameError);
+                            }
+                            checkUserInfoFormValidity();
+                        })
+                        .catch(() => {
+                            // Nếu lỗi API, không chặn người dùng
+                            errorManager.clearError(usernameInput, usernameError);
+                            checkUserInfoFormValidity();
+                        });
+                }, 400);
+            });
+        }
+
+        userInfoForm.addEventListener('input', function() {
+            checkUserInfoFormValidity();
+        }, true);
+        userInfoForm.addEventListener('blur', function() {
+            checkUserInfoFormValidity();
+        }, true);
+        setTimeout(checkUserInfoFormValidity, 100);
 
         userInfoForm.addEventListener('submit', function(e) {
             if (!validateForm(userInfoForm, userInfoRules)) {
@@ -344,7 +584,6 @@ document.addEventListener('DOMContentLoaded', function() {
             isEditingUserInfo = false;
         });
 
-        // Track editing state
         userInfoForm.querySelectorAll('input, select').forEach(input => {
             input.addEventListener('input', () => { isEditingUserInfo = true; });
         });
@@ -415,6 +654,12 @@ document.addEventListener('DOMContentLoaded', function() {
             driverLicenseElements.saveBtn.disabled = true;
             driverLicenseElements.editBtn.classList.add('d-none');
             isEditingDriverLicense = true;
+            
+            // Thêm class edit-mode cho driver license block
+            const driverLicenseBlock = document.querySelector('.driver-license-block');
+            if (driverLicenseBlock) {
+                driverLicenseBlock.classList.add('edit-mode');
+            }
         });
 
         driverLicenseElements.cancelBtn.addEventListener('click', function() {
@@ -426,6 +671,12 @@ document.addEventListener('DOMContentLoaded', function() {
             driverLicenseElements.saveBtn.classList.add('d-none');
             driverLicenseElements.editBtn.classList.remove('d-none');
             isEditingDriverLicense = false;
+            
+            // Xóa class edit-mode khi cancel
+            const driverLicenseBlock = document.querySelector('.driver-license-block');
+            if (driverLicenseBlock) {
+                driverLicenseBlock.classList.remove('edit-mode');
+            }
         });
 
         // Real-time validation
@@ -464,6 +715,12 @@ document.addEventListener('DOMContentLoaded', function() {
                             driverLicenseElements.cancelBtn.classList.add('d-none');
                             driverLicenseElements.saveBtn.classList.add('d-none');
                             isEditingDriverLicense = false;
+                            
+                            // Xóa class edit-mode khi save thành công
+                            const driverLicenseBlock = document.querySelector('.driver-license-block');
+                            if (driverLicenseBlock) {
+                                driverLicenseBlock.classList.remove('edit-mode');
+                            }
                         } else {
                             showBootstrapToast(result.message || 'Failed to update information', 'error');
                         }
@@ -492,6 +749,26 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('citizenIdBackImageInput')
         ]
     };
+
+    // --- Disable nút Update nếu có lỗi trong form CCCD ---
+    function checkCitizenIdFormValidity() {
+        if (!citizenIdElements.form || !citizenIdElements.saveBtn) return;
+        let hasError = false;
+        // Kiểm tra các trường chính
+        ['citizenIdNumber','citizenFullName','citizenDob','citizenIssueDate','citizenPlaceOfIssue'].forEach(id => {
+            const input = document.getElementById(id);
+            const errorDiv = document.getElementById(id + 'Error') || (input && input.parentElement.querySelector('.error-message, .text-danger'));
+            if ((errorDiv && errorDiv.textContent.trim() !== '') || (input && input.classList.contains('is-invalid'))) {
+                hasError = true;
+            }
+        });
+        citizenIdElements.saveBtn.disabled = hasError;
+    }
+    if (citizenIdElements.form && citizenIdElements.saveBtn) {
+        citizenIdElements.form.addEventListener('input', checkCitizenIdFormValidity, true);
+        citizenIdElements.form.addEventListener('blur', checkCitizenIdFormValidity, true);
+        setTimeout(checkCitizenIdFormValidity, 100);
+    }
 
     if (citizenIdElements.editBtn && citizenIdElements.form) {
         let originalValues = {};
@@ -527,9 +804,39 @@ document.addEventListener('DOMContentLoaded', function() {
             citizenIdElements.saveBtn.classList.remove('d-none');
             citizenIdElements.cancelBtn.classList.remove('d-none');
             citizenIdElements.editBtn.classList.add('d-none');
+            
+            // Thêm class edit-mode cho citizen ID block
+            const citizenIdBlock = document.querySelector('.citizen-id-block');
+            if (citizenIdBlock) {
+                citizenIdBlock.classList.add('edit-mode');
+            }
+            
+            // Khởi tạo lại datepicker cho các trường date
+            setTimeout(() => {
+                if (typeof $ !== 'undefined' && $.fn.datepicker) {
+                    $('#citizenDob, #citizenIssueDate').datepicker('destroy');
+                    $('#citizenDob, #citizenIssueDate').datepicker({
+                        format: 'dd/mm/yyyy',
+                        autoclose: true,
+                        todayHighlight: true,
+                        orientation: 'bottom'
+                    });
+                }
+            }, 100);
         });
         citizenIdElements.cancelBtn.addEventListener('click', function() {
             resetToOriginalValues();
+            
+            // Xóa class edit-mode khi cancel
+            const citizenIdBlock = document.querySelector('.citizen-id-block');
+            if (citizenIdBlock) {
+                citizenIdBlock.classList.remove('edit-mode');
+            }
+            
+            // Hủy datepicker khi cancel
+            if (typeof $ !== 'undefined' && $.fn.datepicker) {
+                $('#citizenDob, #citizenIssueDate').datepicker('destroy');
+            }
         });
         citizenIdElements.saveBtn.addEventListener('click', function(e) {
             const citizenIdImageInput = document.getElementById('citizenIdImageInput');
@@ -547,6 +854,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             if (citizenIdImageInput) citizenIdImageInput.disabled = false;
             if (citizenIdBackImageInput) citizenIdBackImageInput.disabled = false;
+            
+            // Xóa class edit-mode khi save
+            const citizenIdBlock = document.querySelector('.citizen-id-block');
+            if (citizenIdBlock) {
+                citizenIdBlock.classList.remove('edit-mode');
+            }
+            
+            // Hủy datepicker khi save
+            if (typeof $ !== 'undefined' && $.fn.datepicker) {
+                $('#citizenDob, #citizenIssueDate').datepicker('destroy');
+            }
+            
             citizenIdElements.form.submit();
         });
     }
@@ -588,7 +907,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         let img = uploadArea.querySelector(`#${imgId}`);
                         if (!img) {
                             // Nếu chưa có img, xóa upload-area-empty và tạo img mới
-                            const emptyDiv = uploadArea.querySelector('.upload-area-empty');
+                            const emptyDiv = uploadArea.querySelector('.upload-area-empty, .citizen-id-upload-empty');
                             if (emptyDiv) emptyDiv.remove();
                             img = document.createElement('img');
                             img.id = imgId;
@@ -614,6 +933,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (editBtn) {
                 editBtn.addEventListener('click', function() {
                     input.disabled = false;
+                    // Thêm class edit-mode cho block chứa
+                    const block = input.closest('.driver-license-block, .citizen-id-block');
+                    if (block) {
+                        block.classList.add('edit-mode');
+                    }
                 });
             }
 
@@ -636,15 +960,21 @@ document.addEventListener('DOMContentLoaded', function() {
                     } else {
                         // Nếu không có ảnh gốc, hiện lại upload-area-empty
                         if (img) img.remove();
-                        if (!uploadArea.querySelector('.upload-area-empty')) {
+                        if (!uploadArea.querySelector('.upload-area-empty, .citizen-id-upload-empty')) {
                             const emptyDiv = document.createElement('div');
-                            emptyDiv.className = 'upload-area-empty';
+                            emptyDiv.className = input.classList.contains('citizen-id-input') ? 'citizen-id-upload-empty' : 'upload-area-empty';
                             emptyDiv.innerHTML = emptyHtml;
                             uploadArea.prepend(emptyDiv);
                         }
                     }
                     input.disabled = true;
                     if (saveBtn) saveBtn.disabled = true;
+                    
+                    // Xóa class edit-mode khi cancel
+                    const block = input.closest('.driver-license-block, .citizen-id-block');
+                    if (block) {
+                        block.classList.remove('edit-mode');
+                    }
                 });
             }
         }
@@ -670,7 +1000,7 @@ document.addEventListener('DOMContentLoaded', function() {
         imgId: 'citizenIdImg',
         emptyHtml: `
             <div class="upload-icon"><i class="bi bi-upload"></i></div>
-            <div class="upload-text">Click to upload CCCD front image</div>
+            <div class="citizen-id-upload-text">Click to upload CCCD front image</div>
         `,
         editBtnId: 'editCitizenIdBtn',
         cancelBtnId: 'cancelCitizenIdBtn'
@@ -682,7 +1012,7 @@ document.addEventListener('DOMContentLoaded', function() {
         imgId: 'citizenIdBackImg',
         emptyHtml: `
             <div class="upload-icon"><i class="bi bi-upload"></i></div>
-            <div class="upload-text">Click to upload CCCD back image</div>
+            <div class="citizen-id-upload-text">Click to upload CCCD back image</div>
         `,
         editBtnId: 'editCitizenIdBtn',
         cancelBtnId: 'cancelCitizenIdBtn'
@@ -735,14 +1065,55 @@ document.addEventListener('DOMContentLoaded', function() {
             errorManager.showError(dobInput, dobError, 'Date of birth must be in dd/MM/yyyy format');
             valid = false;
         } else {
-            errorManager.clearError(dobInput, dobError);
+            // Validate age 18+
+            const dobValue = dobInput.value.trim();
+            if (dobValue) {
+                const [day, month, year] = dobValue.split('/');
+                const birthDate = new Date(year, month - 1, day);
+                const today = new Date();
+                
+                if (birthDate > today) {
+                    errorManager.showError(dobInput, dobError, 'Date of birth cannot be in the future');
+                    valid = false;
+                } else {
+                    let age = today.getFullYear() - birthDate.getFullYear();
+                    const monthDiff = today.getMonth() - birthDate.getMonth();
+                    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                        age--;
+                    }
+                    
+                    if (age < 14) {
+                        errorManager.showError(dobInput, dobError, ValidationRules.citizenDob.age);
+                        valid = false;
+                    } else {
+                        errorManager.clearError(dobInput, dobError);
+                    }
+                }
+            } else {
+                errorManager.clearError(dobInput, dobError);
+            }
         }
         // Issue date
         if (!dateRegex.test(issueDateInput.value.trim())) {
             errorManager.showError(issueDateInput, issueDateError, 'Issue date must be in dd/MM/yyyy format');
             valid = false;
         } else {
-            errorManager.clearError(issueDateInput, issueDateError);
+            const issueValue = issueDateInput.value.trim();
+            if (issueValue) {
+                const [day, month, year] = issueValue.split('/');
+                const issueDate = new Date(year, month - 1, day);
+                const today = new Date();
+                today.setHours(0,0,0,0);
+                issueDate.setHours(0,0,0,0);
+                if (issueDate > today) {
+                    errorManager.showError(issueDateInput, issueDateError, 'Issue date cannot be in the future');
+                    valid = false;
+                } else {
+                    errorManager.clearError(issueDateInput, issueDateError);
+                }
+            } else {
+                errorManager.clearError(issueDateInput, issueDateError);
+            }
         }
         return valid;
     }
@@ -770,4 +1141,232 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // Xử lý nút Save cho Citizen ID
+    const saveCitizenIdBtn = document.getElementById('saveCitizenIdBtn');
+    if (saveCitizenIdBtn) {
+        saveCitizenIdBtn.addEventListener('click', function() {
+            if (validateCitizenIdFields()) {
+                citizenIdForm.submit();
+            }
+        });
+    }
+
+    // Modal Update Information
+    const updateUserInfoForm = document.getElementById('updateUserInfoForm');
+    if (updateUserInfoForm) {
+        const dobInput = updateUserInfoForm.querySelector('input[name="dob"]');
+        const dobError = document.createElement('div');
+        dobError.className = 'error-message';
+        dobError.id = 'dobError';
+        dobInput.parentNode.appendChild(dobError);
+
+        if (dobInput) {
+            dobInput.addEventListener('keydown', function(e) {
+                const allowedKeys = [
+                    'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Home', 'End', 'Control', 'Meta', 'Shift', 'Alt', 'Escape', 'Enter'
+                ];
+                // Cho phép các phím điều hướng, xóa, chọn, dán, copy, cut
+                if (
+                    allowedKeys.includes(e.key) ||
+                    (e.ctrlKey || e.metaKey) // Cho phép Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+                ) {
+                    return;
+                }
+                // Chỉ cho nhập số và dấu '/'
+                if (e.key.length === 1 && !/[0-9\/]/.test(e.key)) {
+                    e.preventDefault();
+                    return;
+                }
+                // Nếu đã đủ 10 ký tự và không phải đang chọn để ghi đè thì chặn nhập thêm
+                const value = dobInput.value;
+                const selection = dobInput.selectionEnd - dobInput.selectionStart;
+                const isReplacing = selection > 0;
+                if (value.length >= 10 && !isReplacing) {
+                    e.preventDefault();
+                }
+            });
+
+            dobInput.addEventListener('paste', function(e) {
+                let paste = (e.clipboardData || window.clipboardData).getData('text');
+                // Chỉ cho phép dán số và dấu '/'
+                if (!/^[0-9\/]+$/.test(paste)) {
+                    e.preventDefault();
+                    return;
+                }
+                let current = dobInput.value;
+                let selection = dobInput.selectionEnd - dobInput.selectionStart;
+                let maxAllowed = 10 - (current.length - selection);
+                if (paste.length > maxAllowed) {
+                    e.preventDefault();
+                }
+            });
+        }
+
+        dobInput.addEventListener('input', function() {
+            // Parse dd/MM/yyyy
+            const value = dobInput.value.trim();
+            let errorMsg = null;
+            if (!value) {
+                errorMsg = ValidationRules.dob.required;
+            } else {
+                const parts = value.split('/');
+                if (parts.length === 3) {
+                    const day = parseInt(parts[0], 10);
+                    const month = parseInt(parts[1], 10) - 1;
+                    const year = parseInt(parts[2], 10);
+                    const birthDate = new Date(year, month, day);
+                    const today = new Date();
+                    if (isNaN(birthDate.getTime())) {
+                        errorMsg = 'Invalid date format! Correct format: dd/MM/yyyy';
+                    } else if (birthDate > today) {
+                        errorMsg = ValidationRules.dob.future;
+                    } else {
+                        let age = today.getFullYear() - birthDate.getFullYear();
+                        if (
+                            today.getMonth() < birthDate.getMonth() ||
+                            (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())
+                        ) {
+                            age--;
+                        }
+                        if (age < 18) {
+                            errorMsg = ValidationRules.dob.age;
+                        }
+                    }
+                } else {
+                    errorMsg = 'Invalid date format! Correct format: dd/MM/yyyy';
+                }
+            }
+            if (errorMsg) {
+                errorManager.showError(dobInput, dobError, errorMsg);
+            } else {
+                errorManager.clearError(dobInput, dobError);
+            }
+        });
+
+        updateUserInfoForm.addEventListener('submit', function(e) {
+            const value = dobInput.value.trim();
+            let errorMsg = null;
+            if (!value) {
+                errorMsg = ValidationRules.dob.required;
+            } else {
+                const parts = value.split('/');
+                if (parts.length === 3) {
+                    const day = parseInt(parts[0], 10);
+                    const month = parseInt(parts[1], 10) - 1;
+                    const year = parseInt(parts[2], 10);
+                    const birthDate = new Date(year, month, day);
+                    const today = new Date();
+                    if (isNaN(birthDate.getTime())) {
+                        errorMsg = 'Invalid date format! Correct format: dd/MM/yyyy (e.g., 14/12/2004)';
+                    } else if (birthDate > today) {
+                        errorMsg = ValidationRules.dob.future;
+                    } else {
+                        let age = today.getFullYear() - birthDate.getFullYear();
+                        if (
+                            today.getMonth() < birthDate.getMonth() ||
+                            (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())
+                        ) {
+                            age--;
+                        }
+                        if (age < 18) {
+                            errorMsg = ValidationRules.dob.age;
+                        }
+                    }
+                } else {
+                    errorMsg = 'Invalid date format! Correct format: dd/MM/yyyy (e.g., 14/12/2004)';
+                }
+            }
+            if (errorMsg) {
+                errorManager.showError(dobInput, dobError, errorMsg);
+                e.preventDefault();
+                return false;
+            } else {
+                errorManager.clearError(dobInput, dobError);
+            }
+        });
+    }
+
+    // Unlink social (Facebook/Google)
+    document.querySelectorAll('form[action$="social-unlink"]').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const providerInput = this.querySelector('input[name="provider"]');
+            const provider = providerInput ? providerInput.value : '';
+            document.getElementById('unlinkProviderName').textContent = provider.charAt(0).toUpperCase() + provider.slice(1);
+            const modal = new bootstrap.Modal(document.getElementById('confirmUnlinkModal'));
+            modal.show();
+
+            // Xử lý nút xác nhận
+            const confirmBtn = document.getElementById('confirmUnlinkBtn');
+            // Xóa event cũ nếu có
+            confirmBtn.onclick = null;
+            confirmBtn.onclick = () => {
+                modal.hide();
+                this.submit();
+            };
+        });
+    });
+
+    validatePhoneInputRealtime();
+    validatePhoneInputOnSubmit();
+    resetPhoneInputOnModalClose();
+});
+
+// ===== Real-time Username Duplicate Check =====
+$(document).ready(function () {
+    // Lấy contextPath từ biến toàn cục (nếu có)
+    var contextPath = window.contextPath || '';
+    const $usernameInput = $('#editUserInfoModal input[name="username"]');
+    const $usernameError = $('#usernameError');
+    let usernameTimeout = null;
+
+    $usernameInput.on('input', function () {
+        clearTimeout(usernameTimeout);
+        const username = $(this).val().trim();
+        $usernameError.text('');
+        // Kiểm tra validate local trước
+        const localError = validationManager.validateUsername(this);
+        if (localError) {
+            $usernameError.text(localError);
+            $(this).addClass('is-invalid');
+            return;
+        } else {
+            $(this).removeClass('is-invalid');
+        }
+        // Gửi AJAX kiểm tra trùng username
+        usernameTimeout = setTimeout(function () {
+            $.ajax({
+                url: contextPath + '/user/check-username',
+                method: 'POST',
+                data: { username },
+                success: function (res) {
+                    // Nếu response là JSON string, parse
+                    let data = res;
+                    if (typeof res === 'string') {
+                        try { data = JSON.parse(res); } catch (e) { data = {}; }
+                    }
+                    if (data.exists) {
+                        $usernameError.text('Username đã tồn tại.');
+                        $usernameInput.addClass('is-invalid');
+                    } else {
+                        $usernameError.text('');
+                        $usernameInput.removeClass('is-invalid');
+                    }
+                },
+                error: function () {
+                    $usernameError.text('Lỗi kiểm tra username.');
+                    $usernameInput.addClass('is-invalid');
+                }
+            });
+        }, 400);
+    });
+
+    // Ngăn submit nếu có lỗi username
+    $('#updateUserInfoForm').on('submit', function (e) {
+        if ($usernameError.text().length > 0) {
+            e.preventDefault();
+            $usernameInput.addClass('is-invalid');
+        }
+    });
 });

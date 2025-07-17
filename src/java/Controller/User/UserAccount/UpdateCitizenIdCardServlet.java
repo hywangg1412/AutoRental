@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import Utils.FormatUtils;
 
 @WebServlet(name = "UpdateCitizenIdCardServlet", urlPatterns = {"/user/update-citizen-id"})
 @MultipartConfig
@@ -70,6 +71,10 @@ public class UpdateCitizenIdCardServlet extends HttpServlet {
                 handleError(request, response, session, "All fields are required");
                 return;
             }
+            if (placeOfIssue == null || !placeOfIssue.matches("^[\\p{L} ]+$")) {
+                handleError(request, response, session, "Place of issue must not contain numbers or special characters");
+                return;
+            }
 
             CitizenIdCard card = null;
             boolean isNew = false;
@@ -108,10 +113,50 @@ public class UpdateCitizenIdCardServlet extends HttpServlet {
 
             card.setCitizenIdNumber(citizenIdNumber);
             card.setFullName(fullName);
-            card.setDob(LocalDate.parse(dob, java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            
+            // Xử lý Date of Birth với định dạng dd/MM/yyyy
+            LocalDate dobDate = FormatUtils.parseDateSafely(dob);
+            if (dobDate == null) {
+                handleError(request, response, session, "Invalid date of birth format. Please use dd/MM/yyyy format");
+                return;
+            }
+            
+            // Validate age 18+
+            LocalDate today = LocalDate.now();
+            if (dobDate.isAfter(today)) {
+                handleError(request, response, session, "Date of birth cannot be in the future");
+                return;
+            }
+            
+            int age = today.getYear() - dobDate.getYear();
+            if (today.getMonthValue() < dobDate.getMonthValue() || 
+                (today.getMonthValue() == dobDate.getMonthValue() && today.getDayOfMonth() < dobDate.getDayOfMonth())) {
+                age--;
+            }
+            
+            if (age < 14) {
+                handleError(request, response, session, "You must be at least 14 years old to register a Citizen ID");
+                return;
+            }
+            
+            card.setDob(dobDate);
+            
             card.setCitizenIdImageUrl(frontUrl);
             card.setCitizenIdBackImageUrl(backUrl);
-            card.setCitizenIdIssuedDate(LocalDate.parse(issueDate, java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            
+            // Xử lý Issue Date với định dạng dd/MM/yyyy
+            LocalDate issueDateObj = FormatUtils.parseDateSafely(issueDate);
+            if (issueDateObj == null) {
+                handleError(request, response, session, "Invalid issue date format. Please use dd/MM/yyyy format");
+                return;
+            }
+            // Validate issue date không được lớn hơn ngày hiện tại
+            if (issueDateObj.isAfter(today)) {
+                handleError(request, response, session, "Issue date cannot be in the future");
+                return;
+            }
+            card.setCitizenIdIssuedDate(issueDateObj);
+            
             card.setCitizenIdIssuedPlace(placeOfIssue);
 
             if (isNew) {
