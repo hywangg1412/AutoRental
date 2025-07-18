@@ -17,6 +17,7 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import javax.crypto.spec.IvParameterSpec;
 import java.security.SecureRandom;
+import com.lowagie.text.pdf.BaseFont;
 
 public class ContractDocService {
     private final CloudinaryService cloudinaryService;
@@ -32,6 +33,7 @@ public class ContractDocService {
     // --- Render JSP -> HTML ---
     public String renderContractJspToHtml(HttpServletRequest request, HttpServletResponse response, String bookingId) throws Exception {
         request.setAttribute("bookingId", bookingId);
+        request.setAttribute("isPdfExport", true); // Đảm bảo luôn set true khi render cho PDF
         StringWriter stringWriter = new StringWriter();
         HttpServletResponseWrapper responseWrapper = new HttpServletResponseWrapper(response) {
             private PrintWriter writer = new PrintWriter(stringWriter);
@@ -44,9 +46,17 @@ public class ContractDocService {
     }
 
     // --- HTML -> PDF ---
-    public byte[] htmlToPdf(String html) throws Exception {
+    public byte[] htmlToPdf(String html, String fontAbsolutePath) throws Exception {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         ITextRenderer renderer = new ITextRenderer();
+        // Ưu tiên nhúng font BeVietnam Pro nếu có
+        String beVietnamFontPath = new java.io.File("web/assets/fonts/be_vietnam/BeVietnamPro-Regular.ttf").getAbsolutePath();
+        java.io.File beVietnamFontFile = new java.io.File(beVietnamFontPath);
+        if (beVietnamFontFile.exists()) {
+            renderer.getFontResolver().addFont(beVietnamFontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+        } else if (fontAbsolutePath != null && !fontAbsolutePath.isEmpty()) {
+            renderer.getFontResolver().addFont(fontAbsolutePath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+        }
         renderer.setDocumentFromString(html);
         renderer.layout();
         renderer.createPDF(os);

@@ -80,8 +80,9 @@ public class ContractSignServlet extends HttpServlet {
             // Escape ký tự & chưa hợp lệ để tránh lỗi XML entity
             html = html.replaceAll("&(?!(amp;|lt;|gt;|quot;|apos;|nbsp;))", "&amp;");
 
-            // 3. Convert HTML sang PDF
-            byte[] pdfBytes = contractDocService.htmlToPdf(html);
+            // 3. Convert HTML sang PDF (truyền đúng đường dẫn font)
+            String fontPath = request.getServletContext().getRealPath("/assets/fonts/dejavu/DejaVuLGCSans.ttf");
+            byte[] pdfBytes = contractDocService.htmlToPdf(html, fontPath);
 
             // 4. Upload PDF lên Cloudinary bảo mật
             ContractDocService.DocumentUploadResult uploadResult = contractDocService.uploadSecureDocument(
@@ -146,9 +147,19 @@ public class ContractSignServlet extends HttpServlet {
             }
             contractDocumentService.add(contractDocument);
 
-            // 8. Gửi email cho user với link PDF
-            String subject = "Hợp đồng thuê xe của bạn";
-            mailService.sendContractEmail(user.getEmail(), subject, pdfUrl);
+            // 8. Gửi email cho user với file PDF đính kèm
+            String subject = "Your Car Rental Contract";
+            String body = "<div style='font-family: Arial, sans-serif;'>"
+                + "<h3>Your car rental contract has been successfully signed!</h3>"
+                + "<p>Please see the attached contract file.</p>"
+                + "</div>";
+            mailService.sendContractEmailWithAttachment(
+                user.getEmail(),
+                subject,
+                body,
+                pdfBytes,
+                "contract.pdf"
+            );
 
             response.sendRedirect(request.getContextPath() + "/user/my-trip");
         } catch (Exception e) {

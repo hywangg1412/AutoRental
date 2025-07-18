@@ -241,6 +241,7 @@
                 .input-error {
                     border-color: #dc3545 !important;
                 }
+            
             </style>
         </head>
 
