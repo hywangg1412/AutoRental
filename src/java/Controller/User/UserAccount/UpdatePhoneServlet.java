@@ -49,13 +49,32 @@ public class UpdatePhoneServlet extends HttpServlet {
 
         try {
             String phoneNumber = request.getParameter("phone");
+            
+            // Validate phone number
             if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
                 session.setAttribute("error", "Phone number cannot be empty!");
                 response.sendRedirect(request.getContextPath() + "/user/profile");
                 return;
             }
+            
+            // Remove all non-digit characters
+            String cleanPhone = phoneNumber.replaceAll("\\D", "");
+            
+            // Check if contains only digits
+            if (!cleanPhone.matches("^\\d+$")) {
+                session.setAttribute("error", "Phone number can only contain digits!");
+                response.sendRedirect(request.getContextPath() + "/user/profile");
+                return;
+            }
+            
+            // Vietnamese phone number validation (10-11 digits starting with 0)
+            if (!cleanPhone.matches("^0[0-9]{9,10}$")) {
+                session.setAttribute("error", "Please enter a valid Vietnamese phone number (10-11 digits starting with 0)!");
+                response.sendRedirect(request.getContextPath() + "/user/profile");
+                return;
+            }
 
-            boolean updateSuccess = userService.updatePhoneNumber(user.getUserId(), phoneNumber);
+            boolean updateSuccess = userService.updatePhoneNumber(user.getUserId(), cleanPhone);
             if (updateSuccess) {
                 User updatedUser = userService.findById(user.getUserId());
                 session.setAttribute("user", updatedUser);

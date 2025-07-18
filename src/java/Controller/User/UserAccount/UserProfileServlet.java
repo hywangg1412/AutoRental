@@ -25,6 +25,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import Service.Role.RoleService;
 import Model.Entity.Role.Role;
+import Service.User.CitizenIdCardService;
+import Model.Entity.User.CitizenIdCard;
 
 @WebServlet("/user/profile")
 public class UserProfileServlet extends HttpServlet {
@@ -36,6 +38,7 @@ public class UserProfileServlet extends HttpServlet {
     private UserLoginsService userLoginsService;
     private DriverLicenseService driverLicenseService;
     private RoleService roleService;
+    private CitizenIdCardService citizenIdCardService;
 
     @Override
     public void init() {
@@ -43,6 +46,7 @@ public class UserProfileServlet extends HttpServlet {
         userLoginsService = new UserLoginsService();
         driverLicenseService = new DriverLicenseService();
         roleService = new RoleService();
+        citizenIdCardService = new CitizenIdCardService();
     }
 
     private UserProfileDTO mapUserToProfileDTO(User user, List<UserLogins> userLogins) {
@@ -55,6 +59,10 @@ public class UserProfileServlet extends HttpServlet {
         UserProfileDTO profile = new UserProfileDTO();
         profile.setUsername(user.getUsername());
         profile.setUserDOB(user.getUserDOB());
+        // Format userDOB to dd/MM/yyyy string for display
+        if (user.getUserDOB() != null) {
+            profile.setUserDOBFormatted(user.getUserDOB().format(formatter));
+        }
         profile.setGender(user.getGender());
         profile.setPhoneNumber(user.getPhoneNumber());
         profile.setEmail(user.getEmail());
@@ -124,6 +132,15 @@ public class UserProfileServlet extends HttpServlet {
                 }
             }
             request.setAttribute("driverLicense", driverLicense);
+
+            // Lấy thông tin CCCD
+            CitizenIdCard citizenIdCard = null;
+            try {
+                citizenIdCard = citizenIdCardService.findByUserId(user.getUserId());
+            } catch (NotFoundException e) {
+                // Không có CCCD, để null
+            }
+            request.setAttribute("citizenId", citizenIdCard);
 
             // Read session messages and clear them
             String successMessage = (String) SessionUtil.getSessionAttribute(request, "success");

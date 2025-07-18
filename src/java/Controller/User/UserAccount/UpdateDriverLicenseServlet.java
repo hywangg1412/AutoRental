@@ -19,6 +19,7 @@ import jakarta.servlet.http.Part;
 import com.google.gson.Gson;
 import java.util.HashMap;
 import java.util.Map;
+import Utils.FormatUtils;
 
 @WebServlet(name = "UpdateDriverLicenseServlet", urlPatterns = {"/user/update-driver-license"})
 @MultipartConfig
@@ -147,7 +148,12 @@ public class UpdateDriverLicenseServlet extends HttpServlet {
         }
 
         try {
-            java.time.LocalDate dobDate = java.time.LocalDate.parse(dob);
+            // Xử lý Date of Birth với định dạng dd/MM/yyyy
+            java.time.LocalDate dobDate = FormatUtils.parseDateSafely(dob);
+            if (dobDate == null) {
+                handleError(request, response, session, "Invalid date of birth format. Please use dd/MM/yyyy format");
+                return;
+            }
             java.time.LocalDate today = java.time.LocalDate.now();
             if (dobDate.isAfter(today)) {
                 handleError(request, response, session, "Date of birth cannot be in the future");
@@ -159,7 +165,7 @@ public class UpdateDriverLicenseServlet extends HttpServlet {
                 age--;
             }
             if (age < 18) {
-                handleError(request, response, session, "You must be at least 18 years old");
+                handleError(request, response, session, "You must be at least 18 years old to register a driver license");
                 return;
             }
 
