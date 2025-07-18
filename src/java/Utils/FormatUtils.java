@@ -22,4 +22,25 @@ public class FormatUtils {
         if (dateStr == null || dateStr.trim().isEmpty()) return null;
         return LocalDate.parse(dateStr, DATE_FORMATTER);
     }
+
+    public static String formatDisplayDate(LocalDate date) {
+        if (date == null) return "";
+        return date.format(DATE_FORMATTER);
+    }
+    
+    public static LocalDate parseDateSafely(String dateStr) {
+        if (dateStr == null || dateStr.trim().isEmpty()) {
+            return null;
+        }
+        
+        try {
+            return LocalDate.parse(dateStr.trim(), DATE_FORMATTER);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
+    public static boolean isValidDateFormat(String dateStr) {
+        return parseDateSafely(dateStr) != null;
+    }
 }

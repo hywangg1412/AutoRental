@@ -241,7 +241,7 @@ body {
     margin-left: 0.5rem;
 }
 
-.account-info-block, .driver-license-block {
+.account-info-block, .driver-license-block, .citizen-id-block {
     background: #fff;
     border-radius: 14px !important;
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
@@ -530,9 +530,16 @@ input:disabled:active {
 .driver-license-upload-area {
     position: relative;
     display: inline-block;
+    cursor: default;
+    transition: cursor 0.2s;
+}
+
+/* Chỉ hiển thị cursor pointer khi ở chế độ edit */
+.driver-license-block.edit-mode .driver-license-upload-area {
     cursor: pointer;
 }
 
+/* Driver License Upload Icon */
 .driver-license-upload-icon {
     position: absolute;
     top: 50%;
@@ -548,6 +555,8 @@ input:disabled:active {
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s;
+    /* Ẩn hoàn toàn khi không ở chế độ edit */
+    visibility: hidden;
 }
 
 .driver-license-upload-icon i {
@@ -555,11 +564,16 @@ input:disabled:active {
     font-size: 2rem;
 }
 
-.driver-license-upload-area:hover .driver-license-upload-icon {
+/* Chỉ hiển thị hover effect khi ở chế độ edit */
+.driver-license-block.edit-mode .driver-license-upload-icon {
+    visibility: visible;
+}
+
+.driver-license-block.edit-mode .driver-license-upload-area:hover .driver-license-upload-icon {
     opacity: 1;
 }
 
-.driver-license-upload-area:hover .driver-license-img-preview {
+.driver-license-block.edit-mode .driver-license-upload-area:hover .driver-license-img-preview {
     filter: brightness(0.7);
 }
 
@@ -694,58 +708,8 @@ input:disabled:active {
     color: #fff;
 }
 
-/* Toast Custom Styles */
-.toast {
-    border-radius: 10px !important;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.12), 0 1.5px 4px rgba(0,0,0,0.08);
-    font-family: 'Poppins', Arial, sans-serif;
-    font-size: 1.05rem;
-    padding: 1rem 1.5rem;
-    min-width: 320px;
-    max-width: 400px;
-    margin-bottom: 1.2rem;
-    opacity: 1;
-    transition: box-shadow 0.2s, transform 0.2s;
-    background: #01d28e !important;
-
-}
-.toast.bg-danger {
-    background: linear-gradient(90deg, #e74c3c 0%, #c0392b 100%);
-}
-.toast .toast-body {
-    font-weight: 500;
-    letter-spacing: 0.01em;
-    display: flex;
-    align-items: center;
-}
-.toast .fa-check-circle, .toast .fa-exclamation-circle {
-    font-size: 1.3em;
-    margin-right: 0.7em;
-}
-.toast .btn-close {
-    filter: invert(1);
-    opacity: 0.7;
-    transition: opacity 0.2s;
-}
-.toast .btn-close:hover {
-    opacity: 1;
-}
-
-
-@keyframes slideOutRight {
-    0% {
-        opacity: 1;
-        transform: translateX(0);
-    }
-    100% {
-        opacity: 0;
-        transform: translateX(120%);
-    }
-}
-
-.toast.slide-out {
-    animation: slideOutRight 0.7s forwards;
-}
+/* Toast Custom Styles - Đã tắt để dùng style mặc định của Bootstrap
+*/
 
 .ftco-navbar-light {
     background: #fff !important;
@@ -901,6 +865,194 @@ nav.ftco-navbar-light .nav-link {
 .fa-bell, .fa-comment-dots {
     color: #222 !important;
 }
+
+.input-error, .is-invalid {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.1rem rgba(220,38,38,0.08);
+}
+.error-message {
+    color: #dc3545;
+    font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-top: 2px;
+    margin-bottom: 0;
+    overflow: hidden;
+    transition: max-height 0.25s cubic-bezier(0.4,0,0.2,1), opacity 0.25s cubic-bezier(0.4,0,0.2,1);
+    max-height: 0;
+    opacity: 0;
+    padding-left: 2px;
+}
+.error-message.show {
+    max-height: 40px;
+    opacity: 1;
+    margin-bottom: 6px;
+}
+
+#citizenIdBlock .citizen-id-img-preview {
+    width: 100%;
+    max-width: 320px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 2px solid #e0e0e0;
+    display: block;
+    margin: 0 auto;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(60,60,60,0.06);
+    transition: filter 0.2s;
+}
+
+/* Citizen ID Label */
+.citizen-id-label {
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 12px;
+}
+
+/* Citizen ID Upload Area */
+.citizen-id-upload-area {
+    position: relative;
+    display: inline-block;
+    cursor: default;
+    width: 100%;
+    transition: cursor 0.2s;
+}
+
+/* Chỉ hiển thị cursor pointer khi ở chế độ edit */
+.citizen-id-block.edit-mode .citizen-id-upload-area {
+    cursor: pointer;
+}
+
+/* Citizen ID Upload Icon */
+.citizen-id-upload-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.35);
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    /* Ẩn hoàn toàn khi không ở chế độ edit */
+    visibility: hidden;
+}
+
+.citizen-id-upload-icon i {
+    color: #fff;
+    font-size: 2rem;
+}
+
+/* Chỉ hiển thị hover effect khi ở chế độ edit */
+.citizen-id-block.edit-mode .citizen-id-upload-icon {
+    visibility: visible;
+}
+
+.citizen-id-block.edit-mode .citizen-id-upload-area:hover .citizen-id-upload-icon {
+    opacity: 1;
+}
+
+.citizen-id-block.edit-mode .citizen-id-upload-area:hover .citizen-id-img-preview {
+    filter: brightness(0.7);
+}
+
+/* Citizen ID Upload Empty Area */
+.citizen-id-upload-empty {
+    width: 100%;
+    max-width: 320px;
+    height: 180px;
+    background: #f6fffa;
+    border: 2px dashed #34c38f;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin: 0 auto;
+    transition: border-color 0.2s;
+}
+
+.citizen-id-upload-empty:hover {
+    border-color: #1abc9c;
+}
+
+.citizen-id-upload-text {
+    color: #6c757d;
+    font-size: 1.1rem;
+    font-weight: 500;
+    text-align: center;
+}
+
+.citizen-id-upload-empty .upload-icon {
+    background: #34c38f;
+    color: #fff;
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+}
+
+/* Citizen ID Actions */
+.citizen-id-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.citizen-id-actions .btn-edit {
+    min-width: 80px;
+    font-weight: 500;
+}
+
+.citizen-id-actions .btn-cancel,
+.citizen-id-actions .btn-save {
+    min-width: 80px;
+    font-weight: 500;
+    border-radius: 20px;
+    transition: background 0.2s, color 0.2s;
+}
+
+.citizen-id-actions .btn-cancel {
+    background: #fff;
+    color: #34c38f;
+    border: 1.5px solid #34c38f;
+}
+
+.citizen-id-actions .btn-cancel:hover {
+    background: #f6fffa;
+    color: #1abc9c;
+}
+
+.citizen-id-actions .btn-save {
+    background: #34c38f;
+    color: #fff;
+    border: none;
+}
+
+.citizen-id-actions .btn-save:hover {
+    background: #1abc9c;
+    color: #fff;
+}
+
+/* Citizen ID Block */
+.citizen-id-block {
+    background: #fff;
+    border-radius: 14px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    font-size: 1rem;
+}
+
 
 
 

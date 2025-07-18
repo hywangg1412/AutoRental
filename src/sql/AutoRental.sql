@@ -57,11 +57,14 @@ GO
 
 CREATE TABLE [CitizenIdCards] (
     [Id] UNIQUEIDENTIFIER NOT NULL,
-    [UserId] UNIQUEIDENTIFIER NOT NULL UNIQUE, -- UNIQUE để đảm bảo 1-1
-    [CitizenIdNumber] NVARCHAR(20) NOT NULL,
-    [CitizenIdImageUrl] NVARCHAR(500) NULL,
-    [CitizenIdIssuedDate] DATE NULL,
-    [CitizenIdIssuedPlace] NVARCHAR(100) NULL,
+    [UserId] UNIQUEIDENTIFIER NOT NULL UNIQUE, -- 1-1 với Users
+    [CitizenIdNumber] NVARCHAR(12) NOT NULL,
+    [FullName] NVARCHAR(100) NOT NULL,
+    [DOB] DATE NOT NULL,
+    [CitizenIdImageUrl] NVARCHAR(500) NOT NULL,         -- Ảnh mặt trước
+    [CitizenIdBackImageUrl] NVARCHAR(500) NOT NULL,     -- Ảnh mặt sau
+    [CitizenIdIssuedDate] DATE NOT NULL,
+    [CitizenIdIssuedPlace] NVARCHAR(100) NOT NULL,
     [CreatedDate] DATETIME2 NOT NULL DEFAULT GETDATE(),
     CONSTRAINT [PK_CitizenIdCards] PRIMARY KEY ([Id]),
     CONSTRAINT [FK_CitizenIdCards_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE
