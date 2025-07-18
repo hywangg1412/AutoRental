@@ -1,7 +1,8 @@
 
-package Repository.Interfaces;
+package Repository.Interfaces.IContract;
 
-import Model.Entity.Contract;
+import Model.Entity.Contract.Contract;
+import Repository.Interfaces.Repository;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;

@@ -1,8 +1,8 @@
-package Repository;
+package Repository.Contract;
 
 import Config.DBContext;
-import Model.Entity.Contract;
-import Repository.Interfaces.IContractRepository;
+import Model.Entity.Contract.Contract;
+import Repository.Interfaces.IContract.IContractRepository;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,14 +21,10 @@ public class ContractRepository implements IContractRepository {
 
     @Override
     public Contract add(Contract entity) throws SQLException {
-        String sql = "INSERT INTO Contract (ContractId, ContractCode, UserId, BookingId, " +
-                    "CreatedDate, SignedDate, CompletedDate, Status, TermsAccepted, TermsAcceptedDate, " +
-                    "TermsVersion, TermsFileUrl, SignatureData, SignatureMethod, Notes, CancellationReason) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        
+        String sql = "INSERT INTO Contract (ContractId, ContractCode, UserId, BookingId, CreatedDate, SignedDate, CompletedDate, Status, TermsAccepted, SignatureData, SignatureMethod, ContractPdfUrl, ContractFileType, Notes, CancellationReason) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = dbContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            
             ps.setObject(1, entity.getContractId());
             ps.setString(2, entity.getContractCode());
             ps.setObject(3, entity.getUserId());
@@ -38,14 +34,12 @@ public class ContractRepository implements IContractRepository {
             ps.setObject(7, entity.getCompletedDate());
             ps.setString(8, entity.getStatus());
             ps.setBoolean(9, entity.isTermsAccepted());
-            ps.setObject(10, entity.getTermsAcceptedDate());
-            ps.setString(11, entity.getTermsVersion());
-            ps.setString(12, entity.getTermsFileUrl());
-            ps.setString(13, entity.getSignatureData());
-            ps.setString(14, entity.getSignatureMethod());
-            ps.setString(15, entity.getNotes());
-            ps.setString(16, entity.getCancellationReason());
-            
+            ps.setString(10, entity.getSignatureData());
+            ps.setString(11, entity.getSignatureMethod());
+            ps.setString(12, entity.getContractPdfUrl());
+            ps.setString(13, entity.getContractFileType());
+            ps.setString(14, entity.getNotes());
+            ps.setString(15, entity.getCancellationReason());
             int affectedRows = ps.executeUpdate();
             if (affectedRows > 0) {
                 return entity;
@@ -60,12 +54,9 @@ public class ContractRepository implements IContractRepository {
     @Override
     public Contract findById(UUID id) throws SQLException {
         String sql = "SELECT * FROM Contract WHERE ContractId = ?";
-        
         try (Connection conn = dbContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            
             ps.setObject(1, id);
-            
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return mapResultSetToContract(rs);
@@ -80,14 +71,9 @@ public class ContractRepository implements IContractRepository {
 
     @Override
     public boolean update(Contract entity) throws SQLException {
-        String sql = "UPDATE Contract SET ContractCode = ?, UserId = ?, BookingId = ?, " +
-                    "CreatedDate = ?, SignedDate = ?, CompletedDate = ?, Status = ?, TermsAccepted = ?, " +
-                    "TermsAcceptedDate = ?, TermsVersion = ?, TermsFileUrl = ?, SignatureData = ?, SignatureMethod = ?, " +
-                    "Notes = ?, CancellationReason = ? WHERE ContractId = ?";
-        
+        String sql = "UPDATE Contract SET ContractCode = ?, UserId = ?, BookingId = ?, CreatedDate = ?, SignedDate = ?, CompletedDate = ?, Status = ?, TermsAccepted = ?, SignatureData = ?, SignatureMethod = ?, ContractPdfUrl = ?, ContractFileType = ?, Notes = ?, CancellationReason = ? WHERE ContractId = ?";
         try (Connection conn = dbContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            
             ps.setString(1, entity.getContractCode());
             ps.setObject(2, entity.getUserId());
             ps.setObject(3, entity.getBookingId());
@@ -96,15 +82,13 @@ public class ContractRepository implements IContractRepository {
             ps.setObject(6, entity.getCompletedDate());
             ps.setString(7, entity.getStatus());
             ps.setBoolean(8, entity.isTermsAccepted());
-            ps.setObject(9, entity.getTermsAcceptedDate());
-            ps.setString(10, entity.getTermsVersion());
-            ps.setString(11, entity.getTermsFileUrl());
-            ps.setString(12, entity.getSignatureData());
-            ps.setString(13, entity.getSignatureMethod());
-            ps.setString(14, entity.getNotes());
-            ps.setString(15, entity.getCancellationReason());
-            ps.setObject(16, entity.getContractId());
-            
+            ps.setString(9, entity.getSignatureData());
+            ps.setString(10, entity.getSignatureMethod());
+            ps.setString(11, entity.getContractPdfUrl());
+            ps.setString(12, entity.getContractFileType());
+            ps.setString(13, entity.getNotes());
+            ps.setString(14, entity.getCancellationReason());
+            ps.setObject(15, entity.getContractId());
             int affectedRows = ps.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
@@ -116,12 +100,9 @@ public class ContractRepository implements IContractRepository {
     @Override
     public boolean delete(UUID id) throws SQLException {
         String sql = "DELETE FROM Contract WHERE ContractId = ?";
-        
         try (Connection conn = dbContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            
             ps.setObject(1, id);
-            
             int affectedRows = ps.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
@@ -130,115 +111,81 @@ public class ContractRepository implements IContractRepository {
         }
     }
 
-    @Override
+    // Thêm các method còn thiếu
     public List<Contract> findAll() throws SQLException {
-        String sql = "SELECT * FROM Contract ORDER BY CreatedDate DESC";
-        List<Contract> contracts = new ArrayList<>();
-        
+        String sql = "SELECT * FROM Contract";
+        List<Contract> list = new ArrayList<>();
         try (Connection conn = dbContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
-            
             while (rs.next()) {
-                contracts.add(mapResultSetToContract(rs));
+                list.add(mapResultSetToContract(rs));
             }
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error finding all contracts", e);
-            throw e;
         }
-        return contracts;
+        return list;
     }
 
-    @Override
-    public List<Contract> getByUserId(UUID userId) throws SQLException {
-        String sql = "SELECT * FROM Contract WHERE UserId = ? ORDER BY CreatedDate DESC";
-        List<Contract> contracts = new ArrayList<>();
-        
+    public List<Contract> findByUserId(UUID userId) throws SQLException {
+        String sql = "SELECT * FROM Contract WHERE UserId = ?";
+        List<Contract> list = new ArrayList<>();
         try (Connection conn = dbContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            
             ps.setObject(1, userId);
-            
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    contracts.add(mapResultSetToContract(rs));
+                    list.add(mapResultSetToContract(rs));
                 }
             }
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error finding contracts by user ID: " + userId, e);
-            throw e;
         }
-        return contracts;
+        return list;
     }
 
-    @Override
-    public List<Contract> getByStatus(String status) throws SQLException {
-        String sql = "SELECT * FROM Contract WHERE Status = ? ORDER BY CreatedDate DESC";
-        List<Contract> contracts = new ArrayList<>();
-        
+    public List<Contract> findByBookingId(UUID bookingId) throws SQLException {
+        String sql = "SELECT * FROM Contract WHERE BookingId = ?";
+        List<Contract> list = new ArrayList<>();
         try (Connection conn = dbContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            
-            ps.setString(1, status);
-            
+            ps.setObject(1, bookingId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    contracts.add(mapResultSetToContract(rs));
+                    list.add(mapResultSetToContract(rs));
                 }
             }
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error finding contracts by status: " + status, e);
-            throw e;
         }
-        return contracts;
+        return list;
     }
 
-    @Override
+    public List<Contract> findByStatus(String status) throws SQLException {
+        String sql = "SELECT * FROM Contract WHERE Status = ?";
+        List<Contract> list = new ArrayList<>();
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, status);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSetToContract(rs));
+                }
+            }
+        }
+        return list;
+    }
+
     public Contract getByContractCode(String contractCode) throws SQLException {
         String sql = "SELECT * FROM Contract WHERE ContractCode = ?";
-        
         try (Connection conn = dbContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            
             ps.setString(1, contractCode);
-            
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return mapResultSetToContract(rs);
                 }
             }
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error finding contract by code: " + contractCode, e);
-            throw e;
         }
         return null;
     }
 
-    @Override
-    public boolean isContractCodeExists(String contractCode) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM Contract WHERE ContractCode = ?";
-        
-        try (Connection conn = dbContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
-            ps.setString(1, contractCode);
-            
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1) > 0;
-                }
-            }
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error checking contract code existence: " + contractCode, e);
-            throw e;
-        }
-        return false;
-    }
-
-    // Helper method to map ResultSet to Contract object
     private Contract mapResultSetToContract(ResultSet rs) throws SQLException {
         Contract contract = new Contract();
-        
         contract.setContractId(UUID.fromString(rs.getString("ContractId")));
         contract.setContractCode(rs.getString("ContractCode"));
         contract.setUserId(UUID.fromString(rs.getString("UserId")));
@@ -248,14 +195,56 @@ public class ContractRepository implements IContractRepository {
         contract.setCompletedDate(rs.getObject("CompletedDate", LocalDateTime.class));
         contract.setStatus(rs.getString("Status"));
         contract.setTermsAccepted(rs.getBoolean("TermsAccepted"));
-        contract.setTermsAcceptedDate(rs.getObject("TermsAcceptedDate", LocalDateTime.class));
-        contract.setTermsVersion(rs.getString("TermsVersion"));
-        contract.setTermsFileUrl(rs.getString("TermsFileUrl"));
         contract.setSignatureData(rs.getString("SignatureData"));
         contract.setSignatureMethod(rs.getString("SignatureMethod"));
+        contract.setContractPdfUrl(rs.getString("ContractPdfUrl"));
+        contract.setContractFileType(rs.getString("ContractFileType"));
         contract.setNotes(rs.getString("Notes"));
         contract.setCancellationReason(rs.getString("CancellationReason"));
-        
         return contract;
     }
-}
+
+    @Override
+    public List<Contract> getByUserId(UUID userId) throws SQLException {
+        String sql = "SELECT * FROM Contract WHERE UserId = ?";
+        List<Contract> list = new ArrayList<>();
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setObject(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSetToContract(rs));
+                }
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public List<Contract> getByStatus(String status) throws SQLException {
+        String sql = "SELECT * FROM Contract WHERE Status = ?";
+        List<Contract> list = new ArrayList<>();
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, status);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSetToContract(rs));
+                }
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public boolean isContractCodeExists(String contractCode) throws SQLException {
+        String sql = "SELECT 1 FROM Contract WHERE ContractCode = ?";
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, contractCode);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+} 

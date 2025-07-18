@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8"/>
     <title>HỢP ĐỒNG CHO THUÊ XE Ô TÔ TỰ LÁI</title>
     <style>
         body { font-family: 'Times New Roman', Times, serif; margin: 40px; }
@@ -18,7 +18,7 @@
         .signature-name { font-family: 'Dancing Script', cursive; font-size: 2em; font-weight: normal; }
         .signature-label { margin-top: 16px; font-style: italic; }
     </style>
-    <link href="https://fonts.googleapis.com/css?family=Dancing+Script&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Dancing+Script&amp;display=swap" rel="stylesheet"/>
 </head>
 <body style="background:#f5f5f5;">
   <!-- Trang 1: Từ đầu đến hết Điều 1 -->

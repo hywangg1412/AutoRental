@@ -233,4 +233,50 @@ public class MailService {
             return false;
         }
     }
+
+    /**
+     * Gửi email hợp đồng PDF cho user
+     */
+    public boolean sendContractEmail(String to, String subject, String pdfUrl) {
+        Properties props = new Properties();
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+
+        Authenticator auth = new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(from, password);
+            }
+        };
+
+        Session session = Session.getInstance(props, auth);
+
+        try {
+            Message msg = new MimeMessage(session);
+            msg.setFrom(new InternetAddress(from));
+            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to, false));
+            msg.setSubject(subject);
+            String content = ""
+                + "<div style=\"font-family: 'Montserrat', Arial, sans-serif; background: #f7faff; padding: 32px; border-radius: 12px; max-width: 480px; margin: auto;\">"
+                + "  <h2 style=\"color: #2176ff; text-align: center; margin-bottom: 8px;\">AutoRental</h2>"
+                + "  <h3 style=\"color: #181f32; text-align: center; margin-top: 0;\">Hợp đồng thuê xe của bạn đã được ký thành công!</h3>"
+                + "  <p>Chào bạn,</p>"
+                + "  <p>Hợp đồng thuê xe của bạn đã được ký thành công. Bạn có thể tải hợp đồng tại đây:</p>"
+                + "  <p style=\"text-align: center; margin: 32px 0;\">"
+                + "    <a href='" + pdfUrl + "' style=\"background: #2176ff; color: #fff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 1.1rem;\">Xem hợp đồng PDF</a>"
+                + "  </p>"
+                + "  <p>Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ <a href=\"mailto:support@autorental.com\" style=\"color: #2176ff;\">support@autorental.com</a>.</p>"
+                + "  <hr style=\"border: none; border-top: 1px solid #e0e7ef; margin: 24px 0;\">"
+                + "  <p style=\"font-size: 0.95rem; color: #6b7280;\">&copy; " + java.time.Year.now() + " AutoRental. All rights reserved.</p>"
+                + "</div>";
+            msg.setContent(content, "text/html; charset=UTF-8");
+            Transport.send(msg);
+            return true;
+        } catch (Exception e) {
+            System.out.println("Send error: " + e);
+            return false;
+        }
+    }
 }
