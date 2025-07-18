@@ -37,3 +37,5 @@ nbproject/build-impl.xml
 # OS-generated
 .DS_Store
 Thumbs.db
+
+credentials.json
