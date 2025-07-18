@@ -353,7 +353,6 @@ CREATE TABLE [Contract] (
 
     [UserId] UNIQUEIDENTIFIER NOT NULL, 
     [BookingId] UNIQUEIDENTIFIER NOT NULL, 
-    -- [StaffId] UNIQUEIDENTIFIER NOT NULL, -- ID của nhân viên duyệt
     
     [CreatedDate] DATETIME2 NOT NULL DEFAULT GETDATE(), -- Ngày tạo hợp đồng
     [SignedDate] DATETIME2 NULL, -- Ngày ký hợp đồng
@@ -361,17 +360,12 @@ CREATE TABLE [Contract] (
     [Status] VARCHAR(20) NOT NULL DEFAULT 'Created', -- Created, Pending, Active, Completed, Cancelled, Terminated
     
     [TermsAccepted] BIT NOT NULL DEFAULT 0, -- Đã chấp nhận điều khoản chưa
-    [TermsAcceptedDate] DATETIME2 NULL, -- Ngày chấp nhận điều khoản
-    -- [TermsVersion] NVARCHAR(10) NULL, -- Version điều khoản đã chấp nhận
-    -- [TermsFileUrl] NVARCHAR(500) NULL, -- Đường dẫn file Terms (PDF/HTML)
 
     [SignatureData] NVARCHAR(MAX) NULL, -- Dữ liệu chữ ký (base64 hoặc JSON)
     [SignatureMethod] VARCHAR(20) NULL, -- Canvas, Upload, Digital, Checkbox
 
     [ContractPdfUrl] NVARCHAR(500) NULL,         -- Link file PDF hợp đồng đã ký
     [ContractFileType] VARCHAR(20) NULL,         -- Loại file hợp đồng (PDF, HTML, ...)
-    [PdfUploadedDate] DATETIME2 NULL,            -- Thời điểm upload file PDF
-    [SignerFullName] NVARCHAR(100) NULL,         -- Họ tên người ký
 
     [Notes] NVARCHAR(500) NULL, -- Ghi chú
     [CancellationReason] NVARCHAR(500) NULL, -- Lý do hủy hợp đồng
@@ -384,17 +378,20 @@ GO
 CREATE TABLE [ContractDocuments] (
     [DocumentId] UNIQUEIDENTIFIER NOT NULL,
     [ContractId] UNIQUEIDENTIFIER NOT NULL,
+    -- Normal URLs
     [DriverLicenseImageUrl] NVARCHAR(500) NULL,
-    [CitizenIdImageUrl] NVARCHAR(500) NULL,
     [DriverLicenseNumber] NVARCHAR(50) NULL,
+
+    [CitizenIdFrontImageUrl] NVARCHAR(500) NULL,
+    [CitizenIdBackImageUrl] NVARCHAR(500) NULL,
     [CitizenIdNumber] NVARCHAR(50) NULL,
-    [DriverLicenseIssuedDate] DATE NULL,
     [CitizenIdIssuedDate] DATE NULL,
-    [DriverLicenseIssuedPlace] NVARCHAR(100) NULL,
     [CitizenIdIssuedPlace] NVARCHAR(100) NULL,
+
+    -- Hashes
     [DriverLicenseImageHash] NVARCHAR(128) NULL,
-    [CitizenIdImageHash] NVARCHAR(128) NULL,
-    [CreatedDate] DATETIME2 NOT NULL DEFAULT GETDATE(),
+    [CitizenIdFrontImageHash] NVARCHAR(128) NULL,
+    [CitizenIdBackImageHash] NVARCHAR(128) NULL,
     CONSTRAINT [PK_ContractDocuments] PRIMARY KEY ([DocumentId]),
     CONSTRAINT [FK_ContractDocuments_ContractId] FOREIGN KEY ([ContractId]) REFERENCES [Contract]([ContractId]) ON DELETE CASCADE
 );

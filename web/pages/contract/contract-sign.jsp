@@ -12,7 +12,7 @@
             <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
             <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css"
                 rel="stylesheet">
-            <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800&display=swap"
+            <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800&amp;display=swap"
                 rel="stylesheet">
 
             <!-- ===== Custom Styles (Theme/Plugins) ===== -->
@@ -241,6 +241,7 @@
                 .input-error {
                     border-color: #dc3545 !important;
                 }
+            
             </style>
         </head>
 
@@ -344,7 +345,7 @@
                     <script src="${pageContext.request.contextPath}/assets/js/jquery.timepicker.min.js"></script>
                     <script src="${pageContext.request.contextPath}/assets/js/scrollax.min.js"></script>
                     <script
-                        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
+                        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&amp;sensor=false"></script>
                     <script src="${pageContext.request.contextPath}/assets/js/google-map.js"></script>
                     <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
                     <script
