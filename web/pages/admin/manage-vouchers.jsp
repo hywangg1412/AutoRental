@@ -33,7 +33,7 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </head>
   <body>
-     <div class="admin-layout">
+    <div class="admin-layout">
       <!-- Sidebar -->
       <div class="sidebar" id="sidebar">
         <div
@@ -107,7 +107,7 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
           </a>
           <a
             href="${pageContext.request.contextPath}/pages/admin/manage-cars.jsp"
-            class="nav-item "
+            class="nav-item"
           >
             <svg class="nav-item-icon" fill="currentColor" viewBox="0 0 24 24">
               <path
@@ -193,22 +193,6 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
                   <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
                 </svg>
               </button>
-              <div class="search-box">
-                <svg
-                  class="search-icon"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
-                  />
-                </svg>
-                <input
-                  type="text"
-                  class="search-input"
-                  placeholder="Search..."
-                />
-              </div>
             </div>
             <div class="header-right">
               <button class="notification-btn">
@@ -225,9 +209,18 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
                 <span class="notification-badge">3</span>
               </button>
               <div class="user-profile">
-                <div class="user-avatar">QH</div>
+                <div class="user-avatar">
+                  <img
+                    src="${not empty sessionScope.user.avatarUrl ? sessionScope.user.avatarUrl : pageContext.request.contextPath.concat('/assets/images/default-avatar.png')}"
+                    alt="User Avatar"
+                    width="32"
+                    height="32"
+                    class="rounded-circle"
+                    onerror="this.onerror=null;this.src='${pageContext.request.contextPath}/assets/images/default-avatar.png';"
+                  />
+                </div>
                 <div class="user-details">
-                  <h4>Quang Huy</h4>
+                  <h4>${sessionScope.user.username}</h4>
                   <p>Administrator</p>
                 </div>
               </div>
@@ -301,13 +294,6 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
               </div>
               <div class="stat-change">Times redeemed</div>
             </div>
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="stat-title">Savings Given</span>
-              </div>
-              <div class="stat-value">$12,450</div>
-              <div class="stat-change">Total discounts</div>
-            </div>
           </div>
 
           <!-- Voucher List Table -->
@@ -344,6 +330,7 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
                         <th>End Date</th>
                         <th>Active</th>
                         <th>Created Date</th>
+                        <th>Số user đã dùng</th>
                         <th>Actions</th>
                       </tr>
                     </thead>
@@ -380,6 +367,11 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
                               <fmt:formatDate
                                 value="${discount.createdDate}"
                                 pattern="yyyy-MM-dd"
+                              />
+                            </td>
+                            <td>
+                              <c:out
+                                value="${userUsedCountMap[discount.discountId]}"
                               />
                             </td>
                             <td>
@@ -984,6 +976,62 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
           );
         }
 
+        function validateVoucherForm(form) {
+          let valid = true;
+          let firstError = null;
+          form.querySelectorAll(".input-error").forEach((e) => e.remove());
+          function showError(input, msg) {
+            const err = document.createElement("div");
+            err.className = "input-error";
+            err.style.color = "#e74c3c";
+            err.style.fontSize = "13px";
+            err.style.marginTop = "2px";
+            err.textContent = msg;
+            input.parentNode.appendChild(err);
+            if (!firstError) firstError = input;
+            valid = false;
+          }
+          // Voucher Name
+          const name = form.discountName;
+          if (!name.value.trim()) showError(name, "Voucher name is required");
+          // Discount Type
+          const type = form.discountType;
+          if (!type.value) showError(type, "Discount type is required");
+          // Discount Value
+          const value = form.discountValue;
+          if (!value.value || value.value < 0)
+            showError(value, "Discount value must be >= 0");
+          // Start/End Date
+          const start = form.startDate;
+          const end = form.endDate;
+          if (!start.value) showError(start, "Start date is required");
+          if (!end.value) showError(end, "End date is required");
+          if (
+            start.value &&
+            end.value &&
+            new Date(end.value) < new Date(start.value)
+          )
+            showError(end, "End date must be after start date");
+          // Min Order Amount
+          const minOrder = form.minOrderAmount;
+          if (!minOrder.value || minOrder.value < 0)
+            showError(minOrder, "Min order amount must be >= 0");
+          // Max Discount Amount
+          const maxDiscount = form.maxDiscountAmount;
+          if (maxDiscount.value && maxDiscount.value < 0)
+            showError(maxDiscount, "Max discount must be >= 0");
+          // Usage Limit
+          const usage = form.usageLimit;
+          if (usage.value && usage.value < 0)
+            showError(usage, "Usage limit must be >= 0");
+          // Description
+          const desc = form.description;
+          if (desc && desc.value.length > 500)
+            showError(desc, "Description max 500 chars");
+          if (!valid && firstError) firstError.focus();
+          return valid;
+        }
+
         window.addEventListener("click", function (event) {
           const createModal = document.getElementById("createVoucherModal");
           const editModal = document.getElementById("editVoucherModal");
@@ -994,6 +1042,19 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
           if (event.target === editModal) {
             closeEditVoucherModal();
           }
+        });
+
+        window.addEventListener("DOMContentLoaded", function () {
+          document.querySelectorAll("form").forEach((form) => {
+            if (
+              form.id === "createVoucherForm" ||
+              form.id === "editVoucherForm"
+            ) {
+              form.onsubmit = function () {
+                return validateVoucherForm(form);
+              };
+            }
+          });
         });
       </script>
     </div>
