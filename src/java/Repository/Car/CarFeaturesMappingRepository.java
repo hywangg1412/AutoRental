@@ -91,6 +91,16 @@ public class CarFeaturesMappingRepository implements ICarFeaturesMappingReposito
         return featureIds;
     }
 
+    public boolean deleteByCarAndFeature(UUID carId, UUID featureId) throws Exception {
+        String sql = "DELETE FROM CarFeaturesMapping WHERE CarId = ? AND FeatureId = ?";
+        try (var conn = dbContext.getConnection();
+             var ps = conn.prepareStatement(sql)) {
+            ps.setObject(1, carId);
+            ps.setObject(2, featureId);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
     private CarFeaturesMapping mapResultSetToCarFeaturesMapping(ResultSet rs) throws SQLException {
         CarFeaturesMapping mapping = new CarFeaturesMapping();
         mapping.setCarId(UUID.fromString(rs.getString("CarId")));
