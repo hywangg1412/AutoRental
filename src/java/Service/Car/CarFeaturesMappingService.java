@@ -103,4 +103,13 @@ public class CarFeaturesMappingService implements ICarFeaturesMappingService {
             return null;
         }
     }
+
+    public boolean deleteByCarAndFeature(UUID carId, UUID featureId) throws Exception {
+        return repository.deleteByCarAndFeature(carId, featureId);
+    }
+
+    public void addMapping(UUID carId, UUID featureId) throws Exception {
+        CarFeaturesMapping mapping = new CarFeaturesMapping(carId, featureId);
+        repository.add(mapping);
+    }
 } 
