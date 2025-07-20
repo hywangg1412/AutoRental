@@ -23,39 +23,79 @@ jobs:
         java-version: ${{ env.JAVA_VERSION }}
         distribution: 'temurin'
     
-    - name: Install Apache Ant
+    - name: Verify project structure
       run: |
-        sudo apt-get update
-        sudo apt-get install -y ant
-    
-    - name: Verify JAR files in project
-      run: |
-        echo "=== JAR files in src/jar/ ==="
+        echo "=== Project Structure ==="
+        echo "Source directory:"
+        ls -la src/java/ | head -5
+        echo "JAR files:"
         ls -la src/jar/ | wc -l
-        echo "Total JAR files found:"
-        find src/jar -name "*.jar" | wc -l
-        echo "Sample JAR files:"
-        ls -la src/jar/ | head -10
+        echo "Web directory:"
+        ls -la web/
+        echo "Build files:"
+        ls -la build.xml
+        ls -la nbproject/
     
-    - name: Create WEB-INF/lib directory and copy JAR files
+    - name: Create simple build script
       run: |
-        echo "=== Preparing JAR files for build ==="
-        # Create WEB-INF/lib if it doesn't exist
-        mkdir -p web/WEB-INF/lib
-        
-        # Copy all JAR files from src/jar to web/WEB-INF/lib
-        cp src/jar/*.jar web/WEB-INF/lib/
-        
-        echo "=== JAR files copied to WEB-INF/lib ==="
-        ls -la web/WEB-INF/lib/ | wc -l
-        echo "Sample copied JAR files:"
-        ls -la web/WEB-INF/lib/ | head -10
+        echo "=== Creating simple build script ==="
+        cat > build-simple.xml << 'EOF'
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="AutoRental-Simple" default="build" basedir=".">
+    <property name="src.dir" value="src/java"/>
+    <property name="web.dir" value="web"/>
+    <property name="build.dir" value="build"/>
+    <property name="build.web.dir" value="${build.dir}/web"/>
+    <property name="build.classes.dir" value="${build.web.dir}/WEB-INF/classes"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="war.name" value="AutoRental.war"/>
+    <property name="dist.war" value="${dist.dir}/${war.name}"/>
     
-    - name: Build with Ant
+    <path id="classpath">
+        <fileset dir="src/jar" includes="*.jar"/>
+    </path>
+    
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+    
+    <target name="init" depends="clean">
+        <mkdir dir="${build.classes.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+    </target>
+    
+    <target name="compile" depends="init">
+        <javac srcdir="${src.dir}" destdir="${build.classes.dir}" 
+               classpathref="classpath" debug="true" includeantruntime="false">
+            <compilerarg value="-source"/>
+            <compilerarg value="24"/>
+            <compilerarg value="-target"/>
+            <compilerarg value="24"/>
+        </javac>
+    </target>
+    
+    <target name="copy-web" depends="compile">
+        <copy todir="${build.web.dir}">
+            <fileset dir="${web.dir}"/>
+        </copy>
+        <copy todir="${build.web.dir}/WEB-INF/lib">
+            <fileset dir="src/jar" includes="*.jar"/>
+        </copy>
+    </target>
+    
+    <target name="build" depends="copy-web">
+        <jar jarfile="${dist.war}" basedir="${build.web.dir}"/>
+        <echo message="WAR file created: ${dist.war}"/>
+    </target>
+</project>
+EOF
+        echo "Simple build script created!"
+    
+    - name: Build with simple Ant script
       run: |
-        echo "=== Building with Ant ==="
-        ant clean
-        ant build
+        echo "=== Building with simple Ant script ==="
+        ant -f build-simple.xml build
         echo "=== Build completed ==="
     
     - name: Check build output
@@ -73,6 +113,8 @@ jobs:
           ls -lh dist/AutoRental.war
           echo "WAR file contents:"
           unzip -l dist/AutoRental.war | head -20
+          echo "Checking WEB-INF/lib contents:"
+          unzip -l dist/AutoRental.war | grep "WEB-INF/lib" | head -10
         fi
     
     - name: Upload artifact for deployment job
@@ -82,7 +124,6 @@ jobs:
         path: |
           dist/AutoRental.war
           dist/*.war
-          build/web/*.war
         if-no-files-found: error
     
   deploy:
