@@ -150,3 +150,183 @@ UserId: <c:out value="${sessionScope.userId}"/>
 Notifications: <c:out value="${fn:length(sessionScope.userNotifications)}"/>
 UnreadCount: <c:out value="${sessionScope.userUnreadCount}"/>
 --%>
+
+<!-- Thêm CSS cho thông báo -->
+<style>
+  .notification-item {
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+    transition: all 0.2s ease;
+  }
+  
+  .notification-item:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .notification-item:last-child {
+    border-bottom: none;
+  }
+  
+  .notification-item.unread {
+    background-color: #f0f8ff;
+  }
+  
+  .notification-content {
+    width: 100%;
+  }
+  
+  .notification-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 5px;
+  }
+  
+  .notification-title {
+    font-size: 0.9rem;
+    color: #333;
+    flex: 1;
+    font-weight: 500;
+  }
+  
+  .dot-unread {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: #01d28e;
+    border-radius: 50%;
+    margin-left: 5px;
+  }
+  
+  #notificationDropdownMenu {
+    width: 350px;
+    max-height: 450px;
+    overflow-y: auto;
+    padding: 0;
+  }
+  
+  #notificationDropdownMenu .dropdown-header {
+    padding: 10px 15px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #222;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #eee;
+  }
+  
+  #notificationDropdownMenu .dropdown-divider {
+    margin: 0;
+  }
+  
+  .mark-all-read-btn {
+    color: #01d28e;
+    font-weight: 500;
+  }
+  
+  .mark-all-read-btn:hover {
+    background-color: #f0f8ff;
+    color: #008c5e;
+  }
+  
+  .notification-time {
+    color: #6c757d;
+    font-size: 0.8rem;
+    display: block;
+  }
+  
+  /* Cải thiện hiển thị số thông báo */
+  .notification-wrapper {
+    position: relative !important;
+    overflow: visible !important;
+    margin-right: 15px !important;
+  }
+  
+  .notification-btn {
+    width: 40px !important;
+    height: 70px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    position: relative !important;
+    overflow: visible !important;
+  }
+  
+  .notification-btn i.fa-bell {
+    border: 2px solid #222;
+    border-radius: 50%;
+    padding: 6px;
+    box-sizing: content-box;
+    color: #222 !important;
+    font-size: 1.2rem !important;
+    transition: border 0.2s;
+  }
+  
+  .notification-count {
+    position: absolute !important;
+    top: 5px !important;
+    right: -8px !important;
+    background: #dc3545 !important;
+    color: white !important;
+    border-radius: 50% !important;
+    min-width: 22px !important;
+    height: 22px !important;
+    font-size: 12px !important;
+    font-weight: bold !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 4px !important;
+    border: 2px solid #222 !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5) !important;
+    z-index: 1050 !important;
+    transform: translate(0, 0) !important;
+  }
+  
+  /* CSS cho nút xóa thông báo */
+  .notification-actions {
+    display: flex !important;
+    align-items: center !important;
+    margin-left: 8px !important;
+  }
+  
+  .btn-delete-notification {
+    background: none !important;
+    border: none !important;
+    color: #dc3545 !important;
+    font-size: 0.8rem !important;
+    width: 24px !important;
+    height: 24px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    opacity: 0.6 !important;
+    transition: all 0.2s ease !important;
+  }
+  
+  .btn-delete-notification:hover {
+    opacity: 1 !important;
+    background-color: rgba(220, 53, 69, 0.1) !important;
+    transform: scale(1.1) !important;
+  }
+  
+  .notification-item:hover .btn-delete-notification {
+    opacity: 0.8 !important;
+  }
+</style>
+
+<!-- Include dropdown JavaScript -->
+<script src="${pageContext.request.contextPath}/scripts/common/nav-dropdown.js"></script>
+
+<!-- Include notification JavaScript -->
+<script src="${pageContext.request.contextPath}/scripts/common/notification.js"></script>
+
+<!-- Debug -->
+<%-- 
+UserId: <c:out value="${sessionScope.userId}"/>
+Notifications: <c:out value="${fn:length(sessionScope.userNotifications)}"/>
+UnreadCount: <c:out value="${sessionScope.userUnreadCount}"/>
+--%>
