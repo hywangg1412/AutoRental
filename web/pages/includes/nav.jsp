@@ -11,7 +11,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
   <div class="container">
     <a class="navbar-brand" href="${pageContext.request.contextPath}/pages/home">Auto<span>Rental</span></a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav"
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#ftco-nav" aria-controls="ftco-nav"
       aria-expanded="false" aria-label="Toggle navigation">
       <span class="oi oi-menu"></span> Menu
     </button>
@@ -19,7 +19,7 @@
     <div class="collapse navbar-collapse" id="ftco-nav">
       <ul class="navbar-nav ml-auto">
         <li class="nav-item"><a href="${pageContext.request.contextPath}/pages/home" class="nav-link">Home</a></li>
-        <li class="nav-item"><a href="${pageContext.request.contextPath}/pages/about.jsp" class="nav-link">About</a></li>
+        <!-- <li class="nav-item"><a href="${pageContext.request.contextPath}/pages/about.jsp" class="nav-link">About</a></li> -->
         <!-- <li class="nav-item"><a href="services.jsp" class="nav-link">Services</a></li> -->
         <!-- <li class="nav-item"><a href="pricing.jsp" class="nav-link">Pricing</a></li> -->
         <li class="nav-item"><a href="${pageContext.request.contextPath}/pages/car" class="nav-link">Cars</a></li>
@@ -42,7 +42,7 @@
                   </span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userNotificationDropdown" id="notificationDropdownMenu">
-                  <li class="dropdown-header">Thông báo</li>
+                  <li class="dropdown-header">Notifications</li>
                   <li><hr class="dropdown-divider"></li>
                   
                   <c:choose>
@@ -87,18 +87,18 @@
                         <li><hr class="dropdown-divider"></li>
                         <li>
                           <a class="dropdown-item text-center mark-all-read-btn" href="#">
-                            <i class="fas fa-check-double"></i> Đánh dấu tất cả đã đọc
+                            <i class="fas fa-check-double"></i> Mark all as read
                           </a>
                         </li>
                       </c:if>
                     </c:when>
                     <c:otherwise>
-                      <li><span class="dropdown-item text-muted">Không có thông báo mới</span></li>
+                      <li><span class="dropdown-item text-muted">No new notifications</span></li>
                     </c:otherwise>
                   </c:choose>
                 </ul>
               </div>
-              <a href="#" class="nav-link p-0 text-dark"><i class="fas fa-comment-dots" style="font-size: 1.2rem !important; color: white;"></i></a>
+              <a href="https://www.facebook.com/share/16hwvT4v4y/" class="nav-link p-0 text-dark"><i class="fas fa-comment-dots" style="font-size: 1.2rem !important; color: white;"></i></a>
               <a href="${pageContext.request.contextPath}/user/profile" class="user-avatar">
                 <img src="${not empty sessionScope.user.avatarUrl ? sessionScope.user.avatarUrl : pageContext.request.contextPath.concat('/assets/images/default-avatar.png')}" 
                      alt="User Avatar" 
@@ -119,7 +119,7 @@
                   <li><a class="dropdown-item" href="${pageContext.request.contextPath}/user/my-trip">My Trips</a></li>
                   <li><a class="dropdown-item" href="${pageContext.request.contextPath}/pages/user/favorite-car.jsp">Favorite Cars</a></li> 
                   <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/logout">Logout</a></li>
+                  <li><a class="dropdown-item text-danger logoutBtn" href="#" style="cursor: pointer;">Logout</a></li>
                 </ul>
               </div>
             </div>
@@ -134,6 +134,22 @@
   </div>
 </nav>
 <!-- END nav -->
+
+<!-- Include dropdown JavaScript -->
+<script src="${pageContext.request.contextPath}/scripts/common/nav-dropdown.js"></script>
+
+<!-- Include notification JavaScript -->
+<script src="${pageContext.request.contextPath}/scripts/common/notification.js"></script>
+
+<!-- Include logout confirmation modal -->
+<jsp:include page="logout-confirm-modal.jsp" />
+
+<!-- Debug -->
+<%-- 
+UserId: <c:out value="${sessionScope.userId}"/>
+Notifications: <c:out value="${fn:length(sessionScope.userNotifications)}"/>
+UnreadCount: <c:out value="${sessionScope.userUnreadCount}"/>
+--%>
 
 <!-- Thêm CSS cho thông báo -->
 <style>
