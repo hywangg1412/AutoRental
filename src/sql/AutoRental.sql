@@ -190,18 +190,6 @@ CREATE TABLE [CarFeaturesMapping] (
 );
 GO
 
-CREATE TABLE [CarMaintenanceHistory] (
-    [MaintenanceId] UNIQUEIDENTIFIER NOT NULL,
-    [CarId] UNIQUEIDENTIFIER NOT NULL,
-    [MaintenanceDate] DATE NOT NULL DEFAULT GETDATE(),
-    [Description] NVARCHAR(500) NULL,
-    [Cost] DECIMAL(10,2) NULL,
-    [StaffId] UNIQUEIDENTIFIER NULL,
-    CONSTRAINT [PK_CarMaintenanceHistory] PRIMARY KEY ([MaintenanceId]),
-    CONSTRAINT [FK_CarMaintenanceHistory_CarId] FOREIGN KEY ([CarId]) REFERENCES [Car]([CarId]) ON DELETE CASCADE,
-    CONSTRAINT [FK_CarMaintenanceHistory_StaffId] FOREIGN KEY ([StaffId]) REFERENCES [Users]([UserId]) ON DELETE SET NULL
-);
-GO
 
 CREATE TABLE [Discount] (
     [DiscountId] UNIQUEIDENTIFIER NOT NULL,
@@ -225,6 +213,15 @@ CREATE TABLE [Discount] (
     -- CONSTRAINT [CK_Discount_DiscountCategory] CHECK ([DiscountCategory] IN ('General', 'Voucher'))
 );
 GO
+
+CREATE TABLE UserVoucherUsage (
+    UserId UNIQUEIDENTIFIER NOT NULL,
+    DiscountId UNIQUEIDENTIFIER NOT NULL,
+    UsedAt DATETIME2 NOT NULL DEFAULT GETDATE(),
+    PRIMARY KEY (UserId, DiscountId),
+    FOREIGN KEY (UserId) REFERENCES Users(UserId) ON DELETE CASCADE,
+    FOREIGN KEY (DiscountId) REFERENCES Discount(DiscountId) ON DELETE CASCADE
+);
 
 CREATE TABLE [Booking] (
     BookingId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
@@ -271,20 +268,6 @@ CREATE TABLE [BookingApproval] (
     CONSTRAINT [PK_BookingApproval] PRIMARY KEY ([ApprovalId]),
     CONSTRAINT [FK_BookingApproval_BookingId] FOREIGN KEY ([BookingId]) REFERENCES [Booking]([BookingId]) ON DELETE CASCADE,
     CONSTRAINT [FK_BookingApproval_StaffId] FOREIGN KEY ([StaffId]) REFERENCES [Users]([UserId])
-);
-GO
-
-CREATE TABLE [SupportTickets] (
-    [TicketId] UNIQUEIDENTIFIER NOT NULL,
-    [UserId] UNIQUEIDENTIFIER NOT NULL,
-    [HandledBy] UNIQUEIDENTIFIER NULL,
-    [Subject] NVARCHAR(200) NOT NULL,
-    [Content] NVARCHAR(MAX) NOT NULL,
-    [CreatedDate] DATETIME2 NOT NULL, --DEFAULT GETDATE(),
-    [Status] VARCHAR(20) NOT NULL, --CHECK ([Status] IN ('Open', 'InProgress', 'Resolved', 'Closed')) DEFAULT 'Open',
-    CONSTRAINT [PK_SupportTickets] PRIMARY KEY ([TicketId]),
-    CONSTRAINT [FK_SupportTickets_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE,
-    CONSTRAINT [FK_SupportTickets_HandledBy] FOREIGN KEY ([HandledBy]) REFERENCES [Users]([UserId]) ON DELETE NO ACTION
 );
 GO
 
