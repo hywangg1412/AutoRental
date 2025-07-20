@@ -2,7 +2,10 @@ package Model.DTO;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.UUID;
+import Model.DTO.Deposit.InsuranceDetailDTO; // Thêm import
+import Utils.PriceUtils; // Thêm import PriceUtils
 
 /**
  * Data Transfer Object for displaying comprehensive booking information on the staff interface.
@@ -23,6 +26,9 @@ public class BookingInfoDTO {
 
     // *** THÊM FIELD MỚI CHO RENTAL TYPE ***
     private String rentalType; // Loại thuê: "hourly", "daily", "monthly"
+    
+    // *** THÊM FIELD MỚI CHO FORMATTED DURATION ***
+    private String formattedDuration; // Chuỗi hiển thị duration đã format (ví dụ: "10 days 4 hours 30 minutes")
 
     // User (Customer) Information
     private String customerName;
@@ -50,6 +56,15 @@ public class BookingInfoDTO {
     private String fullName; // alias cho customerName
     private String email; // alias cho customerEmail
     private String phoneNumber; // alias cho customerPhone
+
+    // Thông tin giá chi tiết
+    private java.math.BigDecimal pricePerHour;
+    private java.math.BigDecimal pricePerMonth;
+    
+    // Thông tin bảo hiểm
+    private List<InsuranceDetailDTO> insuranceDetails;
+    private double basicInsuranceFee;
+    private double additionalInsuranceFee;
 
     // Constructors
     public BookingInfoDTO() {
@@ -141,6 +156,12 @@ public class BookingInfoDTO {
 
     // *** THÊM METHOD FORMAT DURATION CHO HIỂN THỊ CÓ SỐ THẬP PHÂN ***
     public String getFormattedDuration() {
+        // Nếu đã có formattedDuration được đặt trực tiếp, ưu tiên sử dụng nó
+        if (formattedDuration != null && !formattedDuration.isEmpty()) {
+            return formattedDuration;
+        }
+        
+        // Nếu không, tính toán formattedDuration từ duration và rentalType
         if (duration <= 0) return "1 day";
         
         // Format duration theo rental type với số thập phân
@@ -175,6 +196,14 @@ public class BookingInfoDTO {
         } else {
             return String.format("%.2f days", duration);
         }
+    }
+    
+    /**
+     * Đặt chuỗi đã format sẵn cho duration, ưu tiên sử dụng chuỗi này khi hiển thị
+     * @param formattedDuration Chuỗi hiển thị duration đã format (ví dụ: "10 days 4 hours 30 minutes")
+     */
+    public void setFormattedDuration(String formattedDuration) {
+        this.formattedDuration = formattedDuration;
     }
 
     // *** GETTER VÀ SETTER CHO RENTAL TYPE MỚI ***
@@ -290,6 +319,94 @@ public class BookingInfoDTO {
     public void setEmail(String email) { this.email = email; }
     public String getPhoneNumber() { return phoneNumber != null ? phoneNumber : customerPhone; }
     public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+
+    // Getters và setters cho các trường mới
+    public java.math.BigDecimal getPricePerHour() {
+        return pricePerHour;
+    }
+
+    public void setPricePerHour(java.math.BigDecimal pricePerHour) {
+        this.pricePerHour = pricePerHour;
+    }
+
+    public java.math.BigDecimal getPricePerMonth() {
+        return pricePerMonth;
+    }
+
+    public void setPricePerMonth(java.math.BigDecimal pricePerMonth) {
+        this.pricePerMonth = pricePerMonth;
+    }
+    
+    public List<InsuranceDetailDTO> getInsuranceDetails() {
+        return insuranceDetails;
+    }
+
+    public void setInsuranceDetails(List<InsuranceDetailDTO> insuranceDetails) {
+        this.insuranceDetails = insuranceDetails;
+    }
+
+    public double getBasicInsuranceFee() {
+        return basicInsuranceFee;
+    }
+
+    public void setBasicInsuranceFee(double basicInsuranceFee) {
+        this.basicInsuranceFee = basicInsuranceFee;
+    }
+
+    public double getAdditionalInsuranceFee() {
+        return additionalInsuranceFee;
+    }
+
+    public void setAdditionalInsuranceFee(double additionalInsuranceFee) {
+        this.additionalInsuranceFee = additionalInsuranceFee;
+    }
+    
+    // --- Các phương thức format giá tiền sử dụng PriceUtils ---
+    
+    /**
+     * Trả về giá theo giờ đã format
+     */
+    public String getFormattedPricePerHour() {
+        if (pricePerHour == null) return "N/A";
+        return PriceUtils.formatDbPrice(pricePerHour);
+    }
+    
+    /**
+     * Trả về giá theo ngày đã format
+     */
+    public String getFormattedPricePerDay() {
+        if (pricePerDay == null) return "N/A";
+        return PriceUtils.formatDbPrice(pricePerDay);
+    }
+    
+    /**
+     * Trả về giá theo tháng đã format
+     */
+    public String getFormattedPricePerMonth() {
+        if (pricePerMonth == null) return "N/A";
+        return PriceUtils.formatDbPrice(pricePerMonth);
+    }
+    
+    /**
+     * Trả về phí bảo hiểm cơ bản đã format
+     */
+    public String getFormattedBasicInsuranceFee() {
+        return PriceUtils.formatDbPrice(basicInsuranceFee);
+    }
+    
+    /**
+     * Trả về phí bảo hiểm bổ sung đã format
+     */
+    public String getFormattedAdditionalInsuranceFee() {
+        return PriceUtils.formatDbPrice(additionalInsuranceFee);
+    }
+    
+    /**
+     * Trả về tổng tiền đã format
+     */
+    public String getFormattedTotalAmount() {
+        return PriceUtils.formatDbPrice(totalAmount);
+    }
 
     // --- End of Getters and Setters ---
 

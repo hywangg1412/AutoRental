@@ -237,6 +237,52 @@ public class BookingInsuranceRepository {
         }
     }
     
+    /**
+     * Cập nhật tất cả bản ghi BookingInsurance có InsuranceId thuộc danh sách vehicleInsuranceIds, đặt premiumAmount = 0
+     * 
+     * @param vehicleInsuranceIds Danh sách ID của các bảo hiểm vật chất
+     * @return Số bản ghi đã cập nhật
+     * @throws SQLException nếu có lỗi khi thực hiện truy vấn
+     */
+    public int updateAllVehicleInsurancePremiums(List<UUID> vehicleInsuranceIds) throws SQLException {
+        if (vehicleInsuranceIds == null || vehicleInsuranceIds.isEmpty()) {
+            return 0;
+        }
+        
+        // Tạo câu truy vấn SQL với danh sách IN (?)
+        StringBuilder sqlBuilder = new StringBuilder();
+        sqlBuilder.append("UPDATE BookingInsurance SET PremiumAmount = 0 WHERE InsuranceId IN (");
+        
+        // Thêm các dấu ? tương ứng với số lượng ID
+        for (int i = 0; i < vehicleInsuranceIds.size(); i++) {
+            if (i > 0) {
+                sqlBuilder.append(", ");
+            }
+            sqlBuilder.append("?");
+        }
+        sqlBuilder.append(")");
+        
+        String sql = sqlBuilder.toString();
+        
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            // Đặt các giá trị cho các tham số ?
+            for (int i = 0; i < vehicleInsuranceIds.size(); i++) {
+                ps.setObject(i + 1, vehicleInsuranceIds.get(i));
+            }
+            
+            // Thực hiện truy vấn và lấy số bản ghi đã cập nhật
+            int affectedRows = ps.executeUpdate();
+            LOGGER.info("Đã cập nhật " + affectedRows + " bản ghi BookingInsurance với premiumAmount = 0");
+            
+            return affectedRows;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Lỗi khi cập nhật premiumAmount cho bảo hiểm vật chất", e);
+            throw e;
+        }
+    }
+    
     // ========== HELPER METHODS ==========
     
     /**

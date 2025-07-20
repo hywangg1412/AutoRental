@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
+import Utils.PriceUtils; // Thêm import PriceUtils
 
 /**
  * DTO chứa tất cả thông tin cần thiết cho trang deposit
@@ -356,34 +357,34 @@ public class DepositPageDTO {
     }
 
     /**
-     * Format số tiền - trả về định dạng VND đúng cho JSP
+     * Format số tiền - trả về định dạng VND đúng cho JSP sử dụng PriceUtils
      */
     public String getFormattedBaseRentalPrice() {
-        return String.format("%,.0f VND", baseRentalPrice * 1000);
+        return PriceUtils.formatDbPrice(baseRentalPrice);
     }
 
     public String getFormattedTotalInsuranceAmount() {
-        return String.format("%,.0f VND", totalInsuranceAmount * 1000);
+        return PriceUtils.formatDbPrice(totalInsuranceAmount);
     }
 
     public String getFormattedDiscountAmount() {
-        return String.format("%,.0f VND", discountAmount * 1000);
+        return PriceUtils.formatDbPrice(discountAmount);
     }
 
     public String getFormattedSubtotal() {
-        return String.format("%,.0f VND", subtotal * 1000);
+        return PriceUtils.formatDbPrice(subtotal);
     }
 
     public String getFormattedVatAmount() {
-        return String.format("%,.0f VND", vatAmount * 1000);
+        return PriceUtils.formatDbPrice(vatAmount);
     }
 
     public String getFormattedTotalAmount() {
-        return String.format("%,.0f VND", totalAmount * 1000);
+        return PriceUtils.formatDbPrice(totalAmount);
     }
 
     public String getFormattedDepositAmount() {
-        return String.format("%,.0f VND", depositAmount * 1000);
+        return PriceUtils.formatDbPrice(depositAmount);
     }
 
     // ========== BUSINESS LOGIC METHODS ==========

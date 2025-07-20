@@ -1,4 +1,6 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %> <%@ taglib
+prefix="c" uri="jakarta.tags.core" %> <%@ taglib prefix="fmt"
+uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
 <html>
   <head>
@@ -16,7 +18,15 @@
         confirmation.
       </p>
       <c:if test="${not empty booking}">
-        <p class="fw-bold">Total Amount: ${booking.totalAmount} VND</p>
+        <p class="fw-bold">
+          <!-- Hiển thị tổng tiền với đơn vị K (nghìn đồng) -->
+          Total Amount:
+          <fmt:formatNumber
+            value="${booking.totalAmount * 1000}"
+            pattern="#,##0"
+          />
+          VND
+        </p>
       </c:if>
       <a
         href="<%= request.getContextPath() %>/index.jsp"
