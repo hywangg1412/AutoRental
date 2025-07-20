@@ -1,14 +1,14 @@
 name: Build and deploy Java Web app to Azure Web App - AutoRental
 
 on:
-  workflow_dispatch: # Allows manual triggering of the workflow
+  workflow_dispatch:
   push:
     branches:
-      - deploy # The 'deploy' branch. you can change branch as you need
+      - deploy
 
 env:
-  AZURE_WEBAPP_NAME: AutoRental    # Set this to your application's name
-  JAVA_VERSION: '24'               # Match your project.properties javac.source/target
+  AZURE_WEBAPP_NAME: AutoRental
+  JAVA_VERSION: '24'
 
 jobs:
   build:
@@ -23,6 +23,56 @@ jobs:
         java-version: ${{ env.JAVA_VERSION }}
         distribution: 'temurin'
     
+    - name: Install Apache Ant
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ant
+    
+    - name: Create build script
+      run: |
+        echo '<?xml version="1.0" encoding="UTF-8"?>' > build-simple.xml
+        echo '<project name="AutoRental-Simple" default="build" basedir=".">' >> build-simple.xml
+        echo '    <property name="src.dir" value="src/java"/>' >> build-simple.xml
+        echo '    <property name="web.dir" value="web"/>' >> build-simple.xml
+        echo '    <property name="build.dir" value="build"/>' >> build-simple.xml
+        echo '    <property name="build.web.dir" value="${build.dir}/web"/>' >> build-simple.xml
+        echo '    <property name="build.classes.dir" value="${build.web.dir}/WEB-INF/classes"/>' >> build-simple.xml
+        echo '    <property name="dist.dir" value="dist"/>' >> build-simple.xml
+        echo '    <property name="war.name" value="AutoRental.war"/>' >> build-simple.xml
+        echo '    <property name="dist.war" value="${dist.dir}/${war.name}"/>' >> build-simple.xml
+        echo '    <path id="classpath">' >> build-simple.xml
+        echo '        <fileset dir="src/jar" includes="*.jar"/>' >> build-simple.xml
+        echo '    </path>' >> build-simple.xml
+        echo '    <target name="clean">' >> build-simple.xml
+        echo '        <delete dir="${build.dir}"/>' >> build-simple.xml
+        echo '        <delete dir="${dist.dir}"/>' >> build-simple.xml
+        echo '    </target>' >> build-simple.xml
+        echo '    <target name="init" depends="clean">' >> build-simple.xml
+        echo '        <mkdir dir="${build.classes.dir}"/>' >> build-simple.xml
+        echo '        <mkdir dir="${dist.dir}"/>' >> build-simple.xml
+        echo '    </target>' >> build-simple.xml
+        echo '    <target name="compile" depends="init">' >> build-simple.xml
+        echo '        <javac srcdir="${src.dir}" destdir="${build.classes.dir}" classpathref="classpath" debug="true" includeantruntime="false">' >> build-simple.xml
+        echo '            <compilerarg value="-source"/>' >> build-simple.xml
+        echo '            <compilerarg value="24"/>' >> build-simple.xml
+        echo '            <compilerarg value="-target"/>' >> build-simple.xml
+        echo '            <compilerarg value="24"/>' >> build-simple.xml
+        echo '        </javac>' >> build-simple.xml
+        echo '    </target>' >> build-simple.xml
+        echo '    <target name="copy-web" depends="compile">' >> build-simple.xml
+        echo '        <copy todir="${build.web.dir}">' >> build-simple.xml
+        echo '            <fileset dir="${web.dir}"/>' >> build-simple.xml
+        echo '        </copy>' >> build-simple.xml
+        echo '        <copy todir="${build.web.dir}/WEB-INF/lib">' >> build-simple.xml
+        echo '            <fileset dir="src/jar" includes="*.jar"/>' >> build-simple.xml
+        echo '        </copy>' >> build-simple.xml
+        echo '    </target>' >> build-simple.xml
+        echo '    <target name="build" depends="copy-web">' >> build-simple.xml
+        echo '        <jar jarfile="${dist.war}" basedir="${build.web.dir}"/>' >> build-simple.xml
+        echo '        <echo message="WAR file created: ${dist.war}"/>' >> build-simple.xml
+        echo '    </target>' >> build-simple.xml
+        echo '</project>' >> build-simple.xml
+    
     - name: Verify project structure
       run: |
         echo "=== Project Structure ==="
@@ -32,69 +82,12 @@ jobs:
         ls -la src/jar/ | wc -l
         echo "Web directory:"
         ls -la web/
-        echo "Build files:"
-        ls -la build.xml
-        ls -la nbproject/
+        echo "Build script created:"
+        ls -la build-simple.xml
     
-    - name: Create simple build script
+    - name: Build with Ant
       run: |
-        echo "=== Creating simple build script ==="
-        cat > build-simple.xml << 'EOF'
-<?xml version="1.0" encoding="UTF-8"?>
-<project name="AutoRental-Simple" default="build" basedir=".">
-    <property name="src.dir" value="src/java"/>
-    <property name="web.dir" value="web"/>
-    <property name="build.dir" value="build"/>
-    <property name="build.web.dir" value="${build.dir}/web"/>
-    <property name="build.classes.dir" value="${build.web.dir}/WEB-INF/classes"/>
-    <property name="dist.dir" value="dist"/>
-    <property name="war.name" value="AutoRental.war"/>
-    <property name="dist.war" value="${dist.dir}/${war.name}"/>
-    
-    <path id="classpath">
-        <fileset dir="src/jar" includes="*.jar"/>
-    </path>
-    
-    <target name="clean">
-        <delete dir="${build.dir}"/>
-        <delete dir="${dist.dir}"/>
-    </target>
-    
-    <target name="init" depends="clean">
-        <mkdir dir="${build.classes.dir}"/>
-        <mkdir dir="${dist.dir}"/>
-    </target>
-    
-    <target name="compile" depends="init">
-        <javac srcdir="${src.dir}" destdir="${build.classes.dir}" 
-               classpathref="classpath" debug="true" includeantruntime="false">
-            <compilerarg value="-source"/>
-            <compilerarg value="24"/>
-            <compilerarg value="-target"/>
-            <compilerarg value="24"/>
-        </javac>
-    </target>
-    
-    <target name="copy-web" depends="compile">
-        <copy todir="${build.web.dir}">
-            <fileset dir="${web.dir}"/>
-        </copy>
-        <copy todir="${build.web.dir}/WEB-INF/lib">
-            <fileset dir="src/jar" includes="*.jar"/>
-        </copy>
-    </target>
-    
-    <target name="build" depends="copy-web">
-        <jar jarfile="${dist.war}" basedir="${build.web.dir}"/>
-        <echo message="WAR file created: ${dist.war}"/>
-    </target>
-</project>
-EOF
-        echo "Simple build script created!"
-    
-    - name: Build with simple Ant script
-      run: |
-        echo "=== Building with simple Ant script ==="
+        echo "=== Building with Ant ==="
         ant -f build-simple.xml build
         echo "=== Build completed ==="
     
@@ -117,13 +110,11 @@ EOF
           unzip -l dist/AutoRental.war | grep "WEB-INF/lib" | head -10
         fi
     
-    - name: Upload artifact for deployment job
+    - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: java-app
-        path: |
-          dist/AutoRental.war
-          dist/*.war
+        path: dist/AutoRental.war
         if-no-files-found: error
     
   deploy:
@@ -136,7 +127,7 @@ EOF
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     
     steps:
-    - name: Download artifact from build job
+    - name: Download artifact
       uses: actions/download-artifact@v4
       with:
         name: java-app
@@ -148,7 +139,7 @@ EOF
         echo "=== File details ==="
         file *.war || echo "No WAR files found"
     
-    - name: 'Deploy to Azure Web App'
+    - name: Deploy to Azure Web App
       id: deploy-to-webapp
       uses: azure/webapps-deploy@v3
       with:
