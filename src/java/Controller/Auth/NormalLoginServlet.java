@@ -130,6 +130,7 @@ public class NormalLoginServlet extends HttpServlet {
             SessionUtil.setSessionAttribute(request, "user", user);
             SessionUtil.setSessionAttribute(request, "userId", user.getUserId().toString());
             SessionUtil.setSessionAttribute(request, "isLoggedIn", true);
+            SessionUtil.setSessionAttribute(request, "fullName", user.getUsername());
             SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
             response.sendRedirect(request.getContextPath() + redirectUrl);
         } catch (Exception e) {
