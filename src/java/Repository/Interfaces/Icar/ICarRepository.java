@@ -29,4 +29,7 @@ public interface ICarRepository extends Repository<Car, Integer> {
         Integer minDistance, Integer maxDistance
     ) throws SQLException;
     List<CarListItemDTO> findAllForHomePage(int limit) throws SQLException;
+
+    Integer getMinPricePerHour();
+    Integer getMaxPricePerHour();
 }
