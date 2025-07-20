@@ -438,12 +438,12 @@ GO
 CREATE TABLE [UserFeedback] (
     [FeedbackId] UNIQUEIDENTIFIER NOT NULL,
     [UserId] UNIQUEIDENTIFIER NOT NULL,
+    [BookingId] UNIQUEIDENTIFIER NULL,
     [CarId] UNIQUEIDENTIFIER NULL,
     [Rating] INT NOT NULL, --CHECK ([Rating] >= 1 AND [Rating] <= 5),
     [Content] NVARCHAR(4000) NULL,
     [Reviewed] DATE NOT NULL, --DEFAULT GETDATE(),
     [CreatedDate] DATETIME2 NOT NULL, --DEFAULT GETDATE(),
-    [IsApproved] BIT NOT NULL, --DEFAULT 0,
     CONSTRAINT [PK_UserFeedback] PRIMARY KEY ([FeedbackId]),
     CONSTRAINT [FK_UserFeedback_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE,
     CONSTRAINT [FK_UserFeedback_CarId] FOREIGN KEY ([CarId]) REFERENCES [Car]([CarId]) ON DELETE SET NULL
