@@ -80,80 +80,45 @@
         </div>
 
         <nav class="sidebar-nav">
-          <a
-            href="${pageContext.request.contextPath}/pages/admin/admin-dashboard.jsp"
-            class="nav-item"
-          >
+          <a href="${pageContext.request.contextPath}/admin/dashboard" class="nav-item">
             <svg class="nav-item-icon" fill="currentColor" viewBox="0 0 24 24">
-              <path
-                d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"
-              />
+              <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
             </svg>
             Dashboard
           </a>
-          <a
-            href="${pageContext.request.contextPath}/admin/user-management"
-            class="nav-item"
-          >
+          <a href="${pageContext.request.contextPath}/admin/user-management" class="nav-item">
             <svg class="nav-item-icon" fill="currentColor" viewBox="0 0 24 24">
-              <path
-                d="M16 7c0-2.21-1.79-4-4-4S8 4.79 8 7s1.79 4 4 4 4-1.79 4-4zm-4 6c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"
-              />
+              <path d="M16 7c0-2.21-1.79-4-4-4S8 4.79 8 7s1.79 4 4 4 4-1.79 4-4zm-4 6c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"/>
             </svg>
             Users
           </a>
-          <a
-            href="${pageContext.request.contextPath}/pages/admin/manage-cars.jsp"
-            class="nav-item active"
-          >
+          <a href="${pageContext.request.contextPath}/manageCarsServlet" class="nav-item active">
             <svg class="nav-item-icon" fill="currentColor" viewBox="0 0 24 24">
-              <path
-                d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99z"
-              />
+              <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99z"/>
             </svg>
             Cars
           </a>
-          <a
-            href="${pageContext.request.contextPath}/admin/manage-staff"
-            class="nav-item"
-          >
+          <a href="${pageContext.request.contextPath}/admin/manage-staff" class="nav-item">
             <svg class="nav-item-icon" fill="currentColor" viewBox="0 0 24 24">
-              <path
-                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
-              />
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
             </svg>
             Staff
           </a>
-          <a
-            href="${pageContext.request.contextPath}/pages/admin/manage-reports.jsp"
-            class="nav-item"
-          >
+          <a href="${pageContext.request.contextPath}/pages/admin/manage-reports.jsp" class="nav-item">
             <svg class="nav-item-icon" fill="currentColor" viewBox="0 0 24 24">
-              <path
-                d="M3 17h3v-7H3v7zm5 0h3v-12H8v12zm5 0h3v-4h-3v4zm5 0h3v-9h-3v9z"
-              />
+              <path d="M3 17h3v-7H3v7zm5 0h3v-12H8v12zm5 0h3v-4h-3v4zm5 0h3v-9h-3v9z"/>
             </svg>
             Reports
           </a>
-          <a
-            href="${pageContext.request.contextPath}/pages/admin/contract-details.jsp"
-            class="nav-item"
-          >
+          <a href="${pageContext.request.contextPath}/pages/admin/contract-details.jsp" class="nav-item">
             <svg class="nav-item-icon" fill="currentColor" viewBox="0 0 24 24">
-              <path
-                d="M16.5 3a2.5 2.5 0 0 1 3.54 3.54l-12.5 12.5-4.24 1.06 1.06-4.24L16.5 3zm2.04 2.12a.5.5 0 0 0-.71 0l-1.34 1.34 1.71 1.71 1.34-1.34a.5.5 0 0 0 0-.71l-1-1zm-2.75 2.75L5 16.66V19h2.34l10.79-10.79-1.34-1.34z"
-              />
+              <path d="M16.5 3a2.5 2.5 0 0 1 3.54 3.54l-12.5 12.5-4.24 1.06 1.06-4.24L16.5 3zm2.04 2.12a.5.5 0 0 0-.71 0l-1.34 1.34 1.71 1.71 1.34-1.34a.5.5 0 0 0 0-.71l-1-1zm-2.75 2.75L5 16.66V19h2.34l10.79-10.79-1.34-1.34z"/>
             </svg>
             Contract Details
           </a>
-          <a
-            href="${pageContext.request.contextPath}/pages/admin/manage-vouchers.jsp"
-            class="nav-item "
-          >
+          <a href="${pageContext.request.contextPath}/discount" class="nav-item">
             <svg class="nav-item-icon" fill="currentColor" viewBox="0 0 24 24">
-              <path
-                d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"
-              />
+              <path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/>
             </svg>
             Vouchers
           </a>
@@ -190,22 +155,6 @@
                   <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
                 </svg>
               </button>
-              <div class="search-box">
-                <svg
-                  class="search-icon"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
-                  />
-                </svg>
-                <input
-                  type="text"
-                  class="search-input"
-                  placeholder="Search..."
-                />
-              </div>
             </div>
             <div class="header-right">
               <button class="notification-btn">
@@ -222,9 +171,13 @@
                 <span class="notification-badge">3</span>
               </button>
               <div class="user-profile">
-                <div class="user-avatar">QH</div>
+                <div class="user-avatar">
+                  <img src="${not empty sessionScope.user.avatarUrl ? sessionScope.user.avatarUrl : pageContext.request.contextPath.concat('/assets/images/default-avatar.png')}"
+                       alt="User Avatar" width="32" height="32" class="rounded-circle"
+                       onerror="this.onerror=null;this.src='${pageContext.request.contextPath}/assets/images/default-avatar.png';">
+                </div>
                 <div class="user-details">
-                  <h4>Quang Huy</h4>
+                  <h4>${sessionScope.user.username}</h4>
                   <p>Administrator</p>
                 </div>
               </div>
@@ -246,31 +199,35 @@
                             </svg>
                             Add Car
                         </button>
-                            <a href="${pageContext.request.contextPath}/pages/admin/test-add-car.jsp" class="btn" style="background-color: #28a745; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
-                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                                Test Add Car
-                            </a>
-                            <a href="${pageContext.request.contextPath}/pages/admin/test-update-car.jsp" class="btn" style="background-color: #fd7e14; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
-                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-                                </svg>
-                                Test Update
-                            </a>
-                            <a href="${pageContext.request.contextPath}/pages/admin/simple-update-test.jsp" class="btn" style="background-color: #6f42c1; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
-                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                                Simple Update Test
-                            </a>
-                            <a href="${pageContext.request.contextPath}/pages/admin/test-upload-images.jsp" class="btn" style="background-color: #17a2b8; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
-                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
-                                </svg>
-                                Test Upload Images
-                            </a>
                         </div>
+                    </div>
+                    <div style="display: flex; gap: 12px; align-items: center; margin-top: 18px; flex-wrap: wrap;">
+                        <select id="carBrandFilter" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc;">
+                            <option value="all">All Brands</option>
+                            <c:forEach var="brand" items="${brandList}">
+                                <option value="${brand.brandId}" ${param.brandId == brand.brandId ? 'selected' : ''}>${brand.brandName}</option>
+                            </c:forEach>
+                        </select>
+                        <select id="carStatusFilter" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc;">
+                            <option value="all">All Status</option>
+                            <option value="Available" ${param.status == 'Available' ? 'selected' : ''}>Available</option>
+                            <option value="Rented" ${param.status == 'Rented' ? 'selected' : ''}>Rented</option>
+                            <option value="Unavailable" ${param.status == 'Unavailable' ? 'selected' : ''}>Unavailable</option>
+                        </select>
+                        <select id="carFuelFilter" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc;">
+                            <option value="all">All Fuel</option>
+                            <option value="Xăng" ${param.fuel == 'Xăng' ? 'selected' : ''}>Petrol (Xăng)</option>
+                            <option value="Dầu" ${param.fuel == 'Dầu' ? 'selected' : ''}>Diesel (Dầu)</option>
+                            <option value="Điện" ${param.fuel == 'Điện' ? 'selected' : ''}>Electric (Điện)</option>
+                        </select>
+                        <select id="carTransmissionFilter" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc;">
+                            <option value="all">All Transmission</option>
+                            <option value="Số tự động" ${param.transmission == 'Số tự động' ? 'selected' : ''}>Automatic (Số tự động)</option>
+                            <option value="Số sàn" ${param.transmission == 'Số sàn' ? 'selected' : ''}>Manual (Số sàn)</option>
+                        </select>
+                        <input type="number" id="carPriceMin" placeholder="Min Price/Day" value="${param.priceMin != null ? param.priceMin : ''}" style="width: 120px; padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc;" />
+                        <input type="number" id="carPriceMax" placeholder="Max Price/Day" value="${param.priceMax != null ? param.priceMax : ''}" style="width: 120px; padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc;" />
+                        <button class="btn btn-secondary" onclick="applyCarFilters()" type="button">Filter</button>
                     </div>
                 </div>
 
@@ -290,7 +247,7 @@
                     <div class="card-header">
                         <h2 class="card-title">All Cars</h2>
                         <p class="card-description">Manage and monitor your car fleet</p>
-                        <small style="color: #666; font-style: italic;">* Giá hiển thị đã được thêm "000" vào cuối để dễ đọc</small>
+                        
                     </div>
                     <div class="card-content">
                         <c:choose>
@@ -352,6 +309,12 @@
                                                                 <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
                                                             </svg>
                                                         </button>
+                                                        <a class="btn-ghost" title="Tính năng xe" href="${pageContext.request.contextPath}/FeatureCarServlet?carId=${car.carId}&carModel=${car.carModel}">
+                                                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                                                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
+                                                                <path d="M8 12l2 2 4-4" stroke="currentColor" stroke-width="2" fill="none"/>
+                                                            </svg>
+                                                        </a>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -367,19 +330,31 @@
                         </c:choose>
 
                         <!-- Pagination -->
-                        <c:if test="${not empty carList}">
-                            <div class="pagination">
-                                <c:if test="${currentPage > 1}">
-                                    <a href="${pageContext.request.contextPath}/manageCarsServlet?page=${currentPage - 1}" class="pagination-link">Previous</a>
-                                </c:if>
-                                <c:forEach begin="1" end="${totalPages}" var="i">
-                                    <a href="${pageContext.request.contextPath}/manageCarsServlet?page=${i}" class="pagination-link ${i == currentPage ? 'active' : ''}">${i}</a>
-                                </c:forEach>
-                                <c:if test="${currentPage < totalPages}">
-                                    <a href="${pageContext.request.contextPath}/manageCarsServlet?page=${currentPage + 1}" class="pagination-link">Next</a>
-                                </c:if>
-                            </div>
-                        </c:if>
+                        <div class="pagination-wrapper" style="display:flex;justify-content:center;margin-top:32px;">
+                          <c:if test="${totalPages > 1}">
+                            <ul class="pagination">
+                              <c:if test="${currentPage > 1}">
+                                <li class="page-item">
+                                  <a href="${pageContext.request.contextPath}/manageCarsServlet?page=${currentPage - 1}" class="page-link" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                  </a>
+                                </li>
+                              </c:if>
+                              <c:forEach begin="1" end="${totalPages}" var="i">
+                                <li class="page-item ${i == currentPage ? 'active' : ''}">
+                                  <a href="${pageContext.request.contextPath}/manageCarsServlet?page=${i}" class="page-link">${i}</a>
+                                </li>
+                              </c:forEach>
+                              <c:if test="${currentPage < totalPages}">
+                                <li class="page-item">
+                                  <a href="${pageContext.request.contextPath}/manageCarsServlet?page=${currentPage + 1}" class="page-link" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                  </a>
+                                </li>
+                              </c:if>
+                            </ul>
+                          </c:if>
+                        </div>
                     </div>
                 </div>
             </main>
@@ -403,20 +378,33 @@
 
                     <div class="form-group">
                         <label for="brandId">Brand *</label>
-                        <input type="text" id="brandId" name="brandId" required placeholder="Điền thương hiệu xe (ví dụ: Toyota, Honda, Ford)">
-                        <small style="color: #666;">Nhập tên thương hiệu xe (sẽ sử dụng Toyota mặc định)</small>
+                        <select id="brandId" name="brandId" required onchange="toggleBrandOther()">
+                            <c:forEach var="brand" items="${brandList}">
+                                <option value="${brand.brandId}">${brand.brandName}</option>
+                            </c:forEach>
+                            <option value="other">Other</option>
+                        </select>
+                        <input type="text" id="brandOtherInput" name="brandOtherName" placeholder="Enter new brand" style="display:none; margin-top:6px;" />
+                        <small style="color: #666;">Chọn thương hiệu xe hoặc chọn Other để nhập mới</small>
                     </div>
 
                     <div class="form-group">
                         <label for="fuelTypeId">Fuel Type *</label>
-                        <input type="text" id="fuelTypeId" name="fuelTypeId" required placeholder="Điền loại nhiên liệu (ví dụ: Xăng, Dầu, Điện)">
-                        <small style="color: #666;">Nhập loại nhiên liệu xe sử dụng (sẽ sử dụng Xăng mặc định)</small>
+                        <select id="fuelTypeId" name="fuelTypeId" required>
+                            <option value="Xăng" selected>Petrol (Xăng)</option>
+                            <option value="Dầu">Diesel (Dầu)</option>
+                            <option value="Điện">Electric (Điện)</option>
+                        </select>
+                        <small style="color: #666;">Chọn loại nhiên liệu xe sử dụng</small>
                     </div>
 
                     <div class="form-group">
                         <label for="transmissionTypeId">Transmission Type *</label>
-                        <input type="text" id="transmissionTypeId" name="transmissionTypeId" required placeholder="Điền loại hộp số (ví dụ: Số tự động, Số sàn)">
-                        <small style="color: #666;">Nhập loại hộp số xe (sẽ sử dụng Số tự động mặc định)</small>
+                        <select id="transmissionTypeId" name="transmissionTypeId" required>
+                            <option value="Số tự động" selected>Automatic (Số tự động)</option>
+                            <option value="Số sàn">Manual (Số sàn)</option>
+                        </select>
+                        <small style="color: #666;">Chọn loại hộp số xe</small>
                     </div>
 
                     <div class="form-group">
@@ -531,13 +519,40 @@
                     console.log('Received car data:', car);
                     document.getElementById('carId').value = car.carId || '';
                     document.getElementById('carModel').value = car.carModel || '';
-                    
-                    // Clear text input fields (we use fixed UUIDs in backend)
-                    document.getElementById('brandId').value = '';
-                    document.getElementById('fuelTypeId').value = '';
-                    document.getElementById('transmissionTypeId').value = '';
-                    document.getElementById('categoryId').value = '';
-                    
+                    // Set brand
+                    var brandSelect = document.getElementById('brandId');
+                    var found = false;
+                    for (var i = 0; i < brandSelect.options.length; i++) {
+                        if (brandSelect.options[i].value === car.brandId) {
+                            brandSelect.value = car.brandId;
+                            found = true;
+                            break;
+                        }
+                    }
+                    var otherInput = document.getElementById('brandOtherInput');
+                    if (!found && car.brandName) {
+                        brandSelect.value = 'other';
+                        otherInput.style.display = '';
+                        otherInput.value = car.brandName;
+                        otherInput.required = true;
+                    } else {
+                        otherInput.style.display = 'none';
+                        otherInput.value = '';
+                        otherInput.required = false;
+                    }
+                    // Set fuel type
+                    if (car.fuelName) {
+                        document.getElementById('fuelTypeId').value = car.fuelName;
+                    } else {
+                        document.getElementById('fuelTypeId').value = 'Xăng';
+                    }
+                    // Set transmission
+                    if (car.transmissionTypeName) {
+                        document.getElementById('transmissionTypeId').value = car.transmissionTypeName;
+                    } else {
+                        document.getElementById('transmissionTypeId').value = 'Số tự động';
+                    }
+                    document.getElementById('categoryId').value = car.categoryName || '';
                     document.getElementById('seats').value = car.seats || '';
                     document.getElementById('yearManufactured').value = car.yearManufactured || '';
                     document.getElementById('licensePlate').value = car.licensePlate || '';
@@ -557,8 +572,6 @@
                     alert('Không thể tải thông tin xe!');
                 });
         }
-
-
 
         function deleteCar(carId, carModel) {
             if (confirm(`Bạn có chắc chắn muốn xóa xe ${carModel}?`)) {
@@ -600,69 +613,67 @@
             }
         }
 
-        document.getElementById('carForm').addEventListener('submit', (e) => {
-            const action = document.getElementById('carFormAction').value;
-            const seats = document.getElementById('seats').value;
-            const year = document.getElementById('yearManufactured').value;
-            const licensePlate = document.getElementById('licensePlate').value;
-            const odometer = document.getElementById('odometer').value;
-            const pricePerDay = document.getElementById('pricePerDay').value;
-            const pricePerHour = document.getElementById('pricePerHour').value;
-            const pricePerMonth = document.getElementById('pricePerMonth').value;
-
-            // Debug logging
-            console.log('Form submission:', {
-                action: action,
-                seats: seats,
-                year: year,
-                licensePlate: licensePlate,
-                odometer: odometer,
-                pricePerDay: pricePerDay,
-                pricePerHour: pricePerHour,
-                pricePerMonth: pricePerMonth
-            });
-
-            if (!['add', 'update'].includes(action)) {
-                e.preventDefault();
-                alert('Hành động không hợp lệ');
-                return;
+        function validateCarForm(form) {
+            let valid = true;
+            let firstError = null;
+            form.querySelectorAll('.input-error').forEach(e => e.remove());
+            function showError(input, msg) {
+                const err = document.createElement('div');
+                err.className = 'input-error';
+                err.style.color = '#e74c3c';
+                err.style.fontSize = '13px';
+                err.style.marginTop = '2px';
+                err.textContent = msg;
+                input.parentNode.appendChild(err);
+                if (!firstError) firstError = input;
+                valid = false;
             }
+            // Car Model
+            const carModel = form.carModel;
+            if (!carModel.value.trim()) showError(carModel, 'Car model is required');
+            // Brand
+            const brand = form.brandId;
+            if (!brand.value.trim()) showError(brand, 'Brand is required');
+            // Fuel Type
+            const fuel = form.fuelTypeId;
+            if (!fuel.value.trim()) showError(fuel, 'Fuel type is required');
+            // Transmission
+            const trans = form.transmissionTypeId;
+            if (!trans.value.trim()) showError(trans, 'Transmission type is required');
+            // Seats
+            const seats = form.seats;
+            if (!seats.value || seats.value < 1 || seats.value > 50) showError(seats, 'Seats must be 1-50');
+            // Year
+            const year = form.yearManufactured;
+            if (!year.value || year.value < 1900 || year.value > maxYear) showError(year, 'Year must be 1900-' + maxYear);
+            // License Plate
+            const license = form.licensePlate;
+            if (!license.value.trim()) showError(license, 'License plate is required');
+            // Odometer
+            const odo = form.odometer;
+            if (!odo.value || odo.value < 0) showError(odo, 'Odometer must be >= 0');
+            // Price Per Day
+            const priceDay = form.pricePerDay;
+            if (!priceDay.value || priceDay.value < 0) showError(priceDay, 'Price per day must be >= 0');
+            // Price Per Hour
+            const priceHour = form.pricePerHour;
+            if (!priceHour.value || priceHour.value < 0) showError(priceHour, 'Price per hour must be >= 0');
+            // Price Per Month
+            const priceMonth = form.pricePerMonth;
+            if (priceMonth.value && priceMonth.value < 0) showError(priceMonth, 'Price per month must be >= 0');
+            // Status
+            const status = form.status;
+            if (!status.value.trim()) showError(status, 'Status is required');
+            // Description
+            const desc = form.description;
+            if (desc.value && desc.value.length > 500) showError(desc, 'Description max 500 chars');
+            if (!valid && firstError) firstError.focus();
+            return valid;
+        }
 
-            if (!seats || seats < 1 || seats > 50) {
-                e.preventDefault();
-                alert('Số ghế phải từ 1 đến 50');
-                return;
-            }
-
-            if (!year || year < 1900 || year > maxYear) {
-                e.preventDefault();
-                alert('Năm sản xuất phải từ 1900 đến ' + maxYear);
-                return;
-            }
-
-            if (!licensePlate || licensePlate.trim().length === 0) {
-                e.preventDefault();
-                alert('Biển số xe là bắt buộc');
-                return;
-            }
-
-            if (!odometer || odometer < 0) {
-                e.preventDefault();
-                alert('Số km đã chạy phải là số dương');
-                return;
-            }
-
-            if (!pricePerDay || pricePerDay < 0 || !pricePerHour || pricePerHour < 0) {
-                e.preventDefault();
-                alert('Giá theo ngày và giờ không được âm');
-                return;
-            }
-
-            if (pricePerMonth !== '' && pricePerMonth < 0) {
-                e.preventDefault();
-                alert('Giá theo tháng không được âm');
-                return;
-            }
+        window.addEventListener('DOMContentLoaded', function() {
+            const carForm = document.getElementById('carForm');
+            if (carForm) carForm.onsubmit = function() { return validateCarForm(carForm); };
         });
 
         document.querySelectorAll('.alert').forEach(alert => {
@@ -672,6 +683,36 @@
         window.onclick = (event) => {
             if (event.target === document.getElementById('carModal')) closeModal();
         };
+
+        function toggleBrandOther() {
+            var select = document.getElementById('brandId');
+            var otherInput = document.getElementById('brandOtherInput');
+            if (select.value === 'other') {
+                otherInput.style.display = '';
+                otherInput.required = true;
+            } else {
+                otherInput.style.display = 'none';
+                otherInput.required = false;
+                otherInput.value = '';
+            }
+        }
+
+        function applyCarFilters() {
+            var url = new URL(window.location.href);
+            var brand = document.getElementById('carBrandFilter').value;
+            var status = document.getElementById('carStatusFilter').value;
+            var fuel = document.getElementById('carFuelFilter').value;
+            var transmission = document.getElementById('carTransmissionFilter').value;
+            var priceMin = document.getElementById('carPriceMin').value;
+            var priceMax = document.getElementById('carPriceMax').value;
+            if (brand === 'all') url.searchParams.delete('brandId'); else url.searchParams.set('brandId', brand);
+            if (status === 'all') url.searchParams.delete('status'); else url.searchParams.set('status', status);
+            if (fuel === 'all') url.searchParams.delete('fuel'); else url.searchParams.set('fuel', fuel);
+            if (transmission === 'all') url.searchParams.delete('transmission'); else url.searchParams.set('transmission', transmission);
+            if (priceMin) url.searchParams.set('priceMin', priceMin); else url.searchParams.delete('priceMin');
+            if (priceMax) url.searchParams.set('priceMax', priceMax); else url.searchParams.delete('priceMax');
+            window.location.href = url.toString();
+        }
     </script>
 
     <style>
