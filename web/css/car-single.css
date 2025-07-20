@@ -58,3 +58,796 @@
     color: #6c757d;
     font-size: 14px;
 }
+
+/* ========== MODERN REVIEW SECTION REDESIGN ========== */
+
+/* Reset và base styles với higher specificity */
+.tab-pane#pills-review {
+    background: #f8f9fa !important; /* Màu đơn giản thay vì gradient */
+    padding: 2rem !important;
+    border-radius: 20px !important;
+    margin: 1rem 0 !important;
+}
+
+/* Header với accent line - CSS TEST */
+.head, 
+#pills-review .head,
+.tab-pane .head {
+    font-size: 1.8rem !important;
+    font-weight: 800 !important;
+    color: #333333 !important; /* Màu đen đơn giản thay vì gradient */
+    margin-bottom: 2rem !important;
+    position: relative !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+}
+
+/* Đơn giản hóa accent line */
+.head::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 80px;
+    height: 4px;
+    background: #667eea; /* Màu đơn giản thay vì gradient */
+    border-radius: 2px;
+}
+
+/* Review Cards - Completely Redesigned với higher specificity */
+.tab-pane .review, 
+#pills-review .review {
+    background: #ffffff !important;
+    border: none !important;
+    border-radius: 20px !important;
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.1),
+        0 1px 8px rgba(0, 0, 0, 0.06) !important;
+    padding: 1.5rem !important;
+    margin-bottom: 2rem !important;
+    position: relative !important;
+    overflow: hidden !important;
+    transition: none !important;
+}
+
+/* Subtle accent border */
+.review::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: #667eea; /* Màu đơn giản thay vì gradient */
+}
+
+/* Loại bỏ hiệu ứng hover cho review */
+.tab-pane .review:hover, 
+#pills-review .review:hover {
+    transform: none !important;
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.1),
+        0 1px 8px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* User Avatar - Enhanced */
+.user-img {
+    width: 75px !important;
+    height: 75px !important;
+    border-radius: 50% !important;
+    border: 4px solid #ffffff;
+    box-shadow: 
+        0 8px 25px rgba(0, 0, 0, 0.15),
+        0 0 0 2px rgba(102, 126, 234, 0.1);
+    background-size: cover !important;
+    background-position: center !important;
+    transition: none;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Loại bỏ hiệu ứng shimmer cho avatar */
+.user-img::after {
+    display: none;
+}
+
+/* Loại bỏ hiệu ứng hover cho avatar */
+.review:hover .user-img::after {
+    transform: none;
+}
+
+.review:hover .user-img {
+    transform: none;
+    border-color: #ffffff;
+}
+
+/* Review Content Container */
+.review-content {
+    background: #f8f9fa !important; /* Màu đơn giản thay vì gradient */
+    border: 1px solid #e9ecef !important;
+    border-radius: 16px !important;
+    padding: 1.8rem !important;
+    margin-top: 1rem;
+    position: relative;
+    box-shadow: none; /* Loại bỏ shadow */
+}
+
+/* Quote decoration */
+.review-content::before {
+    content: '"';
+    position: absolute;
+    top: -5px;
+    left: 20px;
+    font-size: 4rem;
+    color: rgba(102, 126, 234, 0.15);
+    font-family: 'Georgia', serif;
+    line-height: 1;
+}
+
+/* Đơn giản hóa user review highlight */
+.review[style*="background-color: #f8f9fa;"] {
+    background: #e6fffa !important; /* Màu đơn giản thay vì gradient */
+    border-left: 6px solid #38b2ac !important;
+}
+
+.review[style*="background-color: #f8f9fa;"]::before {
+    background: #38b2ac; /* Màu đơn giản thay vì gradient */
+}
+
+.review[style*="background-color: #f8f9fa;"] .review-content {
+    background: #e6fffa !important; /* Màu đơn giản thay vì gradient */
+    border-color: #b2f5ea !important;
+}
+
+/* Rating Stars Enhancement */
+.rating-stars {
+    display: inline-flex;
+    align-items: center;
+    font-size: 1.2rem;
+    color: #f6ad55;
+    text-shadow: 0 2px 8px rgba(246, 173, 85, 0.3);
+    font-weight: 600;
+}
+
+/* Action Buttons - Complete Redesign với higher specificity */
+.tab-pane .edit-feedback, 
+.tab-pane .delete-feedback,
+#pills-review .edit-feedback, 
+#pills-review .delete-feedback {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 10px 20px !important;
+    border-radius: 50px !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    border: none !important;
+    text-decoration: none !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Đơn giản hóa nút edit */
+.tab-pane .edit-feedback,
+#pills-review .edit-feedback {
+    background: #667eea !important;
+    color: white !important;
+    border-radius: 4px !important;
+    padding: 8px 16px !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    box-shadow: none !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+}
+
+/* Loại bỏ hiệu ứng hover cho nút Edit */
+.tab-pane .edit-feedback,
+#pills-review .edit-feedback {
+    background: #667eea !important;
+    color: white !important;
+    transition: none !important;
+}
+
+.tab-pane .edit-feedback:hover,
+#pills-review .edit-feedback:hover {
+    background: #667eea !important;
+    transform: none !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+    color: white !important;
+}
+
+.tab-pane .delete-feedback,
+#pills-review .delete-feedback {
+    background: linear-gradient(135deg, #fc8181 0%, #f56565 100%) !important;
+    color: white !important;
+}
+
+.tab-pane .delete-feedback:hover,
+#pills-review .delete-feedback:hover {
+    background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%) !important;
+    transform: translateY(-2px) scale(1.05) !important;
+    box-shadow: 0 8px 25px rgba(245, 101, 101, 0.4) !important;
+    color: white !important;
+}
+
+/* Button ripple effect */
+.edit-feedback::before, .delete-feedback::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transition: width 0.6s, height 0.6s, top 0.6s, left 0.6s;
+    transform: translate(-50%, -50%);
+}
+
+.edit-feedback:active::before, .delete-feedback:active::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* Form Section Enhancement */
+.rating-wrap {
+    background: linear-gradient(135deg, #ffffff 0%, #f7fafc 100%);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.1),
+        0 1px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(102, 126, 234, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.rating-wrap::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Form Controls */
+#reviewForm .form-select, 
+#reviewForm .form-control,
+#editFeedbackForm .form-select,
+#editFeedbackForm .form-control {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 15px 20px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+#reviewForm .form-select:focus, 
+#reviewForm .form-control:focus,
+#editFeedbackForm .form-select:focus,
+#editFeedbackForm .form-control:focus {
+    border-color: #667eea;
+    box-shadow: 
+        0 0 0 3px rgba(102, 126, 234, 0.1),
+        0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    outline: none;
+}
+
+/* Submit Button */
+#reviewForm .btn-primary,
+#editFeedbackForm .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 50px;
+    padding: 15px 40px;
+    font-weight: 700;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+#reviewForm .btn-primary:hover,
+#editFeedbackForm .btn-primary:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+}
+
+/* Modal Enhancements */
+.modal-content {
+    border-radius: 8px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+    border: none !important;
+}
+
+.modal-header {
+    background: #f8f9fa !important;
+    border-bottom: 1px solid #e9ecef !important;
+    padding: 1.5rem !important;
+}
+
+.modal-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+}
+
+.modal-title {
+    font-weight: 700 !important;
+    color: #333333 !important;
+    font-size: 1.5rem !important;
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    color: white;
+    opacity: 0.8;
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-close:hover {
+    opacity: 1;
+    transform: scale(1.2) rotate(90deg);
+}
+
+.modal-body {
+    padding: 2.5rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+}
+
+.modal-footer {
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    padding: 2rem;
+}
+
+/* Alert Enhancements */
+.alert {
+    border-radius: 8px !important;
+    padding: 1rem !important;
+    margin-bottom: 1rem !important;
+    border: 1px solid transparent !important;
+}
+
+.alert::before {
+    display: none; /* Loại bỏ icon */
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%);
+    color: #2f855a;
+}
+
+.alert-success::before {
+    background: #38a169;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+    color: #c53030;
+}
+
+.alert-danger::before {
+    background: #e53e3e;
+}
+
+.alert-info {
+    background-color: #e6f7ff !important;
+    border-color: #b3e0ff !important;
+    color: #0070cc !important;
+}
+
+/* Typography Enhancements */
+.review h5 {
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+.review .text-muted {
+    color: #718096 !important;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.review-content p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    color: #4a5568;
+}
+
+.review-content strong {
+    color: #2d3748;
+    font-weight: 600;
+}
+
+/* Animations */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: none;
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes shimmer {
+    to {
+        transform: none;
+    }
+}
+
+/* Loại bỏ animation cho review */
+.review {
+    animation: none !important;
+}
+
+/* Loại bỏ animation delay cho các review */
+.review:nth-child(1), 
+.review:nth-child(2), 
+.review:nth-child(3), 
+.review:nth-child(4) {
+    animation-delay: 0s !important;
+}
+
+/* Loading shimmer effect */
+.review-loading {
+    position: relative;
+    overflow: hidden;
+}
+
+.review-loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+    animation: shimmer 1.5s infinite;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #pills-review {
+        padding: 1.5rem;
+        border-radius: 15px;
+    }
+    
+    .review {
+        padding: 1.2rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .user-img {
+        width: 60px !important;
+        height: 60px !important;
+    }
+    
+    .edit-feedback, .delete-feedback {
+        padding: 8px 16px !important;
+        font-size: 0.8rem;
+        margin-bottom: 8px;
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .rating-wrap {
+        padding: 1.5rem;
+    }
+    
+    .head {
+        font-size: 1.5rem;
+    }
+    
+    .modal-body {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .edit-feedback, .delete-feedback {
+        display: block;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+    
+    .review-content {
+        padding: 1.2rem !important;
+    }
+}
+
+/* ========== REVIEW SECTION MODERN MINIMAL ========== */
+
+.review-section-row {
+    display: flex;
+    flex-direction: row;
+    gap: 32px;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+    margin-bottom: 32px;
+}
+.review-list-col {
+    flex: 1 1 0%;
+    min-width: 0;
+    max-width: 60%;
+}
+.review-summary-col {
+    flex: 0 0 340px;
+    max-width: 40%;
+    min-width: 280px;
+    margin-left: auto;
+}
+
+/* Card style cho cả hai khối */
+.review-list-col, .review-summary-col .rating-wrap {
+    background: #fff !important;
+    border-radius: 14px !important;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08) !important;
+    padding: 28px 24px !important;
+    min-height: 220px;
+    border: none !important;
+    margin-bottom: 0 !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+/* Header */
+.head, #pills-review .head, .tab-pane .head {
+    font-size: 1.15rem !important;
+    font-weight: 700 !important;
+    color: #222 !important;
+    margin-bottom: 18px !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    border: none !important;
+    background: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+/* Review Card */
+.tab-pane .review, #pills-review .review {
+    background: #f9f9f9 !important;
+    border-radius: 10px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04) !important;
+    padding: 20px 24px !important;
+    margin-bottom: 20px !important;
+    border: none !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 16px !important;
+    position: relative !important;
+}
+
+/* Avatar */
+.review .user-img {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 50% !important;
+    border: 1.5px solid #eee !important;
+    box-shadow: none !important;
+    background-size: cover !important;
+    background-position: center !important;
+    margin-right: 0 !important;
+    flex-shrink: 0 !important;
+}
+
+/* Info */
+.review .desc {
+    flex: 1 1 0%;
+    min-width: 0;
+}
+
+.review .desc .d-flex {
+    align-items: center !important;
+    margin-bottom: 2px !important;
+}
+
+.review h5 {
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    color: #222 !important;
+    margin: 0 8px 0 0 !important;
+    display: inline-block !important;
+}
+
+.review .text-muted {
+    color: #b7b7b7 !important;
+    font-size: 0.92rem !important;
+    font-weight: 400 !important;
+    margin-left: 0 !important;
+}
+
+/* Stars */
+.rating-stars, .review .rating-stars, .review .rating-stars i, .review .rating-stars .icon-star, .review .rating-stars .fa-star {
+    color: #ffb300 !important;
+    font-size: 1.1rem !important;
+    margin-right: 2px !important;
+    vertical-align: middle !important;
+}
+
+/* Review Content */
+.review-content {
+    background: #f3f3f3 !important;
+    border-radius: 6px !important;
+    border: none !important;
+    padding: 14px 18px !important;
+    margin: 8px 0 0 0 !important;
+    font-size: 1rem !important;
+    color: #333 !important;
+    box-shadow: none !important;
+}
+
+.review-content p {
+    margin-bottom: 6px !important;
+    line-height: 1.6 !important;
+    color: #333 !important;
+    font-size: 1rem !important;
+}
+
+.review-content strong {
+    color: #222 !important;
+    font-weight: 600 !important;
+}
+
+/* Action Buttons */
+.tab-pane .edit-feedback, .tab-pane .delete-feedback, #pills-review .edit-feedback, #pills-review .delete-feedback {
+    display: inline-block !important;
+    padding: 4px 14px !important;
+    font-size: 0.95rem !important;
+    border-radius: 4px !important;
+    border: 1px solid #e0e0e0 !important;
+    background: #fff !important;
+    color: #888 !important;
+    font-weight: 500 !important;
+    margin-right: 6px !important;
+    margin-top: 8px !important;
+    box-shadow: none !important;
+    transition: border 0.2s, color 0.2s, background 0.2s;
+    text-transform: none !important;
+}
+
+.tab-pane .edit-feedback:hover, #pills-review .edit-feedback:hover {
+    border: 1px solid #222 !important;
+    color: #222 !important;
+    background: #f3f3f3 !important;
+}
+
+.tab-pane .delete-feedback:hover, #pills-review .delete-feedback:hover {
+    border: 1px solid #b7b7b7 !important;
+    color: #b7b7b7 !important;
+    background: #f7f7f7 !important;
+}
+
+/* Alert/info box */
+.alert-info {
+    background: #f3f3f3 !important;
+    color: #1e857c !important;
+    border-radius: 6px !important;
+    border: 1px solid #e0e0e0 !important;
+    font-size: 1rem !important;
+    font-weight: 400 !important;
+    box-shadow: none !important;
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+    .review-section-row {
+        flex-direction: column;
+        gap: 24px;
+    }
+    .review-list-col, .review-summary-col {
+        max-width: 100%;
+        min-width: 0;
+    }
+    .review-summary-col {
+        margin-left: 0;
+    }
+}
+@media (max-width: 768px) {
+    .tab-pane .review, #pills-review .review {
+        flex-direction: column !important;
+        padding: 14px 8px !important;
+    }
+    .review .user-img {
+        margin-bottom: 8px !important;
+    }
+    .review-list-col, .review-summary-col .rating-wrap {
+        padding: 16px 6px !important;
+    }
+}
+
+/* Hide quote icon */
+.review-content::before { display: none !important; }
+
+/* Loại bỏ animation slideInUp */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: none;
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* Loại bỏ animation shimmer */
+@keyframes shimmer {
+    to {
+        transform: none;
+    }
+}
+
+/* Loại bỏ hiệu ứng loading shimmer */
+.review-loading {
+    background: #f0f0f0;
+}
+
+.review-loading::after {
+    display: none;
+}
+
+/* Loại bỏ hiệu ứng hover cho nút close */
+.btn-close:hover {
+    transform: none;
+    background-color: #e2e8f0;
+}
+
+/* Loại bỏ hiệu ứng before cho các nút */
+.edit-feedback::before, .delete-feedback::before {
+    display: none;
+}
+
+.edit-feedback:active::before, .delete-feedback:active::before {
+    transform: none;
+}
+
+/* Loại bỏ hiệu ứng hover cho form elements */
+#reviewForm .form-select:focus, 
+#reviewForm .form-control:focus,
+#editFeedbackForm .form-select:focus,
+#editFeedbackForm .form-control:focus {
+    transform: none;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25);
+}
+
+/* Loại bỏ hiệu ứng hover cho nút submit */
+#reviewForm .btn-primary:hover,
+#editFeedbackForm .btn-primary:hover {
+    transform: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Loại bỏ hiệu ứng before cho modal header */
+.modal-header::after {
+    display: none;
+}
