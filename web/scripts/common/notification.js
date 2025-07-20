@@ -191,6 +191,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Hàm thêm nút xóa vào các thông báo
     function addDeleteButtonsToNotifications() {
         document.querySelectorAll('.notification-item').forEach(function(item) {
+            // Kiểm tra xem đã có nút xóa chưa
+            const existingDeleteBtn = item.querySelector('.notification-actions');
+            if (existingDeleteBtn) {
+                return; // Nếu đã có nút xóa thì bỏ qua
+            }
+            
             // Tạo container cho nút xóa
             const deleteContainer = document.createElement('div');
             deleteContainer.className = 'notification-actions';
