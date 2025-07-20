@@ -134,8 +134,37 @@ public class CarManagementServlet extends HttpServlet {
             int limit = 10;
             int offset = (page - 1) * limit;
 
-            List<CarListItemDTO> carList = carListService.getByPage(offset, limit);
-            if (carList == null) carList = new ArrayList<>();
+            // Lấy filter param
+            String brandId = request.getParameter("brandId");
+            String status = request.getParameter("status");
+            String priceMinStr = request.getParameter("priceMin");
+            String priceMaxStr = request.getParameter("priceMax");
+
+            String[] brandIds = (brandId != null && !brandId.equals("all") && !brandId.isEmpty()) ? new String[]{brandId} : null;
+            String[] statuses = (status != null && !status.equals("all") && !status.isEmpty()) ? new String[]{status} : null;
+            Integer minPricePerDay = (priceMinStr != null && !priceMinStr.isEmpty()) ? Integer.parseInt(priceMinStr) : null;
+            Integer maxPricePerDay = (priceMaxStr != null && !priceMaxStr.isEmpty()) ? Integer.parseInt(priceMaxStr) : null;
+
+            List<CarListItemDTO> carList;
+            int totalCars;
+            if (brandIds != null || statuses != null || minPricePerDay != null || maxPricePerDay != null) {
+                // Có filter
+                carList = carListService.filterCars(
+                    brandIds, null, null, null, statuses, null, null, null, null,
+                    minPricePerDay, maxPricePerDay,
+                    null, null, null, null, null, null, null, null,
+                    offset, limit
+                );
+                totalCars = carListService.countFilteredCars(
+                    brandIds, null, null, null, statuses, null, null, null,
+                    minPricePerDay, maxPricePerDay,
+                    null, null, null, null, null, null, null, null
+                );
+            } else {
+                // Không filter
+                carList = carListService.getByPage(offset, limit);
+                totalCars = carListService.countAll();
+            }
 
             for (CarListItemDTO dto : carList) {
                 Car car = carService.findById(dto.getCarId());
@@ -155,7 +184,6 @@ public class CarManagementServlet extends HttpServlet {
                 }
             }
 
-            int totalCars = carListService.countAll();
             int totalPages = (int) Math.ceil((double) totalCars / limit);
 
             request.setAttribute("carList", carList);
