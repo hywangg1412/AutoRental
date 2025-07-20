@@ -30,4 +30,7 @@ public interface ICarService extends Service<Car>{
         Integer minOdometer, Integer maxOdometer,
         Integer minDistance, Integer maxDistance
     ) throws SQLException;
+
+    Integer getMinPricePerHour();
+    Integer getMaxPricePerHour();
 }
