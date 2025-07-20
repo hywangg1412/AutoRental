@@ -21,9 +21,10 @@ public class CarListService {
     private final CarImageRepository imageRepository = new CarImageRepository();
 
     /**
-     * CẢNH BÁO: Hàm này lấy toàn bộ xe từ DB, có thể gây tải lớn nếu số lượng xe nhiều.
-     * KHÔNG dùng cho hiển thị danh sách lớn. Chỉ dùng cho mục đích đặc biệt (admin, xuất excel, ...).
-     * Nên dùng getByPage, filterCars, searchByKeyword để phân trang.
+     * CẢNH BÁO: Hàm này lấy toàn bộ xe từ DB, có thể gây tải lớn nếu số lượng
+     * xe nhiều. KHÔNG dùng cho hiển thị danh sách lớn. Chỉ dùng cho mục đích
+     * đặc biệt (admin, xuất excel, ...). Nên dùng getByPage, filterCars,
+     * searchByKeyword để phân trang.
      */
     public List<CarListItemDTO> getAll() {
         List<CarListItemDTO> result = new ArrayList<>();
@@ -32,7 +33,9 @@ public class CarListService {
             List<UUID> brandIds = new ArrayList<>();
             List<UUID> carIds = new ArrayList<>();
             for (Car car : cars) {
-                if (car.getBrandId() != null) brandIds.add(car.getBrandId());
+                if (car.getBrandId() != null) {
+                    brandIds.add(car.getBrandId());
+                }
                 carIds.add(car.getCarId());
             }
             Map<UUID, Model.Entity.Car.CarBrand> brandMap = brandService.findByIds(brandIds);
@@ -68,7 +71,9 @@ public class CarListService {
             List<UUID> brandIds = new ArrayList<>();
             List<UUID> carIds = new ArrayList<>();
             for (Car car : cars) {
-                if (car.getBrandId() != null) brandIds.add(car.getBrandId());
+                if (car.getBrandId() != null) {
+                    brandIds.add(car.getBrandId());
+                }
                 carIds.add(car.getCarId());
             }
             Map<UUID, Model.Entity.Car.CarBrand> brandMap = brandService.findByIds(brandIds);
@@ -105,6 +110,7 @@ public class CarListService {
             return 0;
         }
     }
+
     public List<CarListItemDTO> searchByKeyword(String keyword, int offset, int limit) {
         List<CarListItemDTO> result = new ArrayList<>();
         try {
@@ -112,7 +118,9 @@ public class CarListService {
             List<UUID> brandIds = new ArrayList<>();
             List<UUID> carIds = new ArrayList<>();
             for (Car car : cars) {
-                if (car.getBrandId() != null) brandIds.add(car.getBrandId());
+                if (car.getBrandId() != null) {
+                    brandIds.add(car.getBrandId());
+                }
                 carIds.add(car.getCarId());
             }
             Map<UUID, Model.Entity.Car.CarBrand> brandMap = brandService.findByIds(brandIds);
@@ -140,7 +148,7 @@ public class CarListService {
         }
         return result;
     }
-    
+
     public int countByKeyword(String keyword) {
         try {
             return carService.countByKeyword(keyword);
@@ -151,14 +159,14 @@ public class CarListService {
     }
 
     public List<CarListItemDTO> filterCars(
-        String[] brandIds, String[] fuelTypeIds, String[] seats, String[] categoryIds,
-        String[] statuses, String[] featureIds, String[] transmissionTypeIds, String sort, String keyword,
-        Integer minPricePerHour, Integer maxPricePerHour,
-        Integer minSeats, Integer maxSeats,
-        Integer minYear, Integer maxYear,
-        Integer minOdometer, Integer maxOdometer,
-        Integer minDistance, Integer maxDistance,
-        int offset, int limit
+            String[] brandIds, String[] fuelTypeIds, String[] seats, String[] categoryIds,
+            String[] statuses, String[] featureIds, String[] transmissionTypeIds, String sort, String keyword,
+            Integer minPricePerHour, Integer maxPricePerHour,
+            Integer minSeats, Integer maxSeats,
+            Integer minYear, Integer maxYear,
+            Integer minOdometer, Integer maxOdometer,
+            Integer minDistance, Integer maxDistance,
+            int offset, int limit
     ) {
         List<CarListItemDTO> result = new ArrayList<>();
         try {
@@ -166,7 +174,9 @@ public class CarListService {
             List<UUID> brandIdList = new ArrayList<>();
             List<UUID> carIdList = new ArrayList<>();
             for (Car car : cars) {
-                if (car.getBrandId() != null) brandIdList.add(car.getBrandId());
+                if (car.getBrandId() != null) {
+                    brandIdList.add(car.getBrandId());
+                }
                 carIdList.add(car.getCarId());
             }
             Map<UUID, Model.Entity.Car.CarBrand> brandMap = brandService.findByIds(brandIdList);
@@ -189,18 +199,20 @@ public class CarListService {
                 }
                 result.add(dto);
             }
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return result;
     }
 
     public int countFilteredCars(
-        String[] brandIds, String[] fuelTypeIds, String[] seats, String[] categoryIds,
-        String[] statuses, String[] featureIds, String[] transmissionTypeIds, String keyword,
-        Integer minPricePerHour, Integer maxPricePerHour,
-        Integer minSeats, Integer maxSeats,
-        Integer minYear, Integer maxYear,
-        Integer minOdometer, Integer maxOdometer,
-        Integer minDistance, Integer maxDistance
+            String[] brandIds, String[] fuelTypeIds, String[] seats, String[] categoryIds,
+            String[] statuses, String[] featureIds, String[] transmissionTypeIds, String keyword,
+            Integer minPricePerHour, Integer maxPricePerHour,
+            Integer minSeats, Integer maxSeats,
+            Integer minYear, Integer maxYear,
+            Integer minOdometer, Integer maxOdometer,
+            Integer minDistance, Integer maxDistance
     ) {
         try {
             return carService.countFilteredCars(brandIds, fuelTypeIds, seats, categoryIds, statuses, featureIds, transmissionTypeIds, keyword, minPricePerHour, maxPricePerHour, minSeats, maxSeats, minYear, maxYear, minOdometer, maxOdometer, minDistance, maxDistance);
@@ -219,5 +231,13 @@ public class CarListService {
             e.printStackTrace();
             return new ArrayList<>();
         }
+    }
+
+    public Integer getMinPricePerHour() {
+        return carService.getMinPricePerHour();
+    }
+
+    public Integer getMaxPricePerHour() {
+        return carService.getMaxPricePerHour();
     }
 }

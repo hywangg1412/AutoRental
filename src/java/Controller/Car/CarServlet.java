@@ -145,6 +145,10 @@ public class CarServlet extends HttpServlet {
             request.setAttribute("paramNames", request.getParameterMap().keySet());
             request.setAttribute("paramValues", request.getParameterMap());
 
+            // Lấy min/max price cho filter
+            request.setAttribute("minPricePerHour", carListService.getMinPricePerHour());
+            request.setAttribute("maxPricePerHour", carListService.getMaxPricePerHour());
+
             // Lấy danh sách carId đã yêu thích nếu user đã đăng nhập
             User user = (User) request.getSession().getAttribute("user");
             Set<String> favoriteCarIds = new HashSet<>();

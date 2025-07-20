@@ -151,4 +151,10 @@ public class CarService implements ICarService {
         return carRepository.getAllSeatNumbers();
     }
 
+    public Integer getMinPricePerHour() {
+        return carRepository.getMinPricePerHour();
+    }
+    public Integer getMaxPricePerHour() {
+        return carRepository.getMaxPricePerHour();
+    }
 }
