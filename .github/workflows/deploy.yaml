@@ -8,7 +8,7 @@ on:
 
 env:
   AZURE_WEBAPP_NAME: AutoRental
-  JAVA_VERSION: '24'
+  JAVA_VERSION: '17'  # Changed to Java 17 for better compatibility
 
 jobs:
   build:
@@ -28,7 +28,12 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y ant
     
-    - name: Create build script
+    - name: Verify JAR directory exists
+      run: |
+        echo "=== Checking src/jar directory ==="
+        ls -la src/jar/ || echo "JAR directory not found"
+    
+    - name: Create build script with correct classpath
       run: |
         echo '<?xml version="1.0" encoding="UTF-8"?>' > build-simple.xml
         echo '<project name="AutoRental-Simple" default="build" basedir=".">' >> build-simple.xml
@@ -40,8 +45,9 @@ jobs:
         echo '    <property name="dist.dir" value="dist"/>' >> build-simple.xml
         echo '    <property name="war.name" value="AutoRental.war"/>' >> build-simple.xml
         echo '    <property name="dist.war" value="${dist.dir}/${war.name}"/>' >> build-simple.xml
+        echo '    <property name="jar.dir" value="src/jar"/>' >> build-simple.xml
         echo '    <path id="classpath">' >> build-simple.xml
-        echo '        <fileset dir="src/jar" includes="*.jar"/>' >> build-simple.xml
+        echo '        <fileset dir="${jar.dir}" includes="*.jar"/>' >> build-simple.xml
         echo '    </path>' >> build-simple.xml
         echo '    <target name="clean">' >> build-simple.xml
         echo '        <delete dir="${build.dir}"/>' >> build-simple.xml
@@ -50,13 +56,18 @@ jobs:
         echo '    <target name="init" depends="clean">' >> build-simple.xml
         echo '        <mkdir dir="${build.classes.dir}"/>' >> build-simple.xml
         echo '        <mkdir dir="${dist.dir}"/>' >> build-simple.xml
+        echo '        <mkdir dir="${build.web.dir}/WEB-INF/lib"/>' >> build-simple.xml
         echo '    </target>' >> build-simple.xml
         echo '    <target name="compile" depends="init">' >> build-simple.xml
-        echo '        <javac srcdir="${src.dir}" destdir="${build.classes.dir}" classpathref="classpath" debug="true" includeantruntime="false">' >> build-simple.xml
+        echo '        <echo message="Classpath: ${toString:classpath}"/>' >> build-simple.xml
+        echo '        <javac srcdir="${src.dir}" destdir="${build.classes.dir}" debug="true" includeantruntime="false" encoding="UTF-8">' >> build-simple.xml
+        echo '            <classpath refid="classpath"/>' >> build-simple.xml
         echo '            <compilerarg value="-source"/>' >> build-simple.xml
-        echo '            <compilerarg value="24"/>' >> build-simple.xml
+        echo '            <compilerarg value="17"/>' >> build-simple.xml
         echo '            <compilerarg value="-target"/>' >> build-simple.xml
-        echo '            <compilerarg value="24"/>' >> build-simple.xml
+        echo '            <compilerarg value="17"/>' >> build-simple.xml
+        echo '            <compilerarg value="-Xlint:unchecked"/>' >> build-simple.xml
+        echo '            <compilerarg value="-Xlint:deprecation"/>' >> build-simple.xml
         echo '        </javac>' >> build-simple.xml
         echo '    </target>' >> build-simple.xml
         echo '    <target name="copy-web" depends="compile">' >> build-simple.xml
@@ -64,7 +75,7 @@ jobs:
         echo '            <fileset dir="${web.dir}"/>' >> build-simple.xml
         echo '        </copy>' >> build-simple.xml
         echo '        <copy todir="${build.web.dir}/WEB-INF/lib">' >> build-simple.xml
-        echo '            <fileset dir="src/jar" includes="*.jar"/>' >> build-simple.xml
+        echo '            <fileset dir="${jar.dir}" includes="*.jar"/>' >> build-simple.xml
         echo '        </copy>' >> build-simple.xml
         echo '    </target>' >> build-simple.xml
         echo '    <target name="build" depends="copy-web">' >> build-simple.xml
@@ -73,17 +84,15 @@ jobs:
         echo '    </target>' >> build-simple.xml
         echo '</project>' >> build-simple.xml
     
-    - name: Verify project structure
+    - name: Verify JAR files
       run: |
-        echo "=== Project Structure ==="
-        echo "Source directory:"
-        ls -la src/java/ | head -5
-        echo "JAR files:"
+        echo "=== JAR Files Check ==="
+        echo "Total JAR files:"
         ls -la src/jar/ | wc -l
-        echo "Web directory:"
-        ls -la web/
-        echo "Build script created:"
-        ls -la build-simple.xml
+        echo "JAR files list:"
+        ls -la src/jar/
+        echo "File sizes:"
+        du -h src/jar/*
     
     - name: Build with Ant
       run: |
