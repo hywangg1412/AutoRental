@@ -677,7 +677,50 @@ nav .custom-signup-btn:hover, nav .custom-signup-btn:focus {
 .navbar .notification-item .fa-times:hover {
   color: #dc3545;
   background: #f8d7da;
-  transform: scale(1.15) rotate(90deg);
+}
+
+/* Notification actions container */
+.notification-actions {
+  display: flex !important;
+  align-items: center !important;
+  margin-left: 8px !important;
+}
+
+/* Delete button styling */
+.btn-delete-notification {
+  background: none !important;
+  border: none !important;
+  color: #bbb !important;
+  font-size: 0.9rem !important;
+  padding: 2px 4px !important;
+  cursor: pointer !important;
+  opacity: 0.7 !important;
+  transition: all 0.2s !important;
+  border-radius: 4px !important;
+}
+
+.btn-delete-notification:hover {
+  color: #dc3545 !important;
+  background: #f8d7da !important;
+  opacity: 1 !important;
+}
+
+.notification-item:hover .btn-delete-notification {
+  opacity: 0.9 !important;
+}
+
+/* Ensure proper alignment of notification content */
+.notification-content {
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.notification-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  width: 100% !important;
 }
 
 .navbar .notification-item.unread {
