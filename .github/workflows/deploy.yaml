@@ -1,0 +1,117 @@
+name: Build and deploy Java Web app to Azure Web App - AutoRental
+
+on:
+  workflow_dispatch: # Allows manual triggering of the workflow
+  push:
+    branches:
+      - deploy # The 'deploy' branch. you can change branch as you need
+
+env:
+  AZURE_WEBAPP_NAME: AutoRental    # Set this to your application's name
+  JAVA_VERSION: '24'               # Match your project.properties javac.source/target
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up JDK ${{ env.JAVA_VERSION }}
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'temurin'
+    
+    - name: Install Apache Ant
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ant
+    
+    - name: Verify JAR files in project
+      run: |
+        echo "=== JAR files in src/jar/ ==="
+        ls -la src/jar/ | wc -l
+        echo "Total JAR files found:"
+        find src/jar -name "*.jar" | wc -l
+        echo "Sample JAR files:"
+        ls -la src/jar/ | head -10
+    
+    - name: Create WEB-INF/lib directory and copy JAR files
+      run: |
+        echo "=== Preparing JAR files for build ==="
+        # Create WEB-INF/lib if it doesn't exist
+        mkdir -p web/WEB-INF/lib
+        
+        # Copy all JAR files from src/jar to web/WEB-INF/lib
+        cp src/jar/*.jar web/WEB-INF/lib/
+        
+        echo "=== JAR files copied to WEB-INF/lib ==="
+        ls -la web/WEB-INF/lib/ | wc -l
+        echo "Sample copied JAR files:"
+        ls -la web/WEB-INF/lib/ | head -10
+    
+    - name: Build with Ant
+      run: |
+        echo "=== Building with Ant ==="
+        ant clean
+        ant build
+        echo "=== Build completed ==="
+    
+    - name: Check build output
+      run: |
+        echo "=== Build Output ==="
+        echo "Dist directory:"
+        ls -la dist/ || echo "No dist directory found"
+        echo "Build directory:"
+        ls -la build/ || echo "No build directory found"
+        echo "Looking for WAR files:"
+        find . -name "*.war" -type f
+        echo "WAR file details:"
+        if [ -f dist/AutoRental.war ]; then
+          echo "WAR file size:"
+          ls -lh dist/AutoRental.war
+          echo "WAR file contents:"
+          unzip -l dist/AutoRental.war | head -20
+        fi
+    
+    - name: Upload artifact for deployment job
+      uses: actions/upload-artifact@v4
+      with:
+        name: java-app
+        path: |
+          dist/AutoRental.war
+          dist/*.war
+          build/web/*.war
+        if-no-files-found: error
+    
+  deploy:
+    permissions:
+      contents: none
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    
+    steps:
+    - name: Download artifact from build job
+      uses: actions/download-artifact@v4
+      with:
+        name: java-app
+    
+    - name: List downloaded files
+      run: |
+        echo "=== Downloaded Files ==="
+        ls -la
+        echo "=== File details ==="
+        file *.war || echo "No WAR files found"
+    
+    - name: 'Deploy to Azure Web App'
+      id: deploy-to-webapp
+      uses: azure/webapps-deploy@v3
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        slot-name: 'Production'
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: .
