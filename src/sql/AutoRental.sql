@@ -231,7 +231,7 @@ CREATE TABLE [Booking] (
     PickupDateTime DATETIME2 NOT NULL,
     ReturnDateTime DATETIME2 NOT NULL,
     TotalAmount DECIMAL(10,2) NOT NULL,
-    Status NVARCHAR(20) NOT NULL DEFAULT 'Pending',
+    Status NVARCHAR(50) NOT NULL DEFAULT 'Pending', -- change to 50 Character
     DiscountId UNIQUEIDENTIFIER NULL,
     CreatedDate DATETIME2 NOT NULL DEFAULT GETDATE(),
     CancelReason NVARCHAR(500) NULL,
@@ -446,7 +446,8 @@ CREATE TABLE [UserFeedback] (
     [CreatedDate] DATETIME2 NOT NULL, --DEFAULT GETDATE(),
     CONSTRAINT [PK_UserFeedback] PRIMARY KEY ([FeedbackId]),
     CONSTRAINT [FK_UserFeedback_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE,
-    CONSTRAINT [FK_UserFeedback_CarId] FOREIGN KEY ([CarId]) REFERENCES [Car]([CarId]) ON DELETE SET NULL
+    CONSTRAINT [FK_UserFeedback_CarId] FOREIGN KEY ([CarId]) REFERENCES [Car]([CarId]) ON DELETE SET NULL,
+	CONSTRAINT [FK_UserFeedback_BookingId] FOREIGN KEY ([BookingId]) REFERENCES [Booking]([BookingId])
 );
 GO
 
