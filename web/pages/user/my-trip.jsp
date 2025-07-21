@@ -285,7 +285,14 @@
                                                                             <button class="btn-mytrip-action btn-detail btn-view-details" data-booking-id="${booking.bookingId}" data-car-model="${booking.carModel}" data-license-plate="${booking.carLicensePlate}" data-pickup="${booking.formattedPickupDateTime}" data-return="${booking.formattedReturnDateTime}" data-total-amount="${booking.totalAmount}" data-status="${booking.status}" data-booking-code="${booking.bookingCode}" data-bs-toggle="modal" data-bs-target="#myTripDetailModal">
                                                                                 View Details
                                                                             </button>
-                                                                            <button class="btn-mytrip-action btn-mytrip-blue btn-sm" data-booking-id="${booking.bookingId}">Send review</button>
+                                                                            <c:choose>
+                                                                                <c:when test="${booking.hasFeedback}">
+                                                                                    <button class="btn-mytrip-action btn-mytrip-green btn-sm" data-booking-id="${booking.bookingId}" data-car-id="${booking.carId}">View feedback</button>
+                                                                                </c:when>
+                                                                                <c:otherwise>
+                                                                                    <button class="btn-mytrip-action btn-mytrip-blue btn-sm" data-booking-id="${booking.bookingId}" data-car-id="${booking.carId}">Send review</button>
+                                                                                </c:otherwise>
+                                                                            </c:choose>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -338,6 +345,7 @@
         <script src="${pageContext.request.contextPath}/scripts/user/UserAboutSidebar.js"></script>
         <script>
             var contextPath = '${pageContext.request.contextPath}';
+            console.log('Context Path:', contextPath);
         </script>
         <script src="${pageContext.request.contextPath}/scripts/user/my-trip.js"></script>
 
@@ -391,8 +399,6 @@
             </div>
           </div>
         </div>
-
-        <jsp:include page="/pages/includes/logout-confirm-modal.jsp" />
 
         <!-- Cancel Booking Confirmation Modal -->
         <div class="modal fade" id="cancelBookingModal" tabindex="-1" aria-labelledby="cancelBookingModalLabel" aria-hidden="true">
