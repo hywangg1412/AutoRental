@@ -33,6 +33,7 @@ public class BookingInfoDTO {
     private String carModel;
     private String carLicensePlate; // Biển số xe
     private String carStatus;
+    private UUID carId; // Add car ID field for feedback/review functionality
 
     // Driver License Information
     private String driverLicenseImageUrl;
@@ -50,6 +51,8 @@ public class BookingInfoDTO {
     private String fullName; // alias cho customerName
     private String email; // alias cho customerEmail
     private String phoneNumber; // alias cho customerPhone
+
+    private boolean hasFeedback;
 
     // Constructors
     public BookingInfoDTO() {
@@ -253,6 +256,14 @@ public class BookingInfoDTO {
         this.carStatus = carStatus;
     }
 
+    public UUID getCarId() {
+        return carId;
+    }
+
+    public void setCarId(UUID carId) {
+        this.carId = carId;
+    }
+
     public String getDriverLicenseImageUrl() {
         return driverLicenseImageUrl;
     }
@@ -290,6 +301,14 @@ public class BookingInfoDTO {
     public void setEmail(String email) { this.email = email; }
     public String getPhoneNumber() { return phoneNumber != null ? phoneNumber : customerPhone; }
     public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+
+    public boolean isHasFeedback() {
+        return hasFeedback;
+    }
+
+    public void setHasFeedback(boolean hasFeedback) {
+        this.hasFeedback = hasFeedback;
+    }
 
     // --- End of Getters and Setters ---
 
