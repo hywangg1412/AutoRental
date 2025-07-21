@@ -1,4 +1,4 @@
--- Insert default roles
+﻿-- Insert default roles
 INSERT INTO [Roles] ([RoleId], [RoleName], [NormalizedName])
 VALUES 
     ('7c9e6679-7425-40de-944b-e07fc1f90ae7', 'Admin', 'ADMIN'),
@@ -7,12 +7,16 @@ VALUES
 GO
 
 -- Insert data into Insurance table
+-- Chèn dữ liệu vào bảng Insurance
 INSERT INTO [Insurance] (InsuranceId, InsuranceName, InsuranceType, BaseRatePerDay, PercentageRate, CoverageAmount, ApplicableCarSeats, Description, IsActive) VALUES
-    (NEWID(), N'Civil liability insurance for 1-5 seat cars', 'TNDS', 10, NULL, 150000000, '1-5', N'Mandatory civil liability insurance for cars under 6 seats - 10 VND/day', 1),
-    (NEWID(), N'Civil liability insurance for 6-11 seat cars', 'TNDS', 15, NULL, 150000000, '6-11', N'Mandatory civil liability insurance for cars with 6-11 seats - 15 VND/day', 1),
-    (NEWID(), N'Civil liability insurance for 12+ seat cars', 'TNDS', 20, NULL, 150000000, '12+', N'Mandatory civil liability insurance for cars over 12 seats - 20 VND/day', 1),
-    (NEWID(), N'Physical damage insurance', 'VatChat', 0, 2.0, 500000000, NULL, N'Physical damage insurance 2% of car value/year', 1),
-    (NEWID(), N'Accident insurance', 'TaiNan', 5, NULL, 200000000, NULL, N'Accident insurance for people in the car - 5 VND/day', 1);
+    -- Physical damage insurance (MANDATORY for customers)
+    (NEWID(), N'Physical Damage Insurance', 'VatChat', 0, 2.0, 500000000, NULL, N'Physical damage insurance at 2% of car value per year - MANDATORY', 1),
+    -- Accident insurance for mini cars (VOLUNTARY)
+    (NEWID(), N'Accident Insurance for Mini Cars', 'TaiNan', 30000, NULL, 300000000, '1-5', N'Accident insurance at 30,000 VND/day for all seats in cars with fewer than 6 seats - VOLUNTARY', 1),
+    -- Accident insurance for large cars (VOLUNTARY)
+    (NEWID(), N'Accident Insurance for Large Cars', 'TaiNan', 40000, NULL, 300000000, '6-11', N'Accident insurance at 40,000 VND/day for all seats in cars with 6-11 seats - VOLUNTARY', 1),
+    -- Accident insurance for premium cars (VOLUNTARY)
+    (NEWID(), N'Accident Insurance for Premium Cars', 'TaiNan', 50000, NULL, 300000000, '12+', N'Accident insurance at 50,000 VND/day for all seats in premium cars - VOLUNTARY', 1);
 GO
 
 -- Insert data into Discount table
