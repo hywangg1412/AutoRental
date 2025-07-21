@@ -1,803 +1,155 @@
-/* css for booking a car 
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
- Progress Steps - Đặt ở đầu để đảm bảo không bị override 
-.progress-container {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 1.5rem 0;
-  margin-bottom: 2rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.progress-steps {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 3rem;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.step {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  color: #9ca3af;
-  position: relative;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.step.completed,
-.step.active {
-  color: #10b981;
-}
-
-.step-number {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #e5e7eb;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 1rem;
-  border: 2px solid #e5e7eb;
-  transition: all 0.3s ease;
-}
-
-.step.completed .step-number,
-.step.active .step-number {
-  background: #10b981;
-  color: white;
-  border-color: #10b981;
-}
-
-.step:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  left: calc(100% + 0.75rem);
-  top: 50%;
-  transform: translateY(-50%);
-  width: 3rem;
-  height: 2px;
-  background: #e5e7eb;
-  z-index: 1;
-}
-
-.step.completed:not(:last-child)::after {
-  background: #10b981;
-}
-
- Progress Steps - Force override 
-.progress-container .progress-steps {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  gap: 3rem !important;
-  max-width: 800px !important;
-  margin: 0 auto !important;
-}
-
-.progress-container .step {
-  display: flex !important;
-  align-items: center !important;
-  gap: 0.75rem !important;
-  color: #9ca3af !important;
-  position: relative !important;
-  font-weight: 500 !important;
-  white-space: nowrap !important;
-}
-
-.progress-container .step.completed,
-.progress-container .step.active {
-  color: #10b981 !important;
-}
-
-.progress-container .step-number {
-  width: 40px !important;
-  height: 40px !important;
-  border-radius: 50% !important;
-  background: #e5e7eb !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  font-weight: bold !important;
-  font-size: 1rem !important;
-  border: 2px solid #e5e7eb !important;
-  transition: all 0.3s ease !important;
-}
-
-.progress-container .step.completed .step-number,
-.progress-container .step.active .step-number {
-  background: #10b981 !important;
-  color: white !important;
-  border-color: #10b981 !important;
-}
-
-.progress-container .step:not(:last-child)::after {
-  content: "" !important;
-  position: absolute !important;
-  left: calc(100% + 0.75rem) !important;
-  top: 50% !important;
-  transform: translateY(-50%) !important;
-  width: 3rem !important;
-  height: 2px !important;
-  background: #e5e7eb !important;
-  z-index: 1 !important;
-}
-
-.progress-container .step.completed:not(:last-child)::after {
-  background: #10b981 !important;
-}
-
- Responsive cho progress steps 
-@media (max-width: 768px) {
-  .progress-steps {
-    gap: 1.5rem;
-  }
-
-  .step span {
-    display: none;
-  }
-
-  .step-number {
-    width: 32px;
-    height: 32px;
-    font-size: 0.9rem;
-  }
-
-  .step:not(:last-child)::after {
-    width: 1.5rem;
-    left: calc(100% + 0.375rem);
-  }
-}
-
-body {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f8f9fa;
-  color: #333;
-  line-height: 1.6;
-}
-
-.container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
- Header 
-.header {
-  background: white;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 0;
-}
-
-.logo h1 {
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-.logo span {
-  color: #10b981;
-}
-
-.nav {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-}
-
-.nav-link {
-  text-decoration: none;
-  color: #666;
-  font-weight: 500;
-  transition: color 0.3s;
-}
-
-.nav-link:hover {
-  color: #10b981;
-}
-
-.user-menu {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.user-menu i {
-  color: #666;
-  cursor: pointer;
-  transition: color 0.3s;
-}
-
-.user-menu i:hover {
-  color: #10b981;
-}
-
-.user-avatar {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-}
-
- Main Content 
-.main-content {
-  padding: 2rem 0;
-}
-
-.booking-container {
-  display: grid;
-  grid-template-columns: 1fr 400px;
-  gap: 2rem;
-  margin-bottom: 2rem;
-}
-
- Car Info Section 
-.car-info-section {
-  background: white;
-  border-radius: 12px;
-  padding: 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-.car-gallery {
-  margin-bottom: 2rem;
-}
-
-.main-image {
-  margin-bottom: 1rem;
-}
-
-.main-image img {
-  width: 100%;
-  height: 400px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-.thumbnail-gallery {
-  display: flex;
-  gap: 0.5rem;
-  overflow-x: auto;
-}
-
-.thumbnail {
-  width: 100px;
-  height: 70px;
-  object-fit: cover;
-  border-radius: 4px;
-  cursor: pointer;
-  opacity: 0.7;
-  transition: opacity 0.3s;
-}
-
-.thumbnail.active,
-.thumbnail:hover {
-  opacity: 1;
-  border: 2px solid #10b981;
-}
-
-.car-details h2 {
-  font-size: 1.8rem;
-  margin-bottom: 1rem;
-  color: #333;
-}
-
-.car-title {
-  font-size: 1.8rem;
-  margin-bottom: 0;
-  color: #333;
-  font-weight: 600;
-}
-
-.car-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.car-rating {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.stars {
-  color: #fbbf24;
-}
-
-.rating-text {
-  color: #666;
-  font-size: 0.9rem;
-}
-
-.car-specs {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-  margin-bottom: 2rem;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-}
-
-.spec-item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  color: #666;
-  font-weight: 500;
-}
-
-.spec-item i {
-  color: #10b981;
-  width: 20px;
-  font-size: 1.1rem;
-}
-
-.pricing {
-  background: #f8f9fa;
-  padding: 1.5rem;
-  border-radius: 8px;
-  margin-bottom: 2rem;
-  border: 1px solid #e5e7eb;
-}
-
-.price-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.75rem;
-  padding: 0.5rem 0;
-}
-
-.price-item:last-child {
-  margin-bottom: 0;
-  border-top: 1px solid #d1d5db;
-  padding-top: 0.75rem;
-}
-
-.price-label {
-  font-weight: 500;
-  color: #666;
-}
-
-.price-value {
-  font-weight: bold;
-  color: #10b981;
-  font-size: 1.1rem;
-}
-
-.car-description,
-.car-features,
-.reviews-section {
-  margin-bottom: 2rem;
-}
-
-.car-description h3,
-.car-features h3,
-.reviews-section h3 {
-  margin-bottom: 1rem;
-  color: #333;
-}
-
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-}
-
-.feature-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem;
-  background: #f8f9fa;
-  border-radius: 6px;
-}
-
-.feature-item i {
-  color: #10b981;
-}
-
-.review-item {
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 1rem;
-}
-
-.review-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.5rem;
-}
-
-.reviewer-info {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.reviewer-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-}
-
-.reviewer-name {
-  font-weight: 500;
-}
-
-.review-stars {
-  color: #fbbf24;
-  font-size: 0.8rem;
-}
-
-.review-date {
-  color: #666;
-  font-size: 0.8rem;
-}
-
-.review-text {
-  color: #666;
-}
-
- Booking Form Section 
-.booking-form-section {
-  position: sticky;
-  top: 100px;
-  height: fit-content;
-}
-
-.booking-form-container {
-  background: white;
-  border-radius: 12px;
-  padding: 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-.booking-form-container h3 {
-  margin-bottom: 1.5rem;
-  color: #333;
-  text-align: center;
-}
-
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
-}
-
-.form-row .form-group {
-  margin-bottom: 1.5rem;
-  flex: 1;
-  min-width: 0;
-}
-
-.form-row .form-group label {
-  font-size: 0.9rem;
-  margin-bottom: 0.4rem;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: #333;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 1rem;
-  transition: border-color 0.3s;
-}
-
-.form-group input[type="datetime-local"] {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 1rem;
-  transition: border-color 0.3s;
-}
-
- Remove the webkit datetime edit styling that was making it vertical 
-.form-group input[type="datetime-local"]::-webkit-datetime-edit {
-  display: block;
-}
-
-.form-group input[type="datetime-local"]::-webkit-datetime-edit-fields-wrapper {
-  display: inline;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: #10b981;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
-}
-
-.total-price {
-  background: #f8f9fa;
-  padding: 1.5rem;
-  border-radius: 8px;
-  margin-top: 1.5rem;
-}
-
-.price-breakdown {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.price-row {
-  display: flex;
-  justify-content: space-between;
-}
-
-.price-row.total {
-  border-top: 1px solid #d1d5db;
-  padding-top: 0.5rem;
-  font-weight: bold;
-  font-size: 1.1rem;
-  color: #10b981;
-}
-
- Action Buttons 
-.action-buttons {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.btn {
-  padding: 0.75rem 2rem;
-  border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  text-decoration: none;
-}
-
-.btn-primary {
-  background: #10b981;
-  color: white;
-}
-
-.btn-primary:hover {
-  background: #059669;
-  transform: translateY(-2px);
-}
-
-.btn-secondary {
-  background: #6b7280;
-  color: white;
-}
-
-.btn-secondary:hover {
-  background: #4b5563;
-  transform: translateY(-2px);
-}
-
- Responsive 
-@media (max-width: 1024px) {
-  .booking-container {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .booking-form-section {
-    position: static;
-  }
-
-  .action-buttons {
-    flex-direction: column;
-  }
-}
-
-@media (max-width: 768px) {
-  .container {
-    padding: 0 15px;
-  }
-
-  .header-content {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .nav {
-    gap: 1rem;
-  }
-
-  .car-specs {
-    grid-template-columns: 1fr;
-  }
-
-  .features-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .form-row {
-    grid-template-columns: 1fr;
-  }
-
-  .car-info-section,
-  .booking-form-container {
-    padding: 1rem;
-  }
-}
-
- Driver License Image Upload Styles 
-.license-upload-container {
-  width: 100%;
-}
-
-.license-upload-area {
-  display: block;
-  width: 100%;
-  min-height: 200px;
-  border: 2px dashed #d1d5db;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  overflow: hidden;
-  position: relative;
-}
-
-.license-upload-area:hover {
-  border-color: #10b981;
-  background-color: #f0fdf4;
-}
-
-.upload-preview {
-  width: 100%;
-  height: 100%;
-  min-height: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-
-.upload-placeholder {
-  text-align: center;
-  color: #6b7280;
-  padding: 2rem;
-}
-
-.upload-placeholder i {
-  font-size: 3rem;
-  color: #9ca3af;
-  margin-bottom: 1rem;
-  display: block;
-}
-
-.upload-placeholder span {
-  display: block;
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-  font-size: 1rem;
-}
-
-.upload-placeholder small {
-  color: #9ca3af;
-  font-size: 0.875rem;
-}
-
-.license-preview-image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 6px;
-}
-
-.upload-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  color: white;
-  font-size: 1.2rem;
-}
-
-.license-upload-area:hover .upload-overlay {
-  opacity: 1;
-}
-
-.upload-error {
-  color: #ef4444;
-  font-size: 0.875rem;
-  margin-top: 0.5rem;
-  padding: 0.5rem;
-  background-color: #fef2f2;
-  border: 1px solid #fecaca;
-  border-radius: 4px;
-}
-
-.upload-success {
-  color: #10b981;
-  font-size: 0.875rem;
-  margin-top: 0.5rem;
-  padding: 0.5rem;
-  background-color: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  border-radius: 4px;
-}
-
- Responsive adjustments 
-@media (max-width: 768px) {
-  .license-upload-area {
-    min-height: 150px;
-  }
-
-  .upload-placeholder {
-    padding: 1rem;
-  }
-
-  .upload-placeholder i {
-    font-size: 2rem;
-  }
-
-  .license-preview-image {
-    height: 150px;
-  }
-}*/
-
-
-
-
-
 /* css for booking a car */
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+/* Flatpickr Custom Styles */
+.custom-flatpickr {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  border: none;
+  padding: 8px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Calendar header */
+.custom-flatpickr .flatpickr-months {
+  margin-bottom: 10px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  padding: 10px;
+}
+
+.custom-flatpickr .flatpickr-month {
+  height: 40px;
+}
+
+.custom-flatpickr .flatpickr-current-month {
+  padding-top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-flatpickr .flatpickr-monthDropdown-months {
+  font-weight: 600;
+  color: #333;
+}
+
+.custom-flatpickr .flatpickr-prev-month,
+.custom-flatpickr .flatpickr-next-month {
+  height: 40px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-flatpickr .flatpickr-prev-month svg,
+.custom-flatpickr .flatpickr-next-month svg {
+  fill: #666;
+  width: 16px;
+  height: 16px;
+}
+
+.custom-flatpickr .flatpickr-prev-month:hover svg,
+.custom-flatpickr .flatpickr-next-month:hover svg {
+  fill: #10b981;
+}
+
+/* Calendar days */
+.custom-flatpickr .flatpickr-weekdays {
+  background-color: transparent;
+}
+
+.custom-flatpickr .flatpickr-weekday {
+  color: #666;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.custom-flatpickr .flatpickr-day {
+  border-radius: 6px;
+  margin: 2px;
+  height: 36px;
+  line-height: 36px;
+  color: #333;
+}
+
+.custom-flatpickr .flatpickr-day:hover {
+  background: #e6f7f2;
+  border-color: #e6f7f2;
+}
+
+.custom-flatpickr .flatpickr-day.selected,
+.custom-flatpickr .flatpickr-day.startRange,
+.custom-flatpickr .flatpickr-day.endRange {
+  background: #10b981;
+  border-color: #10b981;
+  color: white;
+}
+
+.custom-flatpickr .flatpickr-day.inRange {
+  background: #e6f7f2;
+  border-color: #e6f7f2;
+  color: #333;
+}
+
+.custom-flatpickr .flatpickr-day.today {
+  border-color: #10b981;
+  color: #10b981;
+}
+
+.custom-flatpickr .flatpickr-day.disabled,
+.custom-flatpickr .flatpickr-day.disabled:hover {
+  color: #ccc;
+  background: transparent;
+}
+
+/* Time picker */
+.custom-flatpickr .flatpickr-time {
+  border-top: 1px solid #e5e7eb;
+  margin-top: 10px;
+  padding-top: 10px;
+}
+
+.custom-flatpickr .flatpickr-time input {
+  font-weight: 600;
+  color: #333;
+}
+
+.custom-flatpickr .flatpickr-time .numInputWrapper:hover {
+  background: #e6f7f2;
+}
+
+.custom-flatpickr .flatpickr-time .numInputWrapper span.arrowUp:after {
+  border-bottom-color: #666;
+}
+
+.custom-flatpickr .flatpickr-time .numInputWrapper span.arrowDown:after {
+  border-top-color: #666;
+}
+
+.custom-flatpickr .flatpickr-time .numInputWrapper span:hover {
+  background: #10b981;
+}
+
+.custom-flatpickr .flatpickr-time .numInputWrapper span:hover:after {
+  border-bottom-color: white;
+  border-top-color: white;
+}
+
+/* Override input styles for better flatpickr integration */
+.form-group input[type="datetime-local"] {
+  cursor: pointer;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>');
+  background-repeat: no-repeat;
+  background-position: calc(100% - 12px) center;
+  background-size: 16px;
 }
 
 /* Progress Steps - Đặt ở đầu để đảm bảo không bị override */
@@ -1185,15 +537,161 @@ body {
 
 .car-description,
 .car-features,
-.reviews-section {
+.reviews-section,
+.insurance-section,
+.included-services {
   margin-bottom: 2rem;
 }
 
 .car-description h3,
 .car-features h3,
-.reviews-section h3 {
+.reviews-section h3,
+.insurance-section h3,
+.included-services h3 {
   margin-bottom: 1rem;
   color: #333;
+}
+
+/* Insurance Section Styles */
+.insurance-section {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.insurance-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.insurance-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #10b981;
+}
+
+.insurance-card:last-child {
+  margin-bottom: 0;
+}
+
+.insurance-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.insurance-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  background: #10b981;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.insurance-icon.additional {
+  background: #3b82f6;
+}
+
+.insurance-info {
+  flex: 1;
+}
+
+.insurance-info h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.new-badge {
+  background: #ef4444;
+  color: white;
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.insurance-description {
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.insurance-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.insurance-price {
+  font-weight: 600;
+  color: #10b981;
+  font-size: 1rem;
+}
+
+.btn-view-more {
+  background: none;
+  border: 1px solid #10b981;
+  color: #10b981;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-view-more:hover {
+  background: #10b981;
+  color: white;
+}
+
+/* Included Services Styles */
+.included-services {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.service-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  font-weight: 500;
+}
+
+.service-item i {
+  color: #10b981;
+  width: 20px;
+  font-size: 1.1rem;
 }
 
 .features-grid {
@@ -1343,6 +841,111 @@ body {
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
 
+/* Time Note Styles */
+.time-note {
+  color: #666;
+  font-size: 0.8rem;
+  font-style: italic;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* Tooltip Styles */
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+  margin-left: 0.5rem;
+}
+
+.rental-info-tooltip {
+  color: #10b981;
+  cursor: help;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+}
+
+.rental-info-tooltip:hover {
+  color: #059669;
+}
+
+.tooltip-content {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  text-align: left;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  width: 300px;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  margin-top: 0.5rem;
+}
+
+.tooltip-content::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-bottom-color: #333;
+}
+
+.tooltip-container:hover .tooltip-content {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Checkbox Group Styles */
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #f8f9fa;
+  transition: all 0.3s ease;
+}
+
+.checkbox-group:hover {
+  border-color: #10b981;
+  background: #f0fdf4;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+  transform: scale(1.2);
+}
+
+.checkbox-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  cursor: pointer;
+  margin: 0;
+}
+
+.checkbox-text {
+  font-weight: 500;
+  color: #333;
+}
+
+.checkbox-price {
+  font-weight: 600;
+  color: #10b981;
+}
+
 .total-price {
   background: #f8f9fa;
   padding: 1.5rem;
@@ -1359,6 +962,7 @@ body {
 .price-row {
   display: flex;
   justify-content: space-between;
+  padding: 0.25rem 0;
 }
 
 .price-row.total {
@@ -1367,6 +971,28 @@ body {
   font-weight: bold;
   font-size: 1.1rem;
   color: #10b981;
+  margin-top: 0.5rem;
+}
+
+/* Insurance Section in Price Breakdown */
+.insurance-header-row {
+  font-weight: 600;
+  color: #333;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.insurance-item {
+  color: #666;
+  font-size: 0.95rem;
+  padding-left: 0.5rem;
+}
+
+.included-text {
+  color: #10b981;
+  font-weight: 500;
+  font-style: italic;
 }
 
 /* Action Buttons */
@@ -1411,6 +1037,65 @@ body {
   transform: translateY(-2px);
 }
 
+/* Modal Styles */
+.modal {
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #333;
+}
+
+.close {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #666;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.close:hover {
+  color: #333;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  text-align: right;
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   .booking-container {
@@ -1449,6 +1134,10 @@ body {
     grid-template-columns: 1fr;
   }
 
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+
   .form-row {
     grid-template-columns: 1fr;
   }
@@ -1456,6 +1145,28 @@ body {
   .car-info-section,
   .booking-form-container {
     padding: 1rem;
+  }
+
+  .insurance-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .insurance-actions {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .modal-content {
+    width: 95%;
+    margin: 1rem;
+  }
+
+  .tooltip-content {
+    width: 250px;
+    font-size: 0.8rem;
   }
 }
 
@@ -1627,6 +1338,8 @@ body {
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
   border-bottom: 2px solid #10b981;
+  display: flex;
+  align-items: center;
 }
 
 /* Existing License Info Styles */
@@ -1745,27 +1458,371 @@ body {
   transform: scale(1.1);
 }
 
-/* Responsive adjustments */
+/* Insurance Modal Content Styles */
+.insurance-details {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: #333;
+}
+
+.insurance-intro {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  border-left: 4px solid #10b981;
+}
+
+.insurance-intro p {
+  margin-bottom: 1rem;
+  color: #555;
+}
+
+.insurance-intro p:last-child {
+  margin-bottom: 0;
+}
+
+.coverage-section,
+.terms-section,
+.process-section,
+.benefits-section {
+  margin-bottom: 2rem;
+}
+
+.coverage-section h4,
+.terms-section h4,
+.process-section h4,
+.benefits-section h4 {
+  color: #10b981;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.coverage-section h4 i,
+.terms-section h4 i,
+.process-section h4 i,
+.benefits-section h4 i {
+  font-size: 1.1rem;
+}
+
+/* Damage Table Styles */
+.damage-table {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin: 1.5rem 0;
+}
+
+.table-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  background: #10b981;
+  color: white;
+  font-weight: 600;
+  padding: 1rem;
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.table-row:last-child {
+  border-bottom: none;
+}
+
+.table-row:nth-child(even) {
+  background: #f8f9fa;
+}
+
+/* Example Box */
+.example-box {
+  background: #e3f2fd;
+  border: 1px solid #90caf9;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.example-box h5 {
+  color: #1565c0;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.example-box ul {
+  margin: 0.5rem 0 0 1rem;
+}
+
+.example-box li {
+  margin-bottom: 0.5rem;
+}
+
+/* Terms List */
+.terms-list {
+  list-style: none;
+  padding: 0;
+}
+
+.terms-list li {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.terms-list li:before {
+  content: "✓";
+  color: #10b981;
+  font-weight: bold;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.terms-list li:last-child {
+  border-bottom: none;
+}
+
+/* Deductible Note */
+.deductible-note {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.deductible-note h5 {
+  color: #856404;
+  margin-bottom: 1rem;
+}
+
+.deductible-note ul {
+  margin: 0.5rem 0 0 1.5rem;
+}
+
+/* Process List */
+.process-list {
+  counter-reset: step-counter;
+  list-style: none;
+  padding: 0;
+}
+
+.process-list li {
+  counter-increment: step-counter;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #10b981;
+  position: relative;
+}
+
+.process-list li:before {
+  content: counter(step-counter);
+  position: absolute;
+  left: -2px;
+  top: -2px;
+  background: #10b981;
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+/* Document List */
+.document-list {
+  margin: 0.5rem 0 0 1.5rem;
+  list-style-type: disc;
+}
+
+.document-list li {
+  margin-bottom: 0.5rem;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+}
+
+.document-list li:before {
+  display: none;
+}
+
+/* Coverage Highlights */
+.coverage-highlights {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.highlight-item {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  border: 1px solid #e5e7eb;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.highlight-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.highlight-item i {
+  color: #10b981;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  margin-top: 0.25rem;
+}
+
+.highlight-item h5 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+  font-size: 1rem;
+}
+
+.highlight-item p {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Benefits Grid */
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.benefit-item {
+  background: #f0fdf4;
+  padding: 1rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid #bbf7d0;
+}
+
+.benefit-item i {
+  color: #10b981;
+  font-size: 1.2rem;
+}
+
+.benefit-item span {
+  color: #065f46;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+/* Important Note */
+.important-note {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 1rem;
+  color: #991b1b;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.important-note i {
+  color: #dc2626;
+  font-size: 1.1rem;
+}
+
+/* Pricing Note */
+.pricing-note {
+  background: #f0f9ff;
+  border: 1px solid #7dd3fc;
+  border-radius: 8px;
+  padding: 1rem;
+  color: #0c4a6e;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.pricing-note i {
+  color: #0284c7;
+  font-size: 1.1rem;
+}
+
+/* Modal Responsive */
 @media (max-width: 768px) {
-  .form-section {
-    padding: 1rem;
+  .modal-content {
+    width: 95%;
+    max-height: 90vh;
   }
-  
-  .license-card {
-    padding: 1rem;
+
+  .coverage-highlights {
+    grid-template-columns: 1fr;
   }
-  
-  .license-thumbnail {
-    max-width: 150px;
-    max-height: 90px;
+
+  .benefits-grid {
+    grid-template-columns: 1fr;
   }
-  
-  .license-upload-area .upload-content i {
-    font-size: 2rem;
+
+  .table-header,
+  .table-row {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
   }
-  
-  .license-image-preview img {
-    max-height: 150px;
+
+  .table-header > div,
+  .table-row > div {
+    padding: 0.5rem;
+    text-align: center;
+  }
+
+  .damage-table {
+    font-size: 0.9rem;
   }
 }
 
+/* Modal Body Scrollbar */
+.modal-body {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background: #10b981;
+  border-radius: 3px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background: #059669;
+}

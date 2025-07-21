@@ -316,10 +316,9 @@ public class BookingApprovalService implements IBookingApprovalService {
     }
 
     /**
-     * TỰ ĐỘNG TẠO ĐỦ 3 LOẠI BẢO HIỂM CHO BOOKING MỚI ĐƯỢC DUYỆT
-     * - TNDS: Theo số chỗ xe
-     * - Vật chất: 0 (sẽ được DepositService tính toán)  
-     * - Tai nạn: Fixed rate
+     * TỰ ĐỘNG TẠO BẢO HIỂM VẬT CHẤT CHO BOOKING MỚI ĐƯỢC DUYỆT
+     * - Chỉ tạo bảo hiểm vật chất (bắt buộc)
+     * - KHÔNG tạo bảo hiểm tai nạn (tùy chọn) - đã được tạo khi tạo booking nếu khách hàng chọn mua
      */
     private void createDefaultInsuranceForBooking(Booking booking) throws SQLException {
         try {
@@ -333,76 +332,56 @@ public class BookingApprovalService implements IBookingApprovalService {
             int carSeats = getCarSeats(booking.getCarId());
             LOGGER.info("Số chỗ xe: " + carSeats);
 
-            // Lấy tất cả loại bảo hiểm có sẵn
-            List<Insurance> availableInsurances = insuranceRepository.findAll();
-            LOGGER.info("Tìm thấy " + availableInsurances.size() + " loại bảo hiểm");
-
-            int insuranceCount = 0;
-
-            for (Insurance insurance : availableInsurances) {
-                if (!insurance.isActive()) continue;
-
-                BookingInsurance bookingInsurance = new BookingInsurance();
-                bookingInsurance.setBookingInsuranceId(UUID.randomUUID());
-                bookingInsurance.setBookingId(booking.getBookingId());
-                bookingInsurance.setInsuranceId(insurance.getInsuranceId());
-                bookingInsurance.setRentalDays(rentalDays);
-                bookingInsurance.setCarSeats(carSeats);
-                bookingInsurance.setEstimatedCarValue(booking.getTotalAmount() * 1000); // Ước tính giá xe
-                bookingInsurance.setCreatedAt(LocalDateTime.now());
-
-                // Tính phí theo loại bảo hiểm
-                double premiumAmount = calculateInsurancePremium(insurance, carSeats, booking.getTotalAmount(), rentalDays);
-                bookingInsurance.setPremiumAmount(premiumAmount);
-
-                // Lưu vào database
-                BookingInsurance saved = bookingInsuranceRepository.add(bookingInsurance);
-                if (saved != null) {
-                    insuranceCount++;
-                    LOGGER.info("Đã tạo bảo hiểm: " + insurance.getInsuranceName() + 
-                               " = " + premiumAmount + " (DB value)");
+            // Kiểm tra xem booking đã có bảo hiểm vật chất chưa
+            List<BookingInsurance> existingInsurances = bookingInsuranceRepository.findByBookingId(booking.getBookingId());
+            boolean hasVehicleInsurance = false;
+            
+            for (BookingInsurance ins : existingInsurances) {
+                try {
+                    Insurance insurance = insuranceRepository.findById(ins.getInsuranceId());
+                    if (insurance != null && "VatChat".equals(insurance.getInsuranceType())) {
+                        hasVehicleInsurance = true;
+                        LOGGER.info("Booking đã có bảo hiểm vật chất, bỏ qua tạo mới");
+                        break;
+                    }
+                } catch (Exception e) {
+                    LOGGER.warning("Lỗi khi kiểm tra bảo hiểm hiện có: " + e.getMessage());
+                }
+            }
+            
+            // Nếu chưa có bảo hiểm vật chất, tạo mới
+            if (!hasVehicleInsurance) {
+                // Lấy bảo hiểm vật chất từ database
+                List<Insurance> vehicleInsurances = insuranceRepository.findByType("VatChat");
+                if (!vehicleInsurances.isEmpty()) {
+                    Insurance vehicleInsurance = vehicleInsurances.get(0);
+                    
+                    // Tạo BookingInsurance mới cho bảo hiểm vật chất
+                    BookingInsurance bookingInsurance = new BookingInsurance();
+                    bookingInsurance.setBookingInsuranceId(UUID.randomUUID());
+                    bookingInsurance.setBookingId(booking.getBookingId());
+                    bookingInsurance.setInsuranceId(vehicleInsurance.getInsuranceId());
+                    bookingInsurance.setRentalDays(rentalDays);
+                    bookingInsurance.setCarSeats(carSeats);
+                    bookingInsurance.setEstimatedCarValue(booking.getTotalAmount() * 1000); // Ước tính giá xe
+                    bookingInsurance.setCreatedAt(LocalDateTime.now());
+                    bookingInsurance.setPremiumAmount(0.0); // Để 0, DepositService sẽ tính toán sau
+                    
+                    // Lưu vào database
+                    BookingInsurance saved = bookingInsuranceRepository.add(bookingInsurance);
+                    if (saved != null) {
+                        LOGGER.info("Đã tạo bảo hiểm vật chất cho booking " + booking.getBookingId());
+                    }
+                } else {
+                    LOGGER.warning("Không tìm thấy bảo hiểm vật chất trong database");
                 }
             }
 
-            LOGGER.info("=== ĐÃ TẠO " + insuranceCount + " LOẠI BẢO HIỂM CHO BOOKING ===");
+            LOGGER.info("=== HOÀN THÀNH TẠO BẢO HIỂM MẶC ĐỊNH CHO BOOKING ===");
 
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Lỗi tạo bảo hiểm cho booking " + booking.getBookingId(), e);
             throw e;
-        }
-    }
-
-    /**
-     * Tính phí bảo hiểm theo loại
-     */
-    private double calculateInsurancePremium(Insurance insurance, int carSeats, double bookingTotal, double rentalDays) {
-        try {
-            switch (insurance.getInsuranceType()) {
-                case "TNDS":
-                    // TNDS: Dựa theo số chỗ xe và số ngày
-                    if (carSeats <= 5) {
-                        return 10.0; // 10 VND/ngày cho xe ≤ 5 chỗ (DB value)
-                    } else if (carSeats <= 11) {
-                        return 15.0; // 15 VND/ngày cho xe 6-11 chỗ
-                    } else {
-                        return 20.0; // 20 VND/ngày cho xe 12+ chỗ
-                    }
-
-                case "TaiNan":
-                    // Tai nạn: Fixed rate
-                    return 5.0; // 5 VND/ngày (DB value)
-
-                case "VatChat":
-                    // Vật chất: Để 0, DepositService sẽ tính toán
-                    return 0.0;
-
-                default:
-                    LOGGER.warning("Loại bảo hiểm không xác định: " + insurance.getInsuranceType());
-                    return 0.0;
-            }
-        } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "Lỗi tính phí bảo hiểm cho " + insurance.getInsuranceName(), e);
-            return 0.0;
         }
     }
 

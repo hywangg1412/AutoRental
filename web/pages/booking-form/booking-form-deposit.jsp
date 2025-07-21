@@ -18,6 +18,7 @@
   </head>
   <body>
         <input type="hidden" id="bookingIdHidden" name="bookingIdHidden" value="${depositPageData.bookingId}" />
+        <input type="hidden" id="subtotalHidden" name="subtotalHidden" value="${depositPageData.subtotal * 1000}" />
         
         <!-- Debug script to check bookingId value -->
         <script>
@@ -114,6 +115,11 @@
                       <i class="fas fa-shield-alt"></i>
                       <span>Automatic Insurance</span>
                     </div>
+                    <!-- 
+                    Hiển thị danh sách bảo hiểm lấy từ booking
+                    Dữ liệu bảo hiểm được tái sử dụng từ booking thay vì tính toán lại
+                    depositPageData.insuranceDetails chứa danh sách bảo hiểm đã được lọc từ bảng BookingInsurance
+                    -->
                                         <c:forEach var="ins" items="${depositPageData.insuranceDetails}">
                     <div class="price-item sub-item">
                                                 <span>• <c:out value="${ins.insuranceName}" /></span>
@@ -159,7 +165,7 @@
 
                   <div class="deposit-line">
                     <div class="price-item deposit">
-                                            <span><strong>Deposit Required (<c:out value="${depositPageData.depositPercentage}" />)</strong></span>
+                                            <span><strong>Deposit Required (Fixed)</strong></span>
                                             <span class="amount deposit-amount" id="finalDeposit"><strong><c:out value="${depositPageData.formattedDepositAmount}" /></strong></span>
                     </div>
                   </div>
@@ -718,7 +724,15 @@
     <script>
       // Voucher functionality
       let appliedVoucher = null;
-      const originalSubtotal = 966879;
+      // Khai báo originalSubtotal với giá trị mặc định
+      let originalSubtotal = 0;
+      
+      // Đảm bảo DOM đã sẵn sàng trước khi lấy giá trị
+      document.addEventListener("DOMContentLoaded", function() {
+        // Lấy giá trị subtotal từ hidden input
+        originalSubtotal = parseFloat(document.getElementById("subtotalHidden").value || 0);
+        console.log("Loaded subtotal from backend:", originalSubtotal);
+      });
 
       function applyVoucher() {
         const voucherCode = document
@@ -765,7 +779,8 @@
         const newSubtotal = originalSubtotal - discountAmount;
         const vatAmount = Math.round(newSubtotal * 0.1);
         const totalAmount = newSubtotal + vatAmount;
-        const depositAmount = Math.round(totalAmount * 0.3);
+        // Tiền cọc cố định 300.000 VND
+        const depositAmount = 300000;
 
         // Update price breakdown
         if (discountAmount > 0) {
@@ -910,7 +925,7 @@
                 if (!bookingId || bookingId === "TEMP_BOOKING_ID" || bookingId.trim() === "") {
                     showToast("Không tìm thấy bookingId. Vui lòng tải lại trang hoặc liên hệ hỗ trợ.", "error");
                     return;
-          }
+                }
 
                 try {
                     showToast("Đang tạo mã thanh toán...", "info");
@@ -918,17 +933,17 @@
                     // Tạo form để POST đến PaymentServlet (giống mẫu PayOS)
                     const form = document.createElement('form');
                     form.method = 'POST';
-                    form.action = '<%=request.getContextPath()%>/api/payment/create?bookingId=' + encodeURIComponent(bookingId);
+                    form.action = '<%=request.getContextPath()%>/api/payment/create?bookingId=' + encodeURIComponent(bookingId) + '&fixedDeposit=true';
                     
                     document.body.appendChild(form);
                     console.log("Submitting form to:", form.action);
                     form.submit();
 
-        } catch (error) {
+                } catch (error) {
                     console.error("Error in generateDepositQRMain:", error);
                     showToast("Có lỗi xảy ra khi tạo mã thanh toán. Vui lòng thử lại!", "error");
-        }
-      }
+                }
+            }
 
       // Hàm đếm ngược thời gian thanh toán
       function startPaymentCountdown() {

@@ -1,5 +1,7 @@
 package Model.DTO.Deposit;
 
+import Utils.PriceUtils; // Thêm import PriceUtils
+
 /**
  * DTO hiển thị chi tiết bảo hiểm trong deposit page Chỉ chứa thông tin cần
  * thiết cho giao diện - logic tính toán ở Service
@@ -61,9 +63,10 @@ public class InsuranceDetailDTO {
 
     /**
      * Format hiển thị tiền cho JSP - trả về định dạng VND đúng
+     * Sử dụng PriceUtils để format giá từ DB
      */
     public String getFormattedPremiumAmount() {
-        return String.format("%,.0f VND", premiumAmount * 1000);
+        return PriceUtils.formatDbPrice(premiumAmount);
     }
 
     @Override
