@@ -170,15 +170,6 @@ uri="jakarta.tags.fmt" %>
             <span class="label">Status:</span>
             <span class="value">Pending Approval</span>
           </p>
-          <p>
-            <span class="label">Created Date:</span>
-            <span class="value">
-              <fmt:formatDate
-                value="${booking.createdDate}"
-                pattern="dd/MM/yyyy HH:mm"
-              />
-            </span>
-          </p>
           <p class="total-amount">
             <span class="label">Total Amount:</span>
             <span class="value">
