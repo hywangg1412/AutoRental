@@ -8,10 +8,12 @@ import Model.DTO.Deposit.InsuranceDetailDTO; // Thêm import
 import Utils.PriceUtils; // Thêm import PriceUtils
 
 /**
- * Data Transfer Object for displaying comprehensive booking information on the staff interface.
- * This object aggregates data from Booking, User, Car, and DriverLicense entities.
+ * Data Transfer Object for displaying comprehensive booking information on the
+ * staff interface. This object aggregates data from Booking, User, Car, and
+ * DriverLicense entities.
  */
 public class BookingInfoDTO {
+
     // Booking Information
     private UUID bookingId;
     private String bookingCode; // Friendly booking code like "BK-20240621-XYZ12"
@@ -20,13 +22,13 @@ public class BookingInfoDTO {
     private double totalAmount;
     private String status;
     private LocalDateTime createdDate;
-    
+
     // *** THAY ĐỔI KIỂU DỮ LIỆU TỪ LONG SANG DOUBLE ***
     private double duration; // Thay vì long duration
 
     // *** THÊM FIELD MỚI CHO RENTAL TYPE ***
     private String rentalType; // Loại thuê: "hourly", "daily", "monthly"
-    
+
     // *** THÊM FIELD MỚI CHO FORMATTED DURATION ***
     private String formattedDuration; // Chuỗi hiển thị duration đã format (ví dụ: "10 days 4 hours 30 minutes")
 
@@ -60,11 +62,13 @@ public class BookingInfoDTO {
     // Thông tin giá chi tiết
     private java.math.BigDecimal pricePerHour;
     private java.math.BigDecimal pricePerMonth;
-    
+
     // Thông tin bảo hiểm
     private List<InsuranceDetailDTO> insuranceDetails;
     private double basicInsuranceFee;
     private double additionalInsuranceFee;
+
+    private boolean hasFeedback;
 
     // Constructors
     public BookingInfoDTO() {
@@ -160,10 +164,12 @@ public class BookingInfoDTO {
         if (formattedDuration != null && !formattedDuration.isEmpty()) {
             return formattedDuration;
         }
-        
+
         // Nếu không, tính toán formattedDuration từ duration và rentalType
-        if (duration <= 0) return "1 day";
-        
+        if (duration <= 0) {
+            return "1 day";
+        }
+
         // Format duration theo rental type với số thập phân
         if (rentalType != null) {
             switch (rentalType.toLowerCase()) {
@@ -189,7 +195,7 @@ public class BookingInfoDTO {
                     return String.format("%.2f days", duration);
             }
         }
-        
+
         // Mặc định hiển thị days
         if (duration == Math.floor(duration)) {
             return String.format("%.0f days", duration);
@@ -197,10 +203,13 @@ public class BookingInfoDTO {
             return String.format("%.2f days", duration);
         }
     }
-    
+
     /**
-     * Đặt chuỗi đã format sẵn cho duration, ưu tiên sử dụng chuỗi này khi hiển thị
-     * @param formattedDuration Chuỗi hiển thị duration đã format (ví dụ: "10 days 4 hours 30 minutes")
+     * Đặt chuỗi đã format sẵn cho duration, ưu tiên sử dụng chuỗi này khi hiển
+     * thị
+     *
+     * @param formattedDuration Chuỗi hiển thị duration đã format (ví dụ: "10
+     * days 4 hours 30 minutes")
      */
     public void setFormattedDuration(String formattedDuration) {
         this.formattedDuration = formattedDuration;
@@ -220,7 +229,7 @@ public class BookingInfoDTO {
         if (rentalType == null || rentalType.trim().isEmpty()) {
             return "Daily"; // Mặc định
         }
-        
+
         switch (rentalType.toLowerCase()) {
             case "hourly":
                 return "Per Hour";
@@ -306,19 +315,63 @@ public class BookingInfoDTO {
         this.contractStatus = contractStatus;
     }
 
-    // Getter/Setter cho các trường mới
-    public String getCarImage() { return carImage; }
-    public void setCarImage(String carImage) { this.carImage = carImage; }
-    public java.math.BigDecimal getPricePerDay() { return pricePerDay; }
-    public void setPricePerDay(java.math.BigDecimal pricePerDay) { this.pricePerDay = pricePerDay; }
-    public String getCancelReason() { return cancelReason; }
-    public void setCancelReason(String cancelReason) { this.cancelReason = cancelReason; }
-    public String getFullName() { return fullName != null ? fullName : customerName; }
-    public void setFullName(String fullName) { this.fullName = fullName; }
-    public String getEmail() { return email != null ? email : customerEmail; }
-    public void setEmail(String email) { this.email = email; }
-    public String getPhoneNumber() { return phoneNumber != null ? phoneNumber : customerPhone; }
-    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+    public boolean isHasFeedback() {
+        return hasFeedback;
+    }
+
+    public void setHasFeedback(boolean hasFeedback) {
+        this.hasFeedback = hasFeedback;
+        // Getter/Setter cho các trường mới
+
+    }
+
+    public String getCarImage() {
+        return carImage;
+    }
+
+    public void setCarImage(String carImage) {
+        this.carImage = carImage;
+    }
+
+    public java.math.BigDecimal getPricePerDay() {
+        return pricePerDay;
+    }
+
+    public void setPricePerDay(java.math.BigDecimal pricePerDay) {
+        this.pricePerDay = pricePerDay;
+    }
+
+    public String getCancelReason() {
+        return cancelReason;
+    }
+
+    public void setCancelReason(String cancelReason) {
+        this.cancelReason = cancelReason;
+    }
+
+    public String getFullName() {
+        return fullName != null ? fullName : customerName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getEmail() {
+        return email != null ? email : customerEmail;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber != null ? phoneNumber : customerPhone;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
     // Getters và setters cho các trường mới
     public java.math.BigDecimal getPricePerHour() {
@@ -336,7 +389,7 @@ public class BookingInfoDTO {
     public void setPricePerMonth(java.math.BigDecimal pricePerMonth) {
         this.pricePerMonth = pricePerMonth;
     }
-    
+
     public List<InsuranceDetailDTO> getInsuranceDetails() {
         return insuranceDetails;
     }
@@ -360,47 +413,52 @@ public class BookingInfoDTO {
     public void setAdditionalInsuranceFee(double additionalInsuranceFee) {
         this.additionalInsuranceFee = additionalInsuranceFee;
     }
-    
+
     // --- Các phương thức format giá tiền sử dụng PriceUtils ---
-    
     /**
      * Trả về giá theo giờ đã format
      */
     public String getFormattedPricePerHour() {
-        if (pricePerHour == null) return "N/A";
+        if (pricePerHour == null) {
+            return "N/A";
+        }
         return PriceUtils.formatDbPrice(pricePerHour);
     }
-    
+
     /**
      * Trả về giá theo ngày đã format
      */
     public String getFormattedPricePerDay() {
-        if (pricePerDay == null) return "N/A";
+        if (pricePerDay == null) {
+            return "N/A";
+        }
         return PriceUtils.formatDbPrice(pricePerDay);
     }
-    
+
     /**
      * Trả về giá theo tháng đã format
      */
     public String getFormattedPricePerMonth() {
-        if (pricePerMonth == null) return "N/A";
+        if (pricePerMonth == null) {
+            return "N/A";
+        }
         return PriceUtils.formatDbPrice(pricePerMonth);
     }
-    
+
     /**
      * Trả về phí bảo hiểm cơ bản đã format
      */
     public String getFormattedBasicInsuranceFee() {
         return PriceUtils.formatDbPrice(basicInsuranceFee);
     }
-    
+
     /**
      * Trả về phí bảo hiểm bổ sung đã format
      */
     public String getFormattedAdditionalInsuranceFee() {
         return PriceUtils.formatDbPrice(additionalInsuranceFee);
     }
-    
+
     /**
      * Trả về tổng tiền đã format
      */
@@ -409,21 +467,22 @@ public class BookingInfoDTO {
     }
 
     // --- End of Getters and Setters ---
-
     @Override
     public String toString() {
-        return "BookingInfoDTO{" +
-                "bookingId=" + bookingId +
-                ", bookingCode='" + bookingCode + '\'' +
-                ", pickupDateTime=" + pickupDateTime +
-                ", returnDateTime=" + returnDateTime +
-                ", totalAmount=" + totalAmount +
-                ", status='" + status + '\'' +
-                ", customerName='" + customerName + '\'' +
-                ", carModel='" + carModel + '\'' +
-                ", driverLicenseImageUrl='" + driverLicenseImageUrl + '\'' +
-                ", rentalType='" + rentalType + '\'' + // *** THÊM VÀO toString() ***
-                ", duration=" + duration + // *** THÊM DURATION VÀO toString() ***
+        return "BookingInfoDTO{"
+                + "bookingId=" + bookingId
+                + ", bookingCode='" + bookingCode + '\''
+                + ", pickupDateTime=" + pickupDateTime
+                + ", returnDateTime=" + returnDateTime
+                + ", totalAmount=" + totalAmount
+                + ", status='" + status + '\''
+                + ", customerName='" + customerName + '\''
+                + ", carModel='" + carModel + '\''
+                + ", driverLicenseImageUrl='" + driverLicenseImageUrl + '\''
+                + ", rentalType='" + rentalType + '\''
+                + // *** THÊM VÀO toString() ***
+                ", duration=" + duration
+                + // *** THÊM DURATION VÀO toString() ***
                 '}';
     }
 }
