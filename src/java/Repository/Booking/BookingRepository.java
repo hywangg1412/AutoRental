@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 import Config.DBContext;
 import Model.Constants.BookingStatusConstants;
 import Model.Entity.Booking.Booking;
-import Repository.Interfaces.Ibooking.IBookingRepository;
+import Repository.Interfaces.IBooking.IBookingRepository;
 
 public class BookingRepository implements IBookingRepository {
 
@@ -356,7 +356,6 @@ public class BookingRepository implements IBookingRepository {
     }
     
     
-    
     @Override
     public boolean hasCompletedBookingWithoutReview(UUID userId, UUID carId) throws SQLException {
         // Kiểm tra xem người dùng có booking hoàn thành cho xe này không
@@ -418,8 +417,7 @@ public class BookingRepository implements IBookingRepository {
             stmt.setString(1, userId.toString());
             stmt.setString(2, carId.toString());
             stmt.setString(3, BookingStatusConstants.COMPLETED);
-            
-            try (ResultSet rs = stmt.executeQuery()) {
+try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     bookingIds.add(UUID.fromString(rs.getString("BookingId")));
                 }
@@ -464,4 +462,5 @@ public class BookingRepository implements IBookingRepository {
         }
     }
 }
+
 

@@ -3,6 +3,7 @@ package Model.DTO;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
+import Utils.PriceUtils; // Thêm import PriceUtils
 
 public class BookingRequestDTO {
 
@@ -203,5 +204,12 @@ public class BookingRequestDTO {
 
     public void setDriverLicenseImageUrl(String driverLicenseImageUrl) {
         this.driverLicenseImageUrl = driverLicenseImageUrl;
+    }
+
+    /**
+     * Trả về tổng tiền đã format
+     */
+    public String getFormattedTotalAmount() {
+        return PriceUtils.formatDbPrice(totalAmount);
     }
 }

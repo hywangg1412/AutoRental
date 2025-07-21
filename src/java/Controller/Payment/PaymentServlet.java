@@ -1,4 +1,4 @@
-package Controller.Deposit;
+package Controller.Payment;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -115,6 +115,10 @@ public class PaymentServlet extends HttpServlet {
             return;
         }
 
+        // Kiểm tra tham số fixedDeposit
+        boolean useFixedDeposit = "true".equals(request.getParameter("fixedDeposit"));
+        System.out.println("Use fixed deposit: " + useFixedDeposit);
+
         System.out.println("BookingId final: '" + bookingId + "'");
         System.out.println("Gọi PaymentService.createDepositPayment...");
         
@@ -122,7 +126,8 @@ public class PaymentServlet extends HttpServlet {
             // Gọi service để tạo payment và lấy VNPay URL
             PaymentDTO paymentDTO = paymentService.createDepositPayment(
                 UUID.fromString(bookingId), 
-                userId
+                userId,
+                useFixedDeposit
             );
             
             if (paymentDTO == null || paymentDTO.getQrCode() == null) {

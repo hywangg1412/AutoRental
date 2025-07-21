@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 import Model.DTO.DurationResult;
+import Utils.PriceUtils;
 
 /**
  * DTO mở rộng cho trang Deposit
@@ -226,10 +227,18 @@ public class BookingDepositDTO {
     }
     
     /**
-     * Trả về tổng tiền đã format cho JSP (VD: "1,063,567")
+     * Trả về tổng tiền đã format cho JSP (VD: "1.063.567 VND")
+     * Sử dụng PriceUtils để format giá từ DB
      */
     public String getFormattedTotalAmount() {
-        return String.format("%,.0f", totalAmount);
+        return PriceUtils.formatDbPrice(totalAmount);
+    }
+    
+    /**
+     * Trả về giá xe theo ngày đã format
+     */
+    public String getFormattedCarPricePerDay() {
+        return PriceUtils.formatDbPrice(carPricePerDay);
     }
     
     /**
@@ -239,6 +248,36 @@ public class BookingDepositDTO {
         return String.format("%s - %s", 
             carModel != null ? carModel : "N/A", 
             carLicensePlate != null ? carLicensePlate : "N/A");
+    }
+    
+    /**
+     * Tính số tiền đặt cọc (30% tổng chi phí)
+     * @return Số tiền đặt cọc
+     */
+    public double getDepositAmount() {
+        return totalAmount * 0.3;
+    }
+    
+    /**
+     * Trả về số tiền đặt cọc đã format
+     */
+    public String getFormattedDepositAmount() {
+        return PriceUtils.formatDbPrice(getDepositAmount());
+    }
+    
+    /**
+     * Tính số tiền còn lại phải thanh toán (70% tổng chi phí)
+     * @return Số tiền còn lại
+     */
+    public double getRemainingAmount() {
+        return totalAmount * 0.7;
+    }
+    
+    /**
+     * Trả về số tiền còn lại đã format
+     */
+    public String getFormattedRemainingAmount() {
+        return PriceUtils.formatDbPrice(getRemainingAmount());
     }
     
     /**

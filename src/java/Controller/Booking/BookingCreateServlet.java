@@ -4,14 +4,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.Map;
+import java.math.BigDecimal;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import Model.DTO.DurationResult;
 import Model.Entity.Booking.Booking;
 import Model.Entity.Car.Car;
 import Model.Entity.User.DriverLicense;
 import Model.Entity.User.User;
+import Repository.Booking.BookingRepository;
 import Repository.Car.CarRepository;
 import Service.Booking.BookingService;
 import Service.External.CloudinaryService;
@@ -33,10 +41,18 @@ import jakarta.servlet.http.Part;
 )
 public class BookingCreateServlet extends HttpServlet {
 
+    private static final Logger LOGGER = Logger.getLogger(BookingCreateServlet.class.getName());
+
     private final DriverLicenseService driverLicenseService = new DriverLicenseService();
     private final CloudinaryService cloudinaryService = new CloudinaryService();
     private final BookingService bookingService = new BookingService();
     private final CarRepository carRepository = new CarRepository();
+    private final BookingRepository bookingRepository = new BookingRepository();
+    
+    // Constants for time restrictions
+    private static final int EARLIEST_HOUR = 7;  // 7 AM
+    private static final int LATEST_HOUR = 22;   // 10 PM
+    private static final int MAINTENANCE_BUFFER_DAYS = 1;  // 1 day buffer after each rental
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -70,8 +86,25 @@ public class BookingCreateServlet extends HttpServlet {
             }
 
             UUID carId = UUID.fromString(carIdStr);
-            LocalDateTime pickupDateTime = LocalDateTime.parse(startDateStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-            LocalDateTime returnDateTime = LocalDateTime.parse(endDateStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            
+            // Sửa phần parse ngày giờ để xử lý nhiều định dạng khác nhau
+            LocalDateTime pickupDateTime;
+            LocalDateTime returnDateTime;
+            
+            try {
+                // Thử parse theo định dạng ISO_LOCAL_DATE_TIME (YYYY-MM-DDThh:mm)
+                pickupDateTime = LocalDateTime.parse(startDateStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                returnDateTime = LocalDateTime.parse(endDateStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            } catch (Exception e) {
+                try {
+                    // Thử parse theo định dạng "YYYY-MM-DD HH:MM" (định dạng của Flatpickr)
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                    pickupDateTime = LocalDateTime.parse(startDateStr, formatter);
+                    returnDateTime = LocalDateTime.parse(endDateStr, formatter);
+                } catch (Exception ex) {
+                    throw new IllegalArgumentException("Invalid date/time format. Expected format: YYYY-MM-DD HH:MM or YYYY-MM-DDThh:mm");
+                }
+            }
 
 // ✅ Thêm đoạn này sau khi đã có pickup/return
             DateTimeFormatter isoFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
@@ -86,12 +119,21 @@ public class BookingCreateServlet extends HttpServlet {
             if (returnDateTime.isBefore(pickupDateTime)) {
                 throw new IllegalArgumentException("Return date/time must be after pickup date/time.");
             }
+            
+            // Validate time restrictions (7am to 10pm)
+            validateTimeRestrictions(pickupDateTime, returnDateTime);
+            
+            // Validate time increments (whole hours or half hours)
+            validateTimeIncrements(pickupDateTime, returnDateTime);
 
             // Step 4: Lấy thông tin xe để tính giá
             Car car = carRepository.findById(carId);
             if (car == null) {
                 throw new IllegalArgumentException("Car with ID " + carIdStr + " not found.");
             }
+            
+            // Check for overlapping bookings with maintenance buffer
+//            checkOverlappingBookings(carId, pickupDateTime, returnDateTime);
 
             // Step 5: Xử lý logic bằng lái xe (upload nếu mới)
             boolean hasDriverLicense = "true".equals(hasDriverLicenseParam);
@@ -156,7 +198,14 @@ public class BookingCreateServlet extends HttpServlet {
             }
 
             // Step 7: Lưu booking vào database
-            bookingService.add(newBooking);
+            // Lấy lại thông tin hasAdditionalInsurance từ request để truyền vào bookingService.add()
+            boolean hasAdditionalInsurance = "true".equals(request.getParameter("additionalInsurance"));
+            
+            // Thêm log để kiểm tra giá trị hasAdditionalInsurance
+            LOGGER.info("Giá trị hasAdditionalInsurance trước khi lưu booking: " + hasAdditionalInsurance);
+            LOGGER.info("Giá trị additionalInsurance từ request: " + request.getParameter("additionalInsurance"));
+            
+            bookingService.add(newBooking, hasAdditionalInsurance);
             
             // Gửi notification cho tất cả staff khi có booking mới
             Service.NotificationService notificationService = new Service.NotificationService();
@@ -171,52 +220,289 @@ public class BookingCreateServlet extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Failed to create booking: " + e.getMessage());
+            // Cải thiện thông báo lỗi để hiển thị chi tiết hơn
+            String errorMessage = "Failed to create booking: " + e.getMessage();
+            
+            // Thêm thông tin chi tiết về loại lỗi
+            if (e instanceof IllegalArgumentException) {
+                errorMessage = "Invalid input: " + e.getMessage();
+            } else if (e instanceof java.sql.SQLException) {
+                errorMessage = "Database error: " + e.getMessage();
+            } else if (e instanceof java.io.IOException) {
+                errorMessage = "File upload error: " + e.getMessage();
+            }
+            
+            // Ghi log lỗi
+            LOGGER.log(Level.SEVERE, "Error in BookingCreateServlet: ", e);
+            
+            // Đặt thông báo lỗi chi tiết vào request attribute
+            request.setAttribute("errorMessage", errorMessage);
+            request.setAttribute("exception", e);
+            
+            // Chuyển hướng đến trang error.jsp
             request.getRequestDispatcher("/pages/error.jsp").forward(request, response);
         }
-
     }
+    
+    /**
+     * Validates that pickup and return times are within allowed hours (7am to 10pm)
+     */
+    private void validateTimeRestrictions(LocalDateTime pickupDateTime, LocalDateTime returnDateTime) {
+        int pickupHour = pickupDateTime.getHour();
+        int returnHour = returnDateTime.getHour();
+        
+        if (pickupHour < EARLIEST_HOUR || pickupHour >= LATEST_HOUR) {
+            throw new IllegalArgumentException("Pickup time must be between 7:00 AM and 10:00 PM.");
+        }
+        
+        if (returnHour < EARLIEST_HOUR || returnHour >= LATEST_HOUR) {
+            throw new IllegalArgumentException("Return time must be between 7:00 AM and 10:00 PM.");
+        }
+    }
+    
+    /**
+     * Validates that pickup and return times are on the hour or half hour
+     */
+    private void validateTimeIncrements(LocalDateTime pickupDateTime, LocalDateTime returnDateTime) {
+        int pickupMinute = pickupDateTime.getMinute();
+        int returnMinute = returnDateTime.getMinute();
+        
+        if (pickupMinute != 0 && pickupMinute != 30) {
+            throw new IllegalArgumentException("Pickup time must be on the hour or half hour (e.g., 9:00 or 9:30).");
+        }
+        
+        if (returnMinute != 0 && returnMinute != 30) {
+            throw new IllegalArgumentException("Return time must be on the hour or half hour (e.g., 9:00 or 9:30).");
+        }
+    }
+    
+    /**
+     * Checks for overlapping bookings with maintenance buffer
+     */
+//    private void checkOverlappingBookings(UUID carId, LocalDateTime pickupDateTime, LocalDateTime returnDateTime) throws Exception {
+//        // Get all bookings for this car that are confirmed or in progress
+//        List<Booking> carBookings = new ArrayList<>();
+//        try {
+//            // Get all bookings for this car
+//            List<Booking> allBookings = bookingRepository.findAll();
+//            
+//            // Filter bookings for this car with relevant statuses
+//            String[] relevantStatuses = {"Confirmed", "Deposit_Paid", "Contract_Signed", "Fully_Paid", "In_Progress"};
+//            for (Booking booking : allBookings) {
+//                if (booking.getCarId().equals(carId)) {
+//                    String status = booking.getStatus();
+//                    for (String relevantStatus : relevantStatuses) {
+//                        if (relevantStatus.equalsIgnoreCase(status)) {
+//                            carBookings.add(booking);
+//                            break;
+//                        }
+//                    }
+//                }
+//            }
+//        } catch (Exception e) {
+//            throw new Exception("Error checking car availability: " + e.getMessage());
+//        }
+//        
+//        // Add maintenance buffer to return date
+//        LocalDateTime bufferEndDateTime = returnDateTime.plusDays(MAINTENANCE_BUFFER_DAYS);
+//        
+//        // Check for overlaps
+//        for (Booking booking : carBookings) {
+//            LocalDateTime existingPickup = booking.getPickupDateTime();
+//            LocalDateTime existingReturn = booking.getReturnDateTime();
+//            
+//            // Add maintenance buffer to existing booking's return date
+//            LocalDateTime existingBufferEnd = existingReturn.plusDays(MAINTENANCE_BUFFER_DAYS);
+//            
+//            // Check if there's an overlap
+//            if (!(bufferEndDateTime.isBefore(existingPickup) || pickupDateTime.isAfter(existingBufferEnd))) {
+//                throw new IllegalArgumentException(
+//                    "This car is already booked during the selected period or within the maintenance buffer period. " +
+//                    "Please choose different dates or check other available cars."
+//                );
+//            }
+//        }
+//    }
 
     // ========== TÍNH TOÁN GIÁ THUÊ ==========
     
     /**
      * Tính tổng tiền thuê xe sử dụng logic từ BookingService
      * Đồng bộ với JavaScript frontend để hiển thị nhất quán
+     * Bao gồm phí bảo hiểm
      */
     private double calculateTotalAmount(Car car, LocalDateTime start, LocalDateTime end,
             String rentalType, HttpServletRequest request) {
 
+        // Kiểm tra xem có mua bảo hiểm bổ sung không
+        boolean hasAdditionalInsurance = "true".equals(request.getParameter("additionalInsurance"));
+        
+        // Lấy số chỗ ngồi của xe
+        int carSeats = car.getSeats();
+        
         // Sử dụng BookingService để tính toán (đã đồng bộ với JS)
         double totalAmount = bookingService.calculateTotalAmount(
                 start, end, rentalType,
                 car.getPricePerHour(),
                 car.getPricePerDay(),
-                car.getPricePerMonth()
+                car.getPricePerMonth(),
+                carSeats,
+                hasAdditionalInsurance
         );
 
         // Lấy thông tin chi tiết duration để hiển thị trên JSP
         DurationResult durationResult = bookingService.calculateDuration(start, end, rentalType);
 
+        // Kiểm tra xem có điều chỉnh loại thuê không
+        if (durationResult.hasRentalTypeAdjusted()) {
+            // Cập nhật lại rentalType theo loại thuê đã điều chỉnh
+            rentalType = durationResult.getAdjustedRentalType();
+            
+            // Ghi log thông tin điều chỉnh
+            LOGGER.log(Level.INFO, "Rental type adjusted from {0} to {1} for better pricing", 
+                    new Object[]{durationResult.getOriginalRentalType(), rentalType});
+            
+            // Thêm thông báo cho người dùng
+            request.setAttribute("rentalTypeAdjusted", true);
+            request.setAttribute("originalRentalType", durationResult.getOriginalRentalType());
+            request.setAttribute("adjustedRentalType", rentalType);
+        }
+
+        // Tạo service để tính bảo hiểm
+        Service.Booking.BookingInsuranceService insuranceService = new Service.Booking.BookingInsuranceService();
+        
+        // Tính số ngày thuê cho bảo hiểm (làm tròn lên)
+        double rentalDays;
+        if (durationResult.getUnitType().equals("hour")) {
+            rentalDays = Math.ceil(durationResult.getBillingUnitsAsDouble() / 24.0);
+        } else if (durationResult.getUnitType().equals("day")) {
+            rentalDays = Math.ceil(durationResult.getBillingUnitsAsDouble());
+        } else { // month
+            rentalDays = Math.ceil(durationResult.getBillingUnitsAsDouble() * 30.0);
+        }
+        
+        // Lấy thông tin bảo hiểm từ database
+        Repository.Deposit.InsuranceRepository insuranceRepo = new Repository.Deposit.InsuranceRepository();
+        double basicInsuranceFee = 0; // Giá trị mặc định là 0
+        double additionalInsuranceFee = 0; // Giá trị mặc định là 0
+        
+        try {
+            // Tính phí bảo hiểm vật chất (bắt buộc)
+            List<Model.Entity.Deposit.Insurance> vehicleInsurances = insuranceRepo.findByType("VatChat");
+            if (!vehicleInsurances.isEmpty()) {
+                Model.Entity.Deposit.Insurance vehicleInsurance = vehicleInsurances.get(0);
+                // Ước tính giá trị xe dựa trên giá thuê ngày
+                double dailyRate = car.getPricePerDay().doubleValue() * 1000; // Chuyển sang VND
+                double yearCoefficient = getYearCoefficient(dailyRate);
+                double estimatedCarValue = dailyRate * 365 * yearCoefficient;
+                double premiumPerDay = estimatedCarValue * vehicleInsurance.getPercentageRate() / 100 / 365;
+                basicInsuranceFee = premiumPerDay * rentalDays;
+            }
+            
+            // Tính phí bảo hiểm tai nạn nếu được chọn
+            if (hasAdditionalInsurance) {
+                // Tìm bảo hiểm tai nạn phù hợp với số chỗ ngồi
+                List<Model.Entity.Deposit.Insurance> accidentInsurances = insuranceRepo.findByType("TaiNan");
+                boolean found = false;
+                
+                for (Model.Entity.Deposit.Insurance insurance : accidentInsurances) {
+                    if (isApplicableSeatRange(carSeats, insurance.getApplicableCarSeats())) {
+                        additionalInsuranceFee = insurance.getBaseRatePerDay() * rentalDays;
+                        found = true;
+                        break;
+                    }
+                }
+                
+                if (!found) {
+                    System.out.println("Không tìm thấy bảo hiểm tai nạn phù hợp cho xe " + carSeats + " chỗ");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Đặt giá trị mặc định là 0 để dễ xử lý lỗi
+            basicInsuranceFee = 0;
+            additionalInsuranceFee = 0;
+        }
+        
+        // Tính giá thuê xe cơ bản (không bao gồm bảo hiểm)
+        BigDecimal unitPrice = BigDecimal.ZERO;
+        switch (durationResult.getUnitType()) {
+            case "hour":
+                unitPrice = car.getPricePerHour();
+                break;
+            case "day":
+                unitPrice = car.getPricePerDay();
+                break;
+            case "month":
+                unitPrice = car.getPricePerMonth();
+                break;
+        }
+        
+        double baseRentalFee = unitPrice.doubleValue() * durationResult.getBillingUnitsAsDouble() * 1000;
+        
         // Gửi thông tin về JSP để hiển thị cho user
         request.setAttribute("unitType", durationResult.getUnitType());
         request.setAttribute("units", durationResult.getBillingUnitsAsDouble());
-        request.setAttribute("unitPrice", getUnitPriceAsDouble(car, rentalType));
+        request.setAttribute("unitPrice", getUnitPriceAsDouble(car, durationResult.getUnitType()));
+        request.setAttribute("baseRentalFee", baseRentalFee);
+        request.setAttribute("basicInsuranceFee", basicInsuranceFee);
+        request.setAttribute("additionalInsuranceFee", additionalInsuranceFee);
+        request.setAttribute("hasAdditionalInsurance", hasAdditionalInsurance);
         request.setAttribute("totalAmount", totalAmount);
         request.setAttribute("rentalNote", durationResult.getNote());
 
         return totalAmount;
+    }
+    
+    /**
+     * Kiểm tra xem số chỗ ngồi có phù hợp với range của bảo hiểm không
+     */
+    private boolean isApplicableSeatRange(int seats, String seatRange) {
+        if (seatRange == null) return true;
+        
+        if (seatRange.equals("1-5")) return seats <= 5;
+        if (seatRange.equals("6-11")) return seats >= 6 && seats <= 11;
+        if (seatRange.equals("12+")) return seats >= 12;
+        
+        return true;
+    }
+    
+    /**
+     * Xác định hệ số năm sử dụng theo giá thuê/ngày
+     */
+    private double getYearCoefficient(double dailyRate) {
+        if (dailyRate <= 500000) {
+            return 5; // Hệ số thấp
+        } else if (dailyRate <= 800000) {
+            return 7; // Hệ số trung bình
+        } else if (dailyRate <= 1200000) {
+            return 10; // Hệ số cao
+        } else {
+            return 15; // Hệ số cao cấp
+        }
     }
 
     /**
      * Helper method để lấy đơn giá theo loại thuê
      */
     private double getUnitPriceAsDouble(Car car, String rentalType) {
-        switch (rentalType.toLowerCase()) {
+        if (rentalType == null) {
+            throw new IllegalArgumentException("Loại thuê không được để trống");
+        }
+        
+        // Chuẩn hóa rentalType
+        String normalizedType = rentalType.trim().toLowerCase();
+        
+        // Xử lý các trường hợp có thể xảy ra
+        switch (normalizedType) {
             case "hourly":
+            case "hour":
                 return car.getPricePerHour().doubleValue();
             case "daily":
+            case "day":
                 return car.getPricePerDay().doubleValue();
             case "monthly":
+            case "month":
                 return car.getPricePerMonth().doubleValue();
             default:
                 throw new IllegalArgumentException("Loại thuê không hợp lệ: " + rentalType);
@@ -251,74 +537,31 @@ public class BookingCreateServlet extends HttpServlet {
             throw new IllegalArgumentException("License number must be exactly 12 digits");
         }
 
-        // Validate full name (letters and spaces only)
-        if (!licenseFullName.matches("^[\\p{L} ]+$")) {
-            throw new IllegalArgumentException("Full name must contain only letters and spaces");
-        }
-
-        // Validate date of birth
-        LocalDate dob;
-        try {
-            dob = LocalDate.parse(licenseDob);
-            LocalDate today = LocalDate.now();
-            if (dob.isAfter(today)) {
-                throw new IllegalArgumentException("Date of birth cannot be in the future");
-            }
-            // Check minimum age (18 years)
-            if (today.getYear() - dob.getYear() < 18) {
-                throw new IllegalArgumentException("You must be at least 18 years old");
-            }
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid date of birth format");
-        }
-
-        // Validate and upload image
+        // Upload image to Cloudinary
         String imageUrl = uploadLicenseImage(licenseImagePart);
 
-        // Create or update driver license record
-        DriverLicense driverLicense = driverLicenseService.findByUserId(user.getUserId());
-        if (driverLicense == null) {
-            // Create new license record
-            driverLicense = new DriverLicense();
+        // Create and save driver license
+        DriverLicense driverLicense = new DriverLicense();
             driverLicense.setLicenseId(UUID.randomUUID());
             driverLicense.setUserId(user.getUserId());
-            driverLicense.setCreatedDate(LocalDateTime.now());
-        }
-
-        // Update license information
         driverLicense.setLicenseNumber(licenseNumber);
         driverLicense.setFullName(licenseFullName);
-        driverLicense.setDob(dob);
+        driverLicense.setDob(LocalDate.parse(licenseDob));
         driverLicense.setLicenseImage(imageUrl);
+        // Note: DriverLicense doesn't have a setVerified method, so we'll skip that
+        driverLicense.setCreatedDate(LocalDateTime.now());
 
-        // Save to database
-        if (driverLicense.getLicenseId() == null) {
             driverLicenseService.add(driverLicense);
-        } else {
-            driverLicenseService.update(driverLicense);
-        }
     }
 
     private String uploadLicenseImage(Part filePart) throws Exception {
-        // Validate file type
-        String contentType = filePart.getContentType();
-        if (contentType == null
-                || (!contentType.startsWith("image/") && !contentType.equals("application/pdf"))) {
-            throw new IllegalArgumentException("Invalid file type. Only images and PDF are allowed");
-        }
-
-        // Validate file size (max 5MB)
-        if (filePart.getSize() > 5 * 1024 * 1024) {
-            throw new IllegalArgumentException("File size must be less than 5MB");
-        }
-
-        // Upload to Cloudinary using the correct method
-        try (InputStream inputStream = filePart.getInputStream()) {
-            String originalFilename = filePart.getSubmittedFileName();
-            return cloudinaryService.uploadAndGetUrlToFolder(inputStream, originalFilename, "driver_licenses");
+        try (InputStream fileContent = filePart.getInputStream()) {
+            // Convert InputStream to byte array since the CloudinaryService.uploadImage method expects that
+            byte[] imageBytes = fileContent.readAllBytes();
+            Map uploadResult = cloudinaryService.uploadImage(imageBytes);
+            return cloudinaryService.getImageUrlAfterUpload(uploadResult);
         } catch (Exception e) {
             throw new Exception("Failed to upload license image: " + e.getMessage());
         }
     }
-
 }

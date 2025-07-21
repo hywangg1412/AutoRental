@@ -259,33 +259,59 @@ public class DepositService implements IDepositService {
 
     /**
      * Tính duration theo giờ - ĐỒNG BỘ VỚI BOOKINGSERVICE
+     * Cập nhật: Nếu thời gian thuê vượt quá 24 giờ, khuyến nghị chuyển sang thuê theo ngày
      */
     private DurationResult calculateHourlyDuration(Duration duration) {
         double actualHours = duration.toMinutes() / 60.0;
         double ceilHours = Math.ceil(actualHours);
         double billingHours = Math.max(ceilHours, MIN_HOURLY_DURATION);
+        
+        String note = null;
+        if (actualHours < MIN_HOURLY_DURATION) {
+            note = "Tối thiểu 4 giờ được áp dụng";
+        } else if (actualHours > 24.0) {
+            note = "Thời gian thuê vượt quá 24 giờ, khuyến nghị chuyển sang thuê theo ngày";
+        }
 
         return new DurationResult(
                 BigDecimal.valueOf(billingHours).setScale(2, RoundingMode.HALF_UP),
                 "hour",
-                actualHours < MIN_HOURLY_DURATION ? "Tối thiểu 4 giờ được áp dụng" : null
+                note
         );
     }
 
     /**
      * Tính duration theo ngày - ĐỒNG BỘ VỚI BOOKINGSERVICE
+     * Cập nhật: Nếu thời gian thuê dưới 24 giờ, tự động chuyển sang tính theo giờ
+     * Nếu thời gian thuê từ 24 giờ trở lên, tính theo ngày
      */
     private DurationResult calculateDailyDuration(Duration duration) {
         double totalHours = duration.toMinutes() / 60.0;
-        double actualDays = totalHours / 24.0;
-        double billingDays = Math.max(actualDays, MIN_DAILY_DURATION);
-        billingDays = Math.round(billingDays * 100.0) / 100.0;
+        
+        // Nếu thời gian thuê dưới 24 giờ, tự động chuyển sang tính theo giờ
+        if (totalHours < 24.0) {
+            // Áp dụng quy tắc tính theo giờ (tối thiểu 4 giờ)
+            double ceilHours = Math.ceil(totalHours);
+            double billingHours = Math.max(ceilHours, MIN_HOURLY_DURATION);
+            
+            return new DurationResult(
+                BigDecimal.valueOf(billingHours).setScale(2, RoundingMode.HALF_UP),
+                "hour", // Đơn vị là giờ
+                "Thời gian thuê dưới 24 giờ, tự động tính theo giờ"
+            );
+        } 
+        // Nếu thời gian thuê từ 24 giờ trở lên, tính theo ngày
+        else {
+            // Tính số ngày và làm tròn lên
+            double days = totalHours / 24.0;
+            double billingDays = Math.ceil(days);
 
         return new DurationResult(
                 BigDecimal.valueOf(billingDays).setScale(2, RoundingMode.HALF_UP),
                 "day",
-                actualDays < MIN_DAILY_DURATION ? "Tối thiểu 0.5 ngày được áp dụng" : null
+                null
         );
+        }
     }
 
     /**
@@ -372,91 +398,75 @@ public class DepositService implements IDepositService {
 
     /**
      * Lấy danh sách bảo hiểm cho booking, lọc TNDS theo số chỗ ngồi
+     * Đảm bảo chỉ hiển thị một bảo hiểm vật chất và một bảo hiểm tai nạn nếu có
      */
     private List<InsuranceDetailDTO> getInsuranceList(UUID bookingId) throws Exception {
         List<InsuranceDetailDTO> insuranceList = new ArrayList<>();
         
         try {
             // Lấy danh sách booking insurance từ database
-        List<BookingInsurance> bookingInsurances = depositRepository.getBookingInsurancesByBookingId(bookingId);
+            List<BookingInsurance> bookingInsurances = depositRepository.getBookingInsurancesByBookingId(bookingId);
             LOGGER.info("Found " + bookingInsurances.size() + " booking insurances from database");
 
-            boolean hasVehicleInsuranceFromDB = false;
+            // Tạo map để lưu bảo hiểm theo loại (chỉ giữ một bảo hiểm cho mỗi loại)
+            java.util.Map<String, InsuranceDetailDTO> insuranceMap = new java.util.HashMap<>();
 
             // Với mỗi booking insurance, lấy thông tin chi tiết
-        for (BookingInsurance bookingInsurance : bookingInsurances) {
-            Insurance insurance = depositRepository.getInsuranceById(bookingInsurance.getInsuranceId());
+            for (BookingInsurance bookingInsurance : bookingInsurances) {
+                Insurance insurance = depositRepository.getInsuranceById(bookingInsurance.getInsuranceId());
 
-            if (insurance != null) {
+                if (insurance != null) {
+                    LOGGER.info("Processing insurance: " + insurance.getInsuranceName() + 
+                            " (Type: " + insurance.getInsuranceType() + ", Premium: " + 
+                            bookingInsurance.getPremiumAmount() + ")");
+                    
                     // Kiểm tra TNDS có phù hợp với số chỗ không
-                    if ("TNDS".equals(insurance.getInsuranceType())) {
+                    if ("TaiNan".equals(insurance.getInsuranceType())) {
                         String seatRange = insurance.getApplicableCarSeats();
                         int carSeats = bookingInsurance.getCarSeats();
                         if (!isApplicableSeatRange(carSeats, seatRange)) {
+                            LOGGER.info("Skipping insurance - seat range not applicable: " + seatRange + 
+                                    " for car with " + carSeats + " seats");
                             continue;
                         }
                     }
 
-                InsuranceDetailDTO dto = new InsuranceDetailDTO();
-                dto.setInsuranceName(insurance.getInsuranceName());
-                dto.setInsuranceType(insurance.getInsuranceType());
-                dto.setPremiumAmount(bookingInsurance.getPremiumAmount());
-                dto.setDescription(insurance.getDescription());
-
-                    // Kiểm tra xem có phải bảo hiểm vật chất từ DB không
-                    if (("VatChat".equals(insurance.getInsuranceType()) || 
-                        insurance.getInsuranceName().toLowerCase().contains("vật chất")) &&
-                        bookingInsurance.getPremiumAmount() > 0) {
-                        hasVehicleInsuranceFromDB = true;
-                        LOGGER.info("Found valid vehicle insurance from DB: " + insurance.getInsuranceName() + 
-                                  " with premium: " + bookingInsurance.getPremiumAmount() + " (DB value)");
+                    String insuranceType = insurance.getInsuranceType();
+                    
+                    // Nếu đã có bảo hiểm loại này, chỉ cập nhật nếu phí cao hơn
+                    if (insuranceMap.containsKey(insuranceType)) {
+                        InsuranceDetailDTO existingDto = insuranceMap.get(insuranceType);
+                        if (bookingInsurance.getPremiumAmount() > existingDto.getPremiumAmount()) {
+                            LOGGER.info("Updating existing insurance with higher premium: " + 
+                                    bookingInsurance.getPremiumAmount() + " > " + existingDto.getPremiumAmount());
+                            existingDto.setPremiumAmount(bookingInsurance.getPremiumAmount());
+                            existingDto.setInsuranceName(insurance.getInsuranceName());
+                            existingDto.setDescription(insurance.getDescription());
+                        }
+                    } else {
+                        // Nếu chưa có, thêm vào map
+                        InsuranceDetailDTO dto = new InsuranceDetailDTO();
+                        dto.setInsuranceName(insurance.getInsuranceName());
+                        dto.setInsuranceType(insuranceType);
+                        dto.setPremiumAmount(bookingInsurance.getPremiumAmount());
+                        dto.setDescription(insurance.getDescription());
+                        
+                        insuranceMap.put(insuranceType, dto);
+                        LOGGER.info("Added insurance: " + insurance.getInsuranceName() + 
+                                " (" + insuranceType + ") = " + bookingInsurance.getPremiumAmount() + " (DB value)");
                     }
-
-                    insuranceList.add(dto);
-                    LOGGER.info("Added insurance: " + insurance.getInsuranceName() + 
-                              " (" + insurance.getInsuranceType() + ") = " + bookingInsurance.getPremiumAmount() + " (DB value)");
+                } else {
+                    LOGGER.warning("Insurance not found for ID: " + bookingInsurance.getInsuranceId());
                 }
             }
 
-            // CHỈ THÊM bảo hiểm vật chất tính toán NẾU CHƯA CÓ TRONG DATABASE
-            if (!hasVehicleInsuranceFromDB) {
-                Booking booking = depositRepository.getBookingForDeposit(bookingId);
-                if (booking != null) {
-                    double vehicleInsurancePerDay = calculateVehicleInsurance(booking);
-                    if (vehicleInsurancePerDay > 0) {
-                        // Tìm và thay thế bảo hiểm vật chất có premium = 0
-                        boolean replaced = false;
-                        for (InsuranceDetailDTO existing : insuranceList) {
-                            if (("VatChat".equals(existing.getInsuranceType()) || 
-                                existing.getInsuranceName().toLowerCase().contains("vật chất")) &&
-                                existing.getPremiumAmount() == 0) {
-                                
-                                // Thay thế giá trị 0 bằng giá tính toán
-                                existing.setPremiumAmount(vehicleInsurancePerDay);
-                                existing.setDescription("Bảo hiểm vật chất 2% giá xe/năm - " + 
-                                                      String.format("%.3f per day", vehicleInsurancePerDay));
-                                replaced = true;
-                                LOGGER.info("Replaced 0 vehicle insurance with calculated: " + vehicleInsurancePerDay + " (DB value)");
-                                break;
-                            }
-                        }
-                        
-                        // Nếu không tìm thấy để thay thế, thêm mới
-                        if (!replaced) {
-                            InsuranceDetailDTO vehicleInsurance = new InsuranceDetailDTO();
-                            vehicleInsurance.setInsuranceName("Bảo hiểm vật chất xe");
-                            vehicleInsurance.setInsuranceType("VatChat");
-                            vehicleInsurance.setPremiumAmount(vehicleInsurancePerDay);
-                            vehicleInsurance.setDescription("Bảo hiểm vật chất 2% giá xe/năm - " + 
-                                                          String.format("%.3f per day", vehicleInsurancePerDay));
-                            
-                            insuranceList.add(vehicleInsurance);
-                            LOGGER.info("Added new calculated vehicle insurance: " + vehicleInsurancePerDay + " (DB value)");
-                        }
-                    }
-                }
-            } else {
-                LOGGER.info("Vehicle insurance already exists from database, skipping calculation");
+            // Chuyển từ map sang list
+            insuranceList.addAll(insuranceMap.values());
+            
+            LOGGER.info("Final insurance list contains " + insuranceList.size() + " items:");
+            for (InsuranceDetailDTO dto : insuranceList) {
+                LOGGER.info("- " + dto.getInsuranceName() + " (" + dto.getInsuranceType() + "): " + 
+                        dto.getPremiumAmount() + " (DB value)");
             }
 
         } catch (Exception e) {
@@ -464,27 +474,40 @@ public class DepositService implements IDepositService {
             // Trả về danh sách rỗng thay vì throw exception
         }
 
-        LOGGER.info("Total insurance items: " + insuranceList.size());
         return insuranceList;
     }
 
     /**
      * Tính toán tất cả giá cả - LOGIC ĐƠN GIẢN
      * Logic: Giá thuê + Bảo hiểm - Giảm giá + VAT = Tổng cộng
-     *        Đặt cọc = 30% Tổng cộng
+     *        Đặt cọc = 300.000 VND (hardcode)
      * LƯU Ý: Giữ nguyên giá trị DB để tính toán, format display sẽ xử lý × 1000
      */
     private void calculateAllPricing(Booking booking, DepositPageDTO dto) throws Exception {
         try {
             LOGGER.info("=== CALCULATING ALL PRICING ===");
             
-            // Bước 1: Giá thuê cơ bản (giữ nguyên giá trị DB)
-            double baseAmount = booking.getTotalAmount();
-            LOGGER.info("Base amount: " + baseAmount + " (DB value)");
+            // Lấy thông tin bảo hiểm từ database
+            List<InsuranceDetailDTO> insuranceDetails = dto.getInsuranceDetails();
             
-            // Bước 2: Tổng phí bảo hiểm (giữ nguyên đơn vị DB)
-            double insuranceAmount = getTotalInsuranceAmount(booking);
-            LOGGER.info("Insurance amount: " + insuranceAmount + " (DB value)");
+            // Tính tổng phí bảo hiểm từ danh sách chi tiết
+            double totalInsuranceAmount = 0.0;
+            for (InsuranceDetailDTO insurance : insuranceDetails) {
+                totalInsuranceAmount += insurance.getPremiumAmount();
+                LOGGER.info("Insurance: " + insurance.getInsuranceName() + " = " + insurance.getPremiumAmount() + " (DB value)");
+            }
+            LOGGER.info("Total insurance amount from details: " + totalInsuranceAmount + " (DB value)");
+            
+            // Lấy tổng phí bảo hiểm từ repository để kiểm tra
+            double repoInsuranceAmount = depositRepository.getTotalInsuranceAmount(booking.getBookingId());
+            LOGGER.info("Total insurance amount from repository: " + repoInsuranceAmount + " (DB value)");
+            
+            // Sử dụng tổng phí bảo hiểm từ chi tiết để đảm bảo chính xác
+            double insuranceAmount = totalInsuranceAmount;
+            
+            // Tính base rental price = booking.totalAmount - insuranceAmount
+            double baseAmount = booking.getTotalAmount() - insuranceAmount;
+            LOGGER.info("Base amount calculation: " + booking.getTotalAmount() + " - " + insuranceAmount + " = " + baseAmount + " (DB value)");
             
             // Bước 3: Giảm giá (chưa có voucher)
             double discountAmount = 0.0;
@@ -502,18 +525,19 @@ public class DepositService implements IDepositService {
             double totalAmount = subtotal + vatAmount;
             LOGGER.info("Total: " + subtotal + " + " + vatAmount + " = " + totalAmount);
             
-            // Bước 7: Đặt cọc = total * 30%
-            double depositAmount = totalAmount * DEPOSIT_PERCENTAGE;
-            LOGGER.info("Deposit (30%): " + totalAmount + " × " + DEPOSIT_PERCENTAGE + " = " + depositAmount);
+            // Bước 7: Đặt cọc = 300.000 VND (hardcode)
+            // Chuyển từ VND sang đơn vị DB (chia 1000)
+            double depositAmount = 300.0; // 300.000 VND = 300 đơn vị DB
+            LOGGER.info("Deposit (hardcode): 300.000 VND = " + depositAmount + " (DB value)");
 
             // Gán vào DTO (giá trị DB, format methods sẽ xử lý hiển thị)
+            dto.setBaseRentalPrice(baseAmount);
             dto.setTotalInsuranceAmount(insuranceAmount);
             dto.setDiscountAmount(discountAmount);
             dto.setSubtotal(subtotal);
             dto.setVatAmount(vatAmount);
             dto.setTotalAmount(totalAmount);
             dto.setDepositAmount(depositAmount);
-            dto.setBaseRentalPrice(baseAmount);
             
             LOGGER.info("=== END PRICING CALCULATION ===");
             LOGGER.info("Final deposit amount: " + depositAmount + " (DB value) - JSP will show with 000 VND suffix");
@@ -523,93 +547,17 @@ public class DepositService implements IDepositService {
             
             // Nếu lỗi, dùng giá trị mặc định để tránh crash
             double baseAmount = booking.getTotalAmount();
+            dto.setBaseRentalPrice(baseAmount);
             dto.setTotalInsuranceAmount(0.0);
             dto.setDiscountAmount(0.0);
             dto.setSubtotal(baseAmount);
             dto.setVatAmount(baseAmount * VAT_PERCENTAGE);
             dto.setTotalAmount(baseAmount * (1 + VAT_PERCENTAGE));
-            dto.setDepositAmount(baseAmount * (1 + VAT_PERCENTAGE) * DEPOSIT_PERCENTAGE);
+            dto.setDepositAmount(300.0); // 300.000 VND = 300 đơn vị DB
         }
     }
 
-    /**
-     * Tính tổng phí bảo hiểm - BAO GỒM BẢO HIỂM VẬT CHẤT
-     * LƯU Ý: Trả về giá trị DB để đồng nhất với logic tính toán
-     */
-    private double getTotalInsuranceAmount(Booking booking) throws Exception {
-        // Lấy từ database các bảo hiểm đã có (giá trị DB)
-        double existingInsuranceAmount = depositRepository.getTotalInsuranceAmount(booking.getBookingId());
-        
-        LOGGER.info("Existing insurance from DB: " + existingInsuranceAmount + " (DB value)");
-        
-        // Kiểm tra xem có bảo hiểm vật chất từ DB chưa
-        List<BookingInsurance> bookingInsurances = depositRepository.getBookingInsurancesByBookingId(booking.getBookingId());
-        boolean hasVehicleInsuranceFromDB = false;
-        
-        for (BookingInsurance bookingInsurance : bookingInsurances) {
-            Insurance insurance = depositRepository.getInsuranceById(bookingInsurance.getInsuranceId());
-            if (insurance != null && 
-                ("VatChat".equals(insurance.getInsuranceType()) || 
-                 insurance.getInsuranceName().toLowerCase().contains("vật chất")) &&
-                bookingInsurance.getPremiumAmount() > 0) {
-                hasVehicleInsuranceFromDB = true;
-                LOGGER.info("Vehicle insurance found in DB with valid premium: " + bookingInsurance.getPremiumAmount() + " (DB value)");
-                break;
-            }
-        }
-        
-        // CHỈ THÊM bảo hiểm vật chất tính toán NẾU CHƯA CÓ TRONG DATABASE
-        if (!hasVehicleInsuranceFromDB) {
-            // Tính phí bảo hiểm vật chất per day (đơn vị DB)
-            double vehicleInsurancePerDay = calculateVehicleInsurance(booking);
-            
-            // Tính số ngày thuê
-            DurationResult durationResult = calculateDuration(
-                booking.getPickupDateTime(), 
-                booking.getReturnDateTime(), 
-                booking.getRentalType() != null ? booking.getRentalType() : "daily"
-            );
-            
-            double rentalDays = durationResult.getBillingUnitsAsDouble();
-            
-            // Chuyển đổi về ngày nếu cần
-            if ("hour".equals(durationResult.getUnitType())) {
-                rentalDays = rentalDays / 24.0;
-            } else if ("month".equals(durationResult.getUnitType())) {
-                rentalDays = rentalDays * 30;
-            }
-            
-            if (rentalDays <= 0) {
-                rentalDays = 1;
-            }
-            
-            // Tổng phí = phí per day × số ngày (đơn vị DB)
-            double totalVehicleInsurance = vehicleInsurancePerDay * rentalDays;
-            
-            // Kiểm tra xem có bảo hiểm vật chất với premium = 0 không
-            double vehicleInsuranceFromDB = 0;
-            for (BookingInsurance bookingInsurance : bookingInsurances) {
-                Insurance insurance = depositRepository.getInsuranceById(bookingInsurance.getInsuranceId());
-                if (insurance != null && 
-                    ("VatChat".equals(insurance.getInsuranceType()) || 
-                     insurance.getInsuranceName().toLowerCase().contains("vật chất"))) {
-                    vehicleInsuranceFromDB = bookingInsurance.getPremiumAmount() * rentalDays;
-                    break;
-                }
-            }
-            
-            // Thay thế phí bảo hiểm vật chất 0 bằng phí tính toán
-            double finalTotal = existingInsuranceAmount - vehicleInsuranceFromDB + totalVehicleInsurance;
-            
-            LOGGER.info("Replacing vehicle insurance: " + vehicleInsuranceFromDB + " → " + totalVehicleInsurance + 
-                       " (calculated " + vehicleInsurancePerDay + "/day × " + rentalDays + " days)");
-            LOGGER.info("Final total insurance: " + finalTotal + " (DB value)");
-            return finalTotal;
-        } else {
-            LOGGER.info("Using existing insurance amount only: " + existingInsuranceAmount + " (DB value) - JSP will format with 000 VND");
-            return existingInsuranceAmount;
-        }
-    }
+    // Phương thức getTotalInsuranceAmount đã được xóa và sử dụng trực tiếp từ repository
     
     /**
      * Ước tính giá thuê/ngày từ booking.totalAmount
