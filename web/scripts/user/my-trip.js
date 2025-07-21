@@ -1,4 +1,11 @@
 document.addEventListener('DOMContentLoaded', function () {
+    // Fix for LogoutModal error
+    if (document.getElementById('logoutConfirmModal')) {
+        console.log('LogoutModal element found');
+    } else {
+        console.log('LogoutModal element not found, this is expected if it was included via JSP include');
+    }
+
     let bookingIdToCancel = null;
     let bookingIdToReturn = null;
     // Khi ấn nút Return Car
@@ -50,19 +57,51 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Handle Send Review buttons
+    // Handle Send Review and View Feedback buttons
     document.addEventListener('click', function(e) {
         if (e.target.classList.contains('btn-mytrip-blue') || 
-            e.target.closest('.btn-mytrip-blue')) {
-            const bookingId = e.target.getAttribute('data-booking-id') || 
-                             e.target.closest('[data-booking-id]')?.getAttribute('data-booking-id');
-            const buttonText = e.target.textContent.trim();
+            e.target.closest('.btn-mytrip-blue') ||
+            e.target.classList.contains('btn-mytrip-green') ||
+            e.target.closest('.btn-mytrip-green')) {
+            
+            const button = e.target.classList.contains('btn-mytrip-blue') || e.target.classList.contains('btn-mytrip-green') ? 
+                e.target : e.target.closest('.btn-mytrip-blue, .btn-mytrip-green');
+            
+            if (!button) return;
+            
+            const bookingId = button.getAttribute('data-booking-id');
+            const carId = button.getAttribute('data-car-id');
+            const buttonText = button.textContent.trim();
+            
+            console.log('Button clicked:', buttonText);
+            console.log('Booking ID:', bookingId);
+            console.log('Car ID:', carId);
+            
+            if (!carId) {
+                console.error('Missing car ID for button:', button);
+                alert('Error: Car ID is missing. Please try again later.');
+                return;
+            }
             
             if (buttonText === 'Send review') {
                 if (confirm('Do you want to send a review for this trip?')) {
-                    // TODO: Open review modal or redirect to review page
-                    console.log('Send review for booking: ' + bookingId);
-                    // window.location.href = '/pages/review?bookingId=' + bookingId;
+                    try {
+                        // Redirect to car-single.jsp with the review section active
+                        console.log('Redirecting to:', contextPath + '/pages/car-single?id=' + carId + '&bookingId=' + bookingId + '#pills-review');
+                        window.location.href = contextPath + '/pages/car-single?id=' + carId + '&bookingId=' + bookingId + '#pills-review';
+                    } catch (error) {
+                        console.error('Error redirecting to review page:', error);
+                        alert('Error redirecting to review page. Please try again later.');
+                    }
+                }
+            } else if (buttonText === 'View feedback') {
+                try {
+                    // Redirect to car-single.jsp with the review section active
+                    console.log('Redirecting to:', contextPath + '/pages/car-single?id=' + carId + '&viewFeedback=true&bookingId=' + bookingId + '#pills-review');
+                    window.location.href = contextPath + '/pages/car-single?id=' + carId + '&viewFeedback=true&bookingId=' + bookingId + '#pills-review';
+                } catch (error) {
+                    console.error('Error redirecting to feedback page:', error);
+                    alert('Error redirecting to feedback page. Please try again later.');
                 }
             }
         }
@@ -149,10 +188,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Handle trip history cards (now using same structure as current trips)
-    // The existing event handlers for btn-mytrip-green, btn-mytrip-red, and btn-detail 
-    // will automatically work for trip history cards as well since they use the same classes
-
     // Add hover effects for better UX
     document.querySelectorAll('.btn-mytrip-action').forEach(function(btn) {
         btn.addEventListener('mouseenter', function() {
@@ -173,7 +208,4 @@ document.addEventListener('DOMContentLoaded', function () {
             e.stopPropagation();
         });
     });
-
-    
-
 });
