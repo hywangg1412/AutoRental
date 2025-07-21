@@ -408,14 +408,6 @@ public class BookingInfoDTO {
         this.insuranceDetails = insuranceDetails;
     }
 
-    public boolean isHasFeedback() {
-        return hasFeedback;
-    }
-
-    public void setHasFeedback(boolean hasFeedback) {
-        this.hasFeedback = hasFeedback;
-    }
-
     // --- End of Getters and Setters ---
 
     public double getBasicInsuranceFee() {
