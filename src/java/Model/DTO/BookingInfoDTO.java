@@ -41,6 +41,7 @@ public class BookingInfoDTO {
     private String carModel;
     private String carLicensePlate; // Biển số xe
     private String carStatus;
+    private UUID carId; // Add car ID field for feedback/review functionality
 
     // Driver License Information
     private String driverLicenseImageUrl;
@@ -67,6 +68,7 @@ public class BookingInfoDTO {
     private List<InsuranceDetailDTO> insuranceDetails;
     private double basicInsuranceFee;
     private double additionalInsuranceFee;
+
 
     private boolean hasFeedback;
 
@@ -291,6 +293,14 @@ public class BookingInfoDTO {
         this.carStatus = carStatus;
     }
 
+    public UUID getCarId() {
+        return carId;
+    }
+
+    public void setCarId(UUID carId) {
+        this.carId = carId;
+    }
+
     public String getDriverLicenseImageUrl() {
         return driverLicenseImageUrl;
     }
@@ -397,6 +407,16 @@ public class BookingInfoDTO {
     public void setInsuranceDetails(List<InsuranceDetailDTO> insuranceDetails) {
         this.insuranceDetails = insuranceDetails;
     }
+
+    public boolean isHasFeedback() {
+        return hasFeedback;
+    }
+
+    public void setHasFeedback(boolean hasFeedback) {
+        this.hasFeedback = hasFeedback;
+    }
+
+    // --- End of Getters and Setters ---
 
     public double getBasicInsuranceFee() {
         return basicInsuranceFee;

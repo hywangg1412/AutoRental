@@ -1,6 +1,7 @@
 package Controller.User;
 
 import Model.DTO.BookingInfoDTO;
+import Model.DTO.UserFeedbackDTO;
 import Model.Entity.Booking.Booking;
 import Model.Entity.Car.Car;
 import Model.Entity.User.User;
@@ -9,6 +10,8 @@ import Repository.Car.CarRepository;
 import Repository.Car.CarImageRepository;
 import Service.Booking.BookingService;
 import Service.Car.CarImageService;
+import Service.Interfaces.IUserFeedbackService;
+import Service.UserFeedbackService;
 import Utils.SessionUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -29,12 +32,14 @@ public class UserBookingListServlet extends HttpServlet {
     private CarRepository carRepository;
     private CarImageRepository carImageRepository;
     private CarImageService carImageService;
+    private IUserFeedbackService userFeedbackService;
 
     @Override
     public void init() {
         bookingService = new BookingService();
         carRepository = new CarRepository();
         carImageService = new CarImageService();
+        userFeedbackService = new UserFeedbackService();
     }
 
     @Override
@@ -89,12 +94,23 @@ public class UserBookingListServlet extends HttpServlet {
                     dto.setCarLicensePlate(car.getLicensePlate());
                     dto.setCarStatus(car.getStatus() != null ? car.getStatus().getValue() : "");
                 }
+                // Set the car ID for use in the feedback/review functionality
+                dto.setCarId(booking.getCarId());
                 String carImg = carImageMap.getOrDefault(booking.getCarId(), "/images/car-default.jpg");
                 dto.setCarImage(carImg);
                 if (booking.getPickupDateTime() != null && booking.getReturnDateTime() != null) {
                     long duration = java.time.Duration.between(booking.getPickupDateTime(), booking.getReturnDateTime()).toDays();
                     dto.setDuration(duration > 0 ? duration : 1);
                 }
+                
+                // Check if the booking has feedback
+                try {
+                    UserFeedbackDTO feedback = userFeedbackService.getFeedbackByBookingId(booking.getBookingId());
+                    dto.setHasFeedback(feedback != null);
+                } catch (Exception e) {
+                    dto.setHasFeedback(false);
+                }
+                
                 if (BookingStatusConstants.PENDING.equals(booking.getStatus()) || 
                     BookingStatusConstants.CONFIRMED.equals(booking.getStatus()) || 
                     BookingStatusConstants.IN_PROGRESS.equals(booking.getStatus()) ||
