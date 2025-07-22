@@ -47,8 +47,8 @@ INSERT INTO CarBrand (BrandId, BrandName) VALUES
 
 -- TransmissionType
 INSERT INTO TransmissionType (TransmissionTypeId, TransmissionName) VALUES
-('33333333-3333-3333-3333-333333333333', N'Manual Transmission'),
-('44444444-4444-4444-4444-444444444444', N'Automatic Transmission');
+('33333333-3333-3333-3333-333333333333', N'Manual'),
+('44444444-4444-4444-4444-444444444444', N'Automatic');
 
 -- FuelType
 INSERT INTO FuelType (FuelTypeId, FuelName) VALUES

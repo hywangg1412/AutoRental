@@ -183,7 +183,7 @@ public class CarRepository implements ICarRepository {
         // Lấy features cho tất cả xe
         java.util.Map<UUID, Set<UUID>> carFeaturesMap = getCarFeaturesForCars(carIds);
         for (Car car : cars) {
-            car.setFeatureIds(carFeaturesMap.getOrDefault(car.getCarId(), new java.util.HashSet<>())) ;
+            car.setFeatureIds(carFeaturesMap.getOrDefault(car.getCarId(), new HashSet<>())) ;
         }
         return cars;
     }
@@ -268,7 +268,7 @@ public class CarRepository implements ICarRepository {
         // Lấy features cho tất cả xe
         java.util.Map<UUID, Set<UUID>> carFeaturesMap = getCarFeaturesForCars(carIds);
         for (Car car : cars) {
-            car.setFeatureIds(carFeaturesMap.getOrDefault(car.getCarId(), new java.util.HashSet<>()));
+            car.setFeatureIds(carFeaturesMap.getOrDefault(car.getCarId(), new HashSet<>()));
         }
         return cars;
     }
@@ -327,7 +327,7 @@ public class CarRepository implements ICarRepository {
         // Lấy features cho tất cả xe
         java.util.Map<UUID, Set<UUID>> carFeaturesMap = getCarFeaturesForCars(carIds);
         for (Car car : cars) {
-            car.setFeatureIds(carFeaturesMap.getOrDefault(car.getCarId(), new java.util.HashSet<>()));
+            car.setFeatureIds(carFeaturesMap.getOrDefault(car.getCarId(), new HashSet<>()));
         }
         return cars;
     }
@@ -503,7 +503,7 @@ public class CarRepository implements ICarRepository {
         // Lấy features cho tất cả xe
         java.util.Map<UUID, Set<UUID>> carFeaturesMap = getCarFeaturesForCars(carIds);
         for (Car car : cars) {
-            car.setFeatureIds(carFeaturesMap.getOrDefault(car.getCarId(), new java.util.HashSet<>()));
+            car.setFeatureIds(carFeaturesMap.getOrDefault(car.getCarId(), new HashSet<>()));
         }
         return cars;
     }
@@ -689,14 +689,14 @@ public class CarRepository implements ICarRepository {
                 FROM CarImages
                 WHERE IsMain = 1
             ) ci ON c.CarId = ci.CarId
-            ORDER BY c.CreatedDate DESC
+            ORDER BY NEWID() -- Random xe mỗi lần reload (SQL Server)
             OFFSET 0 ROWS FETCH NEXT ? ROWS ONLY
         """;
         java.util.List<java.util.UUID> carIds = new java.util.ArrayList<>();
-        try (var conn = dbContext.getConnection();
-             var ps = conn.prepareStatement(sql)) {
+        try (java.sql.Connection conn = dbContext.getConnection();
+             java.sql.PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, limit);
-            try (var rs = ps.executeQuery()) {
+            try (java.sql.ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     CarListItemDTO dto = new CarListItemDTO();
                     java.util.UUID carId = java.util.UUID.fromString(rs.getString("CarId"));
@@ -752,13 +752,13 @@ public class CarRepository implements ICarRepository {
                 while (rs.next()) {
                     UUID carId = UUID.fromString(rs.getString("CarId"));
                     UUID featureId = UUID.fromString(rs.getString("FeatureId"));
-                    carFeaturesMap.computeIfAbsent(carId, k -> new java.util.HashSet<>()).add(featureId);
+                    carFeaturesMap.computeIfAbsent(carId, k -> new HashSet<>()).add(featureId);
                 }
             }
         }
         // Đảm bảo tất cả carId đều có entry (có thể là set rỗng)
         for (UUID carId : carIds) {
-            carFeaturesMap.putIfAbsent(carId, new java.util.HashSet<>());
+            carFeaturesMap.putIfAbsent(carId, new HashSet<>());
         }
         return carFeaturesMap;
     }
