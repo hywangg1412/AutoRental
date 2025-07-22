@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import Config.DBContext;
+import Model.Constants.BookingStatusConstants;
 import Model.Entity.Booking.Booking;
 import Repository.Interfaces.IBooking.IBookingRepository;
 
@@ -353,5 +354,113 @@ public class BookingRepository implements IBookingRepository {
         }
         return bookings;
     }
-
+    
+    
+    @Override
+    public boolean hasCompletedBookingWithoutReview(UUID userId, UUID carId) throws SQLException {
+        // Kiểm tra xem người dùng có booking hoàn thành cho xe này không
+        // Không cần kiểm tra đã có đánh giá hay chưa, chỉ cần có booking hoàn thành
+        String sql = "SELECT COUNT(*) FROM Booking WHERE UserId = ? AND CarId = ? AND Status = ?";
+    try (Connection conn = dbContext.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        stmt.setString(1, userId.toString());
+        stmt.setString(2, carId.toString());
+        stmt.setString(3, BookingStatusConstants.COMPLETED);
+        try (ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+            return false;
+        }
+    }
 }
+
+    @Override
+    public UUID findCompletedBookingWithoutReview(UUID userId, UUID carId) throws SQLException {
+        // Tìm booking hoàn thành chưa có đánh giá cho xe cụ thể
+        // Trả về booking gần đây nhất chưa có đánh giá
+    String sql = "SELECT TOP 1 b.BookingId FROM Booking b " +
+                "LEFT JOIN UserFeedback f ON b.BookingId = f.BookingId " +
+                "WHERE b.UserId = ? AND b.CarId = ? AND b.Status = ? AND f.FeedbackId IS NULL " +
+                "ORDER BY b.ReturnDateTime DESC";
+    try (Connection conn = dbContext.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        stmt.setString(1, userId.toString());
+        stmt.setString(2, carId.toString());
+        stmt.setString(3, BookingStatusConstants.COMPLETED);
+        try (ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return UUID.fromString(rs.getString("BookingId"));
+            }
+            return null;
+        }
+    }
+    }
+    
+    /**
+     * Tìm tất cả các booking hoàn thành chưa có đánh giá cho một người dùng và một xe
+     * @param userId ID của người dùng
+     * @param carId ID của xe
+     * @return Danh sách các booking ID
+     * @throws SQLException Nếu có lỗi truy vấn database
+     */
+    public List<UUID> findAllCompletedBookingsWithoutReview(UUID userId, UUID carId) throws SQLException {
+        List<UUID> bookingIds = new ArrayList<>();
+        
+        String sql = "SELECT b.BookingId FROM Booking b " +
+                "LEFT JOIN UserFeedback f ON b.BookingId = f.BookingId " +
+                "WHERE b.UserId = ? AND b.CarId = ? AND b.Status = ? AND f.FeedbackId IS NULL " +
+                "ORDER BY b.ReturnDateTime DESC";
+        
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, userId.toString());
+            stmt.setString(2, carId.toString());
+            stmt.setString(3, BookingStatusConstants.COMPLETED);
+try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    bookingIds.add(UUID.fromString(rs.getString("BookingId")));
+                }
+            }
+        }
+        
+        return bookingIds;
+}
+
+    /**
+     * Kiểm tra xem người dùng có booking đã hoàn thành cho một chiếc xe cụ thể hay không
+     * @param userId ID của người dùng
+     * @param carId ID của xe
+     * @return true nếu người dùng có ít nhất một booking đã hoàn thành cho xe này
+     * @throws SQLException nếu có lỗi truy vấn cơ sở dữ liệu
+     */
+    public boolean hasCompletedBookings(UUID userId, UUID carId) throws SQLException {
+        if (userId == null || carId == null) {
+            throw new IllegalArgumentException("User ID and Car ID cannot be null");
+        }
+        
+        String sql = "SELECT COUNT(*) FROM Booking b " +
+                     "JOIN Car c ON b.CarId = c.CarId " +
+                     "WHERE b.UserId = ? AND c.CarId = ? AND b.Status = ?";
+        
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setObject(1, userId);
+            ps.setObject(2, carId);
+            ps.setString(3, BookingStatusConstants.COMPLETED);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+                return false;
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error checking if user has completed bookings for car: " + e.getMessage(), e);
+            throw e;
+        }
+    }
+}
+
+

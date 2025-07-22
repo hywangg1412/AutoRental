@@ -16,6 +16,8 @@ import Repository.Booking.BookingRepository;
 import Repository.Car.CarRepository;
 import Repository.User.DriverLicenseRepository;
 import Repository.User.UserRepository;
+import Service.Booking.BookingService;
+import Model.DTO.DurationResult;
 
 /**
  * This service handles business logic for staff-related booking operations. It
@@ -109,12 +111,8 @@ public class StaffBookingService {
 
                     // *** SỬA LOGIC TÍNH DURATION - GIỐNG BOOKING-FORM-DETAIL.JS ***
                     if (booking.getPickupDateTime() != null && booking.getReturnDateTime() != null) {
-                        double accurateDuration = calculateAccurateDuration(
-                                booking.getPickupDateTime(),
-                                booking.getReturnDateTime(),
-                                booking.getRentalType()
-                        );
-                        dto.setDuration(accurateDuration); // *** KHÔNG LÀM TRÒN - GIỮ NGUYÊN SỐ THẬP PHÂN ***
+                        // Sử dụng phương thức mới để đặt cả duration và formattedDuration
+                        setFormattedDuration(dto, booking.getPickupDateTime(), booking.getReturnDateTime(), booking.getRentalType());
                     } else {
                         dto.setDuration(1.0); // Fallback
                     }
@@ -188,31 +186,50 @@ public class StaffBookingService {
             return 1.0;
         }
 
-        Duration javaDuration = Duration.between(start, end);
-        double result;
-
-        // Logic giống hệt booking-form-detail.js
-        switch (rentalType != null ? rentalType.toLowerCase() : "daily") {
-            case "hourly":
-                double hours = javaDuration.toMinutes() / 60.0;
-                result = Math.max(Math.ceil(hours), 4.0); // Minimum 4 hours, làm tròn lên
-                break;
-            case "daily":
-                double totalHours = javaDuration.toMinutes() / 60.0;
-                double days = totalHours / 24.0;
-                result = Math.max(days, 0.5); // Minimum 0.5 days - KHÔNG LÀM TRÒN
-                break;
-            case "monthly":
-                double totalDays = javaDuration.toHours() / 24.0;
-                double months = totalDays / 30.0;
-                result = Math.max(months, 0.5); // Minimum 0.5 months
-                break;
-            default:
-                // Fallback cho trường hợp không có rentalType
-                result = Math.max(javaDuration.toDays(), 1);
+        try {
+            // Sử dụng lại logic từ BookingService để tính duration
+            BookingService bookingService = new BookingService();
+            DurationResult durationResult = bookingService.calculateDuration(start, end, rentalType);
+            
+            // Log thông tin duration để debug
+            LOGGER.info("Duration calculated: " + durationResult.toString());
+            
+            // Trả về giá trị số của duration
+            return durationResult.getBillingUnitsAsDouble();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error calculating duration", e);
+            return 1.0; // Fallback
+        }
+    }
+    
+    // Thêm phương thức mới để đặt formattedDuration cho DTO
+    private void setFormattedDuration(BookingInfoDTO dto, java.time.LocalDateTime start, java.time.LocalDateTime end, String rentalType) {
+        if (start == null || end == null) {
+            dto.setDuration(1.0);
+            return;
         }
 
-        return result;
+        try {
+            // Sử dụng lại logic từ BookingService để tính duration
+            BookingService bookingService = new BookingService();
+            DurationResult durationResult = bookingService.calculateDuration(start, end, rentalType);
+            
+            // Đặt giá trị số và chuỗi đã format cho DTO
+            dto.setDuration(durationResult.getBillingUnitsAsDouble());
+            
+            // Nếu DurationResult có formattedDuration, sử dụng nó
+            if (durationResult.getFormattedDuration() != null) {
+                dto.setFormattedDuration(durationResult.getFormattedDuration());
+            }
+            
+            // Log thông tin duration để debug
+            LOGGER.info("Duration set for booking: " + durationResult.toString());
+            LOGGER.info("Formatted duration: " + dto.getFormattedDuration());
+            
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error setting formatted duration", e);
+            dto.setDuration(1.0);
+        }
     }
 
     // *** THÊM METHOD XÁC ĐỊNH DEPOSIT STATUS DỰA TRÊN BOOKING STATUS ***
@@ -352,12 +369,8 @@ public class StaffBookingService {
 
                     // *** SỬA LOGIC TÍNH DURATION CHO PAGED CŨNG VẬY ***
                     if (booking.getPickupDateTime() != null && booking.getReturnDateTime() != null) {
-                        double accurateDuration = calculateAccurateDuration(
-                                booking.getPickupDateTime(),
-                                booking.getReturnDateTime(),
-                                booking.getRentalType()
-                        );
-                        dto.setDuration(accurateDuration); // *** KHÔNG LÀM TRÒN ***
+                        // Sử dụng phương thức mới để đặt cả duration và formattedDuration
+                        setFormattedDuration(dto, booking.getPickupDateTime(), booking.getReturnDateTime(), booking.getRentalType());
                     } else {
                         dto.setDuration(1.0);
                     }

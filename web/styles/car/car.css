@@ -630,3 +630,16 @@ nav.ftco-navbar-light .nav-link {
     border-color: #01D28E;
     transition: background-color 0.2s, border-color 0.2s;
 }
+
+.car-status-inline.status-available {
+    background: #22c55e !important;
+    color: #fff !important;
+}
+.car-status-inline.status-rented {
+    background: #fbbf24 !important;
+    color: #fff !important;
+}
+.car-status-inline.status-unavailable {
+    background: #ef4444 !important;
+    color: #fff !important;
+}

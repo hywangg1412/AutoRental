@@ -218,11 +218,11 @@
                                                                 </div>
                                                                 <div class="col-md-6">
                                                                     <label class="form-label">Duration</label>
-                                                                    <p>${booking.formattedDuration != null ? booking.formattedDuration : booking.duration} ${booking.rentalType == 'hourly' ? 'hours' : (booking.rentalType == 'monthly' ? 'months' : 'days')}</p>
+                                                                    <p>${booking.formattedDuration}</p>
                                                                 </div>
                                                                 <div class="col-md-6">
                                                                     <label class="form-label">Total Amount</label>
-                                                                    <p class="fw-bold">${booking.totalAmount}.000 VND</p>
+                                                                    <p class="fw-bold">${booking.formattedTotalAmount}</p>
                                                                 </div>
                                                             </div>
                                                             <!-- Payment Info -->
@@ -410,7 +410,7 @@
                                                 </c:choose>
                                             </td>
                                             <td>
-                                                <fmt:formatNumber value="${booking.totalAmount}" type="currency" currencySymbol=".000 VND" />
+                                                ${booking.formattedTotalAmount}
                                             </td>
                                             <td>
                                                 <div class="d-flex gap-2">

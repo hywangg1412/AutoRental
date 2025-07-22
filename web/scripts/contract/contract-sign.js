@@ -110,7 +110,6 @@ const signForm = document.getElementById('signForm');
         signForm.addEventListener('submit', function (e) {
             const method = document.getElementById('signatureMethodHidden').value;
             if (method === 'upload' && document.getElementById('signatureImageInput').files.length > 0) {
-                // Lấy base64 ảnh upload
                 e.preventDefault();
                 const file = document.getElementById('signatureImageInput').files[0];
                 const reader = new FileReader();
@@ -120,7 +119,6 @@ const signForm = document.getElementById('signForm');
                 };
                 reader.readAsDataURL(file);
             } else if (method === 'type') {
-                // Lấy text nhập làm signatureData
                 const typed = document.getElementById('typedSignatureInput').value.trim();
                 const fullName = document.getElementById('typedFullNameInput').value.trim();
                 if (!typed) {
@@ -129,15 +127,21 @@ const signForm = document.getElementById('signForm');
                     return;
                 }
                 if (!fullName) {
-        e.preventDefault();
+                    e.preventDefault();
                     document.getElementById('signStatus').textContent = 'Please enter your full name.';
                     return;
                 }
                 document.getElementById('signatureData').value = typed;
                 document.getElementById('fullNameHidden').value = fullName;
             } else {
-                // Lấy base64 từ canvas (giữ nguyên logic cũ trong contract-sign.js)
-                // Nếu đã có logic này trong contract-sign.js thì không cần xử lý lại ở đây
+                // Draw
+                if (window.signaturePadDraw && !window.signaturePadDraw.isEmpty()) {
+                    document.getElementById('signatureData').value = window.signaturePadDraw.toDataURL();
+                } else {
+                    e.preventDefault();
+                    document.getElementById('signStatus').textContent = 'Please draw your signature.';
+                    return;
+                }
             }
         });
     }
