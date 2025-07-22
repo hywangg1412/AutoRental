@@ -20,6 +20,8 @@ public class UserFeedbackDTO {
     private String content;
     private LocalDate reviewed;
     private LocalDateTime createdDate;
+    private String staffReply;
+    private LocalDateTime replyDate;
 
     // Additional fields for display
     private String carModel;
@@ -117,6 +119,22 @@ public class UserFeedbackDTO {
         this.createdDate = createdDate;
     }
 
+    public String getStaffReply() {
+        return staffReply;
+    }
+
+    public void setStaffReply(String staffReply) {
+        this.staffReply = staffReply;
+    }
+
+    public LocalDateTime getReplyDate() {
+        return replyDate;
+    }
+
+    public void setReplyDate(LocalDateTime replyDate) {
+        this.replyDate = replyDate;
+    }
+
     public String getCarModel() {
         return carModel;
     }
@@ -143,6 +161,18 @@ public class UserFeedbackDTO {
         }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         return createdDate.format(formatter);
+    }
+    
+    /**
+     * Get the formatted reply date
+     * @return The formatted date string
+     */
+    public String getFormattedReplyDate() {
+        if (replyDate == null) {
+            return "";
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        return replyDate.format(formatter);
     }
 
     /**
@@ -173,5 +203,13 @@ public class UserFeedbackDTO {
         String fullId = bookingId.toString();
         // Lấy 8 ký tự đầu tiên của UUID
         return fullId.substring(0, 8) + "...";
+    }
+    
+    /**
+     * Check if the feedback has a staff reply
+     * @return true if there is a staff reply, false otherwise
+     */
+    public boolean hasStaffReply() {
+        return staffReply != null && !staffReply.isEmpty();
     }
 } 
