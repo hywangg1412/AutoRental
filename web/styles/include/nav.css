@@ -9,8 +9,9 @@ nav .custom-signup-btn {
   border-radius: 5px !important;
   box-shadow: none !important;
   outline: none !important;
-  border: 2px solid #1089ff !important;
-  background: #fff !important;
+  border: 2px solid #222 !important; /* viền đen */
+  background: #fff !important; /* nền trắng */
+  color: #222 !important; /* chữ đen */
   transition: background 0.2s, color 0.2s, border 0.2s !important;
   padding: 0.25rem 1rem !important;
   font-size: 1rem !important;
@@ -18,24 +19,39 @@ nav .custom-signup-btn {
   height: 38px !important;
 }
 nav .custom-login-btn {
-  color: #1089ff !important;
-  margin-right: 8px !important;
   background: #fff !important;
+  border: 2px solid #222 !important;
+  color: #222 !important;
+  font-weight: 600 !important;
+  border-radius: 5px !important;
+  box-shadow: none !important;
+  outline: none !important;
+  transition: background 0.2s, color 0.2s, border 0.2s !important;
 }
 nav .custom-login-btn:hover, nav .custom-login-btn:focus {
-  background-color: #1089ff !important;
+  background: #222 !important;
   color: #fff !important;
-  border-color: #1089ff !important;
+  border-color: #222 !important;
 }
 nav .custom-signup-btn {
-  color: #fff !important;
-  background: #1089ff !important;
-  margin-left: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  color: #222 !important;
+  /* font-weight: 600 !important; */
+  border-radius: 5px !important;
+  box-shadow: none !important;
+  outline: none !important;
+  transition: none !important;
 }
 nav .custom-signup-btn:hover, nav .custom-signup-btn:focus {
-  background-color: #0056b3 !important;
-  border-color: #0056b3 !important;
-  color: #fff !important;
+  background: transparent !important;
+  color: #222 !important;
+  border: none !important;
+}
+nav .custom-login-btn,
+nav .custom-signup-btn {
+  margin-right: 8px !important;
+  margin-left: 0 !important;
 }
 .vr {
   width: 1px;
@@ -752,6 +768,14 @@ nav .custom-signup-btn:hover, nav .custom-signup-btn:focus {
 .notification-row .fa-times-circle {
   font-size: 15px !important;
   margin-right: 7px;
+}
+
+#ftco-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1050;
 }
 
 
