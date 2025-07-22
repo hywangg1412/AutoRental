@@ -18,15 +18,15 @@ public class UserFeedbackRepository implements IUserFeedbackRepository {
 
     // SQL queries
     private static final String SQL_INSERT = 
-            "INSERT INTO UserFeedback (FeedbackId, UserId, CarId, BookingId, Rating, Content, Reviewed, CreatedDate) " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            "INSERT INTO UserFeedback (FeedbackId, UserId, CarId, BookingId, Rating, Content, Reviewed, CreatedDate, StaffReply, ReplyDate) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
     private static final String SQL_FIND_BY_ID = 
             "SELECT * FROM UserFeedback WHERE FeedbackId = ?";
     
     private static final String SQL_UPDATE = 
             "UPDATE UserFeedback SET UserId = ?, CarId = ?, BookingId = ?, Rating = ?, " +
-            "Content = ?, Reviewed = ? WHERE FeedbackId = ?";
+            "Content = ?, Reviewed = ?, StaffReply = ?, ReplyDate = ? WHERE FeedbackId = ?";
     
     private static final String SQL_DELETE = 
             "DELETE FROM UserFeedback WHERE FeedbackId = ?";
@@ -51,6 +51,12 @@ public class UserFeedbackRepository implements IUserFeedbackRepository {
     
     private static final String SQL_COUNT_FEEDBACK = 
             "SELECT COUNT(*) FROM UserFeedback WHERE CarId = ?";
+            
+    private static final String SQL_ADD_STAFF_REPLY = 
+            "UPDATE UserFeedback SET StaffReply = ?, ReplyDate = ? WHERE FeedbackId = ?";
+            
+    private static final String SQL_FIND_PENDING_REPLIES = 
+            "SELECT * FROM UserFeedback WHERE StaffReply IS NULL OR StaffReply = '' ORDER BY CreatedDate DESC";
 
     public UserFeedbackRepository() {
         this.dbContext = new DBContext();
@@ -74,6 +80,9 @@ public class UserFeedbackRepository implements IUserFeedbackRepository {
             ps.setDate(7, entity.getReviewed() != null ? Date.valueOf(entity.getReviewed()) : null);
             ps.setTimestamp(8, entity.getCreatedDate() != null ? 
                     Timestamp.valueOf(entity.getCreatedDate()) : Timestamp.valueOf(LocalDateTime.now()));
+            ps.setString(9, entity.getStaffReply());
+            ps.setTimestamp(10, entity.getReplyDate() != null ? 
+                    Timestamp.valueOf(entity.getReplyDate()) : null);
             
             int affectedRows = ps.executeUpdate();
             if (affectedRows > 0) {
@@ -126,7 +135,10 @@ public class UserFeedbackRepository implements IUserFeedbackRepository {
             ps.setInt(4, entity.getRating());
             ps.setString(5, entity.getContent());
             ps.setDate(6, entity.getReviewed() != null ? Date.valueOf(entity.getReviewed()) : null);
-            ps.setObject(7, entity.getFeedbackId());
+            ps.setString(7, entity.getStaffReply());
+            ps.setTimestamp(8, entity.getReplyDate() != null ? 
+                    Timestamp.valueOf(entity.getReplyDate()) : null);
+            ps.setObject(9, entity.getFeedbackId());
             
             int affectedRows = ps.executeUpdate();
             return affectedRows > 0;
@@ -321,6 +333,45 @@ public class UserFeedbackRepository implements IUserFeedbackRepository {
         LOGGER.info("approveFeedback called but IsApproved field has been removed");
         return true;
     }
+    
+    @Override
+    public boolean addStaffReply(UUID feedbackId, String reply) throws SQLException {
+        if (feedbackId == null) {
+            throw new IllegalArgumentException("Feedback ID cannot be null");
+        }
+        
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_ADD_STAFF_REPLY)) {
+            
+            ps.setString(1, reply);
+            ps.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
+            ps.setObject(3, feedbackId);
+            
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error adding staff reply to feedback: " + e.getMessage(), e);
+            throw e;
+        }
+    }
+    
+    @Override
+    public List<UserFeedback> findPendingReplies() throws SQLException {
+        List<UserFeedback> feedbackList = new ArrayList<>();
+        
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_FIND_PENDING_REPLIES);
+             ResultSet rs = ps.executeQuery()) {
+            
+            while (rs.next()) {
+                feedbackList.add(mapResultSetToFeedback(rs));
+            }
+            return feedbackList;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error finding pending replies: " + e.getMessage(), e);
+            throw e;
+        }
+    }
 
     private UserFeedback mapResultSetToFeedback(ResultSet rs) throws SQLException {
         UserFeedback feedback = new UserFeedback();
@@ -348,6 +399,13 @@ public class UserFeedbackRepository implements IUserFeedbackRepository {
         Timestamp createdTimestamp = rs.getTimestamp("CreatedDate");
         if (createdTimestamp != null) {
             feedback.setCreatedDate(createdTimestamp.toLocalDateTime());
+        }
+        
+        feedback.setStaffReply(rs.getString("StaffReply"));
+        
+        Timestamp replyTimestamp = rs.getTimestamp("ReplyDate");
+        if (replyTimestamp != null) {
+            feedback.setReplyDate(replyTimestamp.toLocalDateTime());
         }
         
         return feedback;
