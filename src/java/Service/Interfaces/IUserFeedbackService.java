@@ -124,4 +124,51 @@ public interface IUserFeedbackService {
      * @throws Exception If an error occurs
      */
     boolean approveFeedback(UUID feedbackId) throws Exception;
+    
+    /**
+     * Add a staff reply to a feedback
+     * @param feedbackId The feedback ID
+     * @param reply The reply content
+     * @return true if successful, false otherwise
+     * @throws Exception If an error occurs
+     */
+    boolean addStaffReply(UUID feedbackId, String reply) throws Exception;
+    
+    /**
+     * Get all feedback pending staff reply
+     * @return List of feedback DTOs pending reply
+     * @throws Exception If an error occurs
+     */
+    List<UserFeedbackDTO> getPendingReplies() throws Exception;
+    
+    /**
+     * Get all feedback (both responded and pending)
+     * @return List of all feedback DTOs
+     * @throws Exception If an error occurs
+     */
+    List<UserFeedbackDTO> getAllFeedback() throws Exception;
+    
+    /**
+     * Get all feedback that have staff replies
+     * @return List of feedback DTOs with staff replies
+     * @throws Exception If an error occurs
+     */
+    List<UserFeedbackDTO> getRespondedFeedback() throws Exception;
+    
+    /**
+     * Get all feedback with a specific rating
+     * @param rating The rating to filter by (1-5)
+     * @return List of feedback DTOs with the specified rating
+     * @throws Exception If an error occurs
+     */
+    List<UserFeedbackDTO> getFeedbackByRating(int rating) throws Exception;
+    
+    /**
+     * Add a staff reply to multiple feedback entries
+     * @param feedbackIds List of feedback IDs to reply to
+     * @param reply The reply content
+     * @return true if all replies were added successfully, false otherwise
+     * @throws Exception If an error occurs
+     */
+    boolean addBulkStaffReply(List<UUID> feedbackIds, String reply) throws Exception;
 } 

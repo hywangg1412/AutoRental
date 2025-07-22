@@ -16,6 +16,8 @@ public class UserFeedback {
     private String content;
     private LocalDate reviewed;
     private LocalDateTime createdDate;
+    private String staffReply;
+    private LocalDateTime replyDate;
     
     public UserFeedback() {
     }
@@ -95,5 +97,21 @@ public class UserFeedback {
 
     public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
+    }
+    
+    public String getStaffReply() {
+        return staffReply;
+    }
+
+    public void setStaffReply(String staffReply) {
+        this.staffReply = staffReply;
+    }
+
+    public LocalDateTime getReplyDate() {
+        return replyDate;
+    }
+
+    public void setReplyDate(LocalDateTime replyDate) {
+        this.replyDate = replyDate;
     }
 } 

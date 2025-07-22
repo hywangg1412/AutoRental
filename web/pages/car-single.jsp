@@ -239,6 +239,22 @@
                                         <p class="mb-0"><small class="text-muted">Booking Code: ${not empty userReview.bookingCode ? userReview.bookingCode : 'N/A'}</small></p>
                                     </c:if>
                                 </div>
+                                
+                                <!-- Hiển thị phản hồi của nhân viên nếu có -->
+                                <c:if test="${not empty userReview.staffReply}">
+                                    <div class="staff-reply mt-2">
+                                        <div class="staff-reply-header">
+                                            <i class="fas fa-reply"></i>
+                                            <span>Staff Response</span>
+                                            <span class="staff-reply-date">
+                                                ${userReview.formattedReplyDate}
+                                            </span>
+                                        </div>
+                                        <div class="staff-reply-content">
+                                            ${fn:escapeXml(userReview.staffReply)}
+                                        </div>
+                                    </div>
+                                </c:if>
                             </div>
                         </div>
                         
@@ -266,6 +282,22 @@
                                                 <p class="mb-0"><small class="text-muted">Booking Code: ${not empty review.bookingCode ? review.bookingCode : 'N/A'}</small></p>
                                             </c:if>
                                         </div>
+                                        
+                                        <!-- Hiển thị phản hồi của nhân viên nếu có -->
+                                        <c:if test="${not empty review.staffReply}">
+                                            <div class="staff-reply mt-2">
+                                                <div class="staff-reply-header">
+                                                    <i class="fas fa-reply"></i>
+                                                    <span>Staff Response</span>
+                                                    <span class="staff-reply-date">
+                                                        ${review.formattedReplyDate}
+                                                    </span>
+                                                </div>
+                                                <div class="staff-reply-content">
+                                                    ${fn:escapeXml(review.staffReply)}
+                                                </div>
+                                            </div>
+                                        </c:if>
                                     </div>
                                 </div>
                             </c:forEach>
@@ -277,22 +309,38 @@
                             <div class="user-img me-3" style="background-image: url('${not empty review.userAvatar ? fn:escapeXml(review.userAvatar) : pageContext.request.contextPath}/assets/images/person_1.jpg'); width: 60px; height: 60px; border-radius: 50%; background-size: cover;"></div>
                             <div class="desc flex-grow-1">
                                 <div class="d-flex justify-content-between mb-2">
-                                                                    <h5 class="mb-0">${not empty review.username ? fn:escapeXml(review.username) : 'User'}</h5>
-                                                                    <div class="d-flex align-items-center">
-                                                                        <small class="text-muted me-3">${review.formattedCreatedDate}</small>
-                                                                        <!-- Hiển thị nút Edit chỉ khi đánh giá thuộc về người dùng hiện tại -->
-                                <c:if test="${sessionScope.userId == review.userId}">
-                                                                            <button class="btn btn-sm btn-outline-primary edit-feedback" data-bs-toggle="modal" data-bs-target="#editFeedbackModal" data-feedback-id="${review.feedbackId}" data-rating="${review.rating}" data-content="${fn:escapeXml(review.content)}">
-                                                                                <i class="fas fa-edit"></i> Edit
-                                                                            </button>
+                                    <h5 class="mb-0">${not empty review.username ? fn:escapeXml(review.username) : 'User'}</h5>
+                                    <div class="d-flex align-items-center">
+                                        <small class="text-muted me-3">${review.formattedCreatedDate}</small>
+                                        <!-- Hiển thị nút Edit chỉ khi đánh giá thuộc về người dùng hiện tại -->
+                                        <c:if test="${sessionScope.userId == review.userId}">
+                                            <button class="btn btn-sm btn-outline-primary edit-feedback" data-bs-toggle="modal" data-bs-target="#editFeedbackModal" data-feedback-id="${review.feedbackId}" data-rating="${review.rating}" data-content="${fn:escapeXml(review.content)}">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </button>
+                                        </c:if>
+                                    </div>
+                                </div>
+                                <div class="review-content p-3 rounded" style="background-color: #e9ecef;">
+                                    <p class="mb-1"><strong>Rating:</strong> ${review.rating}/5 ${review.ratingStarsHtml}</p>
+                                    <p class="mb-1"><strong>Content:</strong> ${fn:escapeXml(review.content)}</p>
+                                    <p class="mb-0"><strong>Date:</strong> ${review.formattedCreatedDate}</p>
+                                </div>
+                                
+                                <!-- Hiển thị phản hồi của nhân viên nếu có -->
+                                <c:if test="${not empty review.staffReply}">
+                                    <div class="staff-reply mt-2">
+                                        <div class="staff-reply-header">
+                                            <i class="fas fa-reply"></i>
+                                            <span>Staff Response</span>
+                                            <span class="staff-reply-date">
+                                                ${review.formattedReplyDate}
+                                            </span>
+                                        </div>
+                                        <div class="staff-reply-content">
+                                            ${fn:escapeXml(review.staffReply)}
+                                        </div>
+                                    </div>
                                 </c:if>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="review-content p-3 rounded" style="background-color: #e9ecef;">
-                                                                    <p class="mb-1"><strong>Rating:</strong> ${review.rating}/5 ${review.ratingStarsHtml}</p>
-                                                                    <p class="mb-1"><strong>Content:</strong> ${fn:escapeXml(review.content)}</p>
-                                                                    <p class="mb-0"><strong>Date:</strong> ${review.formattedCreatedDate}</p>
-                                                                </div>
                             </div>
                         </div>
                     </c:forEach>

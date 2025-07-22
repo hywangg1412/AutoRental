@@ -1,3 +1,6 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
 <html>
   <head>
@@ -21,6 +24,34 @@
     />
     <!-- Notification CSS -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/staff/staff-notification.css">
+    <style>
+      /* Additional CSS for new features */
+      .bulk-reply-section {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border: 1px solid #dee2e6;
+      }
+      .rating-filter-btn {
+        margin-right: 5px;
+        margin-bottom: 5px;
+      }
+      .rating-star {
+        color: #ffc107;
+      }
+      .feedback-checkbox {
+        width: 18px;
+        height: 18px;
+      }
+      .responded-feedback {
+        background-color: #e8f4f8 !important;
+      }
+      .dropdown-menu {
+        max-height: 300px;
+        overflow-y: auto;
+      }
+    </style>
   </head>
   <body>
     <!-- Sidebar -->
@@ -64,21 +95,11 @@
               <i class="fas fa-clipboard-list"></i> Car Availability
             </a>
           </li>
-          <!-- <li class="nav-item">
-            <a class="nav-link" href="${pageContext.request.contextPath}/pages/staff/staff-damage-reports.jsp">
-              <i class="fas fa-shield-alt"></i> Damage Reports
-            </a>
-          </li> -->
           <li class="nav-item">
-            <a class="nav-link active" href="${pageContext.request.contextPath}/pages/staff/staff-customer-support.jsp">
+            <a class="nav-link active" href="${pageContext.request.contextPath}/staff/feedback-reply">
               <i class="fas fa-comment"></i> Customer Feedback
             </a>
           </li>
-          <!-- <li class="nav-item">
-            <a class="nav-link" href="${pageContext.request.contextPath}/pages/staff/staff-profile.jsp">
-              <i class="fas fa-users"></i> Profile
-            </a>
-          </li> -->
         </ul>
         <hr />
         <ul class="nav flex-column">
@@ -93,7 +114,7 @@
 
     <!-- Main Content -->
     <div class="main-content">
-      <!-- New Header Design -->
+      <!-- Header -->
       <header class="header bg-white border-bottom shadow-sm">
         <div class="container-fluid px-4 py-3">
           <div class="row align-items-center">
@@ -113,6 +134,73 @@
 
       <!-- Customer Support Section -->
       <section id="customer-support" class="section">
+        <!-- Alert Messages -->
+        <c:if test="${not empty successMessage}">
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            ${successMessage}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        </c:if>
+        <c:if test="${not empty errorMessage}">
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            ${errorMessage}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        </c:if>
+        
+        <!-- Bulk Reply Section -->
+        <div class="bulk-reply-section mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0"><i class="fas fa-reply-all me-2"></i>Bulk Reply</h5>
+            <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#bulkReplyCollapse">
+              <i class="fas fa-chevron-down"></i>
+            </button>
+          </div>
+          
+          <div class="collapse" id="bulkReplyCollapse">
+            <form action="${pageContext.request.contextPath}/staff/feedback-reply" method="post">
+              <input type="hidden" name="action" value="bulk-reply">
+              
+              <div class="mb-3">
+                <label class="form-label">Reply to all reviews with rating:</label>
+                <div class="d-flex flex-wrap">
+                  <a href="${pageContext.request.contextPath}/staff/feedback-reply?filter=rating&rating=5" class="btn btn-outline-warning rating-filter-btn">
+                    <i class="fas fa-star rating-star"></i><i class="fas fa-star rating-star"></i><i class="fas fa-star rating-star"></i><i class="fas fa-star rating-star"></i><i class="fas fa-star rating-star"></i>
+                  </a>
+                  <a href="${pageContext.request.contextPath}/staff/feedback-reply?filter=rating&rating=4" class="btn btn-outline-warning rating-filter-btn">
+                    <i class="fas fa-star rating-star"></i><i class="fas fa-star rating-star"></i><i class="fas fa-star rating-star"></i><i class="fas fa-star rating-star"></i><i class="far fa-star rating-star"></i>
+                  </a>
+                  <a href="${pageContext.request.contextPath}/staff/feedback-reply?filter=rating&rating=3" class="btn btn-outline-warning rating-filter-btn">
+                    <i class="fas fa-star rating-star"></i><i class="fas fa-star rating-star"></i><i class="fas fa-star rating-star"></i><i class="far fa-star rating-star"></i><i class="far fa-star rating-star"></i>
+                  </a>
+                  <a href="${pageContext.request.contextPath}/staff/feedback-reply?filter=rating&rating=2" class="btn btn-outline-warning rating-filter-btn">
+                    <i class="fas fa-star rating-star"></i><i class="fas fa-star rating-star"></i><i class="far fa-star rating-star"></i><i class="far fa-star rating-star"></i><i class="far fa-star rating-star"></i>
+                  </a>
+                  <a href="${pageContext.request.contextPath}/staff/feedback-reply?filter=rating&rating=1" class="btn btn-outline-warning rating-filter-btn">
+                    <i class="fas fa-star rating-star"></i><i class="far fa-star rating-star"></i><i class="far fa-star rating-star"></i><i class="far fa-star rating-star"></i><i class="far fa-star rating-star"></i>
+                  </a>
+                </div>
+              </div>
+              
+              <c:if test="${currentRating != null}">
+                <div class="mb-3">
+                  <label for="bulkReplyContent" class="form-label">Reply to all ${currentRating}-star reviews without replies:</label>
+                  <input type="hidden" name="bulkRating" value="${currentRating}">
+                  <textarea class="form-control" name="bulkReplyContent" id="bulkReplyContent" rows="3" required placeholder="Enter your reply to all ${currentRating}-star reviews..."></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-paper-plane me-1"></i>Send Bulk Reply
+                </button>
+              </c:if>
+              
+              <c:if test="${currentRating == null}">
+                <p class="text-muted">Select a star rating above to reply to all reviews with that rating.</p>
+              </c:if>
+            </form>
+          </div>
+        </div>
+        
         <!-- Customer Ratings Section -->
         <div class="card mb-4">
           <div
@@ -133,26 +221,45 @@
                   type="text"
                   class="form-control form-control-sm"
                   placeholder="Search by customer name or review content..."
+                  id="searchInput"
                 />
               </div>
-              <select class="form-select form-select-sm" style="width: auto">
-                <option value="all">All Reviews</option>
-                <option value="responded">Responded</option>
-                <option value="pending">Pending Response</option>
-              </select>
-              <button class="btn btn-primary btn-sm">
+              <div class="dropdown">
+                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                  <c:choose>
+                    <c:when test="${currentFilter == 'pending'}">Pending Response</c:when>
+                    <c:when test="${currentFilter == 'responded'}">Responded</c:when>
+                    <c:when test="${currentFilter == 'rating' && currentRating != null}">${currentRating} Star Reviews</c:when>
+                    <c:otherwise>All Reviews</c:otherwise>
+                  </c:choose>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="filterDropdown">
+                  <li><a class="dropdown-item ${currentFilter == 'all' ? 'active' : ''}" href="${pageContext.request.contextPath}/staff/feedback-reply?filter=all">All Reviews</a></li>
+                  <li><a class="dropdown-item ${currentFilter == 'responded' ? 'active' : ''}" href="${pageContext.request.contextPath}/staff/feedback-reply?filter=responded">Responded</a></li>
+                  <li><a class="dropdown-item ${currentFilter == 'pending' ? 'active' : ''}" href="${pageContext.request.contextPath}/staff/feedback-reply?filter=pending">Pending Response</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><h6 class="dropdown-header">Filter by Rating</h6></li>
+                  <li><a class="dropdown-item ${currentFilter == 'rating' && currentRating == 5 ? 'active' : ''}" href="${pageContext.request.contextPath}/staff/feedback-reply?filter=rating&rating=5">5 Star Reviews</a></li>
+                  <li><a class="dropdown-item ${currentFilter == 'rating' && currentRating == 4 ? 'active' : ''}" href="${pageContext.request.contextPath}/staff/feedback-reply?filter=rating&rating=4">4 Star Reviews</a></li>
+                  <li><a class="dropdown-item ${currentFilter == 'rating' && currentRating == 3 ? 'active' : ''}" href="${pageContext.request.contextPath}/staff/feedback-reply?filter=rating&rating=3">3 Star Reviews</a></li>
+                  <li><a class="dropdown-item ${currentFilter == 'rating' && currentRating == 2 ? 'active' : ''}" href="${pageContext.request.contextPath}/staff/feedback-reply?filter=rating&rating=2">2 Star Reviews</a></li>
+                  <li><a class="dropdown-item ${currentFilter == 'rating' && currentRating == 1 ? 'active' : ''}" href="${pageContext.request.contextPath}/staff/feedback-reply?filter=rating&rating=1">1 Star Reviews</a></li>
+                </ul>
+              </div>
+              <button class="btn btn-primary btn-sm" id="filterButton">
                 <i class="fas fa-filter me-1"></i>Filter
               </button>
             </div>
           </div>
           <div class="card-body">
             <div class="table-responsive">
-              <table class="table">
+              <table class="table" id="feedbackTable">
                 <thead>
                   <tr>
                     <th>ID</th>
                     <th>Customer Name</th>
                     <th>Rented Vehicle</th>
+                    <th>Booking Code</th>
                     <th>Rating</th>
                     <th>Review Content</th>
                     <th>Review Date</th>
@@ -161,164 +268,90 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td class="customer-name">John Smith</td>
-                    <td class="vehicle-name">Toyota Camry 2023</td>
-                    <td class="rating">
-                      <i class="fas fa-star text-warning"></i>
-                      <i class="fas fa-star text-warning"></i>
-                      <i class="fas fa-star text-warning"></i>
-                      <i class="fas fa-star text-warning"></i>
-                      <i class="fas fa-star text-warning"></i>
-                    </td>
-                    <td class="comment">
-                      Great service, clean car, friendly staff.
-                    </td>
-                    <td>May 30, 2025</td>
-                    <td>
-                      <span class="status-badge badge-success">Responded</span>
-                    </td>
-                    <td>
-                      <button
-                        class="btn btn-primary btn-sm"
-                        data-bs-toggle="modal"
-                        data-bs-target="#replyModal"
-                      >
-                        <i class="fas fa-reply me-1"></i>Reply
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>2</td>
-                    <td class="customer-name">Sarah Johnson</td>
-                    <td class="vehicle-name">Honda Civic 2022</td>
-                    <td class="rating">
-                      <i class="fas fa-star text-warning"></i>
-                      <i class="fas fa-star text-warning"></i>
-                      <i class="fas fa-star text-warning"></i>
-                      <i class="far fa-star text-warning"></i>
-                      <i class="far fa-star text-warning"></i>
-                    </td>
-                    <td class="comment">
-                      Car was okay but pickup was a bit slow.
-                    </td>
-                    <td>May 29, 2025</td>
-                    <td>
-                      <span class="status-badge badge-warning"
-                        >Pending Response</span
-                      >
-                    </td>
-                    <td>
-                      <button
-                        class="btn btn-primary btn-sm"
-                        data-bs-toggle="modal"
-                        data-bs-target="#replyModal"
-                      >
-                        <i class="fas fa-reply me-1"></i>Reply
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>3</td>
-                    <td class="customer-name">Mike Wilson</td>
-                    <td class="vehicle-name">Tesla Model 3</td>
-                    <td class="rating">
-                      <i class="fas fa-star text-warning"></i>
-                      <i class="fas fa-star text-warning"></i>
-                      <i class="fas fa-star text-warning"></i>
-                      <i class="fas fa-star text-warning"></i>
-                      <i class="far fa-star text-warning"></i>
-                    </td>
-                    <td class="comment">
-                      Modern car, but need clearer usage instructions.
-                    </td>
-                    <td>May 28, 2025</td>
-                    <td>
-                      <span class="status-badge badge-warning"
-                        >Pending Response</span
-                      >
-                    </td>
-                    <td>
-                      <button
-                        class="btn btn-primary btn-sm"
-                        data-bs-toggle="modal"
-                        data-bs-target="#replyModal"
-                      >
-                        <i class="fas fa-reply me-1"></i>Reply
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- Live Chat Support Section -->
-        <!-- <div class="card">
-          <div class="card-header">
-            <h5 class="card-title mb-0">Live Chat Support</h5>
-            <small class="text-muted"
-              >Direct contact with customers for issue resolution</small
-            >
-          </div>
-          <div class="card-body">
-            <div class="table-responsive">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Customer Name</th>
-                    <th>Support Request</th>
-                    <th>Date</th>
-                    <th>Contact</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td class="customer-name">Alice Brown</td>
-                    <td class="support-request">Did not receive contract</td>
-                    <td>May 30, 2025</td>
-                    <td>
-                      <a
-                        href="https://zalo.me/0123456789"
-                        class="btn btn-success btn-sm"
-                        data-bs-toggle="tooltip"
-                        data-bs-placement="top"
-                        title="Chat with customer on Zalo"
-                      >
-                        <i class="fas fa-comment-dots me-1"></i>Zalo
-                      </a>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>2</td>
-                    <td class="customer-name">Bob Green</td>
-                    <td class="support-request">
-                      Need help changing rental time
-                    </td>
-                    <td>May 29, 2025</td>
-                    <td>
-                      <a
-                        href="https://zalo.me/0987654321"
-                        class="btn btn-success btn-sm"
-                        data-bs-toggle="tooltip"
-                        data-bs-placement="top"
-                        title="Chat with customer on Zalo"
-                      >
-                        <i class="fas fa-comment-dots me-1"></i>Zalo
-                      </a>
-                    </td>
-                  </tr>
+                  <c:choose>
+                    <c:when test="${not empty pendingFeedback}">
+                      <c:forEach var="feedback" items="${pendingFeedback}" varStatus="status">
+                        <tr class="${feedback.hasStaffReply() ? 'responded-feedback' : ''}">
+                          <td>${status.index + 1}</td>
+                          <td class="customer-name">${feedback.username}</td>
+                          <td class="vehicle-name">${feedback.carBrand} ${feedback.carModel}</td>
+                          <td class="booking-code">${not empty feedback.bookingCode ? feedback.bookingCode : feedback.shortBookingId}</td>
+                          <td class="rating">
+                            ${feedback.ratingStarsHtml}
+                          </td>
+                          <td class="comment">
+                            ${feedback.content}
+                            <c:if test="${feedback.hasStaffReply()}">
+<!--                              <div class="staff-reply mt-2 p-2 rounded" style="background-color: #e8f4f8; border-left: 3px solid #0d6efd;">
+                                <small>${feedback.staffReply}</small>
+                              </div>-->
+                            </c:if>
+                          </td>
+                          <td>${feedback.formattedCreatedDate}</td>
+                          <td>
+                            <c:choose>
+                              <c:when test="${feedback.hasStaffReply()}">
+                                <span class="status-badge badge-success">Responded</span>
+                              </c:when>
+                              <c:otherwise>
+                                <span class="status-badge badge-warning">Pending Response</span>
+                              </c:otherwise>
+                            </c:choose>
+                          </td>
+                          <td>
+                            <c:choose>
+                              <c:when test="${feedback.hasStaffReply()}">
+                                <button
+                                  class="btn btn-info btn-sm"
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#replyModal"
+                                  data-feedback-id="${feedback.feedbackId}"
+                                  data-customer-name="${feedback.username}"
+                                  data-vehicle="${feedback.carBrand} ${feedback.carModel}"
+                                  data-booking-code="${not empty feedback.bookingCode ? feedback.bookingCode : feedback.shortBookingId}"
+                                  data-rating="${feedback.rating}"
+                                  data-content="${feedback.content}"
+                                  data-date="${feedback.formattedCreatedDate}"
+                                  data-reply="${feedback.staffReply}"
+                                >
+                                  <i class="fas fa-edit me-1"></i>View/Edit
+                                </button>
+                              </c:when>
+                              <c:otherwise>
+                                <button
+                                  class="btn btn-primary btn-sm"
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#replyModal"
+                                  data-feedback-id="${feedback.feedbackId}"
+                                  data-customer-name="${feedback.username}"
+                                  data-vehicle="${feedback.carBrand} ${feedback.carModel}"
+                                  data-booking-code="${not empty feedback.bookingCode ? feedback.bookingCode : feedback.shortBookingId}"
+                                  data-rating="${feedback.rating}"
+                                  data-content="${feedback.content}"
+                                  data-date="${feedback.formattedCreatedDate}"
+                                  data-reply="${feedback.staffReply}"
+                                >
+                                  <i class="fas fa-reply me-1"></i>Reply
+                                </button>
+                              </c:otherwise>
+                            </c:choose>
+                          </td>
+                        </tr>
+                      </c:forEach>
+                    </c:when>
+                    <c:otherwise>
+                      <tr>
+                        <td colspan="9" class="text-center">No feedback found</td>
+                      </tr>
+                    </c:otherwise>
+                  </c:choose>
                 </tbody>
               </table>
             </div>
           </div>
         </div>
       </section>
-    </div> -->
+    </div>
 
     <!-- Reply Modal -->
     <div
@@ -348,21 +381,27 @@
                 <i class="fas fa-comment me-2"></i>Review Information
               </h6>
               <div class="comment-info">
-                <p><strong>Customer:</strong> John Smith</p>
-                <p><strong>Rented Vehicle:</strong> Toyota Camry 2023</p>
+                <p><strong>Customer:</strong> <span id="modalCustomerName"></span></p>
+                <p><strong>Rented Vehicle:</strong> <span id="modalVehicle"></span></p>
+                <p><strong>Booking Code:</strong> <span id="modalBookingCode"></span></p>
                 <p>
                   <strong>Rating:</strong>
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star text-warning"></i>
+                  <span id="modalRating"></span>
                 </p>
                 <p>
-                  <strong>Content:</strong> Great service, clean car, friendly
-                  staff.
+                  <strong>Content:</strong> <span id="modalContent"></span>
                 </p>
-                <p><strong>Date:</strong> May 30, 2025</p>
+                <p><strong>Date:</strong> <span id="modalDate"></span></p>
+              </div>
+            </div>
+
+            <!-- Previous Reply (if exists) -->
+            <div class="inspection-section" id="previousReplySection" style="display: none;">
+              <h6 class="section-title">
+                <i class="fas fa-history me-2"></i>Previous Reply
+              </h6>
+              <div class="previous-reply">
+                <p id="previousReplyContent"></p>
               </div>
             </div>
 
@@ -371,11 +410,12 @@
               <h6 class="section-title">
                 <i class="fas fa-pen me-2"></i>Reply Content
               </h6>
-              <form action="/api/reply-comment" method="post">
-                <input type="hidden" name="commentId" value="CMT-001" />
+              <form action="${pageContext.request.contextPath}/staff/feedback-reply" method="post">
+                <input type="hidden" name="feedbackId" id="modalFeedbackId" />
                 <textarea
                   class="form-control"
                   name="replyContent"
+                  id="replyContent"
                   rows="5"
                   placeholder="Enter your reply..."
                   required
@@ -394,52 +434,98 @@
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Auto-expand bulk reply section if rating is selected -->
+    <c:if test="${currentRating != null}">
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const bulkReplyCollapse = document.getElementById('bulkReplyCollapse');
+        if (bulkReplyCollapse) {
+          new bootstrap.Collapse(bulkReplyCollapse, {
+            toggle: true
+          });
+        }
+      });
+    </script>
+    </c:if>
+    
+    <!-- Custom JS for feedback handling -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Handle reply modal
+        const replyModal = document.getElementById('replyModal');
+        if (replyModal) {
+          replyModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const feedbackId = button.getAttribute('data-feedback-id');
+            const customerName = button.getAttribute('data-customer-name');
+            const vehicle = button.getAttribute('data-vehicle');
+            const bookingCode = button.getAttribute('data-booking-code');
+            const rating = button.getAttribute('data-rating');
+            const content = button.getAttribute('data-content');
+            const date = button.getAttribute('data-date');
+            const reply = button.getAttribute('data-reply');
+            
+            // Set values in modal
+            document.getElementById('modalFeedbackId').value = feedbackId;
+            document.getElementById('modalCustomerName').textContent = customerName;
+            document.getElementById('modalVehicle').textContent = vehicle;
+            document.getElementById('modalBookingCode').textContent = bookingCode;
+            document.getElementById('modalContent').textContent = content;
+            document.getElementById('modalDate').textContent = date;
+            
+            // Set rating stars
+            const modalRating = document.getElementById('modalRating');
+            modalRating.innerHTML = '';
+            for (let i = 0; i < rating; i++) {
+              modalRating.innerHTML += '<i class="fas fa-star text-warning"></i>';
+            }
+            for (let i = rating; i < 5; i++) {
+              modalRating.innerHTML += '<i class="far fa-star text-muted"></i>';
+            }
+            
+            // Handle previous reply if exists
+            const previousReplySection = document.getElementById('previousReplySection');
+            const previousReplyContent = document.getElementById('previousReplyContent');
+            
+            if (reply && reply.trim() !== '') {
+              previousReplySection.style.display = 'block';
+              previousReplyContent.textContent = reply;
+              document.getElementById('replyContent').value = reply; // Pre-fill with previous reply
+            } else {
+              previousReplySection.style.display = 'none';
+              previousReplyContent.textContent = '';
+              document.getElementById('replyContent').value = ''; // Clear textarea
+            }
+          });
+        }
+        
+        // Handle search and filter
+        const searchInput = document.getElementById('searchInput');
+        const filterButton = document.getElementById('filterButton');
+        
+        filterButton.addEventListener('click', function() {
+          const searchTerm = searchInput.value.toLowerCase();
+          
+          const rows = document.querySelectorAll('#feedbackTable tbody tr');
+          
+          rows.forEach(row => {
+            const customerName = row.querySelector('.customer-name').textContent.toLowerCase();
+            const vehicleName = row.querySelector('.vehicle-name').textContent.toLowerCase();
+            const comment = row.querySelector('.comment').textContent.toLowerCase();
+            
+            const matchesSearch = customerName.includes(searchTerm) || 
+                              vehicleName.includes(searchTerm) || 
+                              comment.includes(searchTerm);
+            
+            if (matchesSearch) {
+              row.style.display = '';
+            } else {
+              row.style.display = 'none';
+            }
+          });
+        });
+      });
+</script>
   </body>
 </html>
-
-<script type="text/javascript">
-  var gk_isXlsx = false;
-  var gk_xlsxFileLookup = {};
-  var gk_fileData = {};
-  function filledCell(cell) {
-    return cell !== "" && cell != null;
-  }
-  function loadFileData(filename) {
-    if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-      try {
-        var workbook = XLSX.read(gk_fileData[filename], { type: "base64" });
-        var firstSheetName = workbook.SheetNames[0];
-        var worksheet = workbook.Sheets[firstSheetName];
-
-        // Convert sheet to JSON to filter blank rows
-        var jsonData = XLSX.utils.sheet_to_json(worksheet, {
-          header: 1,
-          blankrows: false,
-          defval: "",
-        });
-        // Filter out blank rows (rows where all cells are empty, null, or undefined)
-        var filteredData = jsonData.filter((row) => row.some(filledCell));
-
-        // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-        var headerRowIndex = filteredData.findIndex(
-          (row, index) =>
-            row.filter(filledCell).length >=
-            filteredData[index + 1]?.filter(filledCell).length
-        );
-        // Fallback
-        if (headerRowIndex === -1 || headerRowIndex > 25) {
-          headerRowIndex = 0;
-        }
-
-        // Convert filtered JSON back to CSV
-        var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-        csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-        return csv;
-      } catch (e) {
-        console.error(e);
-        return "";
-      }
-    }
-    return gk_fileData[filename] || "";
-  }
-</script>
