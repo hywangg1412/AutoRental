@@ -74,7 +74,7 @@
               </a>
             </li> -->
             <li class="nav-item">
-              <a class="nav-link" href="${pageContext.request.contextPath}/pages/staff/staff-customer-support.jsp">
+                        <a class="nav-link" href="${pageContext.request.contextPath}/staff/feedback-reply">
                 <i class="fas fa-comment"></i> Customer Feedback
               </a>
             </li>
