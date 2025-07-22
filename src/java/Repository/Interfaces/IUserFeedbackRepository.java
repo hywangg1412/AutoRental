@@ -73,4 +73,20 @@ public interface IUserFeedbackRepository extends Repository<UserFeedback, UUID> 
      * @throws SQLException If a database error occurs
      */
     List<UserFeedback> findApprovedFeedbackByCarId(UUID carId) throws SQLException;
+    
+    /**
+     * Add staff reply to a feedback
+     * @param feedbackId The feedback ID
+     * @param reply The reply content
+     * @return true if successful, false otherwise
+     * @throws SQLException If a database error occurs
+     */
+    boolean addStaffReply(UUID feedbackId, String reply) throws SQLException;
+    
+    /**
+     * Find all feedback pending staff reply
+     * @return List of feedback pending reply
+     * @throws SQLException If a database error occurs
+     */
+    List<UserFeedback> findPendingReplies() throws SQLException;
 } 
