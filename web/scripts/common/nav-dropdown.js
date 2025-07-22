@@ -1,4 +1,15 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Fix for contentWayPoint error
+    if (typeof contentWayPoint !== 'undefined') {
+        console.log('contentWayPoint is defined');
+    } else {
+        console.log('contentWayPoint is not defined, defining a dummy function');
+        window.contentWayPoint = function() {
+            // Dummy function to prevent errors
+            console.log('Dummy contentWayPoint called');
+        };
+    }
+    
     const dropdowns = document.querySelectorAll('.dropdown');
     
     dropdowns.forEach(dropdown => {

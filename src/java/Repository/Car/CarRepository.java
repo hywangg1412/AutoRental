@@ -638,6 +638,42 @@ public class CarRepository implements ICarRepository {
         return seatList;
     }
 
+    /**
+     * Lấy giá thuê theo giờ thấp nhất trong bảng Car
+     */
+    @Override
+    public Integer getMinPricePerHour() {
+        String sql = "SELECT MIN(PricePerHour) as MinPrice FROM Car";
+        try (var conn = dbContext.getConnection();
+             var ps = conn.prepareStatement(sql);
+             var rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getBigDecimal("MinPrice") != null ? rs.getBigDecimal("MinPrice").intValue() : null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Lấy giá thuê theo giờ cao nhất trong bảng Car
+     */
+    @Override
+    public Integer getMaxPricePerHour() {
+        String sql = "SELECT MAX(PricePerHour) as MaxPrice FROM Car";
+        try (var conn = dbContext.getConnection();
+             var ps = conn.prepareStatement(sql);
+             var rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getBigDecimal("MaxPrice") != null ? rs.getBigDecimal("MaxPrice").intValue() : null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     @Override
     public List<CarListItemDTO> findAllForHomePage(int limit) throws SQLException {
         List<CarListItemDTO> result = new ArrayList<>();

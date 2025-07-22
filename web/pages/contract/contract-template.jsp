@@ -1,165 +1,439 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>HỢP ĐỒNG CHO THUÊ XE Ô TÔ TỰ LÁI</title>
+    <meta charset="UTF-8"/>
+    <title>CAR RENTAL AGREEMENT</title>
     <style>
-        body { font-family: 'Times New Roman', Times, serif; margin: 40px; }
+<%
+    boolean isPdfExport = request.getAttribute("isPdfExport") != null && Boolean.TRUE.equals(request.getAttribute("isPdfExport"));
+%>
+        @font-face {
+            font-family: 'Dancing Script';
+            src: url('file:/l:/Workspace/SWP/AutoRental/web/assets/fonts/dancing_script/DancingScript-Regular.ttf');
+        }
+        
+        /* Base styles */
+        body { 
+            font-family: 'Times New Roman', Times, serif; 
+            margin: 0; 
+            padding: 0;
+            background: #f5f5f5;
+            line-height: 1.4;
+        }
+        
         .center { text-align: center; }
         .bold { font-weight: bold; }
         .underline { text-decoration: underline; }
-        .section-title { margin-top: 24px; font-weight: bold; }
+        .section-title { 
+            margin-top: 16px; 
+            margin-bottom: 8px;
+            font-weight: bold; 
+        }
         .indent { margin-left: 32px; }
-        .signature-block { margin-top: 48px; display: flex; justify-content: space-between; }
-        .signature { width: 40%; text-align: center; }
+        
         .contract-footer { margin-top: 32px; }
-        ul { margin-top: 0; }
-        .signature-name { font-family: 'Dancing Script', cursive; font-size: 2em; font-weight: normal; }
-        .signature-label { margin-top: 16px; font-style: italic; }
+        ul { 
+            margin-top: 8px; 
+            margin-bottom: 8px;
+            padding-left: 20px;
+        }
+        
+        li {
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+        
+        .signature-name { 
+            font-family: 'Dancing Script', cursive; 
+            font-size: 2em; 
+            font-weight: normal; 
+        }
+        .signature-label { 
+            margin-top: 16px; 
+            font-style: italic; 
+        }
+
+        <% if (isPdfExport) { %>
+        /* Loại bỏ @font-face trong PDF export vì ITextRenderer sẽ load font từ Java */
+        body, .contract-page, .section-title, .bold, ul, li, div, .signature-fullname {
+            font-family: 'BeVietnam Pro', Arial, sans-serif !important;
+        }
+        
+        /* Signature font - sẽ được load từ Java code */
+        .signature-name {
+            font-family: 'Dancing Script', 'Times New Roman', serif !important;
+            font-size: 1.6em !important;
+            line-height: 1.2 !important;
+        }
+        
+        /* Fallback nếu không có font custom */
+        .signature-name {
+            font-family: 'Dancing Script', 'Times New Roman', serif !important;
+        }
+        
+        /* Nếu không có Dancing Script, dùng font thường với style italic */
+        .signature-name-fallback {
+            font-family: 'BeVietnam Pro', Arial, sans-serif !important;
+            font-style: italic !important;
+            font-weight: bold !important;
+        }
+        
+        body {
+            background: #fff !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            line-height: 1.2 !important;
+        }
+        
+        .contract-page {
+            width: 100% !important;
+            height: auto !important;
+            min-height: auto !important;
+            max-height: none !important;
+            margin: 0 !important;
+            background: #fff !important;
+            box-shadow: none !important;
+            padding: 8mm 15mm !important;
+            box-sizing: border-box !important;
+            page-break-after: always !important;
+            display: block !important;
+        }
+        
+        .contract-page:first-child {
+            padding-top: 12mm !important;
+        }
+        
+        .contract-page:last-child {
+            page-break-after: avoid !important;
+        }
+        
+        .signature-block {
+            margin-top: 20px !important;
+            width: 100% !important;
+            display: table !important;
+            table-layout: fixed !important;
+            border-collapse: separate !important;
+        }
+        
+        .signature {
+            display: table-cell !important;
+            width: 50% !important;
+            text-align: center !important;
+            vertical-align: top !important;
+            padding: 0 10px !important;
+        }
+        
+        /* Tối ưu cho in PDF */
+        * {
+            -webkit-print-color-adjust: exact !important;
+            color-adjust: exact !important;
+        }
+        
+        .section-title {
+            margin-top: 8px !important;
+            margin-bottom: 4px !important;
+            page-break-after: avoid !important;
+        }
+        
+        .bold {
+            margin-top: 6px !important;
+            margin-bottom: 3px !important;
+            page-break-after: avoid !important;
+        }
+        
+        ul {
+            margin-top: 3px !important;
+            margin-bottom: 6px !important;
+            padding-left: 18px !important;
+            page-break-inside: avoid !important;
+        }
+        
+        li {
+            margin-bottom: 2px !important;
+            line-height: 1.2 !important;
+            page-break-inside: avoid !important;
+        }
+        
+        br {
+            line-height: 1.1 !important;
+        }
+        
+        div {
+            margin-top: 0 !important;
+            margin-bottom: 3px !important;
+        }
+        
+<% } else { %>
+        /* CSS for Web Display - Giữ nguyên @font-face */
+        @font-face {
+            font-family: 'Dancing Script';
+            src: url('/assets/fonts/dancing_script/DancingScript-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'BeVietnam Pro';
+            src: url('/assets/fonts/be_vietnam/BeVietnamPro-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        body {
+            background: #f5f5f5;
+            font-family: 'BeVietnam Pro', Arial, sans-serif;
+        }
+        
+        .contract-page {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto 24px auto;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 20mm;
+            box-sizing: border-box;
+            page-break-after: always;
+        }
+        
+        .signature-block {
+            margin-top: 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        
+        .signature {
+            width: 45%;
+            text-align: center;
+        }
+        
+        .signature-name {
+            font-family: 'Dancing Script', 'Times New Roman', serif;
+            font-size: 2em;
+            font-weight: normal;
+        }
+        
+<% } %>
+
+        /* Common print styles */
+        @media print {
+            body {
+                background: #fff !important;
+                margin: 0 !important;
+                line-height: 1.2 !important;
+            }
+            
+            .contract-page { 
+                box-shadow: none !important; 
+                margin: 0 !important;
+                padding: 8mm 15mm !important;
+                page-break-after: always !important;
+                min-height: auto !important;
+                max-height: none !important;
+            }
+            
+            .contract-page:first-child {
+                padding-top: 12mm !important;
+            }
+            
+            .contract-page:last-child {
+                page-break-after: avoid !important;
+            }
+            
+            .signature-block {
+                display: table !important;
+                width: 100% !important;
+                table-layout: fixed !important;
+                margin-top: 20px !important;
+            }
+            
+            .signature {
+                display: table-cell !important;
+                width: 50% !important;
+                text-align: center !important;
+                vertical-align: top !important;
+            }
+            
+            /* Tối ưu spacing cho print - Giảm khoảng cách */
+            .section-title {
+                margin-top: 8px !important;
+                margin-bottom: 4px !important;
+                page-break-after: avoid !important;
+            }
+            
+            .bold {
+                margin-top: 6px !important;
+                margin-bottom: 3px !important;
+                page-break-after: avoid !important;
+            }
+            
+            ul {
+                margin-top: 3px !important;
+                margin-bottom: 6px !important;
+                padding-left: 18px !important;
+                page-break-inside: avoid !important;
+            }
+            
+            li {
+                margin-bottom: 2px !important;
+                line-height: 1.2 !important;
+                page-break-inside: avoid !important;
+            }
+            
+            br {
+                line-height: 1.1 !important;
+            }
+            
+            div {
+                margin-bottom: 3px !important;
+            }
+        }
+        
+        /* Fallback cho trường hợp Dancing Script không load được */
+        @font-face {
+            font-family: 'Dancing Script Fallback';
+            src: local('Times New Roman'), local('Times'), serif;
+        }
+        
+        .signature-name {
+            font-family: 'Dancing Script', 'Dancing Script Fallback', 'Times New Roman', serif;
+        }
     </style>
-    <link href="https://fonts.googleapis.com/css?family=Dancing+Script&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Dancing+Script&amp;display=swap" rel="stylesheet"/>
 </head>
-<body style="background:#f5f5f5;">
-  <!-- Trang 1: Từ đầu đến hết Điều 1 -->
+<body>
+  <!-- Page 1: From start to end of Section 1 -->
   <div class="contract-page">
-    <div class="center bold">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
-    <div class="center">Độc lập – Tự do – Hạnh phúc</div>
+    <div class="center bold">SOCIALIST REPUBLIC OF VIETNAM</div>
+    <div class="center">Independence – Freedom – Happiness</div>
     <div class="center">--------------o0o--------------</div>
-    <div class="center section-title" style="margin-top: 24px;">HỢP ĐỒNG CHO THUÊ XE Ô TÔ TỰ LÁI</div>
-    <div class="center">(Số:……/HĐCTXTL)</div>
-    <br/>
-    <div>- Căn cứ Bộ Luật Dân sự số 91/2015/QH13 có hiệu lực thi hành từ ngày 01/01/2017;</div>
-    <div>- Căn cứ Luật Thương mại số 36/2005/QH11 có hiệu lực thi hành từ ngày 01/01/2006;</div>
-    <div>- Căn cứ theo nhu cầu và khả năng cung ứng của hai Bên.</div>
-    <br/>
-    <div class="section-title">ĐIỀU 1: QUYỀN VÀ NGHĨA VỤ CỦA BÊN A (Auto Rental)</div>
-    <div class="bold">1.1. Quyền của Bên A (Auto Rental)</div>
+    <div class="center section-title">CAR RENTAL AGREEMENT</div>
+    <div class="center">(No:……/CRA)</div>
+    <div style="margin: 8px 0;">- Pursuant to the Civil Code No. 91/2015/QH13 effective from 01/01/2017;</div>
+    <div style="margin: 4px 0;">- Pursuant to the Commercial Law No. 36/2005/QH11 effective from 01/01/2006;</div>
+    <div style="margin: 4px 0;">- Based on the needs and supply capabilities of both Parties.</div>
+    <div class="section-title">SECTION 1: RIGHTS AND OBLIGATIONS OF PARTY A (Auto Rental)</div>
+    <div class="bold">1.1. Rights of Party A (Auto Rental)</div>
     <ul>
-        <li>Nhận đủ tiền thuê theo phương thức đã thỏa thuận.</li>
-        <li>Khi hết hạn Hợp đồng có quyền nhận lại tài sản thuê như tình trạng thỏa thuận ban đầu, trừ hao mòn tự nhiên.</li>
-        <li>Trường hợp xe có phát sinh sự cố trong chuyến đi dẫn đến phải đưa xe đi kiểm tra, sửa chữa, Bên A có quyền yêu cầu Bên B cùng tham gia vào quá trình bao gồm nhưng không giới hạn: liên hệ bảo hiểm, cùng đi giám định và sửa chữa.</li>
-        <li>Có quyền đơn phương chấm dứt Hợp đồng và yêu cầu bồi thường thiệt hại nếu Bên B có các hành vi sử dụng tài sản thuê không đúng mục đích như đã thỏa thuận, làm hư hỏng, mất mát tài sản thuê, giao xe cho người khác sử dụng mà không có sự đồng ý của Bên A.</li>
-        <li>Yêu cầu Bên B thực hiện nộp phạt vi phạm hành chính trong thời gian Bên B thuê xe (phạt nguội). Trường hợp Bên B không thể đi nộp phạt thì phải cung cấp giấy phép lái xe của Bên B và thanh toán trước chi phí phạt theo lỗi vi phạm cho Bên A để hỗ trợ thực hiện.</li>
-        <li>Đối với trường hợp các Bên có thỏa thuận về việc đặt cọc tài sản, Bên A có quyền giữ tài sản đặt cọc của Bên B từ lúc nhận xe đến khi Bên B hoàn tất việc trả xe và các khoản chi phí phát sinh (nếu có).</li>
+        <li>Receive full rental payment as agreed.</li>
+        <li>Upon contract expiration, has the right to reclaim the rented asset in its original agreed condition, except for normal wear and tear.</li>
+        <li>In case of incidents during the trip requiring vehicle inspection or repair, Party A has the right to request Party B to participate in the process, including but not limited to: contacting insurance, joint assessment, and repair.</li>
+        <li>Has the right to unilaterally terminate the contract and claim compensation if Party B uses the rented asset for purposes not agreed upon, damages or loses the asset, or sublets without Party A's consent.</li>
+        <li>Request Party B to pay administrative fines incurred during the rental period. If Party B cannot pay, must provide their driver's license and prepay the fine for Party A to assist.</li>
+        <li>For cases with a security deposit, Party A has the right to hold Party B's deposit from vehicle handover until all obligations and arising costs are settled.</li>
     </ul>
-    <div class="bold">1.2. Nghĩa vụ của Bên A (AutoRental)</div>
+    <div class="bold">1.2. Obligations of Party A (Auto Rental)</div>
     <ul>
-        <li>Chịu trách nhiệm pháp lý về nguồn gốc và quyền sở hữu của xe.</li>
-        <li>Giao đúng xe và toàn bộ giấy tờ liên quan đến xe trong tình trạng xe an toàn, vệ sinh sạch sẽ nhằm đảm bảo chất lượng dịch vụ khi Bên B sử dụng. Các giấy tờ xe liên quan bao gồm: giấy đăng ký xe ô tô (bản photo sao y trong thời hạn 06 tháng), giấy kiểm định xe ô tô (bản chính), giấy bảo hiểm xe ô tô bắt buộc (bản chính).</li>
-        <li>Giao xe tại địa điểm bàn giao xe và đúng thời gian theo Hợp đồng này, trước khi giao xe cho Bên B, phải kiểm tra, đối chiếu thông tin khách thuê, sao chụp lại các giấy tờ nhân thân cần thiết để phục vụ nhu cầu liên hệ sau này.</li>
-        <li>Tự chịu trách nhiệm trong trường hợp ký Hợp đồng và giao xe cho khách thuê không đúng với thông tin đã giao kết trên Ứng dụng AutoRental.</li>
-        <li>Đối với trường hợp các bên có thỏa thuận về việc đặt cọc tài sản: (i) Bên A chịu mọi trách nhiệm chi trả hoặc đền bù trong trường hợp tài sản đặt cọc của Bên B bị thiệt hại do lỗi Bên A; và (ii) Bên A có trách nhiệm hoàn trả đầy đủ tài sản đặt cọc của Bên B khi 2 Bên đã hoàn tất Hợp đồng và Bên B đã thanh toán đầy đủ các chi phí phát sinh (trường hợp có nghĩa vụ chưa hoàn thành, các Bên ghi nhận sự việc phát sinh vào Biên bản bàn giao để làm căn cứ).</li>
+        <li>Be legally responsible for the origin and ownership of the vehicle.</li>
+        <li>Deliver the correct vehicle and all related documents in safe and clean condition to ensure service quality for Party B. Related documents include: car registration (certified copy within 6 months), car inspection certificate (original), compulsory insurance (original).</li>
+        <li>Deliver the vehicle at the agreed location and time. Before handover, verify renter's information and copy necessary identification documents for future contact.</li>
+        <li>Be solely responsible if the contract is signed and the vehicle is handed over to a customer whose information does not match the agreement on the AutoRental application.</li>
+        <li>For cases with a security deposit: (i) Party A is fully responsible for compensation if Party B's deposit is damaged due to Party A's fault; and (ii) Party A must return the full deposit to Party B after all obligations are fulfilled and all costs are paid (if any obligations remain, both Parties must record them in the Handover Minutes).</li>
     </ul>
-    <div class="section-title">ĐIỀU 2: QUYỀN VÀ NGHĨA VỤ CỦA BÊN B</div>
   </div>
-  <!-- Trang 2: Điều 2 -->
+  
+  <!-- Page 2: Section 2 -->
   <div class="contract-page">
-    <div class="bold">2.1. Quyền của Bên B</div>
+    <div class="section-title">SECTION 2: RIGHTS AND OBLIGATIONS OF PARTY B</div>
+    <div class="bold">2.1. Rights of Party B</div>
     <ul>
-        <li>Nhận đúng xe và các giấy tờ liên quan đến xe theo Hợp đồng này.</li>
-        <li>Sửa chữa xe trong trường hợp cấp thiết. Trong trường hợp này, Bên B phải thông báo trước cho Bên A về tình trạng xe đang gặp phải và những vấn đề cần khắc phục trước khi tiến hành sửa chữa.</li>
-        <li>Yêu cầu Bên A sửa chữa nếu xe có hư hỏng do lỗi của Bên A hoặc do hao mòn tự nhiên của xe; và bồi thường thiệt hại nếu Bên A chậm giao hoặc giao xe không đúng như thỏa thuận.</li>
-        <li>Yêu cầu Bên A cung cấp hóa đơn, giấy tờ thể hiện chi phí sửa chữa trong trường hợp Bên A thay mặt Bên B làm việc với nhà bảo hiểm, gara để sửa chữa xe hư hỏng do lỗi của Bên B.</li>
-        <li>Đơn phương chấm dứt Hợp đồng và yêu cầu bồi thường thiệt hại nếu Bên A thực hiện các hành vi sau:
+        <li>Receive the correct vehicle and related documents as per this Agreement.</li>
+        <li>Repair the vehicle in urgent cases. In such cases, Party B must notify Party A of the vehicle's condition and issues before proceeding with repairs.</li>
+        <li>Request Party A to repair if the vehicle is faulty due to Party A's fault or natural wear and tear; and claim compensation if Party A is late in delivery or delivers the wrong vehicle.</li>
+        <li>Request Party A to provide invoices and documents for repair costs if Party A acts on behalf of Party B with the insurer or garage for damages caused by Party B.</li>
+        <li>Unilaterally terminate the contract and claim compensation if Party A commits the following acts:
             <ul>
-                <li>Bên A giao xe không đúng thời hạn như thỏa thuận, trừ trường hợp bất khả kháng (Trường hợp bất khả kháng được hiểu là một Bên cố gắng thực hiện bằng mọi biện pháp để thực hiện nghĩa vụ của mình nhưng không thể thực hiện được vì trở ngại khách quan: mưa bão, dịch bệnh…). Bên nào viện dẫn trường hợp bất khả kháng thì Bên đó có nghĩa vụ chứng minh. Trường hợp giao xe chậm gây thiệt hại cho Bên B thì phải bồi thường.</li>
-                <li>Xe có khuyết tật dẫn đến Bên B không đạt được mục đích thuê mà Bên B không biết.</li>
-                <li>Xe có tranh chấp về quyền sở hữu giữa Bên A với Bên thứ ba mà Bên B không biết dẫn đến Bên B không xác lập được mục đích sử dụng xe trong quá trình thuê như đã thỏa thuận.</li>
+                <li>Party A delivers the vehicle late, except for force majeure (defined as circumstances beyond a Party's control: storms, epidemics, etc.). The Party invoking force majeure must prove it. If late delivery causes damage to Party B, compensation must be paid.</li>
+                <li>The vehicle has defects preventing Party B from achieving the rental purpose, which Party B was unaware of.</li>
+                <li>The vehicle is subject to ownership disputes between Party A and a third party, preventing Party B from using the vehicle as agreed.</li>
             </ul>
         </li>
     </ul>
-    <div class="bold">2.2. Nghĩa vụ của Bên B</div>
+    <div class="bold">2.2. Obligations of Party B</div>
     <ul>
-        <li>Cung cấp và tự chịu trách nhiệm về các thông tin nhân thân cần thiết theo nội dung ở phần đầu Hợp đồng và Giấy phép lái xe của mình.</li>
-        <li>Kiểm tra kỹ xe trước khi nhận và trước khi hoàn trả xe. Quay chụp tình trạng xe để làm căn cứ đồng thời ký xác nhận tình trạng xe khi nhận và khi hoàn trả.</li>
-        <li>Thanh toán cho Bên A đầy đủ tiền thuê xe khi nhận xe và thanh toán toàn bộ phụ phí phát sinh trong chuyến đi ngay tại thời điểm hoàn trả xe.</li>
-        <li>Kiểm tra kỹ và tự chịu trách nhiệm đối với tư trang, tài sản cá nhân của mình trước khi trả xe, đảm bảo không để quên, thất lạc đồ trên xe.</li>
-        <li>Đối với trường hợp các bên thỏa thuận về đặt cọc tài sản, Bên B cung cấp tài sản đặt cọc trước khi nhận xe và chịu trách nhiệm pháp lý về nguồn gốc, quyền sở hữu của tài sản đặt cọc bao gồm: CCCD gắn chip/ Passport và tiền mặt 15 triệu đồng/xe máy kèm giấy đăng ký xe.</li>
-        <li>Tuân thủ quy định trả xe như đã được ký kết trong Hợp đồng. Nếu trả xe không đúng thời hạn, Bên B sẽ phải trả thêm tiền phụ trội, và số tiền trả thêm sẽ được tính theo giờ/ngày như quy định tại Điều 2 Hợp đồng này.</li>
-        <li>Bên B chịu trách nhiệm đền bù mọi thất thoát về phụ tùng, phụ kiện của xe: đền bù 100% theo giá phụ tùng chính hãng nếu tráo đổi linh kiện, phụ tùng; chịu 100% chi phí sửa chữa xe nếu có xảy ra hỏng hóc được xác định do lỗi của Bên B, địa điểm sửa chữa theo sự chỉ định của Bên A hoặc 2 Bên tự thỏa thuận. Các ngày xe nghỉ không chạy được do lỗi của Bên B thì Bên B phải trả tiền hoàn toàn trong các ngày đó, giá được tính bằng giá thuê trong Hợp đồng (hoặc các bên có thỏa thuận khác). Ngoài ra, nếu xe trong tình trạng không được sạch sẽ, Bên B sẽ phải chịu thêm khoản phí vệ sinh xe (hoặc tùy 2 Bên tự thỏa thuận).</li>
-        <li>Nghiêm túc chấp hành đúng luật lệ giao thông đường bộ. Tự chịu trách nhiệm dân sự, hình sự, hành chính trong suốt thời gian thuê xe. Có nghĩa vụ thực hiện nộp phạt vi phạm hành chính trong lĩnh vực giao thông đường bộ căn cứ vào thời gian thuê xe của Hợp đồng này và thông báo phạt vi phạm từ cơ quan nhà nước có thẩm quyền.</li>
-        <li>Tuyệt đối không cho người khác thuê lại và không sử dụng xe cho các hành vi trái pháp luật: cầm cố, đua xe, chở hàng lậu, hàng cấm, … Không giao tay lái cho người không đủ năng lực hành vi, không có GPLX từ B1 trở lên. Trường hợp Bên A có căn cứ thấy rằng Bên B có dấu hiệu vi phạm thì Bên A có quyền đơn phương chấm dứt Hợp đồng, đồng thời sẽ thông báo với Cơ quan Công an và thực hiện biện pháp thu hồi xe. Bên B phải hoàn toàn chịu trách nhiệm hình sự trước pháp luật và chịu các phí tổn phát sinh khác.</li>
+        <li>Provide and be responsible for all necessary personal information and their driver's license as required at the beginning of the contract.</li>
+        <li>Carefully inspect the vehicle before receiving and returning it. Take photos/videos of the vehicle's condition as evidence and sign confirmation upon receipt and return.</li>
+        <li>Pay Party A the full rental fee upon receiving the vehicle and settle all additional charges at the time of return.</li>
+        <li>Be responsible for personal belongings before returning the vehicle, ensuring nothing is left behind.</li>
+        <li>For cases with a security deposit, Party B must provide the deposit before receiving the vehicle and be legally responsible for its origin and ownership, including: chip-based ID card/passport and 15 million VND in cash/motorbike registration.</li>
+        <li>Comply with the vehicle return policy as agreed. If returning late, Party B must pay extra, calculated by hour/day as per Section 2 of this Agreement.</li>
+        <li>Be liable for any loss of parts or accessories: 100% compensation at genuine part prices for swaps; 100% repair costs for damages caused by Party B, at a location designated by Party A or mutually agreed. For days the vehicle is out of service due to Party B's fault, Party B must pay the full rental price for those days. If the vehicle is not clean, Party B will bear the cleaning fee (or as mutually agreed).</li>
+        <li>Strictly comply with traffic laws. Be civilly, criminally, and administratively liable during the rental period. Responsible for paying administrative fines during the rental period as notified by authorities.</li>
+        <li>Absolutely not sublet or use the vehicle for illegal purposes: pawning, racing, smuggling, etc. Do not allow unqualified drivers. If Party A has grounds to suspect violations, Party A may unilaterally terminate the contract, notify the police, and take measures to recover the vehicle. Party B will be fully liable before the law and bear all arising costs.</li>
     </ul>
-  </div>
-  <!-- Trang 3: Điều 3 -->
-  <div class="contract-page">
-    <div class="section-title">ĐIỀU 3: CHÍNH SÁCH BẢO HIỂM THEO CHUYẾN ĐI</div>
-    <div class="bold">3.1. Đối tượng bảo hiểm và thời gian bảo hiểm:</div>
+    <div class="section-title">SECTION 3: TRIP INSURANCE POLICY</div>
+    <div class="bold">3.1. Insurance subjects and period:</div>
     <ul>
-        <li>Chỉ áp dụng với chuyến đi có mua bảo hiểm chuyến trên ứng dụng đặt xe AutoRental.</li>
-        <li>Thời gian bảo hiểm tính từ thời gian Bên B bắt đầu và hết hiệu lực theo thời gian Bên B kết thúc chuyến đi đã đăng ký trên ứng dụng AutoRental.</li>
+        <li>Applies only to trips with insurance purchased on the AutoRental app.</li>
+        <li>The insurance period starts when Party B begins the trip and ends when the trip registered on AutoRental ends.</li>
     </ul>
-    <div class="bold">3.2. Phạm vi bảo hiểm (Chi tiết xem Giấy chứng nhận bảo hiểm trong Thông tin chuyến đi trên ứng dụng):</div>
+    <div class="bold">3.2. Insurance coverage (see the insurance certificate in the trip information on the app):</div>
     <ul>
-        <li>Nhà Bảo hiểm chịu trách nhiệm bồi thường những thiệt hại vật chất do thiên tai, tai nạn bất ngờ, va chạm xe, không lường trước được trong những trường hợp sau:
+        <li>The insurer is responsible for compensating for material damages caused by natural disasters, unexpected accidents, collisions, etc. in the following cases:
             <ul>
-                <li>Đâm, va (bao gồm cả va chạm với vật thể khác ngoài xe cơ giới)</li>
-                <li>Hỏa hoạn, cháy, nổ</li>
-                <li>Thủy kích (khấu trừ 20% số tiền bảo hiểm, tối thiểu 3.000.000 VND)</li>
+                <li>Collision (including with non-motor vehicles)</li>
+                <li>Fire, explosion</li>
+                <li>Hydraulic shock (20% deductible, minimum 3,000,000 VND)</li>
             </ul>
         </li>
-        <li>Mức khấu trừ: 2.000.000 VND/vụ (không bao gồm trường hợp giảm trừ bồi thường theo quy định của Nhà bảo hiểm).</li>
+        <li>Deductible: 2,000,000 VND/case (excluding cases with reduced compensation as per insurer's regulations).</li>
     </ul>
-    <div class="bold">3.3. Nghĩa vụ:</div>
+    <div class="bold">3.3. Obligations:</div>
     <ul>
-        <li>Quay chụp tình trạng xe để làm căn cứ đồng thời ký xác nhận tình trạng xe khi nhận và khi hoàn trả.</li>
-        <li>Trường hợp chuyến đi được hỗ trợ bảo hiểm chuyến do Mioto liên kết, khi xảy ra sự cố va chạm trong quá trình di chuyển, Bên B có trách nhiệm giữ nguyên hiện trường xảy ra sự cố và liên hệ ngay Tổng đài Nhà Bảo hiểm để khai báo và làm theo hướng dẫn xử lý.</li>
-        <li>Bên B thông báo cho Bên A để nắm tình hình và phối hợp với Bên A để xử lý sự cố theo hướng dẫn của Nhà Bảo hiểm.</li>
-        <li>Bên B có trách nhiệm thanh toán chi phí theo quy định của Nhà Bảo hiểm.</li>
-        <li>Trường hợp Bên B gây ra sự cố nằm ngoài thời gian bảo hiểm hoặc phạm vi bảo hiểm hoặc thuộc phạm vi loại trừ bảo hiểm dẫn đến Nhà Bảo hiểm từ chối bồi thường thì Bên B có nghĩa vụ bồi thường toàn bộ tổn thất cho Bên A.</li>
-        <li>Các Bên có nghĩa vụ thực hiện theo những điều khoản về chính sách, quy định của nhà bảo hiểm: về chế tài, phạm vi bồi thường, mức bồi thường, trường hợp giảm trừ bồi thường và loại trừ bảo hiểm,…</li>
+        <li>Take photos/videos of the vehicle's condition as evidence and sign confirmation upon receipt and return.</li>
+        <li>For trips with insurance supported by Mioto, in case of an accident, Party B must keep the scene intact and immediately contact the insurer's hotline for instructions.</li>
+        <li>Party B must notify Party A to stay informed and coordinate with Party A to handle the incident as instructed by the insurer.</li>
+        <li>Party B is responsible for paying costs as per the insurer's regulations.</li>
+        <li>If Party B causes an incident outside the insurance period or coverage or in excluded cases, leading to insurer's refusal to compensate, Party B must fully compensate Party A for all losses.</li>
+        <li>Both Parties must comply with the insurer's policies, regulations, penalties, coverage, compensation, reductions, and exclusions.</li>
     </ul>
-    <div class="section-title">ĐIỀU 4:  ĐIỀU KHOẢN CHUNG</div>
+  </div>
+  
+  <!-- Page 3: Section 4 and Signatures -->
+  <div class="contract-page">
+    <div class="section-title">SECTION 4: GENERAL TERMS</div>
     <ul>
-        <li>Hợp đồng này, Biên bản bàn giao và các phụ lục bổ sung Hợp đồng (nếu có) là bộ phận không tách rời của Hợp đồng, các Bên phải có nghĩa vụ thực hiện, cam kết thi hành đúng các điều khoản của Hợp đồng, không Bên nào tự ý đơn phương sửa đổi, đình chỉ hoặc hủy bỏ Hợp đồng. Mọi sự vi phạm phải được xử lý theo pháp luật.</li>
-        <li>Trong quá trình thực hiện Hợp đồng, nếu có vấn đề phát sinh các Bên sẽ cùng bàn bạc giải quyết trên tinh thần hợp tác và tôn trọng lợi ích của cả hai Bên và được thể hiện bằng văn bản. Nếu không giải quyết được thì đưa ra Tòa án nhân dân có thẩm quyền để giải quyết. Bên thua kiện sẽ chịu toàn bộ chi phí.</li>
-        <li>Hợp đồng này tự động chấm dứt khi Bên B hoàn trả xe cho Bên A và hai Bên hoàn tất mọi nghĩa vụ phát sinh từ Hợp đồng này.</li>
-        <li>Hợp đồng có hiệu lực kể từ thời điểm ký kết và được lập thành 02 (hai) bản, mỗi Bên giữ 01 (một) bản.</li>
+        <li>This Agreement, the Handover Minutes, and any appendices are integral parts of the Agreement. Both Parties must comply and cannot unilaterally amend, suspend, or cancel the Agreement. Any violation will be handled according to the law.</li>
+        <li>During the execution of the Agreement, if issues arise, both Parties will discuss in a cooperative spirit and record in writing. If unresolved, the case will be brought to the competent People's Court. The losing Party will bear all costs.</li>
+        <li>This Agreement automatically terminates when Party B returns the vehicle to Party A and both Parties have fulfilled all obligations.</li>
+        <li>This Agreement takes effect from the time of signing and is made in 02 (two) copies, each Party keeps 01 (one) copy.</li>
     </ul>
+    
     <div class="signature-block">
         <div class="signature">
-            <div class="bold">BÊN A – BÊN CHO THUÊ XE</div>
-            <div>(Ký, ghi rõ họ và tên)</div>
-            <div class="signature-label">Chữ ký:</div>
+            <div class="bold">PARTY A – CAR OWNER</div>
+            <div>(Sign and full name)</div>
+            <div class="signature-label">Signature:</div>
             <div class="signature-name">Huy</div>
-            <div>Trần Quang Huy</div>
+            <div>Tran Quang Huy</div>
         </div>
         <div class="signature">
-            <div class="bold">BÊN B – BÊN THUÊ XE</div>
-            <div>(Ký, ghi rõ họ và tên)</div>
-            <div class="signature-label">Chữ ký:</div>
-            <div class="signature-name" id="realtime-signature"><%= request.getAttribute("userSignature") != null ? request.getAttribute("userSignature") : "" %></div>
+            <div class="bold">PARTY B – RENTER</div>
+            <div>(Sign and full name)</div>
+            <div class="signature-label">Signature:</div>
+            <div class="signature-name" id="realtime-signature">
+                <% 
+                    Object userSignature = request.getAttribute("userSignature");
+                    boolean isBase64 = false;
+                    if (userSignature != null && userSignature.toString().startsWith("data:image")) {
+                        isBase64 = true;
+                    }
+                %>
+                <% if (isBase64) { %>
+                    <img src="<%= userSignature %>" style="width:400px; height:180px;" />
+                <% } else { %>
+                    <%= userSignature != null ? userSignature : "" %>
+                <% } %>
+            </div>
             <img id="realtime-signature-image" style="max-width: 220px; max-height: 80px; display: none; margin: 0 auto;" />
             <canvas id="direct-signature-pad" width="220" height="80" style="display:none; border:1px dashed #aaa; background:#fafbfc;"></canvas>
             <button type="button" id="clearDirectSignature" style="display:none; margin-top:8px;">Clear</button>
-            <div id="realtime-fullname"><%= request.getAttribute("userFullName") != null ? request.getAttribute("userFullName") : "" %></div>
+            <div class="signature-fullname" id="realtime-fullname"><%= request.getAttribute("userFullName") != null ? request.getAttribute("userFullName") : "" %></div>
         </div>
     </div>
   </div>
-  <!-- Trang 4: Điều 4 và phần chữ ký -->
-  <!-- <div class="contract-page"> -->
-   
-    <!-- <div class="contract-footer"> -->
-        <!-- Đã chuyển tên xuống phần chữ ký -->
-    <!-- </div>
-  </div> -->
 </body>
-<style>
-.contract-page {
-    width: 210mm;
-    min-height: 297mm;
-    margin: 0 auto 24px auto;
-    background: #fff;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    padding: 20mm;
-    box-sizing: border-box;
-    page-break-after: always;
-}
-@media print {
-    .contract-page { box-shadow: none; margin: 0; }
-}
-</style>
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.6/dist/signature_pad.umd.min.js"></script>
 <script>
 var signaturePad;
@@ -173,6 +447,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
 window.addEventListener('message', function (event) {
     if (event.data && event.data.type === 'SWITCH_SIGNATURE_METHOD') {
         var method = event.data.method;
@@ -214,4 +489,4 @@ window.addEventListener('message', function (event) {
     }
 });
 </script>
-</html> 
+</html>

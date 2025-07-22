@@ -11,4 +11,7 @@ public interface IBookingRepository extends Repository<Booking, UUID> {
     List<Booking> findByUserId(UUID userId) throws SQLException;
     void updateBookingStatus(UUID bookingId, String status) throws SQLException;
     List<Booking> findByStatus(String status) throws SQLException;
+    boolean hasCompletedBookingWithoutReview(UUID userId, UUID carId) throws SQLException;
+
+    UUID findCompletedBookingWithoutReview(UUID userId, UUID carId) throws SQLException;
 }

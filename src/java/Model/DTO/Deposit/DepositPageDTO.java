@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
+import Utils.PriceUtils; // Thêm import PriceUtils
 
 /**
  * DTO chứa tất cả thông tin cần thiết cho trang deposit
@@ -343,11 +344,50 @@ public class DepositPageDTO {
         if (rentalType != null) {
             switch (rentalType.toLowerCase()) {
                 case "hourly":
-                    return String.format("%.1f hours", duration);
+                    if (duration < 1) {
+                        // Nếu dưới 1 giờ, hiển thị theo phút
+                        int minutes = (int) Math.round(duration * 60);
+                        return String.format("%d minutes", minutes);
+                    } else {
+                        // Tính giờ và phút
+                        int hours = (int) Math.floor(duration);
+                        int minutes = (int) Math.round((duration - hours) * 60);
+                        if (minutes > 0) {
+                            return String.format("%d hours %d minutes", hours, minutes);
+                        } else {
+                            return String.format("%d hours", hours);
+                        }
+                    }
                 case "daily":
-                    return String.format("%.2f days", duration);
+                    if (duration < 1) {
+                        // Nếu dưới 1 ngày, hiển thị theo giờ
+                        int hours = (int) Math.round(duration * 24);
+                        return String.format("%d hours", hours);
+                    } else {
+                        // Tính ngày và giờ
+                        int days = (int) Math.floor(duration);
+                        int hours = (int) Math.round((duration - days) * 24);
+                        if (hours > 0) {
+                            return String.format("%d days %d hours", days, hours);
+                        } else {
+                            return String.format("%d days", days);
+                        }
+                    }
                 case "monthly":
-                    return String.format("%.2f months", duration);
+                    if (duration < 1) {
+                        // Nếu dưới 1 tháng, hiển thị theo ngày
+                        int days = (int) Math.round(duration * 30);
+                        return String.format("%d days", days);
+                    } else {
+                        // Tính tháng và ngày
+                        int months = (int) Math.floor(duration);
+                        int days = (int) Math.round((duration - months) * 30);
+                        if (days > 0) {
+                            return String.format("%d months %d days", months, days);
+                        } else {
+                            return String.format("%d months", months);
+                        }
+                    }
                 default:
                     return String.format("%.2f days", duration);
             }
@@ -356,34 +396,34 @@ public class DepositPageDTO {
     }
 
     /**
-     * Format số tiền - trả về định dạng VND đúng cho JSP
+     * Format số tiền - trả về định dạng VND đúng cho JSP sử dụng PriceUtils
      */
     public String getFormattedBaseRentalPrice() {
-        return String.format("%,.0f VND", baseRentalPrice * 1000);
+        return PriceUtils.formatDbPrice(baseRentalPrice);
     }
 
     public String getFormattedTotalInsuranceAmount() {
-        return String.format("%,.0f VND", totalInsuranceAmount * 1000);
+        return PriceUtils.formatDbPrice(totalInsuranceAmount);
     }
 
     public String getFormattedDiscountAmount() {
-        return String.format("%,.0f VND", discountAmount * 1000);
+        return PriceUtils.formatDbPrice(discountAmount);
     }
 
     public String getFormattedSubtotal() {
-        return String.format("%,.0f VND", subtotal * 1000);
+        return PriceUtils.formatDbPrice(subtotal);
     }
 
     public String getFormattedVatAmount() {
-        return String.format("%,.0f VND", vatAmount * 1000);
+        return PriceUtils.formatDbPrice(vatAmount);
     }
 
     public String getFormattedTotalAmount() {
-        return String.format("%,.0f VND", totalAmount * 1000);
+        return PriceUtils.formatDbPrice(totalAmount);
     }
 
     public String getFormattedDepositAmount() {
-        return String.format("%,.0f VND", depositAmount * 1000);
+        return PriceUtils.formatDbPrice(depositAmount);
     }
 
     // ========== BUSINESS LOGIC METHODS ==========
@@ -400,7 +440,7 @@ public class DepositPageDTO {
             double percentage = (depositAmount / totalAmount) * 100;
             return String.format("%.0f%%", percentage);
         }
-        return "30%"; // Default
+        return "Fixed"; // Hiển thị "Fixed" thay vì % vì đã hardcode
     }
 
     @Override

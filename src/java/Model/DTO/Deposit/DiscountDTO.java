@@ -1,5 +1,7 @@
 package Model.DTO.Deposit;
 
+import Utils.PriceUtils; // Thêm import PriceUtils
+
 /**
  * DTO cho voucher/discount - chỉ lưu trữ thông tin, logic tính toán ở Service
  */
@@ -79,6 +81,26 @@ public class DiscountDTO {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    /**
+     * Format hiển thị giá trị giảm giá cho JSP
+     * @return Chuỗi đã format theo định dạng VND hoặc % tùy loại
+     */
+    public String getFormattedDiscountValue() {
+        if ("Percent".equalsIgnoreCase(discountType)) {
+            return String.format("%.0f%%", discountValue);
+        } else {
+            return PriceUtils.formatDbPrice(discountValue);
+        }
+    }
+    
+    /**
+     * Format hiển thị giá trị đơn hàng tối thiểu cho JSP
+     * @return Chuỗi đã format theo định dạng VND
+     */
+    public String getFormattedMinOrderAmount() {
+        return PriceUtils.formatDbPrice(minOrderAmount);
     }
 
     @Override

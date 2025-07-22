@@ -42,9 +42,23 @@ public class PaymentService implements IPaymentService {
 
     @Override
     public PaymentDTO createDepositPayment(UUID bookingId, UUID userId) throws SQLException {
+        // Gọi phương thức mới với fixedDeposit = false (giữ nguyên hành vi cũ)
+        return createDepositPayment(bookingId, userId, false);
+    }
+
+    /**
+     * Phương thức mới hỗ trợ tham số fixedDeposit
+     * @param bookingId ID của booking
+     * @param userId ID của user
+     * @param useFixedDeposit Có sử dụng tiền cọc cố định 300.000 VND không
+     * @return PaymentDTO chứa thông tin thanh toán
+     * @throws SQLException Nếu có lỗi xảy ra
+     */
+    public PaymentDTO createDepositPayment(UUID bookingId, UUID userId, boolean useFixedDeposit) throws SQLException {
         System.out.println("=== createDepositPayment START ===");
         System.out.println("BookingId: " + bookingId);
         System.out.println("UserId: " + userId);
+        System.out.println("Use Fixed Deposit: " + useFixedDeposit);
         
         // Debug VNPay configuration
         System.out.println("=== VNPay Configuration ===");
@@ -59,15 +73,23 @@ public class PaymentService implements IPaymentService {
             // Get deposit data
             var depositDTO = depositService.getDepositPageData(bookingId, userId);
             
-            // Lấy chính xác số tiền hiển thị trên JSP (đã format)
-            String formattedAmount = depositDTO.getFormattedDepositAmount(); // "2,218,339 VND"
+            double depositAmount;
             
-            // Parse số tiền từ formatted string để đảm bảo chính xác 100%
-            double depositAmount = parseFormattedAmount(formattedAmount);
-            
-            System.out.println("Deposit Amount (raw from DB): " + depositDTO.getDepositAmount());
-            System.out.println("Deposit Amount (formatted): " + formattedAmount);
-            System.out.println("Deposit Amount (parsed VND): " + depositAmount);
+            if (useFixedDeposit) {
+                // Sử dụng tiền cọc cố định 300.000 VND
+                depositAmount = 300000.0;
+                System.out.println("Using fixed deposit amount: 300,000 VND");
+            } else {
+                // Lấy chính xác số tiền hiển thị trên JSP (đã format)
+                String formattedAmount = depositDTO.getFormattedDepositAmount(); // "2,218,339 VND"
+                
+                // Parse số tiền từ formatted string để đảm bảo chính xác 100%
+                depositAmount = parseFormattedAmount(formattedAmount);
+                
+                System.out.println("Deposit Amount (raw from DB): " + depositDTO.getDepositAmount());
+                System.out.println("Deposit Amount (formatted): " + formattedAmount);
+                System.out.println("Deposit Amount (parsed VND): " + depositAmount);
+            }
 
             // Validate deposit amount - VNPay yêu cầu số tiền tối thiểu
             if (depositAmount < 1000) {
@@ -451,6 +473,11 @@ public class PaymentService implements IPaymentService {
             // Đảm bảo terms agreement (sử dụng method có sẵn)
             bookingRepository.updateTermsAgreement(bookingId, true, "v1.0");
             System.out.println("✅ Terms agreement ensured (if not already agreed)");
+            
+            // ========== BƯỚC 6: KHÔNG LƯU BẢO HIỂM XUỐNG DATABASE ==========
+            System.out.println("--- Bước 6: Không lưu bảo hiểm xuống database ---");
+            System.out.println("✅ Bỏ qua bước lưu bảo hiểm vì đã được lưu khi tạo booking");
+            System.out.println("✅ Tái sử dụng dữ liệu bảo hiểm từ booking để tránh trùng lặp");
             
             // ========== KẾT QUẢ CUỐI CÙNG ==========
             System.out.println("=== KẾT QUẢ CUỐI CÙNG ===");

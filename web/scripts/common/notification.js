@@ -16,20 +16,30 @@ document.addEventListener('DOMContentLoaded', function() {
         notificationBtn.classList.add('d-flex', 'align-items-center', 'position-relative');
     }
     
+    // Xử lý đặc biệt cho thông báo người dùng
+    document.querySelectorAll('.notification-item.user-notification').forEach(function(item) {
+        item.addEventListener('click', function(e) {
+            e.preventDefault(); // Ngăn chặn hành vi mặc định của thẻ a
+            const notificationId = this.getAttribute('data-notification-id');
+            console.log("User notification clicked:", notificationId);
+            
+            // Đánh dấu đã đọc
+            markAsRead(notificationId);
+            
+            // Chuyển hướng đến trang my-trip
+            console.log("Redirecting to my-trip page");
+            setTimeout(function() {
+                window.location.href = contextPath + '/user/my-trip';
+            }, 200);
+        });
+    });
+    
     // Đánh dấu một thông báo đã đọc khi click vào
-    document.querySelectorAll('.notification-item.unread').forEach(function(item) {
+    document.querySelectorAll('.notification-item.unread:not(.user-notification)').forEach(function(item) {
         item.addEventListener('click', function(e) {
             const notificationId = this.getAttribute('data-notification-id');
             console.log("Marking notification as read:", notificationId);
             markAsRead(notificationId);
-            
-            // Xử lý chuyển hướng nếu cần (chỉ áp dụng cho user)
-            if (this.classList.contains('user-notification')) {
-                const message = this.querySelector('.notification-title')?.textContent.trim().toLowerCase();
-                if (message && message.includes('đã được duyệt')) {
-                    window.location.href = contextPath + '/booking-form/deposit';
-                }
-            }
         });
     });
     
@@ -43,7 +53,6 @@ document.addEventListener('DOMContentLoaded', function() {
             markAllAsRead();
         });
     }
-    
     // Thêm nút xóa thông báo
     addDeleteButtonsToNotifications();
     
@@ -182,6 +191,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Hàm thêm nút xóa vào các thông báo
     function addDeleteButtonsToNotifications() {
         document.querySelectorAll('.notification-item').forEach(function(item) {
+            // Kiểm tra xem đã có nút xóa chưa
+            const existingDeleteBtn = item.querySelector('.notification-actions');
+            if (existingDeleteBtn) {
+                return; // Nếu đã có nút xóa thì bỏ qua
+            }
+            
             // Tạo container cho nút xóa
             const deleteContainer = document.createElement('div');
             deleteContainer.className = 'notification-actions';

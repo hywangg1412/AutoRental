@@ -1,6 +1,7 @@
-package Service.Interfaces;
+package Service.Interfaces.IContract;
 
-import Model.Entity.Contract;
+import Model.Entity.Contract.Contract;
+import Service.Interfaces.Service;
 import java.util.List;
 import java.util.UUID;
 

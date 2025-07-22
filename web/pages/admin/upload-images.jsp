@@ -9,84 +9,13 @@ uri="http://java.sun.com/jsp/jstl/core" %>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Upload Car Images - AutoRental</title>
     <link
+      href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap"
       rel="stylesheet"
-      href="${pageContext.request.contextPath}/css/admin-style.css"
     />
-    <style>
-      .upload-container {
-        max-width: 600px;
-        margin: 50px auto;
-        padding: 20px;
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      }
-      .form-group {
-        margin-bottom: 15px;
-      }
-      .form-group label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: 500;
-      }
-      .form-group input,
-      .form-group select {
-        width: 100%;
-        padding: 8px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        box-sizing: border-box;
-      }
-      .btn {
-        padding: 10px 20px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 14px;
-        margin-right: 10px;
-      }
-      .btn-primary {
-        background-color: #007bff;
-        color: white;
-      }
-      .btn-secondary {
-        background-color: #6c757d;
-        color: white;
-      }
-      .image-preview {
-        max-width: 100px;
-        max-height: 60px;
-        margin: 5px;
-        border-radius: 4px;
-        border: 1px solid #eee;
-      }
-      .alert {
-        padding: 10px;
-        margin-bottom: 15px;
-        border-radius: 4px;
-      }
-      .alert-info {
-        background-color: #d1ecf1;
-        color: #0c5460;
-        border: 1px solid #bee5eb;
-      }
-      .alert-warning {
-        background-color: #fff3cd;
-        color: #856404;
-        border: 1px solid #ffeaa7;
-      }
-      .alert-success {
-        background-color: #d4edda;
-        color: #155724;
-        border: 1px solid #c3e6cb;
-      }
-      .car-info {
-        background-color: #f8f9fa;
-        padding: 15px;
-        border-radius: 4px;
-        margin-bottom: 20px;
-      }
-    </style>
+    <link
+      rel="stylesheet"
+      href="${pageContext.request.contextPath}/styles/admin/upload-images.css"
+    />
   </head>
   <body>
     <div class="upload-container">
@@ -176,30 +105,25 @@ uri="http://java.sun.com/jsp/jstl/core" %>
         const input = document.getElementById("carImage");
         const preview = document.getElementById("imagePreview");
         preview.innerHTML = "";
-
         if (input.files.length > 10) {
           alert(
             "Tối đa 10 ảnh được phép upload. Hệ thống sẽ chỉ xử lý 10 ảnh đầu tiên."
           );
         }
-
         for (let i = 0; i < Math.min(input.files.length, 10); i++) {
           const file = input.files[i];
-
           if (!file.type.startsWith("image/")) {
             alert("Chỉ chấp nhận file ảnh!");
             input.value = "";
             preview.innerHTML = "";
-            return;
+            return false;
           }
-
           if (file.size > 5 * 1024 * 1024) {
             alert("Ảnh " + file.name + " vượt quá 5MB!");
             input.value = "";
             preview.innerHTML = "";
-            return;
+            return false;
           }
-
           const reader = new FileReader();
           reader.onload = (e) => {
             const img = document.createElement("img");
@@ -209,7 +133,12 @@ uri="http://java.sun.com/jsp/jstl/core" %>
           };
           reader.readAsDataURL(file);
         }
+        return true;
       }
+
+      document.getElementById("uploadForm").onsubmit = function () {
+        return validateImages();
+      };
 
       document
         .getElementById("uploadForm")

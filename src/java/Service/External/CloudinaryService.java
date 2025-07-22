@@ -67,9 +67,15 @@ public class CloudinaryService {
         Map options = ObjectUtils.asMap(
             "folder", folderName,
             "resource_type", "raw",
-            "public_id", fileName
+            "public_id", fileName,
+            "type", "upload" // public file
         );
         return cloudinary.uploader().upload(fileBytes, options);
+    }
+
+    // Lấy link public cho file raw (PDF)
+    public String getRawFileUrl(String publicId) {
+        return cloudinary.url().resourceType("raw").generate(publicId);
     }
 
     private static byte[] toByteArray(InputStream in) throws IOException {

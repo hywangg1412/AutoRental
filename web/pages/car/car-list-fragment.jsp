@@ -11,13 +11,12 @@
                     style="background-image: url('${pageContext.request.contextPath}${car.mainImageUrl}'); position: relative; height: 220px; background-size: cover; background-position: center;">
                     <c:set var="isFavorite" value="${favoriteCarIds.contains(car.carId.toString())}" />
                     <form method="post" action="${pageContext.request.contextPath}/user/favorite-car" 
-                          style="position: absolute; top: 10px; right: 10px;"
-                          enctype="application/x-www-form-urlencoded">
+                          style="position: absolute; top: 10px; right: 10px;">
                         <input type="hidden" name="action" value="${isFavorite ? 'remove' : 'add'}">
                         <input type="hidden" name="carId" value="${car.carId}">
                         <input type="hidden" name="source" value="car" />
-                        <button class="favorite-btn" type="submit" title="${isFavorite ? 'Bỏ yêu thích' : 'Yêu thích'}">
-                            <i class="bi ${isFavorite ? 'bi-heart-fill text-success' : 'bi-heart'}"></i>
+                        <button class="favorite-btn" type="submit" title="${isFavorite ? 'Unfavorite' : 'Favorite'}" style="background: none; border: none; box-shadow: none; padding: 0; margin: 0;">
+                            <i class="bi ${isFavorite ? 'bi-heart-fill text-success' : 'bi-heart'}" style="font-size: 1.5rem;"></i>
                         </button>
                     </form>
                 </div>
@@ -27,7 +26,7 @@
                             <a href="${pageContext.request.contextPath}/pages/car-single?id=${car.carId}"
                                 class="text-decoration-none text-dark">${car.carModel}</a>
                         </h2>
-                        <span class="car-status-inline ${car.statusCssClass} badge ms-2">${car.statusDisplay}</span>
+                        <span class="car-status-inline badge ${car.statusCssClass}" style="min-width: 70px; text-align: center;">${car.statusDisplay}</span>
                     </div>
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <span class="cat text-muted small">${car.brandName}</span>
