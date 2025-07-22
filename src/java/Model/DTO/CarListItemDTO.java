@@ -17,6 +17,7 @@ public class CarListItemDTO {
     private String fuelName;
     private Integer yearManufactured;
     private int seats;
+    private Double averageRating;
 
     public UUID getCarId() {
         return carId;
@@ -122,9 +123,8 @@ public class CarListItemDTO {
         this.seats = seats;
     }
 
-    
-    
-
+    public Double getAverageRating() { return averageRating; }
+    public void setAverageRating(Double averageRating) { this.averageRating = averageRating; }
     
 }
 

@@ -7,6 +7,7 @@ import Repository.Car.CarImageRepository;
 import Repository.Car.CarRepository;
 import Service.Interfaces.ICar.ICarBrandService;
 import Service.Interfaces.ICar.ICarService;
+import Service.UserFeedbackService;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class CarListService {
     private final ICarService carService = new CarService();
     private final ICarBrandService brandService = new CarBrandService();
     private final CarImageRepository imageRepository = new CarImageRepository();
+    private UserFeedbackService userFeedbackService = new UserFeedbackService();
 
     /**
      * CẢNH BÁO: Hàm này lấy toàn bộ xe từ DB, có thể gây tải lớn nếu số lượng
@@ -51,10 +53,17 @@ public class CarListService {
                 Model.Entity.Car.CarBrand brand = brandMap.get(car.getBrandId());
                 dto.setBrandName(brand != null ? brand.getBrandName() : "N/A");
                 Model.Entity.Car.CarImage image = imageMap.get(car.getCarId());
-                if (image != null && image.getImageUrl() != null && !image.getImageUrl().isBlank()) {
+                if (image != null && image.getImageUrl() != null && !image.getImageUrl().isEmpty()) {
                     dto.setMainImageUrl(image.getImageUrl());
                 } else {
                     dto.setMainImageUrl("/images/car-default.jpg");
+                }
+                try {
+                    if (userFeedbackService != null) {
+                        dto.setAverageRating(userFeedbackService.getAverageRatingForCar(car.getCarId()));
+                    }
+                } catch (Exception e) {
+                    dto.setAverageRating(0.0);
                 }
                 result.add(dto);
             }
@@ -89,10 +98,17 @@ public class CarListService {
                 Model.Entity.Car.CarBrand brand = brandMap.get(car.getBrandId());
                 dto.setBrandName(brand != null ? brand.getBrandName() : "N/A");
                 Model.Entity.Car.CarImage image = imageMap.get(car.getCarId());
-                if (image != null && image.getImageUrl() != null && !image.getImageUrl().isBlank()) {
+                if (image != null && image.getImageUrl() != null && !image.getImageUrl().isEmpty()) {
                     dto.setMainImageUrl(image.getImageUrl());
                 } else {
                     dto.setMainImageUrl("/images/car-default.jpg");
+                }
+                try {
+                    if (userFeedbackService != null) {
+                        dto.setAverageRating(userFeedbackService.getAverageRatingForCar(car.getCarId()));
+                    }
+                } catch (Exception e) {
+                    dto.setAverageRating(0.0);
                 }
                 result.add(dto);
             }
@@ -136,10 +152,17 @@ public class CarListService {
                 Model.Entity.Car.CarBrand brand = brandMap.get(car.getBrandId());
                 dto.setBrandName(brand != null ? brand.getBrandName() : "N/A");
                 Model.Entity.Car.CarImage image = imageMap.get(car.getCarId());
-                if (image != null && image.getImageUrl() != null && !image.getImageUrl().isBlank()) {
+                if (image != null && image.getImageUrl() != null && !image.getImageUrl().isEmpty()) {
                     dto.setMainImageUrl(image.getImageUrl());
                 } else {
                     dto.setMainImageUrl("/images/car-default.jpg");
+                }
+                try {
+                    if (userFeedbackService != null) {
+                        dto.setAverageRating(userFeedbackService.getAverageRatingForCar(car.getCarId()));
+                    }
+                } catch (Exception e) {
+                    dto.setAverageRating(0.0);
                 }
                 result.add(dto);
             }
@@ -192,10 +215,17 @@ public class CarListService {
                 Model.Entity.Car.CarBrand brand = brandMap.get(car.getBrandId());
                 dto.setBrandName(brand != null ? brand.getBrandName() : "N/A");
                 Model.Entity.Car.CarImage image = imageMap.get(car.getCarId());
-                if (image != null && image.getImageUrl() != null && !image.getImageUrl().isBlank()) {
+                if (image != null && image.getImageUrl() != null && !image.getImageUrl().isEmpty()) {
                     dto.setMainImageUrl(image.getImageUrl());
                 } else {
                     dto.setMainImageUrl("/images/car-default.jpg");
+                }
+                try {
+                    if (userFeedbackService != null) {
+                        dto.setAverageRating(userFeedbackService.getAverageRatingForCar(car.getCarId()));
+                    }
+                } catch (Exception e) {
+                    dto.setAverageRating(0.0);
                 }
                 result.add(dto);
             }
