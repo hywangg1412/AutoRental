@@ -42,11 +42,11 @@ public class ReturnCarRequestServlet extends HttpServlet {
                 out.print("{\"success\":false,\"message\":\"Không thể trả xe ở trạng thái hiện tại\"}");
                 return;
             }
-            // Cập nhật trạng thái
-            bookingService.updateBookingStatus(bookingId, BookingStatusConstants.WAITING_RETURN_CONFIRM);
+            // Cập nhật trạng thái thành PendingInspection để đưa vào danh sách chờ kiểm tra
+            bookingService.updateBookingStatus(bookingId, BookingStatusConstants.PENDING_INSPECTION);
             // Gửi thông báo cho staff
-            notificationService.sendNotificationToAllStaff("Khách hàng đã yêu cầu trả xe. Mã booking: " + booking.getBookingCode());
-            out.print("{\"success\":true}");
+            notificationService.sendNotificationToAllStaff("Khách hàng đã yêu cầu trả xe, đang chờ kiểm tra. Mã booking: " + booking.getBookingCode());
+            out.print("{\"success\":true,\"message\":\"Yêu cầu trả xe đã được gửi, vui lòng chờ nhân viên kiểm tra xe\"}");
         } catch (Exception e) {
             out.print("{\"success\":false,\"message\":\"Lỗi: " + e.getMessage() + "\"}");
         }

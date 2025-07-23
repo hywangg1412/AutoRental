@@ -22,143 +22,136 @@ body {
 
 /* Sidebar Styles */
 .sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 260px;
-  background-color: #ffffff;
-  border-right: 1px solid #e1e8ed;
-  overflow-y: auto;
-  z-index: 1000;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
-}
-
-.sidebar .p-4 {
-  padding: 1.5rem !important;
-  border-bottom: 1px solid #e1e8ed;
-}
-
-.sidebar .bg-primary {
-  background-color: #3b82f6 !important;
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.sidebar h5 {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #1a202c;
-  margin: 0;
-}
-
-.sidebar small {
-  color: #718096;
-  font-size: 0.875rem;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 250px;
+    z-index: 100;
+    padding: 0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    overflow-y: auto;
 }
 
 .sidebar .nav-link {
-  color: #4a5568;
-  padding: 0.75rem 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-weight: 500;
-  font-size: 0.9rem;
-  border-radius: 0;
-  transition: all 0.2s ease;
-  text-decoration: none;
-  min-height: 44px; /* Ensure consistent height */
+    color: #666;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    margin: 0.2rem 0;
 }
 
 .sidebar .nav-link:hover {
-  background-color: #f7fafc;
-  color: #3b82f6;
-  text-decoration: none;
+    background-color: #f0f7ff;
+    color: #3b82f6;
 }
 
 .sidebar .nav-link.active {
-  background-color: #eff6ff;
-  color: #3b82f6;
-  border-right: 3px solid #3b82f6;
-  font-weight: 600;
+    background-color: #e6f0ff;
+    color: #3b82f6;
+    font-weight: 500;
 }
 
 .sidebar .nav-link i {
-  width: 18px;
-  font-size: 16px;
-  text-align: center; /* Center align icons */
+    margin-right: 8px;
+    width: 20px;
+    text-align: center;
 }
 
-.sidebar .text-danger {
-  color: #e53e3e !important;
-}
-
-.sidebar .text-danger:hover {
-  background-color: #fed7d7;
-  color: #e53e3e !important;
-}
-
-/* Main Content */
+/* Main Content Styles */
 .main-content {
-  flex: 1;
-  margin-left: 260px;
-  background-color: #f5f6fa;
+    margin-left: 250px;
+    min-height: 100vh;
+    background-color: #f8f9fa;
 }
 
 .header {
-  background-color: #ffffff;
-  border-bottom: 1px solid #e1e8ed;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 99;
 }
 
-.header h4 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1a202c;
-  margin: 0;
+/* Card Styles */
+.card {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
 }
 
-.header small {
-  color: #718096;
-  font-size: 0.875rem;
+.card-header {
+    border-radius: 8px 8px 0 0 !important;
+    padding: 12px 20px;
 }
 
-.header .btn {
-  border-radius: 8px;
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
+.card-body {
+    padding: 20px;
 }
 
-.header .btn-outline-secondary {
-  border-color: #e2e8f0;
-  color: #4a5568;
+/* Table Styles */
+.table {
+    margin-bottom: 0;
 }
 
-.header .btn-outline-secondary:hover {
-  background-color: #f7fafc;
-  border-color: #cbd5e0;
+.table th {
+    font-weight: 600;
+    color: #444;
+    border-top: none;
+    background-color: #f9f9f9;
 }
 
-.header .bg-primary {
-  background-color: #3b82f6 !important;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 600;
-  font-size: 0.875rem;
+.table td {
+    vertical-align: middle;
+}
+
+/* Button Styles */
+.btn-sm {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+}
+
+/* Badge Styles */
+.badge {
+    padding: 0.35em 0.65em;
+    font-weight: 500;
+}
+
+/* Modal Styles */
+.modal-content {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+    border-bottom: 1px solid #eee;
+    padding: 15px 20px;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    border-top: 1px solid #eee;
+    padding: 15px 20px;
+}
+
+/* Form Styles */
+.form-label {
+    font-weight: 500;
+    color: #555;
+}
+
+.form-control, .form-select {
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25);
 }
 
 /* Progress Bar */
