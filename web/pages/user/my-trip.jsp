@@ -148,6 +148,9 @@
                                                                                                 <i class="bi bi-arrow-repeat me-1"></i> Waiting Return Confirm
                                                                                             </span>
                                                                                         </c:when>
+                                                                                        <c:when test="${trip.status eq 'PendingInspection'}">
+                                                                                            <i class="bi bi-search"></i> Pending Inspection
+                                                                                        </c:when>
                                                                                         <c:otherwise>${trip.status}</c:otherwise>
                                                                                     </c:choose>
                                                                                 </span>
@@ -264,6 +267,9 @@
                                                                                                 <span class="badge status-badge status-reject">
                                                                                                     <i class="bi bi-x-circle-fill me-1"></i> Rejected
                                                                                                 </span>
+                                                                                            </c:when>
+                                                                                            <c:when test="${booking.status eq 'PendingInspection'}">
+                                                                                                <i class="bi bi-search"></i> Pending Inspection
                                                                                             </c:when>
                                                                                             <c:otherwise>${booking.status}</c:otherwise>
                                                                                         </c:choose>
