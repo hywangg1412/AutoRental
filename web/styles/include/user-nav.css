@@ -375,12 +375,15 @@ nav .custom-signup-btn:hover, nav .custom-signup-btn:focus {
   flex-direction: column;
   flex: 1;
   min-width: 0;
+  word-break: break-word;
+  overflow: visible;
 }
 
 .notification-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .notification-title {
@@ -391,6 +394,8 @@ nav .custom-signup-btn:hover, nav .custom-signup-btn:focus {
   white-space: normal;
   word-break: break-word;
   flex: 1;
+  line-height: 1.4;
+  max-width: 275px;
 }
 
 .dot-unread {
@@ -415,6 +420,8 @@ nav .custom-signup-btn:hover, nav .custom-signup-btn:focus {
   padding: 0.5rem 0.5rem 0.5rem 0.5rem;
   min-width: 350px;
   max-width: 400px;
+  max-height: 450px;
+  overflow-y: auto;
   border: none;
 }
 
