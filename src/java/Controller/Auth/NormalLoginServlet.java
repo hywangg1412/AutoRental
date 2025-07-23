@@ -120,7 +120,7 @@ public class NormalLoginServlet extends HttpServlet {
                     if ("Staff".equalsIgnoreCase(roleName)) {
                         redirectUrl = "/staff/dashboard";
                     } else if ("Admin".equalsIgnoreCase(roleName)) {
-                        redirectUrl = "/pages/admin/admin-dashboard.jsp";
+                        redirectUrl = "/admin/dashboard";
                     }
                 }
             } catch (Exception ex) {

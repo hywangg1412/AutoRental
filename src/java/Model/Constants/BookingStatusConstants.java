@@ -18,4 +18,5 @@ public class BookingStatusConstants {
     public static final String REJECTED = "Rejected";
     public static final String WAITING_RETURN_CONFIRM = "WAITING_RETURN_CONFIRM";
     public static final String RETURN_REJECTED = "RETURN_REJECTED";
+    public static final String PENDING_INSPECTION = "PendingInspection"; // Trạng thái chờ kiểm tra xe
 }

@@ -59,7 +59,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="${pageContext.request.contextPath}/pages/staff/staff-car-condition.jsp">
+              <a class="nav-link" href="${pageContext.request.contextPath}/staff/car-condition">
                 <i class="fas fa-car"></i> Car Condition
               </a>
             </li>
