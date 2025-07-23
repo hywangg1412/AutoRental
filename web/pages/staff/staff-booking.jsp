@@ -41,7 +41,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="${pageContext.request.contextPath}/pages/staff/staff-car-condition.jsp">
+                        <a class="nav-link" href="${pageContext.request.contextPath}/staff/car-condition">
                             <i class="fas fa-car"></i> Car Condition
                         </a>
                     </li>
@@ -51,8 +51,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                                                <a class="nav-link" href="${pageContext.request.contextPath}/staff/feedback-reply">
-
+                        <a class="nav-link" href="${pageContext.request.contextPath}/staff/feedback-reply">
                             <i class="fas fa-comment"></i> Customer Feedback
                         </a>
                     </li>
@@ -139,8 +138,9 @@
                                     <c:choose>
                                         <c:when test="${not empty bookingRequests}">
                                             <c:forEach items="${bookingRequests}" var="booking">
-                                                <tr>
-                                                    <!-- =================== MODAL CHI TIẾT BOOKING (KẾT HỢP CŨ + MỚI) =================== -->
+                                                <c:if test="${booking.status ne 'PendingInspection'}">
+                                                    <tr>
+                                                        <!-- =================== MODAL CHI TIẾT BOOKING (KẾT HỢP CŨ + MỚI) =================== -->
                                             <div class="modal fade" id="modal-${booking.bookingId}" tabindex="-1" aria-labelledby="modalLabel-${booking.bookingId}" aria-hidden="true">
                                                 <div class="modal-dialog modal-lg">
                                                     <div class="modal-content">
@@ -443,7 +443,8 @@
                                                 </div>
                                             </td>
                                             </tr>
-                                        </c:forEach>
+                                        </c:if>
+                                    </c:forEach>
                                     </c:when>
                                     <c:otherwise>
                                         <tr>
