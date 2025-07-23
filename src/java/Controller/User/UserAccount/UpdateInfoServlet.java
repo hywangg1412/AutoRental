@@ -21,7 +21,7 @@ import java.util.Map;
 import Service.Role.RoleService;
 import Model.Entity.Role.Role;
 
-//@WebServlet(name = "UpdateInfoServlet", urlPatterns = {"/user/update-info"})
+@WebServlet(name = "UpdateInfoServlet", urlPatterns = {"/user/update-info"})
 public class UpdateInfoServlet extends HttpServlet {
     private UserService userService;
     private RoleService roleService;
