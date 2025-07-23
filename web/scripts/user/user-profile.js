@@ -129,17 +129,35 @@ class ValidationManager {
 
     validateDateOfBirth(value) {
         const rules = ValidationRules.dob;
-        
         if (!value) return rules.required;
-        
-        const birthDate = new Date(value);
+
+        // Parse dd/MM/yyyy
+        const parts = value.split('/');
+        if (parts.length !== 3) return 'Invalid date format! Correct format: dd/MM/yyyy';
+        const day = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1;
+        const year = parseInt(parts[2], 10);
+
+        // Kiểm tra ngày hợp lệ
+        const birthDate = new Date(year, month, day);
+        if (
+            isNaN(birthDate.getTime()) ||
+            birthDate.getDate() !== day ||
+            birthDate.getMonth() !== month ||
+            birthDate.getFullYear() !== year
+        ) {
+            return 'Date does not exist! Please enter a valid date in dd/MM/yyyy format';
+        }
+
         const today = new Date();
-        
+        today.setHours(0,0,0,0);
+        birthDate.setHours(0,0,0,0);
+
         if (birthDate > today) return rules.future;
-        
+
         const age = this.calculateAge(birthDate, today);
         if (age < 18) return rules.age;
-        
+
         return null;
     }
 
@@ -1330,6 +1348,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 errorManager.showError(dobInput, dobError, errorMsg);
             } else {
                 errorManager.clearError(dobInput, dobError);
+            }
+            if (typeof validateDriverLicenseFields === 'function') {
+                validateDriverLicenseFields();
             }
         });
 
