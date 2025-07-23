@@ -20,6 +20,9 @@ import com.google.gson.Gson;
 import java.util.HashMap;
 import java.util.Map;
 import Utils.FormatUtils;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
 
 @WebServlet(name = "UpdateDriverLicenseServlet", urlPatterns = {"/user/update-driver-license"})
 @MultipartConfig
@@ -35,6 +38,31 @@ public class UpdateDriverLicenseServlet extends HttpServlet {
         cloudinaryService = new CloudinaryService();
         driverLicenseService = new DriverLicenseService();
         gson = new Gson();
+    }
+
+    // Helper: Trả về JSON response
+    private void sendJsonResponse(HttpServletResponse response, Map<String, Object> data) throws IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(gson.toJson(data));
+    }
+
+    // Helper: Lấy hoặc tạo mới DriverLicense
+    private DriverLicense getOrCreateLicense(UUID userId) {
+        try {
+            return driverLicenseService.findByUserId(userId);
+        } catch (NotFoundException e) {
+            DriverLicense license = new DriverLicense();
+            license.setLicenseId(UUID.randomUUID());
+            license.setUserId(userId);
+            license.setCreatedDate(LocalDateTime.now());
+            return license;
+        }
+    }
+
+    // Helper: Tính tuổi
+    private int calculateAge(LocalDate dob, LocalDate today) {
+        return Period.between(dob, today).getYears();
     }
 
     @Override
@@ -54,12 +82,18 @@ public class UpdateDriverLicenseServlet extends HttpServlet {
         }
 
         try {
-            if ("uploadImage".equals(action)) {
-                handleImageUpload(request, response, session, user);
-            } else if ("updateInfo".equals(action)) {
-                handleInfoUpdate(request, response, session, user);
-            } else {
-                response.sendRedirect(request.getContextPath() + "/user/profile");
+            switch (action) {
+                case "uploadImage":
+                    handleImageUploadOnly(request, response, session, user);
+                    break;
+                case "updateInfo":
+                    handleInfoUpdateOnly(request, response, session, user);
+                    break;
+                case "updateBoth":
+                    handleImageAndInfoUpdate(request, response, session, user);
+                    break;
+                default:
+                    response.sendRedirect(request.getContextPath() + "/user/profile");
             }
         } catch (Exception e) {
             session.setAttribute("error", "An error occurred: " + e.getMessage());
@@ -67,60 +101,42 @@ public class UpdateDriverLicenseServlet extends HttpServlet {
         }
     }
 
-    private void handleImageUpload(HttpServletRequest request, HttpServletResponse response, HttpSession session, User user) 
+    // Chỉ cập nhật ảnh, không ghi đè thông tin
+    private void handleImageUploadOnly(HttpServletRequest request, HttpServletResponse response, HttpSession session, User user)
             throws ServletException, IOException {
         Part filePart = request.getPart("licenseImage");
         if (filePart == null || filePart.getSize() == 0) {
-            session.setAttribute("error", "No image file provided");
-            response.sendRedirect(request.getContextPath() + "/user/profile");
+            handleError(request, response, session, "No image file provided");
             return;
         }
-
         try (InputStream inputStream = filePart.getInputStream()) {
             String publicId = "driver_license_" + user.getUserId();
             String imageUrl = cloudinaryService.uploadAndGetUrlToFolder(inputStream, "driver_license", publicId);
-            
-            DriverLicense license = null;
-            boolean isNewLicense = false;
-            try {
-                license = driverLicenseService.findByUserId(user.getUserId());
-            } catch (NotFoundException e) {
-                license = new DriverLicense();
-                license.setLicenseId(UUID.randomUUID());
-                license.setUserId(user.getUserId());
-                license.setCreatedDate(java.time.LocalDateTime.now());
-                isNewLicense = true;
-            }
-            
+
+            DriverLicense license = getOrCreateLicense(user.getUserId());
             license.setLicenseImage(imageUrl);
-            
-            if (isNewLicense) {
+            if (license.getLicenseId() == null) {
                 driverLicenseService.add(license);
             } else {
                 driverLicenseService.update(license);
             }
-            
+
             session.setAttribute("success", "Driver license image updated successfully");
-            
             if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
-                response.setContentType("application/json");
-                response.setCharacterEncoding("UTF-8");
                 Map<String, Object> responseData = new HashMap<>();
                 responseData.put("success", true);
                 responseData.put("message", "Driver license image updated successfully");
-                responseData.put("imageUrl", imageUrl);
-                response.getWriter().write(gson.toJson(responseData));
+                responseData.put("newImageUrl", imageUrl);
+                sendJsonResponse(response, responseData);
             } else {
                 response.sendRedirect(request.getContextPath() + "/user/profile");
             }
         } catch (Exception e) {
             if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
-                response.setContentType("application/json");
-                response.setCharacterEncoding("UTF-8");
                 Map<String, Object> responseData = new HashMap<>();
                 responseData.put("success", false);
                 responseData.put("message", "Failed to upload image: " + e.getMessage());
-                response.getWriter().write(gson.toJson(responseData));
+                sendJsonResponse(response, responseData);
             } else {
                 session.setAttribute("error", "Failed to upload image: " + e.getMessage());
                 response.sendRedirect(request.getContextPath() + "/user/profile");
@@ -128,7 +144,8 @@ public class UpdateDriverLicenseServlet extends HttpServlet {
         }
     }
 
-    private void handleInfoUpdate(HttpServletRequest request, HttpServletResponse response, HttpSession session, User user) 
+    // Chỉ cập nhật thông tin, không ghi đè ảnh
+    private void handleInfoUpdateOnly(HttpServletRequest request, HttpServletResponse response, HttpSession session, User user)
             throws ServletException, IOException {
         String licenseNumber = request.getParameter("licenseNumber");
         String fullName = request.getParameter("fullName");
@@ -146,60 +163,37 @@ public class UpdateDriverLicenseServlet extends HttpServlet {
             handleError(request, response, session, "Date of birth is required");
             return;
         }
-
         try {
-            // Xử lý Date of Birth với định dạng dd/MM/yyyy
-            java.time.LocalDate dobDate = FormatUtils.parseDateSafely(dob);
+            LocalDate dobDate = FormatUtils.parseDateSafely(dob);
             if (dobDate == null) {
                 handleError(request, response, session, "Invalid date of birth format. Please use dd/MM/yyyy format");
                 return;
             }
-            java.time.LocalDate today = java.time.LocalDate.now();
+            LocalDate today = LocalDate.now();
             if (dobDate.isAfter(today)) {
                 handleError(request, response, session, "Date of birth cannot be in the future");
                 return;
             }
-            int age = today.getYear() - dobDate.getYear();
-            if (today.getMonthValue() < dobDate.getMonthValue() || 
-                (today.getMonthValue() == dobDate.getMonthValue() && today.getDayOfMonth() < dobDate.getDayOfMonth())) {
-                age--;
-            }
+            int age = calculateAge(dobDate, today);
             if (age < 18) {
                 handleError(request, response, session, "You must be at least 18 years old to register a driver license");
                 return;
             }
-
-            DriverLicense license = null;
-            boolean isNewLicense = false;
-            try {
-                license = driverLicenseService.findByUserId(user.getUserId());
-            } catch (NotFoundException e) {
-                license = new DriverLicense();
-                license.setLicenseId(UUID.randomUUID());
-                license.setUserId(user.getUserId());
-                license.setCreatedDate(java.time.LocalDateTime.now());
-                isNewLicense = true;
-            }
-            
+            DriverLicense license = getOrCreateLicense(user.getUserId());
             license.setLicenseNumber(licenseNumber);
             license.setFullName(fullName);
             license.setDob(dobDate);
-            
-            if (isNewLicense) {
+            if (license.getLicenseId() == null) {
                 driverLicenseService.add(license);
             } else {
                 driverLicenseService.update(license);
             }
-            
             session.setAttribute("success", "Driver license information updated successfully");
-            
             if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
-                response.setContentType("application/json");
-                response.setCharacterEncoding("UTF-8");
                 Map<String, Object> responseData = new HashMap<>();
                 responseData.put("success", true);
                 responseData.put("message", "Driver license information updated successfully");
-                response.getWriter().write(gson.toJson(responseData));
+                sendJsonResponse(response, responseData);
             } else {
                 response.sendRedirect(request.getContextPath() + "/user/profile");
             }
@@ -208,15 +202,79 @@ public class UpdateDriverLicenseServlet extends HttpServlet {
         }
     }
 
-    private void handleError(HttpServletRequest request, HttpServletResponse response, HttpSession session, String errorMessage) 
+    private void handleImageAndInfoUpdate(HttpServletRequest request, HttpServletResponse response, HttpSession session, User user)
+            throws ServletException, IOException {
+        String licenseNumber = request.getParameter("licenseNumber");
+        String fullName = request.getParameter("fullName");
+        String dob = request.getParameter("dob");
+        Part filePart = request.getPart("licenseImage");
+
+        if (licenseNumber == null || !licenseNumber.matches("^[0-9]{12}$")) {
+            handleError(request, response, session, "License number must be exactly 12 digits");
+            return;
+        }
+        if (fullName == null || !fullName.matches("^[\\p{L} ]+$")) {
+            handleError(request, response, session, "Full name must not contain special characters or numbers");
+            return;
+        }
+        if (dob == null) {
+            handleError(request, response, session, "Date of birth is required");
+            return;
+        }
+        LocalDate dobDate = FormatUtils.parseDateSafely(dob);
+        if (dobDate == null) {
+            handleError(request, response, session, "Invalid date of birth format. Please use dd/MM/yyyy format");
+            return;
+        }
+        LocalDate today = LocalDate.now();
+        if (dobDate.isAfter(today)) {
+            handleError(request, response, session, "Date of birth cannot be in the future");
+            return;
+        }
+        int age = calculateAge(dobDate, today);
+        if (age < 18) {
+            handleError(request, response, session, "You must be at least 18 years old to register a driver license");
+            return;
+        }
+        if (filePart == null || filePart.getSize() == 0) {
+            handleError(request, response, session, "No image file provided");
+            return;
+        }
+        try (InputStream inputStream = filePart.getInputStream()) {
+            String publicId = "driver_license_" + user.getUserId();
+            String imageUrl = cloudinaryService.uploadAndGetUrlToFolder(inputStream, "driver_license", publicId);
+            DriverLicense license = getOrCreateLicense(user.getUserId());
+            license.setLicenseNumber(licenseNumber);
+            license.setFullName(fullName);
+            license.setDob(dobDate);
+            license.setLicenseImage(imageUrl);
+            if (license.getLicenseId() == null) {
+                driverLicenseService.add(license);
+            } else {
+                driverLicenseService.update(license);
+            }
+            session.setAttribute("success", "Driver license updated successfully");
+            if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+                Map<String, Object> responseData = new HashMap<>();
+                responseData.put("success", true);
+                responseData.put("message", "Driver license updated successfully");
+                responseData.put("newImageUrl", imageUrl);
+                sendJsonResponse(response, responseData);
+            } else {
+                response.sendRedirect(request.getContextPath() + "/user/profile");
+            }
+        } catch (Exception e) {
+            handleError(request, response, session, "Failed to update information: " + e.getMessage());
+        }
+    }
+
+    private void handleError(HttpServletRequest request, HttpServletResponse response, HttpSession session, String errorMessage)
             throws IOException {
         if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
             Map<String, Object> responseData = new HashMap<>();
             responseData.put("success", false);
             responseData.put("message", errorMessage);
-            response.getWriter().write(gson.toJson(responseData));
+            sendJsonResponse(response, responseData);
         } else {
             session.setAttribute("error", errorMessage);
             response.sendRedirect(request.getContextPath() + "/user/profile");
