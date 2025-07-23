@@ -16,31 +16,45 @@ document.addEventListener('DOMContentLoaded', function() {
         notificationBtn.classList.add('d-flex', 'align-items-center', 'position-relative');
     }
     
-    // Xử lý đặc biệt cho thông báo người dùng
-    document.querySelectorAll('.notification-item.user-notification').forEach(function(item) {
+    // Xử lý đặc biệt cho tất cả thông báo người dùng (bao gồm cả booking và trả xe)
+    document.querySelectorAll('.notification-item').forEach(function(item) {
         item.addEventListener('click', function(e) {
             e.preventDefault(); // Ngăn chặn hành vi mặc định của thẻ a
             const notificationId = this.getAttribute('data-notification-id');
-            console.log("User notification clicked:", notificationId);
+            console.log("Notification clicked:", notificationId);
             
             // Đánh dấu đã đọc
             markAsRead(notificationId);
             
-            // Chuyển hướng đến trang my-trip
-            console.log("Redirecting to my-trip page");
-            setTimeout(function() {
-                window.location.href = contextPath + '/user/my-trip';
-            }, 200);
+            // Kiểm tra nội dung thông báo
+            const messageText = this.querySelector('.notification-title')?.textContent?.trim().toLowerCase() || '';
+            
+            // Xử lý chuyển hướng dựa vào nội dung thông báo
+            if (messageText.includes('booking') || 
+                messageText.includes('đặt xe') || 
+                messageText.includes('trả xe') || 
+                messageText.includes('xác nhận')) {
+                
+                // Chuyển hướng đến trang my-trip
+                console.log("Redirecting to my-trip page based on notification content");
+                setTimeout(function() {
+                    window.location.href = contextPath + '/user/my-trip';
+                }, 200);
+            }
         });
     });
     
-    // Đánh dấu một thông báo đã đọc khi click vào
+    // Đánh dấu một thông báo đã đọc khi click vào (chỉ áp dụng cho staff)
     document.querySelectorAll('.notification-item.unread:not(.user-notification)').forEach(function(item) {
-        item.addEventListener('click', function(e) {
-            const notificationId = this.getAttribute('data-notification-id');
-            console.log("Marking notification as read:", notificationId);
-            markAsRead(notificationId);
-        });
+        // Đảm bảo không ghi đè sự kiện đã thêm ở trên
+        if (!item.classList.contains('notification-handled')) {
+            item.addEventListener('click', function(e) {
+                const notificationId = this.getAttribute('data-notification-id');
+                console.log("Marking notification as read:", notificationId);
+                markAsRead(notificationId);
+            });
+            item.classList.add('notification-handled');
+        }
     });
     
     // Đánh dấu tất cả thông báo đã đọc

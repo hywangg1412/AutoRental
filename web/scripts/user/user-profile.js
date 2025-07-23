@@ -691,14 +691,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Save functionality
         driverLicenseElements.saveBtn.addEventListener('click', function() {
-            if (validateDriverLicenseFields()) {
-                const formData = new FormData();
-                formData.append('action', 'updateInfo');
-                formData.append('licenseNumber', driverLicenseElements.inputs[0].element.value);
-                formData.append('fullName', driverLicenseElements.inputs[1].element.value);
-                formData.append('dob', driverLicenseElements.inputs[2].element.value);
+            saveBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (!validateDriverLicenseFields()) return;
 
-                fetch(driverLicenseElements.form.action, {
+                const formData = new FormData(driverLicenseForm);
+                // Nếu có file ảnh, FormData sẽ tự động lấy từ input type="file"
+                if (licenseImageInput.files && licenseImageInput.files.length > 0) {
+                    formData.set('action', 'uploadImage');
+                } else {
+                    formData.set('action', 'updateInfo');
+                }
+
+                fetch(driverLicenseForm.action, {
                     method: 'POST',
                     body: formData
                 })
@@ -708,19 +713,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (data) {
                         const result = JSON.parse(data);
                         if (result.success) {
-                            // Xóa các lệnh showBootstrapToast trong fetch cập nhật driver license
-                            // giữ lại logic cập nhật UI, không show toast ở đây
-                            driverLicenseElements.inputs.forEach(input => input.element.disabled = true);
-                            driverLicenseElements.editBtn.classList.remove('d-none');
-                            driverLicenseElements.cancelBtn.classList.add('d-none');
-                            driverLicenseElements.saveBtn.classList.add('d-none');
-                            isEditingDriverLicense = false;
-                            
-                            // Xóa class edit-mode khi save thành công
-                            const driverLicenseBlock = document.querySelector('.driver-license-block');
-                            if (driverLicenseBlock) {
-                                driverLicenseBlock.classList.remove('edit-mode');
-                            }
+                            // ... update UI
                         } else {
                             showBootstrapToast(result.message || 'Failed to update information', 'error');
                         }
@@ -729,7 +722,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 .catch(error => {
                     showBootstrapToast('Failed to update information. Please try again.', 'error');
                 });
-            }
+            });
         });
     }
 
