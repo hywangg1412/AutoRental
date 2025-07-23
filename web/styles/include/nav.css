@@ -407,6 +407,8 @@ nav .custom-signup-btn {
   white-space: normal;
   word-break: break-word;
   flex: 1;
+  line-height: 1.4;
+  max-width: 275px;
 }
 
 .dot-unread {
@@ -431,6 +433,8 @@ nav .custom-signup-btn {
   padding: 0.5rem 0.5rem 0.5rem 0.5rem;
   min-width: 350px;
   max-width: 400px;
+  max-height: 450px;
+  overflow-y: auto;
   border: none;
 }
 
@@ -441,7 +445,7 @@ nav .custom-signup-btn {
   margin-bottom: 4px;
   transition: background 0.2s;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   cursor: pointer;
 }
@@ -733,10 +737,10 @@ nav .custom-signup-btn {
 }
 
 .notification-row {
-  display: flex !important;
-  justify-content: space-between !important;
-  align-items: flex-start !important;
-  width: 100% !important;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .navbar .notification-item.unread {
@@ -776,6 +780,15 @@ nav .custom-signup-btn {
   left: 0;
   width: 100%;
   z-index: 1050;
+}
+
+.notification-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  word-break: break-word;
+  overflow: visible;
 }
 
 
