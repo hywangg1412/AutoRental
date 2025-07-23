@@ -436,6 +436,22 @@ CREATE TABLE [Notification] (
 GO
 
 CREATE TABLE [UserFeedback] (
+<<<<<<< HEAD
+    [FeedbackId] UNIQUEIDENTIFIER NOT NULL,
+    [UserId] UNIQUEIDENTIFIER NOT NULL,
+    [CarId] UNIQUEIDENTIFIER NULL,
+    [BookingId] UNIQUEIDENTIFIER NULL,
+    [Rating] INT NOT NULL, --CHECK ([Rating] >= 1 AND [Rating] <= 5),
+    [Content] NVARCHAR(4000) NULL,
+    [Reviewed] DATE NOT NULL, --DEFAULT GETDATE(),
+    [CreatedDate] DATETIME2 NOT NULL, --DEFAULT GETDATE(),
+    [StaffReply] NVARCHAR(MAX) NULL,
+    [ReplyDate] DATETIME NULL,
+    CONSTRAINT [PK_UserFeedback] PRIMARY KEY ([FeedbackId]),
+    CONSTRAINT [FK_UserFeedback_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users]([UserId]) ON DELETE CASCADE,
+    CONSTRAINT [FK_UserFeedback_CarId] FOREIGN KEY ([CarId]) REFERENCES [Car]([CarId]) ON DELETE SET NULL,
+    CONSTRAINT [FK_UserFeedback_BookingId] FOREIGN KEY ([BookingId]) REFERENCES [Booking]([BookingId]) ON DELETE SET NULL ON UPDATE NO ACTION
+=======
     [FeedbackId] UNIQUEIDENTIFIER   NOT NULL,
     [UserId]     UNIQUEIDENTIFIER   NOT NULL,
     [CarId]      UNIQUEIDENTIFIER   NULL,
@@ -462,6 +478,7 @@ CREATE TABLE [UserFeedback] (
       FOREIGN KEY ([BookingId])
       REFERENCES [Booking]([BookingId])
       ON DELETE NO ACTION
+>>>>>>> a66f7ea02385db3585bf4dae4103328235cfde51
 );
 GO
 
