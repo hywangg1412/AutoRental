@@ -41,7 +41,7 @@
                     ${sessionScope.userUnreadCount}
                   </span>
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userNotificationDropdown" id="notificationDropdownMenu">
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userNotificationDropdown" id="notificationDropdownMenu" style="max-height: 450px; overflow-y: auto;">
                   <li class="dropdown-header">Notifications</li>
                   <li><hr class="dropdown-divider"></li>
                   
@@ -52,8 +52,8 @@
                           <a class="dropdown-item notification-item ${notification.isRead() ? 'read' : 'unread'} user-notification"
                              href="#"
                              data-notification-id="${notification.notificationId}">
-                            <div class="notification-content">
-                              <div class="notification-row">
+                            <div class="notification-content" style="width: 100%; word-break: break-word; overflow: visible;">
+                              <div class="notification-row" style="display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap;">
                                 <c:set var="iconClass" value="info-circle" />
                                 <c:set var="iconColor" value="#17a2b8" />
                                 
@@ -67,11 +67,11 @@
                                 </c:if>
                                 
                                 <i class="fas fa-${iconClass}" style="color: ${iconColor}; margin-right: 8px;"></i>
-                                <div class="notification-title">
+                                <div class="notification-title" style="word-break: break-word; white-space: normal; overflow: visible; line-height: 1.4; max-width: 275px;">
                                   ${notification.message}
                                 </div>
                                 <c:if test="${!notification.isRead()}">
-                                  <span class="dot-unread"></span>
+                                  <span class="dot-unread" style="flex-shrink: 0;"></span>
                                 </c:if>
                               </div>
                               <span class="notification-time">
