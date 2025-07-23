@@ -604,6 +604,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (driverLicenseElements.editBtn && driverLicenseElements.form) {
         let originalValues = {};
+        const licenseImageInput = document.getElementById('licenseImageInput');
 
         function storeOriginalValues() {
             driverLicenseElements.inputs.forEach(input => {
@@ -647,7 +648,6 @@ document.addEventListener('DOMContentLoaded', function() {
             storeOriginalValues();
             driverLicenseElements.inputs.forEach(input => input.element.disabled = false);
             // Enable file input when editing
-            const licenseImageInput = document.getElementById('licenseImageInput');
             if (licenseImageInput) licenseImageInput.disabled = false;
             driverLicenseElements.cancelBtn.classList.remove('d-none');
             driverLicenseElements.saveBtn.classList.remove('d-none');
@@ -665,7 +665,6 @@ document.addEventListener('DOMContentLoaded', function() {
         driverLicenseElements.cancelBtn.addEventListener('click', function() {
             resetToOriginalValues();
             // Disable file input when cancel
-            const licenseImageInput = document.getElementById('licenseImageInput');
             if (licenseImageInput) licenseImageInput.disabled = true;
             driverLicenseElements.cancelBtn.classList.add('d-none');
             driverLicenseElements.saveBtn.classList.add('d-none');
@@ -689,41 +688,122 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
 
-        // Save functionality
-        driverLicenseElements.saveBtn.addEventListener('click', function() {
-            saveBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                if (!validateDriverLicenseFields()) return;
+        // Save functionality - AJAX fetch
+        driverLicenseElements.saveBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (!validateDriverLicenseFields()) return;
 
-                const formData = new FormData(driverLicenseForm);
-                // Nếu có file ảnh, FormData sẽ tự động lấy từ input type="file"
-                if (licenseImageInput.files && licenseImageInput.files.length > 0) {
-                    formData.set('action', 'uploadImage');
-                } else {
-                    formData.set('action', 'updateInfo');
+            const formData = new FormData(driverLicenseElements.form);
+            let action = 'updateInfo';
+            const hasNewImage = licenseImageInput && licenseImageInput.files && licenseImageInput.files.length > 0;
+            let infoChanged = false;
+            // So sánh giá trị hiện tại với giá trị gốc
+            driverLicenseElements.inputs.forEach(input => {
+                if (input.element.value !== originalValues[input.element.id]) {
+                    infoChanged = true;
                 }
+            });
 
-                fetch(driverLicenseForm.action, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.redirected ? 
-                    window.location.href = response.url : response.text())
-                .then(data => {
-                    if (data) {
+            if (hasNewImage && infoChanged) {
+                action = 'updateBoth';
+            } else if (hasNewImage) {
+                action = 'uploadImage';
+            } else if (infoChanged) {
+                action = 'updateInfo';
+            } else {
+                // Không có gì thay đổi, không gửi request
+                showBootstrapToast({message: 'No changes to update', title: 'Notice'});
+                driverLicenseElements.saveBtn.disabled = false;
+                return;
+            }
+            formData.set('action', action);
+
+            driverLicenseElements.saveBtn.disabled = true;
+
+            fetch(driverLicenseElements.form.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                    return null;
+                }
+                return response.text();
+            })
+            .then(data => {
+                if (data) {
+                    try {
                         const result = JSON.parse(data);
+                        console.log('Kết quả cập nhật:', result);
                         if (result.success) {
-                            // ... update UI
+                            // Cập nhật UI thành công
+                            showBootstrapToast('Information updated successfully', 'success');
+                            
+                            // Reset về chế độ view
+                            driverLicenseElements.inputs.forEach(input => {
+                                input.element.disabled = true;
+                            });
+                            if (licenseImageInput) licenseImageInput.disabled = true;
+                            
+                            driverLicenseElements.cancelBtn.classList.add('d-none');
+                            driverLicenseElements.saveBtn.classList.add('d-none');
+                            driverLicenseElements.editBtn.classList.remove('d-none');
+                            isEditingDriverLicense = false;
+                            
+                            const driverLicenseBlock = document.querySelector('.driver-license-block');
+                            if (driverLicenseBlock) {
+                                driverLicenseBlock.classList.remove('edit-mode');
+                            }
+
+                            // Cập nhật ảnh nếu có URL mới
+                            if (result.newImageUrl) {
+                                const driverLicenseImg = document.getElementById('driverLicenseImg');
+                                if (driverLicenseImg) {
+                                    driverLicenseImg.src = result.newImageUrl + '?t=' + new Date().getTime();
+                                }
+                            }
+                            // Lưu lại giá trị mới làm gốc
+                            driverLicenseElements.inputs.forEach(input => {
+                                originalValues[input.element.id] = input.element.value;
+                            });
                         } else {
                             showBootstrapToast(result.message || 'Failed to update information', 'error');
+                            driverLicenseElements.saveBtn.disabled = false;
                         }
+                    } catch (error) {
+                        console.error('Error parsing response:', error);
+                        showBootstrapToast('Failed to update information. Please try again.', 'error');
+                        driverLicenseElements.saveBtn.disabled = false;
                     }
-                })
-                .catch(error => {
-                    showBootstrapToast('Failed to update information. Please try again.', 'error');
-                });
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                showBootstrapToast('Failed to update information. Please try again.', 'error');
+                driverLicenseElements.saveBtn.disabled = false;
             });
         });
+
+        // File input change handler để preview ảnh
+        if (licenseImageInput) {
+            licenseImageInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const driverLicenseImg = document.getElementById('driverLicenseImg');
+                        if (driverLicenseImg) {
+                            driverLicenseImg.src = e.target.result;
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                    
+                    // Validate và enable save button
+                    validateDriverLicenseFields();
+                }
+            });
+        }
     }
 
     // Citizen ID Form
@@ -871,10 +951,26 @@ document.addEventListener('DOMContentLoaded', function() {
     if (saveBtn && driverLicenseForm && licenseImageInput && actionInput) {
         saveBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            if (licenseImageInput.files && licenseImageInput.files.length > 0) {
+            let originalValues = {};
+            driverLicenseElements.inputs.forEach(input => {
+                originalValues[input.element.id] = input.element.defaultValue || input.element.value;
+            });
+            let infoChanged = false;
+            driverLicenseElements.inputs.forEach(input => {
+                if (input.element.value !== originalValues[input.element.id]) {
+                    infoChanged = true;
+                }
+            });
+            const hasNewImage = licenseImageInput.files && licenseImageInput.files.length > 0;
+            if (hasNewImage && infoChanged) {
+                actionInput.value = 'updateBoth';
+            } else if (hasNewImage) {
                 actionInput.value = 'uploadImage';
-            } else {
+            } else if (infoChanged) {
                 actionInput.value = 'updateInfo';
+            } else {
+                showBootstrapToast({message: 'No changes to update', title: 'Notice'});
+                return;
             }
             driverLicenseForm.submit();
         });
