@@ -18,6 +18,7 @@ import java.util.UUID;
 import Service.Auth.EmailOTPVerificationService;
 import Model.Entity.OAuth.EmailOTPVerification;
 import Service.External.MailService;
+import java.sql.SQLException;
 
 @WebServlet("/normalRegister")
 public class NormalRegisterServlet extends HttpServlet {
@@ -74,14 +75,20 @@ public class NormalRegisterServlet extends HttpServlet {
         }
 
         try {
-            if (userService.findByUsername(username) != null) {
-                forwardWithError(request, response, "Username is already taken!");
+            // Kiểm tra tài khoản đã tồn tại (để hiển thị thông báo phù hợp)
+            User existingUserByUsername = userService.findByUsername(username);
+            if (existingUserByUsername != null) {
+                String errorMsg = existingUserByUsername.isDeleted() ? "This username is associated with a deleted account and cannot be reused."
+                        : existingUserByUsername.isBanned() ? "This username is associated with a banned account. Please contact support."
+                        : "Username is already taken!";
+                forwardWithError(request, response, errorMsg);
                 return;
             }
-            User existingUser = userService.findByEmail(email);
-            if (existingUser != null) {
-                String errorMsg = existingUser.isDeleted() ? "This email is associated with a deleted account and cannot be reused."
-                        : existingUser.isBanned() ? "This email is associated with a banned account. Please contact support."
+            
+            User existingUserByEmail = userService.findByEmail(email);
+            if (existingUserByEmail != null) {
+                String errorMsg = existingUserByEmail.isDeleted() ? "This email is associated with a deleted account and cannot be reused."
+                        : existingUserByEmail.isBanned() ? "This email is associated with a banned account. Please contact support."
                         : "An account with this email already exists.";
                 forwardWithError(request, response, errorMsg);
                 return;
@@ -109,6 +116,7 @@ public class NormalRegisterServlet extends HttpServlet {
                 return;
             }
             user.setRoleId(userRole.getRoleId());
+            
             userService.add(user);
 
             // Generate and send OTP
@@ -135,6 +143,27 @@ public class NormalRegisterServlet extends HttpServlet {
             
         } catch (Exception e) {
             forwardWithError(request, response, "An unexpected error occurred. Please try again later.");
+        }
+    }
+
+    private void handleUniqueConstraintViolation(SQLException e, HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        String errorMessage = e.getMessage();
+        
+        if (errorMessage != null) {
+            if (errorMessage.contains("UQ_Users_Username") || errorMessage.contains("Username")) {
+                forwardWithError(request, response, "Username is already taken!");
+            } else if (errorMessage.contains("UQ_Users_Email") || errorMessage.contains("Email")) {
+                forwardWithError(request, response, "An account with this email already exists.");
+            } else if (errorMessage.contains("UQ_Users_NormalizedUserName")) {
+                forwardWithError(request, response, "Username is already taken!");
+            } else if (errorMessage.contains("UQ_Users_NormalizedEmail")) {
+                forwardWithError(request, response, "An account with this email already exists.");
+            } else {
+                forwardWithError(request, response, "Username or email is already taken!");
+            }
+        } else {
+            forwardWithError(request, response, "Username or email is already taken!");
         }
     }
 
