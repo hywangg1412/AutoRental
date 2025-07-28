@@ -33,6 +33,31 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/flaticon.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/icomoon.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
+        
+        <!-- Custom Modal Styles -->
+        <style>
+            /* Làm cho backdrop không tối quá */
+            .modal-backdrop {
+                opacity: 0.3 !important;
+                background-color: #000 !important;
+            }
+            
+            /* Hoặc nếu muốn backdrop trong suốt hơn nữa */
+            .modal-backdrop.show {
+                opacity: 0.2 !important;
+            }
+            
+            /* Đảm bảo modal hiển thị rõ ràng */
+            .modal-content {
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                border: none;
+            }
+            
+            /* Tùy chọn: thêm animation cho modal */
+            .modal.fade .modal-dialog {
+                transition: transform 0.3s ease-out;
+            }
+        </style>
     </head>
     <body>
         <!-- Header -->
@@ -177,7 +202,20 @@
                                                                             </a>
                                                                         </c:if>
                                                                         <c:if test="${trip.status eq BookingStatusConstants.PENDING}">
-                                                                            <button class="btn-mytrip-action btn-mytrip-red btn-sm" data-booking-id="${trip.bookingId}">Cancel Booking</button>
+                                                                            <button class="btn-mytrip-action btn-mytrip-red btn-sm cancel-booking-btn" 
+                                                                                    data-booking-id="${trip.bookingId}" 
+                                                                                    data-bs-toggle="modal" 
+                                                                                    data-bs-target="#cancelBookingModal">
+                                                                                Cancel Booking
+                                                                            </button>
+                                                                        </c:if>
+                                                                        <c:if test="${trip.status eq BookingStatusConstants.AWAITING_PAYMENT || trip.status eq 'Awaiting Payment' || trip.status eq BookingStatusConstants.CONFIRMED}">
+                                                                            <button class="btn-mytrip-action btn-mytrip-red btn-sm cancel-booking-btn" 
+                                                                                    data-booking-id="${trip.bookingId}" 
+                                                                                    data-bs-toggle="modal" 
+                                                                                    data-bs-target="#cancelBookingModal">
+                                                                                Cancel Booking
+                                                                            </button>
                                                                         </c:if>
                                                                         <c:if test="${trip.status eq 'DepositPaid'}">
                                                                             <a class="btn-mytrip-action btn-mytrip-green btn-sm"
@@ -292,6 +330,9 @@
                                                                                 View Details
                                                                             </button>
                                                                             <c:choose>
+                                                                                <c:when test="${booking.status eq 'Cancelled'}">
+                                                                                    <a href="${pageContext.request.contextPath}/pages/car-single?id=${booking.carId}" class="btn-mytrip-action btn-mytrip-green btn-sm">Book Again</a>
+                                                                                </c:when>
                                                                                 <c:when test="${booking.hasFeedback}">
                                                                                     <button class="btn-mytrip-action btn-mytrip-green btn-sm" data-booking-id="${booking.bookingId}" data-car-id="${booking.carId}">View feedback</button>
                                                                                 </c:when>
@@ -418,9 +459,45 @@
                 <div class="mb-4" style="font-size: 1.1rem;">Are you sure you want to cancel this booking?</div>
                 <form id="cancelBookingForm" method="post" action="${pageContext.request.contextPath}/user/booking-cancel">
                   <input type="hidden" name="bookingId" id="cancelBookingIdInput" value="">
-                  <button type="submit" class="btn btn-danger w-100" id="confirmCancelBookingBtn">Yes, Cancel Booking</button>
+                  <div class="mb-3">
+                    <label for="cancelReasonInput" class="form-label text-start d-block">Reason for cancellation (optional):</label>
+                    <textarea class="form-control" id="cancelReasonInput" name="reason" rows="3" placeholder="Please provide a reason for cancellation..."></textarea>
+                  </div>
+                  <button type="button" class="btn btn-danger w-100" id="confirmCancelBookingBtn">
+                    Yes, Cancel Booking
+                  </button>
                   <button type="button" class="btn btn-secondary w-100 mt-2" data-bs-dismiss="modal">No, Keep Booking</button>
                 </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Request Cancellation Modal -->
+        <div class="modal fade" id="requestCancelModal" tabindex="-1" aria-labelledby="requestCancelModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content custom-modal-content">
+              <div class="modal-header border-0 pb-0 justify-content-end">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body text-center pt-0">
+                <h2 class="modal-title fw-bold mb-3" id="requestCancelModalLabel" style="font-size: 2rem;">Request Cancellation</h2>
+                <div class="mb-4" style="font-size: 1.1rem;">Your cancellation request will be sent to staff for approval.</div>
+                <form id="requestCancelForm" method="post" action="${pageContext.request.contextPath}/user/request-cancellation">
+                  <input type="hidden" name="bookingId" id="requestCancelBookingIdInput" value="">
+                  <div class="mb-3">
+                    <label for="requestCancelReasonInput" class="form-label text-start d-block">Reason for cancellation request:</label>
+                    <textarea class="form-control" id="requestCancelReasonInput" name="reason" rows="3" placeholder="Please provide a detailed reason for your cancellation request..." required></textarea>
+                  </div>
+                  <button type="button" class="btn btn-warning w-100" id="confirmRequestCancelBtn">
+                    Send Request
+                  </button>
+                  <button type="button" class="btn btn-secondary w-100 mt-2" data-bs-dismiss="modal">Cancel</button>
+                </form>
+                
+                <div class="mt-3 p-3 bg-light rounded">
+                  <small class="d-block text-muted">Staff will review your request and contact you within 24 hours</small>
+                </div>
               </div>
             </div>
           </div>

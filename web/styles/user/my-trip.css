@@ -443,10 +443,10 @@ nav.ftco-navbar-light .nav-link {
 }
 
 .btn-mytrip-action.btn-mytrip-green:hover, .btn-mytrip-action.btn-mytrip-green:focus {
-    background: var(--primary-green);
+    background: #4ade80;
     color: #fff;
     box-shadow: 0 4px 16px rgba(16,185,129,0.25);
-    border-color: var(--primary-green);
+    border-color: #4ade80;
     transform: translateY(-1px);
 }
 
@@ -456,10 +456,10 @@ nav.ftco-navbar-light .nav-link {
 }
 
 .btn-mytrip-action.btn-mytrip-red:hover, .btn-mytrip-action.btn-mytrip-red:focus {
-    background: var(--danger-red) !important;
+    background: #ef4444 !important;
     color: #fff !important;
-    box-shadow: 0 4px 16px rgba(220,38,38,0.25);
-    border-color: var(--danger-red) !important;
+    box-shadow: 0 4px 16px rgba(239,68,68,0.25);
+    border-color: #ef4444 !important;
     transform: translateY(-1px);
 }
 
@@ -470,10 +470,10 @@ nav.ftco-navbar-light .nav-link {
 }
 
 .btn-mytrip-action.btn-detail:hover, .btn-mytrip-action.btn-detail:focus {
-    background: #2563eb;
+    background: #60a5fa;
     color: #fff;
-    box-shadow: 0 4px 16px rgba(37,99,235,0.25);
-    border-color: #2563eb;
+    box-shadow: 0 4px 16px rgba(96,165,250,0.25);
+    border-color: #60a5fa;
     transform: translateY(-1px);
 }
 
@@ -483,12 +483,27 @@ nav.ftco-navbar-light .nav-link {
 }
 
 .btn-mytrip-action.btn-mytrip-blue:hover, .btn-mytrip-action.btn-mytrip-blue:focus {
-    background: #3b82f6;
+    background: #60a5fa;
     color: #fff;
-    box-shadow: 0 4px 16px rgba(59,130,246,0.25);
-    border-color: #3b82f6;
+    box-shadow: 0 4px 16px rgba(96,165,246,0.25);
+    border-color: #60a5fa;
     transform: translateY(-1px);
 }
+
+.btn-mytrip-action.btn-mytrip-orange {
+    border-color: var(--warning-orange);
+    color: var(--warning-orange);
+}
+
+.btn-mytrip-action.btn-mytrip-orange:hover, .btn-mytrip-action.btn-mytrip-orange:focus {
+    background: #fbbf24;
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(251,191,36,0.25);
+    border-color: #fbbf24;
+    transform: translateY(-1px);
+}
+
+
 
 .car-img-wrapper {
   width: 200px;
@@ -754,14 +769,16 @@ hr.mytrip-divider {
     color: #222 !important;
 }
 
-#cancelBookingModal .modal-dialog {
+#cancelBookingModal .modal-dialog,
+#requestCancelModal .modal-dialog {
   margin-top: 40px !important;      /* Cách trên 40px, giống modal log out */
   display: flex;
   align-items: flex-start;
   min-height: 100vh;
   justify-content: center;
 }
-#cancelBookingModal .modal-content {
+#cancelBookingModal .modal-content,
+#requestCancelModal .modal-content {
   margin-top: 0 !important;         /* Đảm bảo không bị cộng thêm */
 }
 
@@ -794,7 +811,7 @@ hr.mytrip-divider {
 
 #cancelBookingModal .btn-secondary {
   background: #4ade80 !important;
-  color: #222 !important;
+  color: white !important;
   border: none !important;
   border-radius: 12px !important;
   font-size: 1.1rem;
@@ -807,8 +824,56 @@ hr.mytrip-divider {
 #cancelBookingModal .btn-secondary:hover, 
 #cancelBookingModal .btn-secondary:focus {
   background: #22c55e !important;
-  color: #fff !important;
+  color: white !important;
   box-shadow: 0 4px 16px rgba(34,197,94,0.15);
+  transform: translateY(-1px);
+}
+
+/* Request Cancellation Modal Styles */
+#requestCancelModal .modal-title {
+  font-weight: 700;
+  color: #222;
+  font-size: 2rem;
+  width: 100%;
+  text-align: center;
+}
+
+#requestCancelModal .btn-warning {
+  background: #f59e0b !important;
+  border: none !important;
+  border-radius: 12px !important;
+  font-size: 1.1rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(245,158,11,0.10);
+  transition: background 0.18s, box-shadow 0.18s;
+  padding: 0.9rem 0;
+}
+
+#requestCancelModal .btn-warning:hover, 
+#requestCancelModal .btn-warning:focus {
+  background: #d97706 !important;
+  color: #fff !important;
+  box-shadow: 0 4px 16px rgba(245,158,11,0.15);
+  transform: translateY(-1px);
+}
+
+#requestCancelModal .btn-secondary {
+  background: #6b7280 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 12px !important;
+  font-size: 1.1rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(107,114,128,0.10);
+  transition: background 0.18s, box-shadow 0.18s;
+  padding: 0.9rem 0;
+}
+
+#requestCancelModal .btn-secondary:hover, 
+#requestCancelModal .btn-secondary:focus {
+  background: #4b5563 !important;
+  color: white !important;
+  box-shadow: 0 4px 16px rgba(75,85,99,0.15);
   transform: translateY(-1px);
 }
 
