@@ -323,8 +323,7 @@
                                                 </div>
                                                 <form id="driverLicenseInfoForm"
                                                     action="${pageContext.request.contextPath}/user/update-driver-license"
-                                                    method="post" enctype="multipart/form-data"
-                                                    onsubmit="return false;">
+                                                    method="post" enctype="multipart/form-data">
                                                     <input type="hidden" name="action" value="updateInfo" />
                                                     <div class="row g-5">
                                                         <div class="col-md-5">

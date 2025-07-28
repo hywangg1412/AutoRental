@@ -156,17 +156,6 @@
                                                 Update Password
                                             </button>
                                         </form>
-                                        <!-- Security Tips -->
-                                        <div class="security-tips">
-                                            <h6><i class="bi bi-shield-exclamation me-2"></i>Security Tips</h6>
-                                            <ul>
-                                                <li>Use a unique password that you don't use for other accounts</li>
-                                                <li>Consider using a password manager to generate and store strong passwords</li>
-                                                <li>Never share your password with anyone</li>
-                                                <li>Change your password regularly, especially if you suspect it's been compromised</li>
-                                                <li>Avoid using personal information like names, birthdays, or common words</li>
-                                            </ul>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
