@@ -152,11 +152,8 @@
                             <p class="price ml-auto"><fmt:formatNumber value="${car.pricePerHour * 1000}" type="number" pattern="#,###" /> <span>&nbsp;VND/hour</span></p>
                         </div>
                         <div class="car-action-buttons">
-                            <a href="${pageContext.request.contextPath}/pages/booking?carId=<%= car.getCarId()%>" class="btn btn-book-now">
+                            <a href="${pageContext.request.contextPath}/booking/form/details?id=<%= car.getCarId()%>" class="btn btn-book-now">
                                 <i class="ion-ios-calendar"></i> Book now
-                            </a>
-                            <a href="#" class="btn btn-add-cart" onclick="addToCart(<%= car.getCarId()%>)">
-                                <i class="ion-ios-cart"></i> Add to cart
                             </a>
                         </div>
                     </div>
