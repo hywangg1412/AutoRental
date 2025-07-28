@@ -209,7 +209,7 @@
                                                                                 Cancel Booking
                                                                             </button>
                                                                         </c:if>
-                                                                        <c:if test="${trip.status eq BookingStatusConstants.AWAITING_PAYMENT || trip.status eq 'Awaiting Payment' || trip.status eq BookingStatusConstants.CONFIRMED}">
+                                                                        <c:if test="${trip.status eq BookingStatusConstants.AWAITING_PAYMENT || trip.status eq 'Awaiting Payment'}">
                                                                             <button class="btn-mytrip-action btn-mytrip-red btn-sm cancel-booking-btn" 
                                                                                     data-booking-id="${trip.bookingId}" 
                                                                                     data-bs-toggle="modal" 
