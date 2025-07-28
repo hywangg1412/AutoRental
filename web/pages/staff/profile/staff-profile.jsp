@@ -189,7 +189,8 @@
                                                                             <i class="bi bi-check-circle-fill me-1"></i>
                                                                             ${not empty profile.facebookAccountName ? profile.facebookAccountName : 'Connected'}
                                                                         </span>
-                                                                        <form action="${pageContext.request.contextPath}/facebook-unlink" method="post" style="display: inline;" onsubmit="return confirm('Are you sure you want to unlink your Facebook account?')">
+                                                                        <form action="${pageContext.request.contextPath}/user/social-unlink" method="post" style="display: inline;" onsubmit="return confirm('Are you sure you want to unlink your Facebook account?')">
+                                                                            <input type="hidden" name="provider" value="facebook">
                                                                             <button type="submit"
                                                                                     class="btn btn-outline-danger btn-unlink-social d-flex align-items-center gap-1 px-3 py-1"
                                                                                     style="font-size:0.95em; border-radius: 20px; border-width: 2px; font-weight: 500;"
@@ -220,7 +221,8 @@
                                                                             <i class="bi bi-check-circle-fill me-1"></i>
                                                                             ${not empty profile.googleAccountName ? profile.googleAccountName : 'Connected'}
                                                                         </span>
-                                                                        <form action="${pageContext.request.contextPath}/google-unlink" method="post" style="display: inline;" onsubmit="return confirm('Are you sure you want to unlink your Google account?')">
+                                                                        <form action="${pageContext.request.contextPath}/user/social-unlink" method="post" style="display: inline;" onsubmit="return confirm('Are you sure you want to unlink your Google account?')">
+                                                                            <input type="hidden" name="provider" value="google">
                                                                             <button type="submit"
                                                                                     class="btn btn-outline-danger btn-unlink-social d-flex align-items-center gap-1 px-3 py-1"
                                                                                     style="font-size:0.95em; border-radius: 20px; border-width: 2px; font-weight: 500;"
