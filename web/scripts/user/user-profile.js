@@ -706,15 +706,16 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
 
-        // Save functionality - AJAX fetch
+        // Save functionality - DISABLED AJAX, using form submit instead
         driverLicenseElements.saveBtn.addEventListener('click', function(e) {
             e.preventDefault();
             if (!validateDriverLicenseFields()) return;
 
-            const formData = new FormData(driverLicenseElements.form);
+            // Set action based on what changed
             let action = 'updateInfo';
             const hasNewImage = licenseImageInput && licenseImageInput.files && licenseImageInput.files.length > 0;
             let infoChanged = false;
+            
             // So sánh giá trị hiện tại với giá trị gốc
             driverLicenseElements.inputs.forEach(input => {
                 if (input.element.value !== originalValues[input.element.id]) {
@@ -731,76 +732,17 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 // Không có gì thay đổi, không gửi request
                 showBootstrapToast({message: 'No changes to update', title: 'Notice'});
-                driverLicenseElements.saveBtn.disabled = false;
                 return;
             }
-            formData.set('action', action);
 
-            driverLicenseElements.saveBtn.disabled = true;
-
-            fetch(driverLicenseElements.form.action, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (response.redirected) {
-                    window.location.href = response.url;
-                    return null;
-                }
-                return response.text();
-            })
-            .then(data => {
-                if (data) {
-                    try {
-                        const result = JSON.parse(data);
-                        console.log('Kết quả cập nhật:', result);
-                        if (result.success) {
-                            // Cập nhật UI thành công
-                            showBootstrapToast('Information updated successfully', 'success');
-                            
-                            // Reset về chế độ view
-                            driverLicenseElements.inputs.forEach(input => {
-                                input.element.disabled = true;
-                            });
-                            if (licenseImageInput) licenseImageInput.disabled = true;
-                            
-                            driverLicenseElements.cancelBtn.classList.add('d-none');
-                            driverLicenseElements.saveBtn.classList.add('d-none');
-                            driverLicenseElements.editBtn.classList.remove('d-none');
-                            isEditingDriverLicense = false;
-                            
-                            const driverLicenseBlock = document.querySelector('.driver-license-block');
-                            if (driverLicenseBlock) {
-                                driverLicenseBlock.classList.remove('edit-mode');
-                            }
-
-                            // Cập nhật ảnh nếu có URL mới
-                            if (result.newImageUrl) {
-                                const driverLicenseImg = document.getElementById('driverLicenseImg');
-                                if (driverLicenseImg) {
-                                    driverLicenseImg.src = result.newImageUrl + '?t=' + new Date().getTime();
-                                }
-                            }
-                            // Lưu lại giá trị mới làm gốc
-                            driverLicenseElements.inputs.forEach(input => {
-                                originalValues[input.element.id] = input.element.value;
-                            });
-                        } else {
-                            showBootstrapToast(result.message || 'Failed to update information', 'error');
-                            driverLicenseElements.saveBtn.disabled = false;
-                        }
-                    } catch (error) {
-                        console.error('Error parsing response:', error);
-                        showBootstrapToast('Failed to update information. Please try again.', 'error');
-                        driverLicenseElements.saveBtn.disabled = false;
-                    }
-                }
-            })
-            .catch(error => {
-                console.error('Fetch error:', error);
-                showBootstrapToast('Failed to update information. Please try again.', 'error');
-                driverLicenseElements.saveBtn.disabled = false;
-            });
+            // Set action in form and submit
+            const actionInput = driverLicenseElements.form.querySelector('input[name="action"]');
+            if (actionInput) {
+                actionInput.value = action;
+            }
+            
+            console.log('Submitting form with action:', action);
+            driverLicenseElements.form.submit();
         });
 
         // File input change handler để preview ảnh
@@ -962,37 +904,38 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- Đảm bảo gửi đúng action khi cập nhật bằng lái xe ---
-    const saveBtn = document.getElementById('saveDriverLicenseBtn');
-    const licenseImageInput = document.getElementById('licenseImageInput');
-    const driverLicenseForm = document.getElementById('driverLicenseInfoForm');
-    const actionInput = driverLicenseForm ? driverLicenseForm.querySelector('input[name="action"]') : null;
-    if (saveBtn && driverLicenseForm && licenseImageInput && actionInput) {
-        saveBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            let originalValues = {};
-            driverLicenseElements.inputs.forEach(input => {
-                originalValues[input.element.id] = input.element.defaultValue || input.element.value;
-            });
-            let infoChanged = false;
-            driverLicenseElements.inputs.forEach(input => {
-                if (input.element.value !== originalValues[input.element.id]) {
-                    infoChanged = true;
-                }
-            });
-            const hasNewImage = licenseImageInput.files && licenseImageInput.files.length > 0;
-            if (hasNewImage && infoChanged) {
-                actionInput.value = 'updateBoth';
-            } else if (hasNewImage) {
-                actionInput.value = 'uploadImage';
-            } else if (infoChanged) {
-                actionInput.value = 'updateInfo';
-            } else {
-                showBootstrapToast({message: 'No changes to update', title: 'Notice'});
-                return;
-            }
-            driverLicenseForm.submit();
-        });
-    }
+    // DISABLED - This was causing conflicts with the main event listener above
+    // const saveBtn = document.getElementById('saveDriverLicenseBtn');
+    // const licenseImageInput = document.getElementById('licenseImageInput');
+    // const driverLicenseForm = document.getElementById('driverLicenseInfoForm');
+    // const actionInput = driverLicenseForm ? driverLicenseForm.querySelector('input[name="action"]') : null;
+    // if (saveBtn && driverLicenseForm && licenseImageInput && actionInput) {
+    //     saveBtn.addEventListener('click', function(e) {
+    //         e.preventDefault();
+    //         let originalValues = {};
+    //         driverLicenseElements.inputs.forEach(input => {
+    //             originalValues[input.element.id] = input.element.defaultValue || input.element.value;
+    //         });
+    //         let infoChanged = false;
+    //         driverLicenseElements.inputs.forEach(input => {
+    //             if (input.element.value !== originalValues[input.element.id]) {
+    //                 infoChanged = true;
+    //             }
+    //         });
+    //         const hasNewImage = licenseImageInput.files && licenseImageInput.files.length > 0;
+    //         if (hasNewImage && infoChanged) {
+    //             actionInput.value = 'updateBoth';
+    //         } else if (hasNewImage) {
+    //             actionInput.value = 'uploadImage';
+    //         } else if (infoChanged) {
+    //             actionInput.value = 'updateInfo';
+    //         } else {
+    //             showBootstrapToast({message: 'No changes to update', title: 'Notice'});
+    //             return;
+    //         }
+    //         driverLicenseForm.submit();
+    //     });
+    // }
 
     // === IMAGE PREVIEW ===
     // Giữ lại duy nhất hàm setupImageUploadPreview và các lệnh gọi hàm này, xóa các đoạn preview ảnh, enable/disable input file, reset preview cũ cho driver license và citizen id
