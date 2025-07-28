@@ -4,6 +4,10 @@
         <servlet-name>SocialLinkServlet</servlet-name>
         <url-pattern>/user/social-link</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SocialUnlinkServlet</servlet-name>
+        <url-pattern>/user/social-unlink</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>1440</session-timeout>
     </session-config>
@@ -62,6 +66,10 @@
     <servlet>
         <servlet-name>SocialLinkServlet</servlet-name>
         <servlet-class>Controller.User.UserAccount.SocialLinkServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SocialUnlinkServlet</servlet-name>
+        <servlet-class>Controller.User.UserAccount.SocialUnlinkServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>GoogleLoginServlet</servlet-name>

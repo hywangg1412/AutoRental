@@ -197,24 +197,20 @@ public class UserService implements IUserService {
         }
     }
 
-    @Override
     public String generateUniqueUsername(String baseUsername) {
         List<String> existingUsernames = userRepsitory.findAllUsernamesLike(baseUsername);
-        String username = baseUsername;
-        int count = 1;
-        boolean exists;
-        do {
-            exists = false;
-            for (String u : existingUsernames) {
-                if (u.equalsIgnoreCase(username)) {
-                    exists = true;
-                    username = baseUsername + count;
-                    count++;
-                    break;
+        
+        int maxNumber = 0;
+        for (String username : existingUsernames) {
+            if (username.toLowerCase().startsWith(baseUsername.toLowerCase())) {
+                String suffix = username.substring(baseUsername.length());
+                if (suffix.matches("\\d+")) {
+                    maxNumber = Math.max(maxNumber, Integer.parseInt(suffix));
                 }
             }
-        } while (exists);
-        return username;
+        }
+        
+        return maxNumber == 0 ? baseUsername : baseUsername + (maxNumber + 1);
     }
 
     public List<User> findByRoleId(UUID roleId) throws Exception {

@@ -4,6 +4,7 @@ import Model.Entity.User.User;
 import Service.Interfaces.Service;
 import java.util.UUID;
 import java.util.List;
+import java.sql.SQLException;
 
 public interface IUserService extends Service<User> {
 
@@ -24,4 +25,18 @@ public interface IUserService extends Service<User> {
     String generateUniqueUsername(String baseUsername);
 
     List<User> findByRoleId(UUID roleId) throws Exception;
+    
+    boolean verifyPassword(UUID userId, String password) throws Exception;
+    
+    boolean markUserAsDeleted(UUID userId);
+    
+    boolean anonymizeDeletedUser(UUID userId);
+    
+    List<User> getAllUsers() throws SQLException;
+    
+    List<User> getUsersWithFilters(String roleFilter, String statusFilter, String searchTerm) throws SQLException;
+    
+    List<User> getUsersByStatus(String status) throws SQLException;
+    
+    List<User> searchUsers(String searchTerm) throws SQLException;
 }

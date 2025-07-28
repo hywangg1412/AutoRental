@@ -43,19 +43,213 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Handle Cancel Booking buttons
     document.addEventListener('click', function(e) {
-        const btn = e.target.closest('.btn-mytrip-red');
-        if (btn) {
-            // Kiểm tra status
-            const card = btn.closest('.favorite-car-card');
-            const statusBadge = card.querySelector('.status-badge');
-            if (statusBadge && statusBadge.textContent.includes('Awaiting Confirmation')) {
-                bookingIdToCancel = btn.getAttribute('data-booking-id');
-                document.getElementById('cancelBookingIdInput').value = bookingIdToCancel;
-                const modal = new bootstrap.Modal(document.getElementById('cancelBookingModal'));
-                modal.show();
-            }
+        if (e.target.classList.contains('cancel-booking-btn')) {
+            const bookingId = e.target.getAttribute('data-booking-id');
+            document.getElementById('cancelBookingIdInput').value = bookingId;
+            
+            // Clear previous reason if any
+            document.getElementById('cancelReasonInput').value = '';
+            
+            // Show modal using Bootstrap 5
+            const modalElement = document.getElementById('cancelBookingModal');
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
         }
     });
+
+    // Handle Request Cancellation buttons
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('request-cancel-btn')) {
+            const bookingId = e.target.getAttribute('data-booking-id');
+            document.getElementById('requestCancelBookingIdInput').value = bookingId;
+            
+            // Clear previous reason if any
+            document.getElementById('requestCancelReasonInput').value = '';
+            
+            // Show modal using Bootstrap 5
+            const modalElement = document.getElementById('requestCancelModal');
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+        }
+    });
+
+    // Handle the Yes, Cancel Booking button click
+    document.addEventListener('click', function(e) {
+        if (e.target.id === 'confirmCancelBookingBtn') {
+            e.preventDefault();
+            
+            const bookingId = document.getElementById('cancelBookingIdInput').value;
+            const reason = document.getElementById('cancelReasonInput').value || 'User cancelled';
+            
+            // Build the URL with actual booking ID and user's reason
+            const url = contextPath + '/user/booking-cancel?bookingId=' + encodeURIComponent(bookingId) + '&reason=' + encodeURIComponent(reason);
+            
+            console.log('Redirecting to:', url);
+            window.location.href = url;
+        }
+    });
+
+    // Handle the Send Request button click
+    document.addEventListener('click', function(e) {
+        if (e.target.id === 'confirmRequestCancelBtn') {
+            e.preventDefault();
+            
+            const bookingId = document.getElementById('requestCancelBookingIdInput').value;
+            const reason = document.getElementById('requestCancelReasonInput').value;
+            
+            if (!reason.trim()) {
+                alert('Please provide a reason for your cancellation request.');
+                return;
+            }
+            
+            // Build the URL with actual booking ID and user's reason
+            const url = contextPath + '/user/request-cancellation?bookingId=' + encodeURIComponent(bookingId) + '&reason=' + encodeURIComponent(reason);
+            
+            console.log('Sending cancellation request to:', url);
+            window.location.href = url;
+        }
+    });
+
+    // Handle modal close events to ensure clean closing
+    document.getElementById('cancelBookingModal').addEventListener('hidden.bs.modal', function () {
+        // Clear form when modal is closed
+        document.getElementById('cancelBookingForm').reset();
+        document.getElementById('cancelBookingIdInput').value = '';
+        
+        // Remove any remaining backdrop elements
+        document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+            backdrop.remove();
+        });
+        
+        // Remove modal-open class from body
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+    });
+
+    // Handle Request Cancellation modal close events
+    document.getElementById('requestCancelModal').addEventListener('hidden.bs.modal', function () {
+        // Clear form when modal is closed
+        document.getElementById('requestCancelForm').reset();
+        document.getElementById('requestCancelBookingIdInput').value = '';
+        
+        // Remove any remaining backdrop elements
+        document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+            backdrop.remove();
+        });
+        
+        // Remove modal-open class from body
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+    });
+
+    // Handle Cancel button in Request Cancellation modal
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('#requestCancelModal') && e.target.textContent.trim() === 'Cancel') {
+            e.preventDefault();
+            
+            // Close modal properly
+            const modalElement = document.getElementById('requestCancelModal');
+            const modalInstance = bootstrap.Modal.getInstance(modalElement);
+            if (modalInstance) {
+                modalInstance.hide();
+            }
+            
+            // Clear form
+            document.getElementById('requestCancelForm').reset();
+            document.getElementById('requestCancelBookingIdInput').value = '';
+            
+            // Clean up backdrop
+            document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+                backdrop.remove();
+            });
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+        }
+    });
+
+    // Handle form submission - COMMENTED OUT FOR TESTING
+    /*
+    document.getElementById('cancelBookingForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const bookingId = document.getElementById('cancelBookingIdInput').value;
+        const reason = document.getElementById('cancelReasonInput').value;
+        
+        console.log('=== CANCEL BOOKING DEBUG ===');
+        console.log('Booking ID:', bookingId);
+        console.log('Reason:', reason);
+        console.log('Context Path:', contextPath);
+        
+        if (!bookingId) {
+            alert('Error: Booking ID is missing');
+            return;
+        }
+        
+        // Disable submit button to prevent double submission
+        const submitBtn = document.getElementById('confirmCancelBookingBtn');
+        const originalText = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Cancelling...';
+        
+        // Submit form data
+        const formData = new FormData();
+        formData.append('bookingId', bookingId);
+        formData.append('reason', reason);
+        
+        console.log('Sending request to:', contextPath + '/user/booking-cancel');
+        
+        fetch(contextPath + '/user/booking-cancel', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            console.log('Response status:', response.status);
+            console.log('Response redirected:', response.redirected);
+            console.log('Response URL:', response.url);
+            
+            if (response.redirected) {
+                console.log('Redirecting to:', response.url);
+                window.location.href = response.url;
+                return;
+            } else {
+                return response.text();
+            }
+        })
+        .then(data => {
+            console.log('Response data:', data);
+            
+            // Close modal properly
+            const modalElement = document.getElementById('cancelBookingModal');
+            const modalInstance = bootstrap.Modal.getInstance(modalElement);
+            if (modalInstance) {
+                modalInstance.hide();
+            }
+            
+            // Clean up backdrop
+            document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+                backdrop.remove();
+            });
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+            
+            // Reload page to show updated status
+            console.log('Reloading page...');
+            location.reload();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while cancelling the booking. Please try again.');
+            
+            // Re-enable submit button
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+        });
+    });
+    */
 
     // Handle Send Review and View Feedback buttons
     document.addEventListener('click', function(e) {
@@ -79,7 +273,6 @@ document.addEventListener('DOMContentLoaded', function () {
             
             if (!carId) {
                 console.error('Missing car ID for button:', button);
-                alert('Error: Car ID is missing. Please try again later.');
                 return;
             }
             

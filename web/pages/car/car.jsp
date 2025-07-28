@@ -59,7 +59,7 @@
             <jsp:include page="../includes/car-nav.jsp" />
         </div>
         <section class="ftco-section bg-light">
-            <div class="container" style="max-width: 1140px; margin-top: 80px;">
+            <div class="container" style="max-width: 1140px; margin-top: 30px;">
                 <!-- Thay thế toàn bộ filter-bar, advanced filter, các modal filter bằng đoạn này -->
                 <div class="row">
                     <!-- SIDEBAR FILTER -->
@@ -289,7 +289,7 @@
         <!-- Toast notification -->
         <div id="favorite-toast" style="display: none;"></div>
         <script>
-              var contextPath = '${pageContext.request.contextPath}';
+                                        var contextPath = '${pageContext.request.contextPath}';
         </script>
 
 
@@ -507,7 +507,7 @@
                 // Trước khi submit, luôn lấy số nguyên (không dấu phẩy, không ký tự đặc biệt)
                 var filterForm = document.getElementById('sidebarFilterForm');
                 if (filterForm) {
-                    filterForm.addEventListener('submit', function(e) {
+                    filterForm.addEventListener('submit', function (e) {
                         if (document.getElementById('priceErrorMsg').style.display !== 'none') {
                             e.preventDefault();
                             return false;
@@ -522,8 +522,8 @@
             // Pagination giữ lại filter:
             document.addEventListener('DOMContentLoaded', function () {
                 // Tìm tất cả các link phân trang
-                document.querySelectorAll('.pagination-link').forEach(function(link) {
-                    link.addEventListener('click', function(e) {
+                document.querySelectorAll('.pagination-link').forEach(function (link) {
+                    link.addEventListener('click', function (e) {
                         e.preventDefault();
                         // Lấy url hiện tại và các tham số filter
                         const url = new URL(window.location.href);
