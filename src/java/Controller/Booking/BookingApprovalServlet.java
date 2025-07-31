@@ -114,11 +114,11 @@ public class BookingApprovalServlet extends HttpServlet {
             
             if ("approve".equals(action)) {
                 // Nếu duyệt thành công, gửi thông báo kèm link đến trang thanh toán đặt cọc
-                String message = "Booking của bạn (mã " + bookingCode + ") đã được duyệt. Vui lòng tiến hành thanh toán đặt cọc để hoàn tất đặt xe.";
+                String message = "Your booking (code " + bookingCode + ") has been approved. Please proceed with the deposit payment to complete the car booking.";
                 notificationService.sendNotificationToUser(userId, message);
             } else {
                 // Nếu từ chối, gửi thông báo kèm lý do từ chối
-                String message = "Booking của bạn (mã " + bookingCode + ") đã bị từ chối với lý do: " + rejectionReason;
+                String message = "Your booking (code " + bookingCode + ") has been rejected. Reason: " + rejectionReason;
                 notificationService.sendNotificationToUser(userId, message);
             }
             // 7. Trả về kết quả thành công
