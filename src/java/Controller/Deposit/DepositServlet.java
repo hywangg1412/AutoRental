@@ -151,6 +151,9 @@ public class DepositServlet extends HttpServlet {
                     String voucherCode = request.getParameter("voucherCode");
                     handleApplyVoucher(bookingId, voucherCode, userId, response);
                     break;
+                case "removeVoucher":
+                    handleRemoveVoucher(bookingId, userId, response);
+                    break;
                 case "recalculate":
                     handleRecalculate(bookingId, userId, response);
                     break;
@@ -206,6 +209,11 @@ public class DepositServlet extends HttpServlet {
      */
     private void handleApplyVoucher(UUID bookingId, String voucherCode, UUID userId, HttpServletResponse response) throws IOException {
         try {
+            LOGGER.info("=== APPLYING VOUCHER VIA SERVLET ===");
+            LOGGER.info("Booking ID: " + bookingId);
+            LOGGER.info("Voucher Code: " + voucherCode);
+            LOGGER.info("User ID: " + userId);
+            
             // GỌI SERVICE XỬ LÝ VOUCHER LOGIC
             boolean voucherApplied = depositService.applyVoucher(bookingId, voucherCode, userId);
             
@@ -213,27 +221,89 @@ public class DepositServlet extends HttpServlet {
                 // Lấy lại dữ liệu đã update
                 DepositPageDTO updatedData = depositService.getDepositPageData(bookingId, userId);
                 
-                // Trả về JSON success
+                // Trả về JSON success với thông tin discount
                 String jsonResponse = String.format(
                     "{\"success\": true, \"message\": \"Voucher applied successfully\", " +
-                    "\"baseAmount\": %.0f, \"insuranceAmount\": %.0f, \"vatAmount\": %.0f, \"totalAmount\": %.0f, \"depositAmount\": %.0f}",
+                    "\"baseAmount\": %.0f, \"insuranceAmount\": %.0f, \"discountAmount\": %.0f, " +
+                    "\"vatAmount\": %.0f, \"totalAmount\": %.0f, \"depositAmount\": %.0f, " +
+                    "\"discountName\": \"%s\", \"discountCode\": \"%s\"}",
                     updatedData.getBaseRentalPrice(), updatedData.getTotalInsuranceAmount(),
-                    updatedData.getVatAmount(), updatedData.getTotalAmount(),
-                    updatedData.getDepositAmount()
+                    updatedData.getDiscountAmount(), updatedData.getVatAmount(), 
+                    updatedData.getTotalAmount(), updatedData.getDepositAmount(),
+                    updatedData.getAppliedDiscount() != null ? updatedData.getAppliedDiscount().getName() : "",
+                    updatedData.getAppliedDiscount() != null ? updatedData.getAppliedDiscount().getVoucherCode() : ""
                 );
                 
                 response.setContentType("application/json");
                 response.getWriter().write(jsonResponse);
+                LOGGER.info("Voucher applied successfully");
             } else {
                 // Voucher không hợp lệ
                 response.setContentType("application/json");
                 response.getWriter().write("{\"success\": false, \"message\": \"Invalid voucher code\"}");
+                LOGGER.warning("Voucher application failed - invalid code");
             }
             
+        } catch (SecurityException e) {
+            LOGGER.warning("Security error applying voucher: " + e.getMessage());
+            response.setContentType("application/json");
+            response.getWriter().write("{\"success\": false, \"message\": \"" + e.getMessage() + "\"}");
+        } catch (IllegalArgumentException e) {
+            LOGGER.warning("Validation error applying voucher: " + e.getMessage());
+            response.setContentType("application/json");
+            response.getWriter().write("{\"success\": false, \"message\": \"" + e.getMessage() + "\"}");
         } catch (Exception e) {
             LOGGER.severe("❌ Error applying voucher: " + e.getMessage());
             response.setContentType("application/json");
-            response.getWriter().write("{\"success\": false, \"message\": \"Error applying voucher\"}");
+            response.getWriter().write("{\"success\": false, \"message\": \"Có lỗi xảy ra khi áp dụng voucher\"}");
+        }
+    }
+
+    /**
+     * Xử lý xóa voucher - ỦY QUYỀN CHO SERVICE
+     */
+    private void handleRemoveVoucher(UUID bookingId, UUID userId, HttpServletResponse response) throws IOException {
+        try {
+            LOGGER.info("=== REMOVING VOUCHER VIA SERVLET ===");
+            LOGGER.info("Booking ID: " + bookingId);
+            LOGGER.info("User ID: " + userId);
+            
+            // GỌI SERVICE XỬ LÝ REMOVE VOUCHER LOGIC
+            boolean voucherRemoved = depositService.removeVoucher(bookingId, userId);
+            
+            if (voucherRemoved) {
+                // Lấy lại dữ liệu đã update
+                DepositPageDTO updatedData = depositService.getDepositPageData(bookingId, userId);
+                
+                // Trả về JSON success với thông tin đã xóa discount
+                String jsonResponse = String.format(
+                    "{\"success\": true, \"message\": \"Voucher removed successfully\", " +
+                    "\"baseAmount\": %.0f, \"insuranceAmount\": %.0f, \"discountAmount\": %.0f, " +
+                    "\"vatAmount\": %.0f, \"totalAmount\": %.0f, \"depositAmount\": %.0f, " +
+                    "\"discountName\": \"\", \"discountCode\": \"\"}",
+                    updatedData.getBaseRentalPrice(), updatedData.getTotalInsuranceAmount(),
+                    updatedData.getDiscountAmount(), updatedData.getVatAmount(), 
+                    updatedData.getTotalAmount(), updatedData.getDepositAmount()
+                );
+                
+                response.setContentType("application/json");
+                response.getWriter().write(jsonResponse);
+                LOGGER.info("Voucher removed successfully");
+            } else {
+                // Không thể xóa voucher
+                response.setContentType("application/json");
+                response.getWriter().write("{\"success\": false, \"message\": \"Failed to remove voucher\"}");
+                LOGGER.warning("Voucher removal failed");
+            }
+            
+        } catch (SecurityException e) {
+            LOGGER.warning("Security error removing voucher: " + e.getMessage());
+            response.setContentType("application/json");
+            response.getWriter().write("{\"success\": false, \"message\": \"" + e.getMessage() + "\"}");
+        } catch (Exception e) {
+            LOGGER.severe("❌ Error removing voucher: " + e.getMessage());
+            response.setContentType("application/json");
+            response.getWriter().write("{\"success\": false, \"message\": \"Có lỗi xảy ra khi xóa voucher\"}");
         }
     }
 
