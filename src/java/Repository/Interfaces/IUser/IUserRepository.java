@@ -34,6 +34,7 @@ public interface IUserRepository extends Repository<User, Integer>{
     List<User> findByStatus(String status) throws SQLException;
     
     List<User> searchUsers(String searchTerm) throws SQLException;
+    User findByPhoneNumber(String phoneNumber);
     
     // Additional methods
     User findById(UUID userId) throws SQLException;
