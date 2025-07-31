@@ -472,6 +472,14 @@ public class BookingInfoDTO {
     }
 
     /**
+     * Trả về phí bảo hiểm bổ sung đã format (KHÔNG nhân thêm 1000)
+     * Sử dụng cho hiển thị giá bảo hiểm tai nạn trong giao diện
+     */
+    public String getFormattedAdditionalInsuranceFeeWithoutConversion() {
+        return PriceUtils.formatPrice(additionalInsuranceFee);
+    }
+
+    /**
      * Trả về tổng tiền đã format
      */
     public String getFormattedTotalAmount() {

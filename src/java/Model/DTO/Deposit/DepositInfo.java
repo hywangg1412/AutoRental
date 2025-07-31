@@ -12,7 +12,7 @@ public class DepositInfo {
     private double discountAmount;   // Tiền giảm giá
     private double vatAmount;        // Tiền VAT (10%)
     private double totalAmount;      // Tổng tiền
-    private double depositAmount;    // Tiền cọc (30%)
+    private double depositAmount;    // Tiền cọc (cố định 300K hoặc 10% tùy theo total amount)
     
     // Chi tiết bảo hiểm
     private double tndsInsurance;    // Bảo hiểm TNDS

@@ -327,8 +327,13 @@ public class BookingService implements IBookingService {
         // Kết quả là đơn vị K (nghìn đồng) để lưu vào database
         double totalAmount = rentalAmount.doubleValue() + basicInsuranceFee + additionalInsuranceFee;
         
+        // LÀM TRÒN GIỐNG NHƯ FRONTEND: làm tròn đến hàng chục đồng (đơn vị K)
+        // Frontend: Math.round(totalPrice / 10) * 10
+        // Backend: Math.round(totalAmount * 10) / 10 (vì đơn vị là K)
+        totalAmount = Math.round(totalAmount * 10) / 10.0;
+        
         LOGGER.info("Tiền thuê xe: " + rentalAmount.doubleValue() + "K VND");
-        LOGGER.info("Tổng tiền: " + totalAmount + "K VND");
+        LOGGER.info("Tổng tiền sau khi làm tròn: " + totalAmount + "K VND");
 
         return totalAmount; // Trả về double để lưu vào database (đơn vị K)
     }

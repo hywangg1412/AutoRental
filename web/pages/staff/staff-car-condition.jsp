@@ -22,6 +22,10 @@
       rel="stylesheet"
       href="${pageContext.request.contextPath}/styles/staff/staff-car-condition.css"
     />
+    <link
+      rel="stylesheet"
+      href="${pageContext.request.contextPath}/styles/staff/staff-notification.css"
+    />
     <style>
       .image-preview-container {
         display: flex;

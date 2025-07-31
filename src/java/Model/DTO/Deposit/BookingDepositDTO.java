@@ -251,11 +251,17 @@ public class BookingDepositDTO {
     }
     
     /**
-     * Tính số tiền đặt cọc (30% tổng chi phí)
+     * Tính số tiền đặt cọc (cố định 300K hoặc 10% tổng chi phí)
      * @return Số tiền đặt cọc
      */
     public double getDepositAmount() {
-        return totalAmount * 0.3;
+        if (totalAmount >= 3000.0) {
+            // Nếu total >= 3 triệu: đặt cọc = 10% của total
+            return totalAmount * 0.1;
+        } else {
+            // Nếu total < 3 triệu: đặt cọc cố định 300K
+            return 300.0;
+        }
     }
     
     /**

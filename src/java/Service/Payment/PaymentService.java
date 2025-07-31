@@ -42,23 +42,10 @@ public class PaymentService implements IPaymentService {
 
     @Override
     public PaymentDTO createDepositPayment(UUID bookingId, UUID userId) throws SQLException {
-        // Gọi phương thức mới với fixedDeposit = false (giữ nguyên hành vi cũ)
-        return createDepositPayment(bookingId, userId, false);
-    }
-
-    /**
-     * Phương thức mới hỗ trợ tham số fixedDeposit
-     * @param bookingId ID của booking
-     * @param userId ID của user
-     * @param useFixedDeposit Có sử dụng tiền cọc cố định 300.000 VND không
-     * @return PaymentDTO chứa thông tin thanh toán
-     * @throws SQLException Nếu có lỗi xảy ra
-     */
-    public PaymentDTO createDepositPayment(UUID bookingId, UUID userId, boolean useFixedDeposit) throws SQLException {
         System.out.println("=== createDepositPayment START ===");
         System.out.println("BookingId: " + bookingId);
         System.out.println("UserId: " + userId);
-        System.out.println("Use Fixed Deposit: " + useFixedDeposit);
+        System.out.println("Sử dụng logic mới: 300K hoặc 10% tùy theo total amount");
         
         // Debug VNPay configuration
         System.out.println("=== VNPay Configuration ===");
@@ -70,26 +57,19 @@ public class PaymentService implements IPaymentService {
         System.out.println("=========================");
 
         try {
-            // Get deposit data
+            // Get deposit data với logic mới từ DepositService
             var depositDTO = depositService.getDepositPageData(bookingId, userId);
             
-            double depositAmount;
+            // Lấy chính xác số tiền hiển thị trên JSP (đã format)
+            String formattedAmount = depositDTO.getFormattedDepositAmount(); // "2,218,339 VND"
             
-            if (useFixedDeposit) {
-                // Sử dụng tiền cọc cố định 300.000 VND
-                depositAmount = 300000.0;
-                System.out.println("Using fixed deposit amount: 300,000 VND");
-            } else {
-                // Lấy chính xác số tiền hiển thị trên JSP (đã format)
-                String formattedAmount = depositDTO.getFormattedDepositAmount(); // "2,218,339 VND"
-                
-                // Parse số tiền từ formatted string để đảm bảo chính xác 100%
-                depositAmount = parseFormattedAmount(formattedAmount);
-                
-                System.out.println("Deposit Amount (raw from DB): " + depositDTO.getDepositAmount());
-                System.out.println("Deposit Amount (formatted): " + formattedAmount);
-                System.out.println("Deposit Amount (parsed VND): " + depositAmount);
-            }
+            // Parse số tiền từ formatted string để đảm bảo chính xác 100%
+            double depositAmount = parseFormattedAmount(formattedAmount);
+            
+            System.out.println("Deposit Amount (raw from DB): " + depositDTO.getDepositAmount());
+            System.out.println("Deposit Amount (formatted): " + formattedAmount);
+            System.out.println("Deposit Amount (parsed VND): " + depositAmount);
+            System.out.println("Logic: " + (depositDTO.getSubtotal() >= 3000 ? "10% of total" : "Fixed 300K"));
 
             // Validate deposit amount - VNPay yêu cầu số tiền tối thiểu
             if (depositAmount < 1000) {
@@ -338,15 +318,21 @@ public class PaymentService implements IPaymentService {
      */
     private double parseFormattedAmount(String formattedAmount) {
         try {
-            // Remove "VND", spaces, and commas, then parse
+            if (formattedAmount == null || formattedAmount.trim().isEmpty()) {
+                System.out.println("Warning: formattedAmount is null or empty");
+                return 0.0;
+            }
+            
+            // Remove "VND", spaces, commas, and dots (format Việt Nam: 1.682.500 VND)
             String cleanAmount = formattedAmount
                 .replace("VND", "")
                 .replace(",", "")
+                .replace(".", "")  // Xóa dấu chấm phân cách hàng nghìn
                 .replace(" ", "")
                 .trim();
             
             double amount = Double.parseDouble(cleanAmount);
-            System.out.println("Parsed amount: " + cleanAmount + " → " + amount);
+            System.out.println("Parsed amount: " + formattedAmount + " → " + cleanAmount + " → " + amount);
             return amount;
         } catch (Exception e) {
             System.err.println("Error parsing formatted amount: " + formattedAmount);
