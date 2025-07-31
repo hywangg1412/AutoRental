@@ -339,7 +339,7 @@ public class StaffCarConditionServlet extends HttpServlet {
                 if (booking != null) {
                     notificationService.sendNotificationToUser(
                             booking.getUserId(),
-                            "Xe của bạn đã được kiểm tra và hoàn tất trả xe. Mã booking: " + booking.getBookingCode());
+                            "Your car has been inspected and the return process is complete. Booking code: " + booking.getBookingCode() + ". You can provide feedback now.");
                 }
                 
                 out.print("{\"success\":true,\"message\":\"Đã lưu thông tin kiểm tra xe thành công\"}");
@@ -378,7 +378,7 @@ public class StaffCarConditionServlet extends HttpServlet {
                 if (booking != null) {
                     notificationService.sendNotificationToUser(
                             booking.getUserId(),
-                            "Xe của bạn đã được trả thành công. Mã booking: " + booking.getBookingCode());
+                            "Your car has been returned successfully. Booking code: " + booking.getBookingCode() + ". You can provide feedback now.");
                 }
                 
                 out.print("{\"success\":true,\"message\":\"Đã chấp nhận trả xe thành công\"}");

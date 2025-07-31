@@ -57,11 +57,11 @@
                                 <c:set var="iconClass" value="info-circle" />
                                 <c:set var="iconColor" value="#17a2b8" />
                                 
-                                <c:if test="${fn:contains(fn:toLowerCase(notification.message), 'đã được duyệt')}">
+                                <c:if test="${fn:contains(fn:toLowerCase(notification.message), 'approved')}">
                                   <c:set var="iconClass" value="check-circle" />
                                   <c:set var="iconColor" value="#28a745" />
                                 </c:if>
-                                <c:if test="${fn:contains(fn:toLowerCase(notification.message), 'từ chối')}">
+                                <c:if test="${fn:contains(fn:toLowerCase(notification.message), 'rejected')}">
                                   <c:set var="iconClass" value="times-circle" />
                                   <c:set var="iconColor" value="#dc3545" />
                                 </c:if>
