@@ -40,7 +40,7 @@ public class DepositPageDTO {
     private double subtotal;                // base + insurance - discount
     private double vatAmount;               // VAT 10%
     private double totalAmount;             // Tổng cuối cùng (subtotal + VAT)
-    private double depositAmount;           // Tiền cọc 30% của total
+    private double depositAmount;           // Tiền cọc (cố định 300K hoặc 10% tùy theo total amount)
 
     // Thông tin điều khoản
     private boolean termsAgreed;           // Đã đồng ý điều khoản chưa
