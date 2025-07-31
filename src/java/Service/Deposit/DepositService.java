@@ -3,7 +3,9 @@ package Service.Deposit;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -11,11 +13,14 @@ import java.util.logging.Logger;
 
 import Model.DTO.Deposit.DepositPageDTO;
 import Model.DTO.Deposit.InsuranceDetailDTO;
+import Model.DTO.Deposit.DiscountDTO;
 import Model.DTO.DurationResult;
 import Model.Entity.Booking.Booking;
 import Model.Entity.Booking.BookingInsurance;
 import Model.Entity.Deposit.Insurance;
 import Model.Entity.Deposit.Terms;
+import Model.Entity.Discount;
+
 import Repository.Interfaces.IDeposit.IDepositRepository;
 import Repository.Interfaces.IDeposit.ITermsRepository;
 import Service.Interfaces.IDeposit.IDepositService;
@@ -103,6 +108,24 @@ public class DepositService implements IDepositService {
         
         // Tính toán giá cả
         calculateAllPricing(booking, dto);
+        
+        // Lấy thông tin discount đã áp dụng (nếu có)
+        if (booking.getDiscountId() != null) {
+            Discount appliedDiscount = depositRepository.getDiscountById(booking.getDiscountId());
+            if (appliedDiscount != null) {
+                // Convert từ Entity sang DTO
+                DiscountDTO discountDTO = new DiscountDTO();
+                discountDTO.setDiscountId(appliedDiscount.getDiscountId());
+                discountDTO.setName(appliedDiscount.getDiscountName());
+                discountDTO.setDescription(appliedDiscount.getDescription());
+                discountDTO.setDiscountType(appliedDiscount.getDiscountType());
+                discountDTO.setDiscountValue(appliedDiscount.getDiscountValue().doubleValue());
+                discountDTO.setVoucherCode(appliedDiscount.getVoucherCode());
+                discountDTO.setMinOrderAmount(appliedDiscount.getMinOrderAmount() != null ? appliedDiscount.getMinOrderAmount().doubleValue() : 0.0);
+                discountDTO.setMaxDiscountAmount(appliedDiscount.getMaxDiscountAmount() != null ? appliedDiscount.getMaxDiscountAmount().doubleValue() : 0.0);
+                dto.setAppliedDiscount(discountDTO);
+            }
+        }
 
         return dto;
     }
@@ -111,8 +134,163 @@ public class DepositService implements IDepositService {
 
     @Override
     public boolean applyVoucher(UUID bookingId, String voucherCode, UUID userId) throws Exception {
-        // TODO: Sẽ làm sau khi có yêu cầu
+        LOGGER.info("=== APPLYING VOUCHER ===");
+        LOGGER.info("Booking ID: " + bookingId);
+        LOGGER.info("Voucher Code: " + voucherCode);
+        LOGGER.info("User ID: " + userId);
+        
+        // Debug: Log tất cả voucher active trong DB
+        depositRepository.logAllActiveVouchers();
+        
+        // 1. Kiểm tra quyền sở hữu booking
+        if (!isBookingOwnedByUser(bookingId, userId)) {
+            LOGGER.warning("Booking không thuộc về user này: " + userId);
             return false;
+        }
+        
+        // 2. Lấy thông tin voucher từ database
+        LOGGER.info("Đang tìm voucher: " + voucherCode);
+        Discount discount = depositRepository.getValidVoucher(voucherCode);
+        if (discount == null) {
+            LOGGER.warning("Voucher không tồn tại: " + voucherCode);
+            // Debug: Kiểm tra tất cả voucher trong DB
+            depositRepository.debugVoucherStatus(voucherCode);
+            return false;
+        }
+        LOGGER.info("Tìm thấy voucher: " + discount.getDiscountName());
+        
+        // 3. Kiểm tra voucher có active không
+        LOGGER.info("Kiểm tra voucher active: " + discount.isIsActive());
+        if (!discount.isIsActive()) {
+            LOGGER.warning("Voucher không active: " + voucherCode);
+            return false;
+        }
+        
+        // 4. Kiểm tra thời gian hiệu lực
+        Date currentDate = new Date();
+        if (discount.getStartDate() != null && currentDate.before(discount.getStartDate())) {
+            LOGGER.warning("Voucher chưa có hiệu lực: " + voucherCode);
+            return false;
+        }
+        if (discount.getEndDate() != null && currentDate.after(discount.getEndDate())) {
+            LOGGER.warning("Voucher đã hết hạn: " + voucherCode);
+            return false;
+        }
+        
+        // 5. Kiểm tra số lần sử dụng
+        if (discount.getUsageLimit() != null && discount.getUsedCount() >= discount.getUsageLimit()) {
+            LOGGER.warning("Voucher đã hết lượt sử dụng: " + voucherCode);
+            return false;
+        }
+        
+        // 6. Kiểm tra user đã dùng voucher này chưa
+        int userUsageCount = countUserVoucherUsage(userId, discount.getDiscountId());
+        if (userUsageCount > 0) {
+            LOGGER.warning("User đã sử dụng voucher này: " + voucherCode);
+            return false;
+        }
+        
+        // 7. Lấy thông tin booking để kiểm tra giá trị đơn hàng
+        Booking booking = depositRepository.getBookingForDeposit(bookingId);
+        if (booking == null) {
+            LOGGER.severe("Không tìm thấy booking: " + bookingId);
+            return false;
+        }
+        
+        // 8. Tính toán giá trị đơn hàng (base amount + insurance)
+        double baseAmount = booking.getTotalAmount();
+        double insuranceAmount = calculateVehicleInsurance(booking);
+        double subtotal = baseAmount + insuranceAmount;
+        
+        LOGGER.info("Tính toán giá trị đơn hàng:");
+        LOGGER.info("  - Base amount (DB): " + baseAmount);
+        LOGGER.info("  - Insurance amount (DB): " + insuranceAmount);
+        LOGGER.info("  - Subtotal (DB): " + subtotal);
+        LOGGER.info("  - Subtotal (VND): " + (subtotal * 1000));
+        
+        // 9. Kiểm tra giá trị tối thiểu đơn hàng
+        // Chuyển đổi subtotal từ DB unit sang VND để so sánh với MinOrderAmount
+        double subtotalVND = subtotal * 1000;
+        LOGGER.info("Kiểm tra giá trị tối thiểu: subtotal(VND)=" + subtotalVND + ", minOrder=" + discount.getMinOrderAmount());
+        if (discount.getMinOrderAmount() != null && subtotalVND < discount.getMinOrderAmount().doubleValue()) {
+            LOGGER.warning("Đơn hàng không đạt giá trị tối thiểu: " + subtotalVND + " < " + discount.getMinOrderAmount());
+            return false;
+        }
+        
+        // 10. Cập nhật discount cho booking
+        boolean updateSuccess = depositRepository.updateBookingDiscount(bookingId, discount.getDiscountId());
+        if (!updateSuccess) {
+            LOGGER.severe("Không thể cập nhật discount cho booking");
+            return false;
+        }
+        
+        // 11. Tăng số lần sử dụng voucher
+        depositRepository.incrementVoucherUsage(discount.getDiscountId());
+        
+        // 12. Ghi log sử dụng voucher của user
+        depositRepository.recordUserVoucherUsage(userId, discount.getDiscountId());
+        
+        LOGGER.info("Voucher applied successfully: " + voucherCode);
+        LOGGER.info("=== END APPLYING VOUCHER ===");
+        return true;
+    }
+
+
+
+    @Override
+    public String createVoucherResponse(boolean success, String message, UUID bookingId, UUID userId) throws Exception {
+        LOGGER.info("=== CREATING VOUCHER RESPONSE ===");
+        LOGGER.info("Success: " + success);
+        LOGGER.info("Message: " + message);
+        
+        if (!success) {
+            String errorResponse = String.format("{\"success\": false, \"message\": \"%s\"}", message);
+            LOGGER.info("Error response: " + errorResponse);
+            return errorResponse;
+        }
+        
+        // Lấy dữ liệu cập nhật sau khi áp dụng/xóa voucher
+        DepositPageDTO depositData = getDepositPageData(bookingId, userId);
+        LOGGER.info("Deposit data loaded:");
+        LOGGER.info("  - Subtotal: " + depositData.getSubtotal());
+        LOGGER.info("  - Discount amount: " + depositData.getDiscountAmount());
+        LOGGER.info("  - VAT amount: " + depositData.getVatAmount());
+        LOGGER.info("  - Total amount: " + depositData.getTotalAmount());
+        LOGGER.info("  - Deposit amount: " + depositData.getDepositAmount());
+        if (depositData.getAppliedDiscount() != null) {
+            LOGGER.info("  - Applied discount: " + depositData.getAppliedDiscount().getVoucherCode());
+        }
+        
+        // Tạo response JSON theo format mà JSP mong đợi
+        StringBuilder json = new StringBuilder();
+        json.append("{");
+        json.append("\"success\": true,");
+        json.append("\"message\": \"").append(message).append("\",");
+        
+        // Thêm thông tin voucher nếu có
+        if (depositData.getAppliedDiscount() != null) {
+            json.append("\"discountCode\": \"").append(depositData.getAppliedDiscount().getVoucherCode()).append("\",");
+            json.append("\"discountAmount\": ").append(depositData.getDiscountAmount()).append(",");
+            LOGGER.info("  - JSON discountCode: " + depositData.getAppliedDiscount().getVoucherCode());
+            LOGGER.info("  - JSON discountAmount: " + depositData.getDiscountAmount());
+        } else {
+            json.append("\"discountCode\": null,");
+            json.append("\"discountAmount\": 0,");
+            LOGGER.info("  - JSON discountCode: null");
+            LOGGER.info("  - JSON discountAmount: 0");
+        }
+        
+        // Thêm các thông tin khác theo đúng format JSP mong đợi
+        json.append("\"baseAmount\": ").append(depositData.getSubtotal()).append(",");
+        json.append("\"vatAmount\": ").append(depositData.getVatAmount()).append(",");
+        json.append("\"totalAmount\": ").append(depositData.getTotalAmount()).append(",");
+        json.append("\"depositAmount\": ").append(depositData.getDepositAmount());
+        json.append("}");
+        
+        String response = json.toString();
+        LOGGER.info("Final JSON response: " + response);
+        LOGGER.info("=== END CREATING VOUCHER RESPONSE ===");
+        return response;
     }
 
     @Override
@@ -157,6 +335,42 @@ public class DepositService implements IDepositService {
     @Override
     public boolean isBookingOwnedByUser(UUID bookingId, UUID userId) throws Exception {
         return depositRepository.isBookingOwnedByUser(bookingId, userId);
+    }
+
+    @Override
+    public boolean removeVoucher(UUID bookingId, UUID userId) throws Exception {
+        LOGGER.info("=== REMOVING VOUCHER ===");
+        LOGGER.info("Booking ID: " + bookingId);
+        LOGGER.info("User ID: " + userId);
+        
+        // 1. Kiểm tra quyền sở hữu booking
+        if (!isBookingOwnedByUser(bookingId, userId)) {
+            LOGGER.warning("Booking không thuộc về user này: " + userId);
+            return false;
+        }
+        
+        // 2. Lấy thông tin booking
+        Booking booking = depositRepository.getBookingForDeposit(bookingId);
+        if (booking == null) {
+            LOGGER.severe("Không tìm thấy booking: " + bookingId);
+            return false;
+        }
+        
+        // 3. Kiểm tra xem booking có voucher không
+        if (booking.getDiscountId() == null) {
+            LOGGER.warning("Booking không có voucher để xóa");
+            return false;
+        }
+        
+        // 4. Cập nhật booking để xóa discount
+        boolean updateSuccess = depositRepository.updateBookingDiscount(bookingId, null);
+        if (!updateSuccess) {
+            LOGGER.severe("Không thể xóa discount cho booking");
+            return false;
+        }
+        
+        LOGGER.info("Voucher removed successfully from booking: " + bookingId);
+        return true;
     }
 
     // ========== CÁC PHƯƠNG THỨC HELPER - ĐƠN GIẢN DỄ HIỂU ==========
@@ -424,30 +638,58 @@ public class DepositService implements IDepositService {
             double baseAmount = booking.getTotalAmount() - insuranceAmount;
             LOGGER.info("Base amount calculation: " + booking.getTotalAmount() + " - " + insuranceAmount + " = " + baseAmount + " (DB value)");
             
-            // Bước 3: Giảm giá (chưa có voucher)
+            // Bước 3: Tính subtotal trước khi áp dụng discount
+            double subtotal = baseAmount + insuranceAmount;
+            LOGGER.info("Subtotal before discount: " + baseAmount + " + " + insuranceAmount + " = " + subtotal);
+            
+            // Bước 4: Giảm giá từ voucher đã áp dụng
             double discountAmount = 0.0;
-            LOGGER.info("Discount amount: " + discountAmount + " (DB value)");
+            if (booking.getDiscountId() != null) {
+                Discount appliedDiscount = depositRepository.getDiscountById(booking.getDiscountId());
+                if (appliedDiscount != null) {
+                    LOGGER.info("Tính toán discount cho voucher: " + appliedDiscount.getVoucherCode());
+                    LOGGER.info("  - Discount type: " + appliedDiscount.getDiscountType());
+                    LOGGER.info("  - Discount value: " + appliedDiscount.getDiscountValue());
+                    LOGGER.info("  - Max discount: " + appliedDiscount.getMaxDiscountAmount());
+                    
+                    if ("Percent".equalsIgnoreCase(appliedDiscount.getDiscountType())) {
+                        // Giảm theo phần trăm
+                        discountAmount = subtotal * (appliedDiscount.getDiscountValue().doubleValue() / 100.0);
+                        // Kiểm tra giới hạn tối đa
+                        if (appliedDiscount.getMaxDiscountAmount() != null && discountAmount > appliedDiscount.getMaxDiscountAmount().doubleValue()) {
+                            discountAmount = appliedDiscount.getMaxDiscountAmount().doubleValue();
+                        }
+                        LOGGER.info("  - Percent discount: " + discountAmount + " (DB value)");
+                    } else {
+                        // Giảm cố định - chuyển từ VND sang DB unit
+                        discountAmount = appliedDiscount.getDiscountValue().doubleValue() / 1000.0;
+                        LOGGER.info("  - Fixed discount: " + discountAmount + " (DB value) = " + (discountAmount * 1000) + " VND");
+                    }
+                    LOGGER.info("Applied discount: " + appliedDiscount.getVoucherCode() + " = " + discountAmount + " (DB value)");
+                }
+            }
+            LOGGER.info("Final discount amount: " + discountAmount + " (DB value)");
             
-            // Bước 4: Tính subtotal = base + insurance - discount
-            double subtotal = baseAmount + insuranceAmount - discountAmount;
-            LOGGER.info("Subtotal: " + baseAmount + " + " + insuranceAmount + " - " + discountAmount + " = " + subtotal);
+            // Bước 5: Tính subtotal sau khi áp dụng discount
+            double finalSubtotal = subtotal - discountAmount;
+            LOGGER.info("Final subtotal after discount: " + subtotal + " - " + discountAmount + " = " + finalSubtotal);
             
-            // Bước 5: Tính VAT = subtotal * 10%
-            double vatAmount = subtotal * VAT_PERCENTAGE;
-            LOGGER.info("VAT (10%): " + subtotal + " × " + VAT_PERCENTAGE + " = " + vatAmount);
+            // Bước 6: Tính VAT = finalSubtotal * 10%
+            double vatAmount = finalSubtotal * VAT_PERCENTAGE;
+            LOGGER.info("VAT (10%): " + finalSubtotal + " × " + VAT_PERCENTAGE + " = " + vatAmount);
             
-            // Bước 6: Tổng cộng = subtotal + VAT
-            double totalAmount = subtotal + vatAmount;
-            LOGGER.info("Total: " + subtotal + " + " + vatAmount + " = " + totalAmount);
+            // Bước 7: Tổng cộng = finalSubtotal + VAT
+            double totalAmount = finalSubtotal + vatAmount;
+            LOGGER.info("Total: " + finalSubtotal + " + " + vatAmount + " = " + totalAmount);
             
-            // Bước 7: Tính tiền đặt cọc theo logic mới
+            // Bước 8: Tính tiền đặt cọc theo logic mới
             double depositAmount;
-            if (subtotal >= DEPOSIT_THRESHOLD) {
-                // Nếu subtotal >= 3 triệu: đặt cọc = 10% của subtotal
-                depositAmount = subtotal * DEPOSIT_PERCENTAGE;
-                LOGGER.info("Deposit calculation (10%): " + subtotal + " × " + DEPOSIT_PERCENTAGE + " = " + depositAmount + " (DB value)");
+            if (finalSubtotal >= DEPOSIT_THRESHOLD) {
+                // Nếu finalSubtotal >= 3 triệu: đặt cọc = 10% của finalSubtotal
+                depositAmount = finalSubtotal * DEPOSIT_PERCENTAGE;
+                LOGGER.info("Deposit calculation (10%): " + finalSubtotal + " × " + DEPOSIT_PERCENTAGE + " = " + depositAmount + " (DB value)");
             } else {
-                // Nếu subtotal < 3 triệu: đặt cọc cố định 300.000 VND
+                // Nếu finalSubtotal < 3 triệu: đặt cọc cố định 300.000 VND
                 depositAmount = FIXED_DEPOSIT_AMOUNT;
                 LOGGER.info("Deposit (fixed): " + FIXED_DEPOSIT_AMOUNT + " (DB value) = 300.000 VND");
             }
@@ -456,7 +698,7 @@ public class DepositService implements IDepositService {
             dto.setBaseRentalPrice(baseAmount);
             dto.setTotalInsuranceAmount(insuranceAmount);
             dto.setDiscountAmount(discountAmount);
-            dto.setSubtotal(subtotal);
+            dto.setSubtotal(finalSubtotal);
             dto.setVatAmount(vatAmount);
             dto.setTotalAmount(totalAmount);
             dto.setDepositAmount(depositAmount);
@@ -582,6 +824,72 @@ public class DepositService implements IDepositService {
             return COEFFICIENT_HIGH;
         } else {
             return COEFFICIENT_LUXURY;
+        }
+    }
+
+    // ====== BỔ SUNG HELPER VOUCHER/DISCOUNT (CHỈ THÊM MỚI) ======
+
+    /**
+     * Helper: Log toàn bộ voucher đang active (gọi từ repository)
+     */
+    public void logAllActiveVouchers() {
+        if (depositRepository instanceof Repository.Deposit.DepositRepository) {
+            ((Repository.Deposit.DepositRepository) depositRepository).logAllActiveVouchers();
+        } else {
+            LOGGER.info("Repository không hỗ trợ logAllActiveVouchers()");
+        }
+    }
+
+    /**
+     * Helper: Debug chi tiết trạng thái voucher
+     */
+    public void debugVoucherStatus(String voucherCode) {
+        if (depositRepository instanceof Repository.Deposit.DepositRepository) {
+            ((Repository.Deposit.DepositRepository) depositRepository).debugVoucherStatus(voucherCode);
+        } else {
+            LOGGER.info("Repository không hỗ trợ debugVoucherStatus()");
+        }
+    }
+
+    /**
+     * Helper: Kiểm tra user đã dùng voucher này bao nhiêu lần
+     */
+    public int countUserVoucherUsage(UUID userId, UUID discountId) {
+        if (depositRepository instanceof Repository.Deposit.DepositRepository) {
+            return ((Repository.Deposit.DepositRepository) depositRepository).countUserVoucherUsage(userId, discountId);
+        }
+        return 0;
+    }
+
+    /**
+     * Helper: Kiểm tra tổng số lượt sử dụng voucher này trên toàn hệ thống
+     */
+    public int countTotalVoucherUsage(UUID discountId) {
+        if (depositRepository instanceof Repository.Deposit.DepositRepository) {
+            return ((Repository.Deposit.DepositRepository) depositRepository).countTotalVoucherUsage(discountId);
+        }
+        return 0;
+    }
+
+    /**
+     * Helper: Validate voucher nâng cao (có thể dùng cho unit test hoặc debug)
+     */
+    public boolean isVoucherCurrentlyValid(String voucherCode) {
+        if (depositRepository instanceof Repository.Deposit.DepositRepository) {
+            return ((Repository.Deposit.DepositRepository) depositRepository).isVoucherCurrentlyValid(voucherCode);
+        }
+        return false;
+    }
+
+    // ====== BỔ SUNG HELPER REMOVE VOUCHER/DISCOUNT (CHỈ THÊM MỚI) ======
+
+    /**
+     * Helper: Xóa thông tin voucher/discount khỏi DepositPageDTO (nếu cần clear ở service)
+     */
+    public void removeVoucherInfo(DepositPageDTO dto) {
+        if (dto != null) {
+            dto.setAppliedDiscount(null);
+            dto.setDiscountAmount(0.0);
         }
     }
 }
