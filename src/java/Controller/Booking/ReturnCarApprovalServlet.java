@@ -38,12 +38,12 @@ public class ReturnCarApprovalServlet extends HttpServlet {
 
             if ("approve".equals(action)) {
                 bookingService.updateBookingStatus(bookingId, BookingStatusConstants.COMPLETED);
-                notificationService.sendNotificationToUser(booking.getUserId(), "Yêu cầu trả xe của bạn đã được xác nhận. Cảm ơn bạn đã sử dụng dịch vụ!");
+                notificationService.sendNotificationToUser(booking.getUserId(), "Your car return request has been confirmed. Thank you for using our service!");
                 response.sendRedirect(request.getContextPath() + "/staff/booking-approval-list?success=Confirmed Return Car");
                 return;
             } else if ("reject".equals(action)) {
                 bookingService.updateBookingStatus(bookingId, BookingStatusConstants.RETURN_REJECTED);
-                notificationService.sendNotificationToUser(booking.getUserId(), "Yêu cầu trả xe của bạn bị từ chối. Lý do: " + reason);
+                notificationService.sendNotificationToUser(booking.getUserId(), "Your car return request has been rejected. Reason: " + reason);
                 response.sendRedirect(request.getContextPath() + "/staff/booking-approval-list?success=Rejected Return Car");
                 return;
             }
