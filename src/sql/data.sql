@@ -379,8 +379,8 @@ INSERT INTO [Discount] (
     [DiscountCategory]
 ) VALUES (
     NEWID(),
-    N'Giảm 20K cho mọi đơn hàng',
-    N'Voucher giảm 20.000 VND cho mọi đơn hàng, không giới hạn giá trị tối thiểu',
+    N'Discount 20K for all orders',
+    N'Voucher for a 20,000 VND discount on all orders, no minimum order value required',
     'Fixed',
     20000.00,
     '2024-01-01',
@@ -414,8 +414,8 @@ INSERT INTO [Discount] (
     [DiscountCategory]
 ) VALUES (
     NEWID(),
-    N'Giảm 5% cho mọi đơn hàng',
-    N'Voucher giảm 5% giá trị đơn hàng, áp dụng cho mọi đơn hàng',
+    N'Discount 5% for all orders',
+    N'Voucher for a 5% discount on the order value, applicable to all orders',
     'Percent',
     5.00,
     '2024-01-01',
@@ -449,8 +449,8 @@ INSERT INTO [Discount] (
     [DiscountCategory]
 ) VALUES (
     NEWID(),
-    N'Giảm 30K cho mọi đơn hàng',
-    N'Voucher giảm 30.000 VND cho mọi đơn hàng, không giới hạn giá trị tối thiểu',
+    N'Discount 30K for all orders',
+    N'Voucher for a 30,000 VND discount on all orders, no minimum order value required',
     'Fixed',
     30000.00,
     '2024-01-01',
@@ -484,8 +484,8 @@ INSERT INTO [Discount] (
     [DiscountCategory]
 ) VALUES (
     NEWID(),
-    N'Giảm 8% cho mọi đơn hàng',
-    N'Voucher giảm 8% giá trị đơn hàng, áp dụng cho mọi đơn hàng',
+    N'Discount 8% for all orders',
+    N'Voucher for an 8% discount on the order value, applicable to all orders',
     'Percent',
     8.00,
     '2024-01-01',
@@ -504,7 +504,7 @@ INSERT INTO [Discount] (
 INSERT INTO [Discount] (
     [DiscountId],
     [DiscountName],
-[Description],
+    [Description],
     [DiscountType],
     [DiscountValue],
     [StartDate],
@@ -519,8 +519,8 @@ INSERT INTO [Discount] (
     [DiscountCategory]
 ) VALUES (
     NEWID(),
-    N'Giảm 15K cho mọi đơn hàng',
-    N'Voucher giảm 15.000 VND cho mọi đơn hàng, không giới hạn giá trị tối thiểu',
+    N'Discount 15K for all orders',
+    N'Voucher for a 15,000 VND discount on all orders, no minimum order value required',
     'Fixed',
     15000.00,
     '2024-01-01',
@@ -554,8 +554,8 @@ INSERT INTO [Discount] (
     [DiscountCategory]
 ) VALUES (
     NEWID(),
-    N'Giảm 3% cho mọi đơn hàng',
-    N'Voucher giảm 3% giá trị đơn hàng, áp dụng cho mọi đơn hàng',
+    N'Discount 3% for all orders',
+    N'Voucher for a 3% discount on the order value, applicable to all orders',
     'Percent',
     3.00,
     '2024-01-01',
@@ -589,8 +589,8 @@ INSERT INTO [Discount] (
     [DiscountCategory]
 ) VALUES (
     NEWID(),
-    N'Giảm 25K cho mọi đơn hàng',
-    N'Voucher giảm 25.000 VND cho mọi đơn hàng, không giới hạn giá trị tối thiểu',
+    N'Discount 25K for all orders',
+    N'Voucher for a 25,000 VND discount on all orders, no minimum order value required',
     'Fixed',
     25000.00,
     '2024-01-01',
@@ -624,8 +624,8 @@ INSERT INTO [Discount] (
     [DiscountCategory]
 ) VALUES (
     NEWID(),
-    N'Giảm 10% cho mọi đơn hàng',
-    N'Voucher giảm 10% giá trị đơn hàng, áp dụng cho mọi đơn hàng',
+    N'Discount 10% for all orders',
+    N'Voucher for a 10% discount on the order value, applicable to all orders',
     'Percent',
     10.00,
     '2024-01-01',
@@ -656,11 +656,11 @@ INSERT INTO [Discount] (
     [MaxDiscountAmount],
     [UsageLimit],
     [UsedCount],
-[DiscountCategory]
+    [DiscountCategory]
 ) VALUES (
     NEWID(),
-    N'Giảm 40K cho mọi đơn hàng',
-    N'Voucher giảm 40.000 VND cho mọi đơn hàng, không giới hạn giá trị tối thiểu',
+    N'Discount 40K for all orders',
+    N'Voucher for a 40,000 VND discount on all orders, no minimum order value required',
     'Fixed',
     40000.00,
     '2024-01-01',
@@ -694,8 +694,8 @@ INSERT INTO [Discount] (
     [DiscountCategory]
 ) VALUES (
     NEWID(),
-    N'Giảm 12% cho mọi đơn hàng',
-    N'Voucher giảm 12% giá trị đơn hàng, áp dụng cho mọi đơn hàng',
+    N'Discount 12% for all orders',
+    N'Voucher for a 12% discount on the order value, applicable to all orders',
     'Percent',
     12.00,
     '2024-01-01',
@@ -709,19 +709,3 @@ INSERT INTO [Discount] (
     0,
     'General'
 );
-
-PRINT 'Đã thêm thành công 10 voucher mới có thể dùng với mọi đơn hàng!';
-PRINT '';
-PRINT 'Danh sách voucher mới:';
-PRINT '1. SAVE20K - Giảm 20K cho mọi đơn hàng';
-PRINT '2. SAVE5PERCENT - Giảm 5% cho mọi đơn hàng';
-PRINT '3. SAVE30K - Giảm 30K cho mọi đơn hàng';
-PRINT '4. SAVE8PERCENT - Giảm 8% cho mọi đơn hàng';
-PRINT '5. SAVE15K - Giảm 15K cho mọi đơn hàng';
-PRINT '6. SAVE3PERCENT - Giảm 3% cho mọi đơn hàng';
-PRINT '7. SAVE25K - Giảm 25K cho mọi đơn hàng';
-PRINT '8. SAVE10PERCENT - Giảm 10% cho mọi đơn hàng';
-PRINT '9. SAVE40K - Giảm 40K cho mọi đơn hàng';
-PRINT '10. SAVE12PERCENT - Giảm 12% cho mọi đơn hàng';
-PRINT '';
-PRINT 'Tất cả voucher đều có MinOrderAmount = 0, có thể dùng với mọi đơn hàng!';
