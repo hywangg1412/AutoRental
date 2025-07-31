@@ -450,6 +450,71 @@ public class DepositPageDTO {
         return "Fixed"; // Hiển thị "Fixed" thay vì % vì đã hardcode
     }
 
+    // ====== BỔ SUNG HELPER VOUCHER/DISCOUNT (CHỈ THÊM MỚI) ======
+
+    /**
+     * Kiểm tra booking này có áp dụng voucher/discount không
+     */
+    public boolean hasVoucherApplied() {
+        return appliedDiscount != null && appliedDiscount.getVoucherCode() != null && !appliedDiscount.getVoucherCode().isEmpty();
+    }
+
+    /**
+     * Lấy mã voucher đã áp dụng (nếu có)
+     */
+    public String getAppliedVoucherCode() {
+        return hasVoucherApplied() ? appliedDiscount.getVoucherCode() : "";
+    }
+
+    /**
+     * Lấy tên discount đã áp dụng (nếu có)
+     */
+    public String getAppliedDiscountName() {
+        return hasVoucherApplied() ? appliedDiscount.getName() : "";
+    }
+
+    /**
+     * Lấy mô tả discount đã áp dụng (nếu có)
+     */
+    public String getAppliedDiscountDescription() {
+        return hasVoucherApplied() ? appliedDiscount.getDescription() : "";
+    }
+
+    /**
+     * Lấy loại discount đã áp dụng (nếu có)
+     */
+    public String getAppliedDiscountType() {
+        return hasVoucherApplied() ? appliedDiscount.getDiscountType() : "";
+    }
+
+    /**
+     * Lấy giá trị giảm giá đã áp dụng (nếu có)
+     */
+    public double getAppliedDiscountValue() {
+        return hasVoucherApplied() ? appliedDiscount.getDiscountValue() : 0.0;
+    }
+
+    /**
+     * Lấy số tiền đơn hàng tối thiểu của voucher đã áp dụng (nếu có)
+     */
+    public double getAppliedDiscountMinOrderAmount() {
+        return hasVoucherApplied() ? appliedDiscount.getMinOrderAmount() : 0.0;
+    }
+
+    /**
+     * Lấy giá trị giảm giá đã format (nếu có)
+     */
+    public String getFormattedAppliedDiscountValue() {
+        return hasVoucherApplied() ? appliedDiscount.getFormattedDiscountValue() : "";
+    }
+
+    /**
+     * Lấy số tiền đơn hàng tối thiểu đã format (nếu có)
+     */
+    public String getFormattedAppliedDiscountMinOrderAmount() {
+        return hasVoucherApplied() ? appliedDiscount.getFormattedMinOrderAmount() : "";
+    }
+
     @Override
     public String toString() {
         return "DepositPageDTO{"
