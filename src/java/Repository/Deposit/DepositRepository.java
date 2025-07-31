@@ -90,14 +90,184 @@ public class DepositRepository implements IDepositRepository {
 
     @Override
     public Discount getValidVoucher(String voucherCode) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return validateVoucher(voucherCode);
     }
 
     @Override
     public Discount getDiscountById(UUID discountId) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String sql = "SELECT * FROM Discount WHERE DiscountId = ?";
+        
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setObject(1, discountId);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToDiscount(rs);
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error getting discount by ID: " + discountId, e);
+            throw e;
+        }
+        return null;
     }
 
+    // ========== VOUCHER VALIDATION METHODS ==========
+    
+    @Override
+    public boolean hasUserUsedVoucher(UUID userId, UUID discountId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM UserVoucherUsage WHERE UserId = ? AND DiscountId = ?";
+        
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setObject(1, userId);
+            ps.setObject(2, discountId);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error checking user voucher usage: " + userId + ", " + discountId, e);
+            throw e;
+        }
+        return false;
+    }
+    
+    @Override
+    public boolean recordVoucherUsage(UUID userId, UUID discountId) throws SQLException {
+        String sql = "INSERT INTO UserVoucherUsage (UserId, DiscountId, UsedAt) VALUES (?, ?, GETDATE())";
+        
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setObject(1, userId);
+            ps.setObject(2, discountId);
+            
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0;
+            
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error recording voucher usage: " + userId + ", " + discountId, e);
+            throw e;
+        }
+    }
+    
+    @Override
+    public Discount validateVoucher(String voucherCode) throws SQLException {
+        LOGGER.info("=== VALIDATING VOUCHER ===");
+        LOGGER.info("Input voucher code: '" + voucherCode + "'");
+        
+        if (voucherCode == null || voucherCode.trim().isEmpty()) {
+            LOGGER.warning("Voucher code is null or empty");
+            return null;
+        }
+        
+        String trimmedCode = voucherCode.trim();
+        LOGGER.info("Trimmed voucher code: '" + trimmedCode + "'");
+        
+        String sql = "SELECT * FROM Discount WHERE VoucherCode = ? AND IsActive = 1";
+        LOGGER.info("SQL Query: " + sql);
+        
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setString(1, trimmedCode);
+            LOGGER.info("Set parameter: '" + trimmedCode + "'");
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    LOGGER.info("Found voucher in database");
+                    Discount discount = mapResultSetToDiscount(rs);
+                    
+                    LOGGER.info("Voucher details:");
+                    LOGGER.info("  - ID: " + discount.getDiscountId());
+                    LOGGER.info("  - Name: " + discount.getDiscountName());
+                    LOGGER.info("  - Code: " + discount.getVoucherCode());
+                    LOGGER.info("  - Start Date: " + discount.getStartDate());
+                    LOGGER.info("  - End Date: " + discount.getEndDate());
+                    LOGGER.info("  - Usage Limit: " + discount.getUsageLimit());
+                    LOGGER.info("  - Used Count: " + discount.getUsedCount());
+                    
+                    // Kiểm tra thời gian hiệu lực
+                    java.util.Date now = new java.util.Date();
+                    if (discount.getStartDate() != null && now.before(discount.getStartDate())) {
+                        LOGGER.warning("Voucher chưa có hiệu lực: " + voucherCode + " (Start: " + discount.getStartDate() + ")");
+                        return null;
+                    }
+                    
+                    if (discount.getEndDate() != null && now.after(discount.getEndDate())) {
+                        LOGGER.warning("Voucher đã hết hạn: " + voucherCode + " (End: " + discount.getEndDate() + ")");
+                        return null;
+                    }
+                    
+                    // Kiểm tra giới hạn sử dụng
+                    if (discount.getUsageLimit() != null && discount.getUsedCount() >= discount.getUsageLimit()) {
+                        LOGGER.warning("Voucher đã hết lượt sử dụng: " + voucherCode + " (Used: " + discount.getUsedCount() + "/" + discount.getUsageLimit() + ")");
+                        return null;
+                    }
+                    
+                    LOGGER.info("✓ Voucher validation successful");
+                    return discount;
+                } else {
+                    LOGGER.warning("No voucher found with code: '" + trimmedCode + "'");
+                    
+                    // Debug: Kiểm tra tất cả voucher trong database
+                    String debugSql = "SELECT VoucherCode FROM Discount WHERE IsActive = 1";
+                    try (PreparedStatement debugPs = conn.prepareStatement(debugSql);
+                         ResultSet debugRs = debugPs.executeQuery()) {
+                        LOGGER.info("Available vouchers in database:");
+                        boolean foundAny = false;
+                        while (debugRs.next()) {
+                            foundAny = true;
+                            String availableCode = debugRs.getString("VoucherCode");
+                            LOGGER.info("  - '" + availableCode + "'");
+                        }
+                        if (!foundAny) {
+                            LOGGER.warning("No active vouchers found in database");
+                        }
+                    }
+                    return null;
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error validating voucher: " + voucherCode, e);
+            throw e;
+        }
+    }
+    
+    @Override
+    public boolean isBookingEligibleForVoucher(UUID bookingId, double minOrderAmount) throws SQLException {
+        // Lấy tổng tiền booking (chưa có discount)
+        String sql = "SELECT TotalAmount FROM Booking WHERE BookingId = ?";
+        
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setObject(1, bookingId);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    double bookingTotal = rs.getDouble("TotalAmount");
+                    // Chuyển từ đơn vị DB sang VND thực tế để so sánh
+                    double bookingTotalVND = bookingTotal * 1000;
+                    double minOrderAmountVND = minOrderAmount * 1000;
+                    
+                    LOGGER.info("Booking total: " + bookingTotalVND + " VND, Min required: " + minOrderAmountVND + " VND");
+                    return bookingTotalVND >= minOrderAmountVND;
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error checking booking eligibility for voucher: " + bookingId, e);
+            throw e;
+        }
+        return false;
+    }
+    
     /**
      * Inner class chứa thông tin xe cần thiết cho deposit
      */
@@ -236,54 +406,10 @@ public class DepositRepository implements IDepositRepository {
         }
     }
 
-//    @Override
-//    public Discount getValidVoucher(String voucherCode) throws SQLException {
-//        String sql = "SELECT * FROM Discount WHERE VoucherCode = ? AND IsActive = 1 "
-//                + "AND StartDate <= GETDATE() AND EndDate >= GETDATE() "
-//                + "AND DiscountCategory = 'Voucher'";
-//        
-//        try (Connection conn = dbContext.getConnection(); 
-//             PreparedStatement ps = conn.prepareStatement(sql)) {
-//
-//            ps.setString(1, voucherCode);
-//
-//            try (ResultSet rs = ps.executeQuery()) {
-//                if (rs.next()) {
-//                    return mapResultSetToDiscount(rs);
-//                }
-//                return null;
-//            }
-//        } catch (SQLException e) {
-//            LOGGER.log(Level.SEVERE, "Error getting valid voucher: " + voucherCode, e);
-//            throw e;
-//        }
-//    }
-
-//    @Override
-//    public Discount getDiscountById(UUID discountId) throws SQLException {
-//        String sql = "SELECT * FROM Discount WHERE DiscountId = ?";
-//        
-//        try (Connection conn = dbContext.getConnection(); 
-//             PreparedStatement ps = conn.prepareStatement(sql)) {
-//
-//            ps.setObject(1, discountId);
-//
-//            try (ResultSet rs = ps.executeQuery()) {
-//                if (rs.next()) {
-//                    return mapResultSetToDiscount(rs);
-//                }
-//                return null;
-//            }
-//        } catch (SQLException e) {
-//            LOGGER.log(Level.SEVERE, "Error getting discount by ID: " + discountId, e);
-//            throw e;
-//        }
-//    }
-
     @Override
     public List<BookingSurcharges> getSurchargesByBookingId(UUID bookingId) throws SQLException {
-        // Placeholder - return empty list
-        return new java.util.ArrayList<>();
+        // Placeholder - return empty list for now
+        return new ArrayList<>();
     }
 
     // ========== MAPPING METHODS ==========
@@ -330,30 +456,25 @@ public class DepositRepository implements IDepositRepository {
     /**
      * Map ResultSet sang Discount entity
      */
-//    private Discount mapResultSetToDiscount(ResultSet rs) throws SQLException {
-//        Discount discount = new Discount();
-//
-//        discount.setDiscountId(UUID.fromString(rs.getString("DiscountId")));
-//        discount.setDiscountName(rs.getString("DiscountName"));
-//        discount.setDescription(rs.getString("Description"));
-//        discount.setDiscountType(rs.getString("DiscountType"));
-//        discount.setDiscountValue(java.math.BigDecimal.valueOf(rs.getDouble("DiscountValue")));
-//        
-//        // Handle date fields safely
-//        if (rs.getTimestamp("StartDate") != null) {
-//            discount.setStartDate(rs.getTimestamp("StartDate").toLocalDateTime());
-//        }
-//        if (rs.getTimestamp("EndDate") != null) {
-//            discount.setEndDate(rs.getTimestamp("EndDate").toLocalDateTime());
-//        }
-//        
-//        discount.setActive(rs.getBoolean("IsActive"));
-//        if (rs.getTimestamp("CreatedDate") != null) {
-//        discount.setCreatedDate(rs.getTimestamp("CreatedDate").toLocalDateTime());
-//        }
-//
-//        return discount;
-//    }
+    private Discount mapResultSetToDiscount(ResultSet rs) throws SQLException {
+        Discount discount = new Discount();
+        discount.setDiscountId(UUID.fromString(rs.getString("DiscountId")));
+        discount.setDiscountName(rs.getString("DiscountName"));
+        discount.setDescription(rs.getString("Description"));
+        discount.setDiscountType(rs.getString("DiscountType"));
+        discount.setDiscountValue(rs.getBigDecimal("DiscountValue"));
+        discount.setStartDate(rs.getDate("StartDate"));
+        discount.setEndDate(rs.getDate("EndDate"));
+        discount.setIsActive(rs.getBoolean("IsActive"));
+        discount.setCreatedDate(rs.getTimestamp("CreatedDate"));
+        discount.setVoucherCode(rs.getString("VoucherCode"));
+        discount.setMinOrderAmount(rs.getBigDecimal("MinOrderAmount"));
+        discount.setMaxDiscountAmount(rs.getBigDecimal("MaxDiscountAmount"));
+        discount.setUsageLimit(rs.getObject("UsageLimit") != null ? rs.getInt("UsageLimit") : null);
+        discount.setUsedCount(rs.getInt("UsedCount"));
+        discount.setDiscountCategory(rs.getString("DiscountCategory"));
+        return discount;
+    }
     
     /**
      * Map ResultSet sang Insurance entity
@@ -379,22 +500,14 @@ public class DepositRepository implements IDepositRepository {
     
     @Override
     public double[] calculateTotalAndDeposit(UUID bookingId) throws SQLException {
-        // Tính toán theo logic mới: deposit cố định 300K hoặc 10% tùy theo total amount
+        // Simple calculation: lấy booking total amount và tính deposit 30%
         Booking booking = getBookingForDeposit(bookingId);
         if (booking == null) {
             return new double[]{0, 0};
         }
         
         double totalAmount = booking.getTotalAmount();
-        double depositAmount;
-        
-        if (totalAmount >= 3000.0) {
-            // Nếu total >= 3 triệu: đặt cọc = 10% của total
-            depositAmount = totalAmount * 0.10;
-        } else {
-            // Nếu total < 3 triệu: đặt cọc cố định 300K
-            depositAmount = 300.0;
-        }
+        double depositAmount = totalAmount * 0.30; // 30% deposit
         
         LOGGER.info("Calculate total and deposit - Total: " + totalAmount + ", Deposit: " + depositAmount);
         return new double[]{totalAmount, depositAmount};
