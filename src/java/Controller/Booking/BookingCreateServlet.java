@@ -209,7 +209,7 @@ public class BookingCreateServlet extends HttpServlet {
             
             // Gửi notification cho tất cả staff khi có booking mới
             Service.NotificationService notificationService = new Service.NotificationService();
-            String message = "Bạn có một booking request mới.";
+            String message = "You have a new booking request.";
             notificationService.sendNotificationToAllStaff(message);
 
             // Step 8: Lấy lại booking từ DB và chuyển đến trang success
