@@ -23,30 +23,30 @@ import Repository.Interfaces.IDeposit.ITermsRepository;
 import Service.Interfaces.IDeposit.IDepositService;
 
 /**
- * Service xử lý logic đặt cọc - STYLE ĐỂ SINH VIÊN DỄ HIỂU
- * Logic đơn giản: Lấy dữ liệu từ database → Tính toán → Trả về DTO
- * TÁI SỬ DỤNG logic duration từ BookingService
+ * Service handling deposit logic - STYLE FOR STUDENTS TO UNDERSTAND EASILY
+ * Simple logic: Get data from database → Calculate → Return DTO
+ * REUSE duration logic from BookingService
  */
 public class DepositService implements IDepositService {
 
     private static final Logger LOGGER = Logger.getLogger(DepositService.class.getName());
     
-    // ========== CÁC HẰNG SỐ TÍNH TOÁN - DỄ HIỂU ==========
-    private static final double DEPOSIT_PERCENTAGE = 0.30;    // 30% đặt cọc
+    // ========== CALCULATION CONSTANTS - EASY TO UNDERSTAND ==========
+    private static final double DEPOSIT_PERCENTAGE = 0.30;    // 30% deposit
     private static final double VAT_PERCENTAGE = 0.10;        // 10% VAT
-    private static final double VEHICLE_INSURANCE_RATE = 0.02; // 2% bảo hiểm vật chất/năm
+    private static final double VEHICLE_INSURANCE_RATE = 0.02; // 2% vehicle insurance/year
     
-    // Hệ số ước tính giá trị xe theo giá thuê/ngày
-    private static final double COEFFICIENT_LOW = 5;     // ≤ 500k/ngày
-    private static final double COEFFICIENT_MEDIUM = 7;  // ≤ 800k/ngày
-    private static final double COEFFICIENT_HIGH = 10;   // ≤ 1,200k/ngày
-    private static final double COEFFICIENT_LUXURY = 15; // > 1,200k/ngày
+    // Coefficient to estimate vehicle value based on rental price/day
+    private static final double COEFFICIENT_LOW = 5;     // ≤ 500k/day
+    private static final double COEFFICIENT_MEDIUM = 7;  // ≤ 800k/day
+    private static final double COEFFICIENT_HIGH = 10;   // ≤ 1,200k/day
+    private static final double COEFFICIENT_LUXURY = 15; // > 1,200k/day
 
-    // ========== HẰNG SỐ DURATION - TÁI SỬ DỤNG TỪ BOOKINGSERVICE ==========
-    private static final double MIN_HOURLY_DURATION = 4.0; // Tối thiểu 4 giờ thuê
-    private static final double MIN_DAILY_DURATION = 0.5;  // Tối thiểu 0.5 ngày thuê (12 tiếng)
-    private static final double MIN_MONTHLY_DURATION = 0.5; // Tối thiểu 0.5 tháng thuê (15 ngày)
-    private static final int DAYS_PER_MONTH = 30; // Quy ước 1 tháng = 30 ngày
+    // ========== DURATION CONSTANTS - REUSED FROM BOOKINGSERVICE ==========
+    private static final double MIN_HOURLY_DURATION = 4.0; // Minimum 4 hours rental
+    private static final double MIN_DAILY_DURATION = 0.5;  // Minimum 0.5 day rental (12 hours)
+    private static final double MIN_MONTHLY_DURATION = 0.5; // Minimum 0.5 month rental (15 days)
+    private static final int DAYS_PER_MONTH = 30; // Convention: 1 month = 30 days
 
     private final IDepositRepository depositRepository;
     private final ITermsRepository termsRepository;
@@ -56,49 +56,49 @@ public class DepositService implements IDepositService {
         this.termsRepository = termsRepository;
     }
 
-    // ========== PHƯƠNG THỨC CHÍNH - LẤY DỮ LIỆU DEPOSIT ==========
+    // ========== MAIN METHOD - GET DEPOSIT DATA ==========
 
     @Override
     public DepositPageDTO getDepositPageData(UUID bookingId, UUID userId) throws Exception {
-        // Bước 1: Kiểm tra quyền sở hữu booking
+        // Step 1: Check booking ownership
         if (!depositRepository.isBookingOwnedByUser(bookingId, userId)) {
-            throw new SecurityException("Booking không thuộc về user này");
+            throw new SecurityException("Booking does not belong to this user");
         }
 
-        // Bước 2: Lấy thông tin booking
+        // Step 2: Get booking information
         Booking booking = depositRepository.getBookingForDeposit(bookingId);
         if (booking == null) {
-            throw new IllegalArgumentException("Không tìm thấy booking");
+            throw new IllegalArgumentException("Booking not found");
         }
 
-        // Bước 3: Kiểm tra trạng thái booking
+        // Step 3: Check booking status
         if (!"Confirmed".equals(booking.getStatus()) && !"Pending".equals(booking.getStatus())) {
-            throw new IllegalStateException("Booking phải ở trạng thái Confirmed hoặc Pending");
+            throw new IllegalStateException("Booking must be in Confirmed or Pending status");
         }
 
-        // Bước 4: Lấy thông tin xe
+        // Step 4: Get vehicle information
         Repository.Deposit.DepositRepository.CarInfoForDeposit carInfo = 
             ((Repository.Deposit.DepositRepository) depositRepository).getCarInfoByBookingId(bookingId);
 
-        // Bước 5: Tạo DTO và điền dữ liệu
+        // Step 5: Create DTO and fill data
         DepositPageDTO dto = new DepositPageDTO();
 
-        // Map thông tin cơ bản
+        // Map basic information
         mapBookingInfoToDTO(booking, dto);
         
-        // Map thông tin xe
+        // Map vehicle information
         if (carInfo != null) {
             mapCarInfoToDTO(carInfo, dto);
         }
         
-        // Tính duration bằng DurationResult
+        // Calculate duration using DurationResult
         calculateDurationUsingDurationResult(booking, dto);
         
-        // Lấy danh sách bảo hiểm
+        // Get insurance list
         List<InsuranceDetailDTO> insuranceList = getInsuranceList(bookingId);
         dto.setInsuranceDetails(insuranceList);
         
-        // Lấy thông tin discount đã áp dụng (nếu có)
+        // Get applied discount information (if any)
         if (booking.getDiscountId() != null) {
             try {
                 Discount appliedDiscount = depositRepository.getDiscountById(booking.getDiscountId());
@@ -116,17 +116,17 @@ public class DepositService implements IDepositService {
                     LOGGER.info("Applied discount: " + appliedDiscount.getDiscountName() + " (" + appliedDiscount.getVoucherCode() + ")");
                 }
             } catch (Exception e) {
-                LOGGER.log(Level.WARNING, "Lỗi khi lấy thông tin discount đã áp dụng", e);
+                LOGGER.log(Level.WARNING, "Error getting applied discount information", e);
             }
         }
         
-        // Tính toán giá cả
+        // Calculate pricing
         calculateAllPricing(booking, dto);
 
         return dto;
     }
 
-    // ========== CÁC PHƯƠNG THỨC KHÁC ==========
+    // ========== OTHER METHODS ==========
 
     @Override
     public boolean applyVoucher(UUID bookingId, String voucherCode, UUID userId) throws Exception {
@@ -136,58 +136,58 @@ public class DepositService implements IDepositService {
         LOGGER.info("User ID: " + userId);
         
         try {
-            // Bước 1: Kiểm tra quyền sở hữu booking
+            // Step 1: Check booking ownership
             if (!depositRepository.isBookingOwnedByUser(bookingId, userId)) {
-                LOGGER.warning("User không có quyền với booking này");
-                throw new SecurityException("Booking không thuộc về user này");
+                LOGGER.warning("User does not have permission for this booking");
+                throw new SecurityException("Booking does not belong to this user");
             }
             
-            // Bước 2: Validate voucher code
+            // Step 2: Validate voucher code
             if (voucherCode == null || voucherCode.trim().isEmpty()) {
-                LOGGER.warning("Voucher code không được để trống");
-                throw new IllegalArgumentException("Voucher code không được để trống");
+                LOGGER.warning("Voucher code cannot be empty");
+                throw new IllegalArgumentException("Voucher code cannot be empty");
             }
             
-            // Bước 3: Kiểm tra voucher có hợp lệ không
+            // Step 3: Check if voucher is valid
             LOGGER.info("Calling depositRepository.validateVoucher('" + voucherCode.trim() + "')");
             Discount discount = depositRepository.validateVoucher(voucherCode.trim());
             if (discount == null) {
-                LOGGER.warning("Voucher không hợp lệ hoặc không tồn tại: " + voucherCode);
-                throw new IllegalArgumentException("Voucher không hợp lệ hoặc không tồn tại");
+                LOGGER.warning("Invalid or non-existent voucher: " + voucherCode);
+                throw new IllegalArgumentException("Invalid or non-existent voucher");
             }
             
-            LOGGER.info("Voucher hợp lệ: " + discount.getDiscountName() + " (ID: " + discount.getDiscountId() + ")");
+            LOGGER.info("Valid voucher: " + discount.getDiscountName() + " (ID: " + discount.getDiscountId() + ")");
             
-            // Bước 4: Kiểm tra user đã sử dụng voucher này chưa
+            // Step 4: Check if user has used this voucher before
             if (depositRepository.hasUserUsedVoucher(userId, discount.getDiscountId())) {
-                LOGGER.warning("User đã sử dụng voucher này trước đó");
-                throw new IllegalArgumentException("Bạn đã sử dụng voucher này trước đó");
+                LOGGER.warning("User has used this voucher before");
+                throw new IllegalArgumentException("You have used this voucher before");
             }
             
-            // Bước 5: Kiểm tra booking có đủ điều kiện không
+            // Step 5: Check if booking meets conditions
             double minOrderAmount = discount.getMinOrderAmount() != null ? 
                 discount.getMinOrderAmount().doubleValue() : 0.0;
             
             if (!depositRepository.isBookingEligibleForVoucher(bookingId, minOrderAmount)) {
-                LOGGER.warning("Booking không đủ điều kiện để áp dụng voucher");
-                throw new IllegalArgumentException("Đơn hàng không đủ điều kiện để áp dụng voucher này");
+                LOGGER.warning("Booking does not meet voucher conditions");
+                throw new IllegalArgumentException("Order does not meet conditions for this voucher");
             }
             
-            // Bước 6: Cập nhật discount cho booking
+            // Step 6: Update discount for booking
             boolean updateSuccess = depositRepository.updateBookingDiscount(bookingId, discount.getDiscountId());
             if (!updateSuccess) {
-                LOGGER.severe("Không thể cập nhật discount cho booking");
-                throw new Exception("Không thể áp dụng voucher cho booking");
+                LOGGER.severe("Cannot update discount for booking");
+                throw new Exception("Cannot apply voucher to booking");
             }
             
-            // Bước 7: Ghi lại việc sử dụng voucher
+            // Step 7: Record voucher usage
             boolean recordSuccess = depositRepository.recordVoucherUsage(userId, discount.getDiscountId());
             if (!recordSuccess) {
-                LOGGER.warning("Không thể ghi lại việc sử dụng voucher, nhưng voucher đã được áp dụng");
-                // Không throw exception vì voucher đã được áp dụng thành công
+                LOGGER.warning("Cannot record voucher usage, but voucher has been applied");
+                // Don't throw exception because voucher was applied successfully
             }
             
-            LOGGER.info("Voucher áp dụng thành công: " + discount.getDiscountName());
+            LOGGER.info("Voucher applied successfully: " + discount.getDiscountName());
             LOGGER.info("=== END APPLYING VOUCHER ===");
             
             return true;
@@ -196,8 +196,8 @@ public class DepositService implements IDepositService {
             LOGGER.warning("Voucher validation failed: " + e.getMessage());
             throw e;
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Lỗi khi áp dụng voucher", e);
-            throw new Exception("Có lỗi xảy ra khi áp dụng voucher: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error applying voucher", e);
+            throw new Exception("An error occurred while applying voucher: " + e.getMessage());
         }
     }
 
@@ -208,33 +208,33 @@ public class DepositService implements IDepositService {
         LOGGER.info("User ID: " + userId);
         
         try {
-            // Bước 1: Kiểm tra quyền sở hữu booking
+            // Step 1: Check booking ownership
             if (!depositRepository.isBookingOwnedByUser(bookingId, userId)) {
-                LOGGER.warning("User không có quyền với booking này");
-                throw new SecurityException("Booking không thuộc về user này");
+                LOGGER.warning("User does not have permission for this booking");
+                throw new SecurityException("Booking does not belong to this user");
             }
             
-            // Bước 2: Lấy thông tin booking hiện tại
+            // Step 2: Get current booking information
             Booking booking = depositRepository.getBookingForDeposit(bookingId);
             if (booking == null) {
-                LOGGER.warning("Không tìm thấy booking");
-                throw new IllegalArgumentException("Không tìm thấy booking");
+                LOGGER.warning("Booking not found");
+                throw new IllegalArgumentException("Booking not found");
             }
             
-            // Bước 3: Kiểm tra xem booking có voucher không
+            // Step 3: Check if booking has voucher
             if (booking.getDiscountId() == null) {
-                LOGGER.info("Booking không có voucher để xóa");
-                return true; // Không có voucher = xóa thành công
+                LOGGER.info("Booking has no voucher to remove");
+                return true; // No voucher = successful removal
             }
             
-            // Bước 4: Xóa voucher khỏi booking
+            // Step 4: Remove voucher from booking
             boolean updateSuccess = depositRepository.updateBookingDiscount(bookingId, null);
             if (!updateSuccess) {
-                LOGGER.severe("Không thể xóa discount khỏi booking");
-                throw new Exception("Không thể xóa voucher khỏi booking");
+                LOGGER.severe("Cannot remove discount from booking");
+                throw new Exception("Cannot remove voucher from booking");
             }
             
-            LOGGER.info("Voucher đã được xóa khỏi booking thành công");
+            LOGGER.info("Voucher removed from booking successfully");
             LOGGER.info("=== END REMOVING VOUCHER ===");
             
             return true;
@@ -243,31 +243,31 @@ public class DepositService implements IDepositService {
             LOGGER.warning("Voucher removal validation failed: " + e.getMessage());
             throw e;
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Lỗi khi xóa voucher", e);
-            throw new Exception("Có lỗi xảy ra khi xóa voucher: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error removing voucher", e);
+            throw new Exception("An error occurred while removing voucher: " + e.getMessage());
         }
     }
 
     @Override
     public boolean agreeToTerms(UUID bookingId, UUID userId, String termsVersion) throws Exception {
-        // Kiểm tra quyền
+        // Check permission
         if (!depositRepository.isBookingOwnedByUser(bookingId, userId)) {
-            throw new SecurityException("Không có quyền với booking này");
+            throw new SecurityException("No permission for this booking");
         }
 
-        // Cập nhật đồng ý điều khoản
+        // Update terms agreement
         return depositRepository.updateTermsAgreement(bookingId, true, termsVersion);
     }
 
     @Override
     public DepositPageDTO recalculateCost(UUID bookingId) throws Exception {
-        // Lấy lại booking và tính toán
+        // Get booking again and calculate
         Booking booking = depositRepository.getBookingForDeposit(bookingId);
         if (booking == null) {
-            throw new IllegalArgumentException("Không tìm thấy booking");
+            throw new IllegalArgumentException("Booking not found");
         }
         
-        // Lấy car info
+        // Get car info
         Repository.Deposit.DepositRepository.CarInfoForDeposit carInfo = 
             ((Repository.Deposit.DepositRepository) depositRepository).getCarInfoByBookingId(bookingId);
         
@@ -292,10 +292,10 @@ public class DepositService implements IDepositService {
         return depositRepository.isBookingOwnedByUser(bookingId, userId);
     }
 
-    // ========== CÁC PHƯƠNG THỨC HELPER - ĐƠN GIẢN DỄ HIỂU ==========
+    // ========== HELPER METHODS - SIMPLE AND EASY TO UNDERSTAND ==========
     
     /**
-     * Sao chép thông tin từ Booking entity sang DTO
+     * Copy information from Booking entity to DTO
      */
     private void mapBookingInfoToDTO(Booking booking, DepositPageDTO dto) {
         dto.setBookingId(booking.getBookingId());
@@ -305,11 +305,11 @@ public class DepositService implements IDepositService {
         dto.setCustomerEmail(booking.getCustomerEmail());
         dto.setPickupDateTime(booking.getPickupDateTime());
         dto.setReturnDateTime(booking.getReturnDateTime());
-        dto.setRentalType(booking.getRentalType()); // THÊM DÒNG NÀY
+        dto.setRentalType(booking.getRentalType()); // ADD THIS LINE
         dto.setTermsAgreed(booking.isTermsAgreed());
         dto.setTermsAgreedAt(booking.getTermsAgreedAt());
         
-        // Lấy điều khoản từ DB theo version
+        // Get terms from DB by version
         try {
             Terms terms = termsRepository.findByVersion(booking.getTermsVersion());
             if (terms != null) {
@@ -319,12 +319,12 @@ public class DepositService implements IDepositService {
                 dto.setTermsFullContent(terms.getFullContent());
             }
         } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "Lỗi khi lấy điều khoản từ DB", e);
+            LOGGER.log(Level.WARNING, "Error getting terms from DB", e);
         }
     }
 
     /**
-     * Map thông tin xe - MỚI THÊM
+     * Map vehicle information - NEWLY ADDED
      */
     private void mapCarInfoToDTO(Repository.Deposit.DepositRepository.CarInfoForDeposit carInfo, DepositPageDTO dto) {
         dto.setCarModel(carInfo.getCarModel());
@@ -334,7 +334,7 @@ public class DepositService implements IDepositService {
     }
 
     /**
-     * Tính duration sử dụng DurationResult - TÁI SỬ DỤNG TỪ BOOKINGSERVICE
+     * Calculate duration using DurationResult - REUSED FROM BOOKINGSERVICE
      */
     private void calculateDurationUsingDurationResult(Booking booking, DepositPageDTO dto) {
         if (booking.getPickupDateTime() != null && booking.getReturnDateTime() != null) {
@@ -346,14 +346,14 @@ public class DepositService implements IDepositService {
             LOGGER.info("Pickup: " + booking.getPickupDateTime());
             LOGGER.info("Return: " + booking.getReturnDateTime());
             
-            // Sử dụng logic từ BookingService
+            // Use logic from BookingService
             DurationResult durationResult = calculateDuration(
                 booking.getPickupDateTime(), 
                 booking.getReturnDateTime(), 
                 rentalType
             );
             
-            // Set duration từ DurationResult
+            // Set duration from DurationResult
             dto.setDuration(durationResult.getBillingUnitsAsDouble());
             
             LOGGER.info(String.format("Duration calculation result: %s %s %s", 
@@ -363,22 +363,22 @@ public class DepositService implements IDepositService {
             ));
             LOGGER.info("=== END DURATION CALCULATION ===");
         } else {
-            dto.setDuration(1.0); // Default 1 ngày
+            dto.setDuration(1.0); // Default 1 day
             LOGGER.warning("Pickup or Return time is null, using default duration 1.0");
         }
     }
 
     /**
-     * TÁI SỬ DỤNG LOGIC DURATION TỪ BOOKINGSERVICE
-     * Tính thời gian thuê theo loại thuê với quy tắc tối thiểu
+     * REUSE DURATION LOGIC FROM BOOKINGSERVICE
+     * Calculate rental duration by type with minimum rules
      */
     public DurationResult calculateDuration(java.time.LocalDateTime start, java.time.LocalDateTime end, String rentalType) {
         if (start == null || end == null) {
-            throw new IllegalArgumentException("Thời gian bắt đầu và kết thúc không được null");
+            throw new IllegalArgumentException("Start and end time cannot be null");
         }
 
         if (end.isBefore(start)) {
-            throw new IllegalArgumentException("Thời gian kết thúc phải sau thời gian bắt đầu");
+            throw new IllegalArgumentException("End time must be after start time");
         }
 
         Duration duration = Duration.between(start, end);
@@ -391,13 +391,13 @@ public class DepositService implements IDepositService {
             case "monthly":
                 return calculateMonthlyDuration(duration);
             default:
-                return calculateDailyDuration(duration); // Default là daily
+                return calculateDailyDuration(duration); // Default is daily
         }
     }
 
     /**
-     * Tính duration theo giờ - ĐỒNG BỘ VỚI BOOKINGSERVICE
-     * Cập nhật: Nếu thời gian thuê vượt quá 24 giờ, khuyến nghị chuyển sang thuê theo ngày
+     * Calculate hourly duration - SYNCHRONIZED WITH BOOKINGSERVICE
+     * Update: If rental time exceeds 24 hours, recommend switching to daily rental
      */
     private DurationResult calculateHourlyDuration(Duration duration) {
         double actualHours = duration.toMinutes() / 60.0;
@@ -406,9 +406,9 @@ public class DepositService implements IDepositService {
         
         String note = null;
         if (actualHours < MIN_HOURLY_DURATION) {
-            note = "Tối thiểu 4 giờ được áp dụng";
+            note = "Minimum 4 hours applied";
         } else if (actualHours > 24.0) {
-            note = "Thời gian thuê vượt quá 24 giờ, khuyến nghị chuyển sang thuê theo ngày";
+            note = "Rental time exceeds 24 hours, recommend switching to daily rental";
         }
 
         return new DurationResult(
@@ -419,28 +419,28 @@ public class DepositService implements IDepositService {
     }
 
     /**
-     * Tính duration theo ngày - ĐỒNG BỘ VỚI BOOKINGSERVICE
-     * Cập nhật: Nếu thời gian thuê dưới 24 giờ, tự động chuyển sang tính theo giờ
-     * Nếu thời gian thuê từ 24 giờ trở lên, tính theo ngày
+     * Calculate daily duration - SYNCHRONIZED WITH BOOKINGSERVICE
+     * Update: If rental time is under 24 hours, automatically switch to hourly calculation
+     * If rental time is 24 hours or more, calculate by day
      */
     private DurationResult calculateDailyDuration(Duration duration) {
         double totalHours = duration.toMinutes() / 60.0;
         
-        // Nếu thời gian thuê dưới 24 giờ, tự động chuyển sang tính theo giờ
+        // If rental time is under 24 hours, automatically switch to hourly calculation
         if (totalHours < 24.0) {
-            // Áp dụng quy tắc tính theo giờ (tối thiểu 4 giờ)
+            // Apply hourly calculation rules (minimum 4 hours)
             double ceilHours = Math.ceil(totalHours);
             double billingHours = Math.max(ceilHours, MIN_HOURLY_DURATION);
             
             return new DurationResult(
                 BigDecimal.valueOf(billingHours).setScale(2, RoundingMode.HALF_UP),
-                "hour", // Đơn vị là giờ
-                "Thời gian thuê dưới 24 giờ, tự động tính theo giờ"
+                "hour", // Unit is hours
+                "Rental time under 24 hours, automatically calculated by hour"
             );
         } 
-        // Nếu thời gian thuê từ 24 giờ trở lên, tính theo ngày
+        // If rental time is 24 hours or more, calculate by day
         else {
-            // Tính số ngày và làm tròn lên
+            // Calculate number of days and round up
             double days = totalHours / 24.0;
             double billingDays = Math.ceil(days);
 
@@ -453,7 +453,7 @@ public class DepositService implements IDepositService {
     }
 
     /**
-     * Tính duration theo tháng - ĐỒNG BỘ VỚI BOOKINGSERVICE
+     * Calculate monthly duration - SYNCHRONIZED WITH BOOKINGSERVICE
      */
     private DurationResult calculateMonthlyDuration(Duration duration) {
         double totalDays = duration.toHours() / 24.0;
@@ -464,21 +464,21 @@ public class DepositService implements IDepositService {
         return new DurationResult(
                 BigDecimal.valueOf(billingMonths).setScale(2, RoundingMode.HALF_UP),
                 "month",
-                actualMonths < MIN_MONTHLY_DURATION ? "Tối thiểu 0.5 tháng được áp dụng" : null
+                actualMonths < MIN_MONTHLY_DURATION ? "Minimum 0.5 month applied" : null
         );
     }
 
     /**
-     * TÍNH BẢO HIỂM VẬT CHẤT PER DAY THEO CÔNG THỨC SINH VIÊN CUNG CẤP
+     * CALCULATE VEHICLE INSURANCE PER DAY USING STUDENT-PROVIDED FORMULA
      * 
-     * Công thức:
-     * 1. Ước tính giá trị xe = Giá thuê/ngày × 365 × Hệ số năm sử dụng  
-     * 2. Phí bảo hiểm vật chất PER DAY = Giá trị xe × 2% / 365
-     *    = (Giá thuê/ngày × 365 × Hệ số năm) × 0.02 / 365
+     * Formula:
+     * 1. Estimate vehicle value = Daily rental price × 365 × Year usage coefficient  
+     * 2. Vehicle insurance fee PER DAY = Vehicle value × 2% / 365
+     *    = (Daily rental price × 365 × Year coefficient) × 0.02 / 365
      * 
-     * LƯU Ý: Database lưu chia 1000, tính toán với VND thực rồi chia 1000 để trả về DB value
+     * NOTE: Database stores divided by 1000, calculate with actual VND then divide by 1000 to return DB value
      * 
-     * Return: Phí bảo hiểm vật chất PER DAY (đơn vị DB)
+     * Return: Vehicle insurance fee PER DAY (DB unit)
      */
     private double calculateVehicleInsurance(Booking booking) {
         try {
@@ -486,27 +486,27 @@ public class DepositService implements IDepositService {
             LOGGER.info("Booking ID: " + booking.getBookingId());
             LOGGER.info("Total Amount (DB value): " + booking.getTotalAmount());
             
-            // Chuyển đổi từ giá trị database sang VND thực tế
+            // Convert from database value to actual VND
             double actualTotalAmount = booking.getTotalAmount() * 1000;
             LOGGER.info("Actual Total Amount (VND for calculation): " + actualTotalAmount);
             
-            // Bước 1: Ước tính giá thuê/ngày (VND thực)
+            // Step 1: Estimate daily rental price (actual VND)
             double dailyRateVND = estimateDailyRateWithActualValue(booking, actualTotalAmount);
             LOGGER.info("Estimated daily rate: " + dailyRateVND + " VND");
 
-            // Bước 2: Xác định hệ số năm sử dụng theo giá thuê
+            // Step 2: Determine year usage coefficient based on rental price
             double yearCoefficient = getYearCoefficient(dailyRateVND);
             LOGGER.info("Year coefficient: " + yearCoefficient);
 
-            // Bước 3: Tính giá xe mới (VND thực)
+            // Step 3: Calculate new vehicle value (actual VND)
             double estimatedCarValue = dailyRateVND * 365 * yearCoefficient;
             LOGGER.info("Estimated car value: " + estimatedCarValue + " VND");
             
-            // Bước 4: Tính phí bảo hiểm vật chất PER DAY (VND thực)
+            // Step 4: Calculate vehicle insurance fee PER DAY (actual VND)
             double vehicleInsurancePerDayVND = estimatedCarValue * VEHICLE_INSURANCE_RATE / 365;
             LOGGER.info("Vehicle insurance per day (VND): " + vehicleInsurancePerDayVND);
             
-            // Chuyển về đơn vị DB (chia 1000) để gán vào DTO
+            // Convert to DB unit (divide by 1000) to assign to DTO
             double vehicleInsurancePerDayDB = vehicleInsurancePerDayVND / 1000;
             vehicleInsurancePerDayDB = Math.round(vehicleInsurancePerDayDB * 1000.0) / 1000.0;
             
@@ -516,13 +516,13 @@ public class DepositService implements IDepositService {
             return vehicleInsurancePerDayDB;
 
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Lỗi tính bảo hiểm vật chất", e);
+            LOGGER.log(Level.SEVERE, "Error calculating vehicle insurance", e);
             return 0.0;
         }
     }
 
     /**
-     * Kiểm tra xem số chỗ ngồi có phù hợp với range của bảo hiểm TNDS không
+     * Check if number of seats is suitable for TNDS insurance range
      */
     private boolean isApplicableSeatRange(int seats, String seatRange) {
         if (seatRange == null) return true;
@@ -535,21 +535,21 @@ public class DepositService implements IDepositService {
     }
 
     /**
-     * Lấy danh sách bảo hiểm cho booking, lọc TNDS theo số chỗ ngồi
-     * Đảm bảo chỉ hiển thị một bảo hiểm vật chất và một bảo hiểm tai nạn nếu có
+     * Get insurance list for booking, filter TNDS by number of seats
+     * Ensure only one vehicle insurance and one accident insurance are displayed if available
      */
     private List<InsuranceDetailDTO> getInsuranceList(UUID bookingId) throws Exception {
         List<InsuranceDetailDTO> insuranceList = new ArrayList<>();
         
         try {
-            // Lấy danh sách booking insurance từ database
+            // Get booking insurance list from database
             List<BookingInsurance> bookingInsurances = depositRepository.getBookingInsurancesByBookingId(bookingId);
             LOGGER.info("Found " + bookingInsurances.size() + " booking insurances from database");
 
-            // Tạo map để lưu bảo hiểm theo loại (chỉ giữ một bảo hiểm cho mỗi loại)
+            // Create map to store insurance by type (keep only one insurance for each type)
             java.util.Map<String, InsuranceDetailDTO> insuranceMap = new java.util.HashMap<>();
 
-            // Với mỗi booking insurance, lấy thông tin chi tiết
+            // For each booking insurance, get detailed information
             for (BookingInsurance bookingInsurance : bookingInsurances) {
                 Insurance insurance = depositRepository.getInsuranceById(bookingInsurance.getInsuranceId());
 
@@ -558,7 +558,7 @@ public class DepositService implements IDepositService {
                             " (Type: " + insurance.getInsuranceType() + ", Premium: " + 
                             bookingInsurance.getPremiumAmount() + ")");
                     
-                    // Kiểm tra TNDS có phù hợp với số chỗ không
+                    // Check if TNDS is suitable for number of seats
                     if ("TaiNan".equals(insurance.getInsuranceType())) {
                         String seatRange = insurance.getApplicableCarSeats();
                         int carSeats = bookingInsurance.getCarSeats();
@@ -571,7 +571,7 @@ public class DepositService implements IDepositService {
 
                     String insuranceType = insurance.getInsuranceType();
                     
-                    // Nếu đã có bảo hiểm loại này, chỉ cập nhật nếu phí cao hơn
+                    // If insurance of this type already exists, only update if premium is higher
                     if (insuranceMap.containsKey(insuranceType)) {
                         InsuranceDetailDTO existingDto = insuranceMap.get(insuranceType);
                         if (bookingInsurance.getPremiumAmount() > existingDto.getPremiumAmount()) {
@@ -582,7 +582,7 @@ public class DepositService implements IDepositService {
                             existingDto.setDescription(insurance.getDescription());
                         }
                     } else {
-                        // Nếu chưa có, thêm vào map
+                        // If not exists, add to map
                         InsuranceDetailDTO dto = new InsuranceDetailDTO();
                         dto.setInsuranceName(insurance.getInsuranceName());
                         dto.setInsuranceType(insuranceType);
@@ -598,7 +598,7 @@ public class DepositService implements IDepositService {
                 }
             }
 
-            // Chuyển từ map sang list
+            // Convert from map to list
             insuranceList.addAll(insuranceMap.values());
             
             LOGGER.info("Final insurance list contains " + insuranceList.size() + " items:");
@@ -608,27 +608,27 @@ public class DepositService implements IDepositService {
             }
 
         } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "Lỗi khi lấy thông tin bảo hiểm cho booking " + bookingId, e);
-            // Trả về danh sách rỗng thay vì throw exception
+            LOGGER.log(Level.WARNING, "Error getting insurance information for booking " + bookingId, e);
+            // Return empty list instead of throwing exception
         }
 
         return insuranceList;
     }
 
     /**
-     * Tính toán tất cả giá cả - LOGIC ĐƠN GIẢN
-     * Logic: Giá thuê + Bảo hiểm - Giảm giá + VAT = Tổng cộng
-     *        Đặt cọc = 300.000 VND (hardcode)
-     * LƯU Ý: Giữ nguyên giá trị DB để tính toán, format display sẽ xử lý × 1000
+     * Calculate all pricing - SIMPLE LOGIC
+     * Logic: Rental price + Insurance - Discount + VAT = Total
+     *        Deposit = 300,000 VND (hardcode)
+     * NOTE: Keep DB values for calculation, display formatting will handle × 1000
      */
     private void calculateAllPricing(Booking booking, DepositPageDTO dto) throws Exception {
         try {
             LOGGER.info("=== CALCULATING ALL PRICING ===");
             
-            // Lấy thông tin bảo hiểm từ database
+            // Get insurance information from database
             List<InsuranceDetailDTO> insuranceDetails = dto.getInsuranceDetails();
             
-            // Tính tổng phí bảo hiểm từ danh sách chi tiết
+            // Calculate total insurance amount from detail list
             double totalInsuranceAmount = 0.0;
             for (InsuranceDetailDTO insurance : insuranceDetails) {
                 totalInsuranceAmount += insurance.getPremiumAmount();
@@ -636,18 +636,18 @@ public class DepositService implements IDepositService {
             }
             LOGGER.info("Total insurance amount from details: " + totalInsuranceAmount + " (DB value)");
             
-            // Lấy tổng phí bảo hiểm từ repository để kiểm tra
+            // Get total insurance amount from repository to verify
             double repoInsuranceAmount = depositRepository.getTotalInsuranceAmount(booking.getBookingId());
             LOGGER.info("Total insurance amount from repository: " + repoInsuranceAmount + " (DB value)");
             
-            // Sử dụng tổng phí bảo hiểm từ chi tiết để đảm bảo chính xác
+            // Use total insurance amount from details to ensure accuracy
             double insuranceAmount = totalInsuranceAmount;
             
-            // Tính base rental price = booking.totalAmount - insuranceAmount
+            // Calculate base rental price = booking.totalAmount - insuranceAmount
             double baseAmount = booking.getTotalAmount() - insuranceAmount;
             LOGGER.info("Base amount calculation: " + booking.getTotalAmount() + " - " + insuranceAmount + " = " + baseAmount + " (DB value)");
             
-            // Bước 3: Tính discount từ voucher (Nếu có)
+            // Step 3: Calculate discount from voucher (If any)
             double discountAmount = 0.0;
             if (booking.getDiscountId() != null) {
                 try {
@@ -657,29 +657,29 @@ public class DepositService implements IDepositService {
                         LOGGER.info("Discount applied: " + discount.getDiscountName() + " = " + discountAmount + " (DB value)");
                     }
                 } catch (Exception e) {
-                    LOGGER.log(Level.WARNING, "Lỗi khi tính discount", e);
+                    LOGGER.log(Level.WARNING, "Error calculating discount", e);
                 }
             }
             LOGGER.info("Discount amount: " + discountAmount + " (DB value)");
             
-            // Bước 4: Tính subtotal = base + insurance - discount
+            // Step 4: Calculate subtotal = base + insurance - discount
             double subtotal = baseAmount + insuranceAmount - discountAmount;
             LOGGER.info("Subtotal: " + baseAmount + " + " + insuranceAmount + " - " + discountAmount + " = " + subtotal);
             
-            // Bước 5: Tính VAT = subtotal * 10%
+            // Step 5: Calculate VAT = subtotal * 10%
             double vatAmount = subtotal * VAT_PERCENTAGE;
             LOGGER.info("VAT (10%): " + subtotal + " × " + VAT_PERCENTAGE + " = " + vatAmount);
             
-            // Bước 6: Tổng cộng = subtotal + VAT
+            // Step 6: Total = subtotal + VAT
             double totalAmount = subtotal + vatAmount;
             LOGGER.info("Total: " + subtotal + " + " + vatAmount + " = " + totalAmount);
             
-            // Bước 7: Đặt cọc = 300.000 VND (hardcode)
-            // Chuyển từ VND sang đơn vị DB (chia 1000)
-            double depositAmount = 300.0; // 300.000 VND = 300 đơn vị DB
-            LOGGER.info("Deposit (hardcode): 300.000 VND = " + depositAmount + " (DB value)");
+            // Step 7: Deposit = 300,000 VND (hardcode)
+            // Convert from VND to DB unit (divide by 1000)
+            double depositAmount = 300.0; // 300,000 VND = 300 DB units
+            LOGGER.info("Deposit (hardcode): 300,000 VND = " + depositAmount + " (DB value)");
 
-            // Gán vào DTO (giá trị DB, format methods sẽ xử lý hiển thị)
+            // Assign to DTO (DB values, format methods will handle display)
             dto.setBaseRentalPrice(baseAmount);
             dto.setTotalInsuranceAmount(insuranceAmount);
             dto.setDiscountAmount(discountAmount);
@@ -692,9 +692,9 @@ public class DepositService implements IDepositService {
             LOGGER.info("Final deposit amount: " + depositAmount + " (DB value) - JSP will show with 000 VND suffix");
             
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Lỗi tính toán giá cho booking " + booking.getBookingId(), e);
+            LOGGER.log(Level.SEVERE, "Error calculating pricing for booking " + booking.getBookingId(), e);
             
-            // Nếu lỗi, dùng giá trị mặc định để tránh crash
+            // If error, use default values to avoid crash
             double baseAmount = booking.getTotalAmount();
             dto.setBaseRentalPrice(baseAmount);
             dto.setTotalInsuranceAmount(0.0);
@@ -702,15 +702,15 @@ public class DepositService implements IDepositService {
             dto.setSubtotal(baseAmount);
             dto.setVatAmount(baseAmount * VAT_PERCENTAGE);
             dto.setTotalAmount(baseAmount * (1 + VAT_PERCENTAGE));
-            dto.setDepositAmount(300.0); // 300.000 VND = 300 đơn vị DB
+            dto.setDepositAmount(300.0); // 300,000 VND = 300 DB units
         }
     }
     
     /**
-     * Tính toán số tiền discount dựa trên loại discount
-     * @param baseAmount Số tiền cơ bản (DB value)
+     * Calculate discount amount based on discount type
+     * @param baseAmount Base amount (DB value)
      * @param discount Discount entity
-     * @return Số tiền discount (DB value)
+     * @return Discount amount (DB value)
      */
     private double calculateDiscountAmount(double baseAmount, Discount discount) {
         if (discount == null || discount.getDiscountValue() == null) {
@@ -721,27 +721,27 @@ public class DepositService implements IDepositService {
         double calculatedDiscount = 0.0;
         
         if ("Percent".equals(discount.getDiscountType()) || "Percentage".equals(discount.getDiscountType())) {
-            // Tính theo phần trăm
+            // Calculate by percentage
             calculatedDiscount = baseAmount * (discountValue / 100.0);
         } else if ("Fixed".equals(discount.getDiscountType())) {
-            // Tính theo số tiền cố định (chuyển từ VND sang DB value)
+            // Calculate by fixed amount (convert from VND to DB value)
             calculatedDiscount = discountValue / 1000.0;
         }
         
-        // Kiểm tra giới hạn tối đa discount
+        // Check maximum discount limit
         if (discount.getMaxDiscountAmount() != null) {
-            double maxDiscount = discount.getMaxDiscountAmount().doubleValue() / 1000.0; // Chuyển từ VND sang DB
+            double maxDiscount = discount.getMaxDiscountAmount().doubleValue() / 1000.0; // Convert from VND to DB
             if (calculatedDiscount > maxDiscount) {
                 calculatedDiscount = maxDiscount;
             }
         }
         
-        // Đảm bảo discount không vượt quá base amount
+        // Ensure discount does not exceed base amount
         if (calculatedDiscount > baseAmount) {
             calculatedDiscount = baseAmount;
         }
         
-        // Làm tròn đến 3 chữ số thập phân
+        // Round to 3 decimal places
         calculatedDiscount = Math.round(calculatedDiscount * 1000.0) / 1000.0;
         
         LOGGER.info("Discount calculation: " + discount.getDiscountType() + " " + discountValue + 
@@ -750,15 +750,15 @@ public class DepositService implements IDepositService {
         return calculatedDiscount;
     }
 
-    // Phương thức getTotalInsuranceAmount đã được xóa và sử dụng trực tiếp từ repository
+    // getTotalInsuranceAmount method has been removed and used directly from repository
     
     /**
-     * Ước tính giá thuê/ngày từ booking.totalAmount
+     * Estimate daily rental price from booking.totalAmount
      */
     private double estimateDailyRate(Booking booking) {
         LOGGER.info("--- Estimating daily rate ---");
         
-        // Tính số ngày thuê bằng DurationResult để chính xác
+        // Calculate rental days using DurationResult for accuracy
         DurationResult durationResult = calculateDuration(
             booking.getPickupDateTime(), 
             booking.getReturnDateTime(), 
@@ -768,7 +768,7 @@ public class DepositService implements IDepositService {
         double rentalDays = durationResult.getBillingUnitsAsDouble();
         LOGGER.info("Duration result: " + durationResult.getBillingUnits() + " " + durationResult.getUnitType());
         
-        // Chuyển đổi về ngày
+        // Convert to days
         if ("hour".equals(durationResult.getUnitType())) {
             rentalDays = rentalDays / 24.0;
             LOGGER.info("Converted " + durationResult.getBillingUnits() + " hours to " + rentalDays + " days");
@@ -782,7 +782,7 @@ public class DepositService implements IDepositService {
             LOGGER.info("Rental days was <= 0, set to 1");
         }
 
-        // Ước tính giá/ngày = totalAmount / số ngày
+        // Estimate daily price = totalAmount / number of days
         double dailyRate = booking.getTotalAmount() / rentalDays;
         LOGGER.info("Daily rate calculation: " + booking.getTotalAmount() + " / " + rentalDays + " = " + dailyRate);
         
@@ -790,13 +790,13 @@ public class DepositService implements IDepositService {
     }
 
     /**
-     * Ước tính giá thuê/ngày từ giá trị thực tế (đã nhân 1000)
-     * Sử dụng cho tính bảo hiểm vật chất với giá trị VND chính xác
+     * Estimate daily rental price from actual value (multiplied by 1000)
+     * Used for vehicle insurance calculation with accurate VND value
      */
     private double estimateDailyRateWithActualValue(Booking booking, double actualTotalAmount) {
         LOGGER.info("--- Estimating daily rate with actual VND value ---");
         
-        // Tính số ngày thuê bằng DurationResult để chính xác
+        // Calculate rental days using DurationResult for accuracy
         DurationResult durationResult = calculateDuration(
             booking.getPickupDateTime(), 
             booking.getReturnDateTime(), 
@@ -806,7 +806,7 @@ public class DepositService implements IDepositService {
         double rentalDays = durationResult.getBillingUnitsAsDouble();
         LOGGER.info("Duration result: " + durationResult.getBillingUnits() + " " + durationResult.getUnitType());
         
-        // Chuyển đổi về ngày
+        // Convert to days
         if ("hour".equals(durationResult.getUnitType())) {
             rentalDays = rentalDays / 24.0;
             LOGGER.info("Converted " + durationResult.getBillingUnits() + " hours to " + rentalDays + " days");
@@ -820,7 +820,7 @@ public class DepositService implements IDepositService {
             LOGGER.info("Rental days was <= 0, set to 1");
         }
 
-        // Ước tính giá/ngày = actualTotalAmount / số ngày
+        // Estimate daily price = actualTotalAmount / number of days
         double dailyRate = actualTotalAmount / rentalDays;
         LOGGER.info("Daily rate calculation: " + actualTotalAmount + " VND / " + rentalDays + " days = " + dailyRate + " VND/day");
         
@@ -828,13 +828,13 @@ public class DepositService implements IDepositService {
     }
 
     /**
-     * Xác định hệ số năm sử dụng theo giá thuê/ngày
+     * Determine year usage coefficient based on daily rental price
      * 
-     * Quy tắc:
-     * - ≤ 500k: hệ số = 5
-     * - ≤ 800k: hệ số = 7  
-     * - ≤ 1,200k: hệ số = 10
-     * - > 1,200k: hệ số = 15
+     * Rules:
+     * - ≤ 500k: coefficient = 5
+     * - ≤ 800k: coefficient = 7  
+     * - ≤ 1,200k: coefficient = 10
+     * - > 1,200k: coefficient = 15
      */
     private double getYearCoefficient(double dailyRate) {
         if (dailyRate <= 500000) {
