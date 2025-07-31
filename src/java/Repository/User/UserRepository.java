@@ -300,6 +300,21 @@ public class UserRepository implements IUserRepository {
         }
         return null;
     }
+    public User findByPhoneNumber(String phoneNumber) {
+        String sql = "SELECT * FROM Users WHERE PhoneNumber = ?";
+        try (Connection conn = dbContext.getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, phoneNumber);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToUser(rs);
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error finding user by phone number: " + phoneNumber, e);
+        }
+        return null;
+    }
 
     /**
      * Lấy tất cả username bắt đầu bằng baseUsername (không phân biệt hoa thường)
@@ -446,4 +461,5 @@ public class UserRepository implements IUserRepository {
         }
         return users;
     }
+    
 }
