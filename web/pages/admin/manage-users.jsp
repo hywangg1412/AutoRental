@@ -255,6 +255,12 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
       <div class="top-bar">
         <h1>User Management</h1>
         <div style="display: flex; gap: 12px; align-items: center;">
+          <div class="search-box">
+            <input type="text" id="searchUsername" placeholder="Tìm kiếm theo username..." />
+            <button class="btn btn-search" id="searchButton">
+              <i class="fa fa-search"></i>
+            </button>
+          </div>
           <button class="btn" onclick="openAddModal()">
             <i class="fa fa-plus"></i> Add User
           </button>
@@ -274,8 +280,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
           <thead>
             <tr>
               <th>Username</th>
-              <th>First Name</th>
-              <th>Last Name</th>
+              <!-- Xóa cột First Name và Last Name -->
               <th>Email</th>
               <th>Phone</th>
               <th>Gender</th>
@@ -284,16 +289,20 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
               <th>Actions</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="userTableBody">
             <c:forEach var="user" items="${users}">
-              <tr>
+              <tr class="user-row">
                 <td>${user.username}</td>
-                <td>${user.firstName}</td>
-                <td>${user.lastName}</td>
+                <!-- Xóa cột First Name và Last Name -->
                 <td>${user.email}</td>
                 <td>${user.phoneNumber}</td>
                 <td>${user.gender}</td>
-                <td>${user.userDOB}</td>
+                <td>
+                  <c:if test="${not empty user.userDOB}">
+                    <fmt:parseDate value="${user.userDOB}" pattern="yyyy-MM-dd" var="parsedDate" type="date" />
+                    <fmt:formatDate value="${parsedDate}" pattern="dd-MM-yyyy" />
+                  </c:if>
+                </td>
                 <td>
                   <c:choose>
                     <c:when test="${user.status eq 'Active'}">
@@ -313,22 +322,11 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
                 <td class="actions">
                   <button
                     class="btn btn-secondary"
-                    onclick="openEditModal('${user.userId}', '${user.username}', '${user.firstName}', '${user.lastName}', '${user.email}', '${user.phoneNumber}', '${user.gender}', '${user.userDOB}', '${user.status}', '${user.roleId}')"
+                    onclick="openEditModal('${user.userId}', '${user.username}', '${user.email}', '${user.phoneNumber}', '${user.gender}', '${user.userDOB}', '${user.status}', '${user.roleId}')"
                   >
                     <i class="fa fa-edit"></i> Edit
                   </button>
-                  <form
-                    method="post"
-                    action="${pageContext.request.contextPath}/admin/user-management"
-                    style="display: inline"
-                    onsubmit="return confirm('Are you sure you want to delete this user?');"
-                  >
-                    <input type="hidden" name="action" value="delete" />
-                    <input type="hidden" name="userId" value="${user.userId}" />
-                    <button type="submit" class="btn btn-danger">
-                      <i class="fa fa-trash"></i> Delete
-                    </button>
-                  </form>
+                  <!-- Xóa nút Delete -->
                   <c:if test="${user.status ne 'Banned'}">
                     <form
                       method="post"
@@ -348,6 +346,22 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
             </c:forEach>
           </tbody>
         </table>
+        
+        <!-- Pagination -->
+        <div class="pagination-container">
+          <div class="pagination-info">
+            Hiển thị <span id="startIndex">0</span> - <span id="endIndex">0</span> trên tổng số <span id="totalItems">0</span>
+          </div>
+          <div class="pagination">
+            <button id="prevPage" class="pagination-btn">
+              <i class="fa fa-chevron-left"></i>
+            </button>
+            <div id="pageNumbers" class="page-numbers"></div>
+            <button id="nextPage" class="pagination-btn">
+              <i class="fa fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -365,12 +379,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
             <label>Username</label
             ><input type="text" name="username" required />
           </div>
-          <div class="form-group">
-            <label>Họ</label><input type="text" name="firstName" required />
-          </div>
-          <div class="form-group">
-            <label>Tên</label><input type="text" name="lastName" required />
-          </div>
+          <!-- Xóa trường First Name và Last Name -->
           <div class="form-group">
             <label>Email</label><input type="email" name="email" required />
           </div>
@@ -427,14 +436,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
             <label>Username</label
             ><input type="text" name="username" id="editUsername" required />
           </div>
-          <div class="form-group">
-            <label>Họ</label
-            ><input type="text" name="firstName" id="editFirstName" required />
-          </div>
-          <div class="form-group">
-            <label>Tên</label
-            ><input type="text" name="lastName" id="editLastName" required />
-          </div>
+          <!-- Xóa trường First Name và Last Name -->
           <div class="form-group">
             <label>Email</label
             ><input type="email" name="email" id="editEmail" required />
@@ -485,8 +487,6 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
       function openEditModal(
         userId,
         username,
-        firstName,
-        lastName,
         email,
         phoneNumber,
         gender,
@@ -496,8 +496,6 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
       ) {
         document.getElementById("editUserId").value = userId;
         document.getElementById("editUsername").value = username;
-        document.getElementById("editFirstName").value = firstName;
-        document.getElementById("editLastName").value = lastName;
         document.getElementById("editEmail").value = email;
         document.getElementById("editPhoneNumber").value = phoneNumber;
         document.getElementById("editGender").value = gender;
@@ -538,14 +536,6 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
         const username = form.username;
         if (!username.value.trim()) showError(username, 'Username is required');
         else if (!/^[a-zA-Z0-9_]{4,32}$/.test(username.value)) showError(username, '4-32 chars, no special chars');
-        // First Name
-        const firstName = form.firstName;
-        if (!firstName.value.trim()) showError(firstName, 'First name is required');
-        else if (!/^[a-zA-ZÀ-ỹ\s]{1,32}$/.test(firstName.value)) showError(firstName, 'Only letters, max 32 chars');
-        // Last Name
-        const lastName = form.lastName;
-        if (!lastName.value.trim()) showError(lastName, 'Last name is required');
-        else if (!/^[a-zA-ZÀ-ỹ\s]{1,32}$/.test(lastName.value)) showError(lastName, 'Only letters, max 32 chars');
         // Email
         const email = form.email;
         if (!email.value.trim()) showError(email, 'Email is required');
@@ -601,6 +591,150 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
           url.searchParams.set('status', status);
         }
         window.location.href = url.toString();
+      });
+      
+      // Chức năng tìm kiếm theo username
+      function searchUsers() {
+        const searchTerm = document.getElementById('searchUsername').value.toLowerCase().trim();
+        const rows = document.querySelectorAll('.user-row');
+        let visibleRows = 0;
+        
+        rows.forEach(row => {
+          const username = row.querySelector('td:first-child').textContent.toLowerCase();
+          
+          if (username.includes(searchTerm)) {
+            row.classList.remove('filtered-out');
+            visibleRows++;
+          } else {
+            row.classList.add('filtered-out');
+          }
+        });
+        
+        // Cập nhật phân trang sau khi lọc
+        initPagination();
+        
+        // Hiển thị thông báo nếu không có kết quả
+        const noResultsMessage = document.getElementById('noResultsMessage');
+        if (visibleRows === 0 && searchTerm !== '') {
+          if (!noResultsMessage) {
+            const message = document.createElement('div');
+            message.id = 'noResultsMessage';
+            message.className = 'no-results-message';
+            message.textContent = 'Không tìm thấy người dùng nào phù hợp';
+            document.querySelector('.table-wrap').appendChild(message);
+          }
+        } else if (noResultsMessage) {
+          noResultsMessage.remove();
+        }
+      }
+      
+      // Xử lý sự kiện tìm kiếm
+      document.getElementById('searchButton').addEventListener('click', searchUsers);
+      document.getElementById('searchUsername').addEventListener('keyup', function(event) {
+        if (event.key === 'Enter') {
+          searchUsers();
+        }
+      });
+      
+      // Phân trang
+      function initPagination() {
+        const rowsPerPage = 10;
+        const rows = document.querySelectorAll('.user-row:not(.filtered-out)');
+        const totalRows = rows.length;
+        const totalPages = Math.ceil(totalRows / rowsPerPage);
+        let currentPage = 1;
+        
+        // Cập nhật thông tin hiển thị
+        function updatePaginationInfo() {
+          document.getElementById('totalItems').textContent = totalRows;
+          const startIndex = totalRows > 0 ? (currentPage - 1) * rowsPerPage + 1 : 0;
+          const endIndex = Math.min(currentPage * rowsPerPage, totalRows);
+          document.getElementById('startIndex').textContent = startIndex;
+          document.getElementById('endIndex').textContent = endIndex;
+        }
+        
+        // Tạo các nút số trang
+        function createPageNumbers() {
+          const pageNumbers = document.getElementById('pageNumbers');
+          pageNumbers.innerHTML = '';
+          
+          // Hiển thị tối đa 5 nút số trang
+          const maxPageButtons = 5;
+          let startPage = Math.max(1, currentPage - Math.floor(maxPageButtons / 2));
+          let endPage = Math.min(totalPages, startPage + maxPageButtons - 1);
+          
+          if (endPage - startPage + 1 < maxPageButtons) {
+            startPage = Math.max(1, endPage - maxPageButtons + 1);
+          }
+          
+          for (let i = startPage; i <= endPage; i++) {
+            const pageNumber = document.createElement('div');
+            pageNumber.className = 'page-number' + (i === currentPage ? ' active' : '');
+            pageNumber.textContent = i;
+            pageNumber.addEventListener('click', function() {
+              goToPage(i);
+            });
+            pageNumbers.appendChild(pageNumber);
+          }
+        }
+        
+        // Hiển thị các hàng cho trang hiện tại
+        function displayRows() {
+          const allRows = document.querySelectorAll('.user-row');
+          const visibleRows = document.querySelectorAll('.user-row:not(.filtered-out)');
+          
+          const start = (currentPage - 1) * rowsPerPage;
+          const end = start + rowsPerPage;
+          
+          allRows.forEach(row => row.classList.add('hidden'));
+          
+          Array.from(visibleRows).forEach((row, index) => {
+            if (index >= start && index < end) {
+              row.classList.remove('hidden');
+            }
+          });
+        }
+        
+        // Cập nhật trạng thái các nút điều hướng
+        function updateNavigationButtons() {
+          const prevButton = document.getElementById('prevPage');
+          const nextButton = document.getElementById('nextPage');
+          
+          prevButton.disabled = currentPage === 1;
+          nextButton.disabled = currentPage === totalPages || totalPages === 0;
+        }
+        
+        // Chuyển đến trang cụ thể
+        function goToPage(page) {
+          currentPage = page;
+          displayRows();
+          updatePaginationInfo();
+          createPageNumbers();
+          updateNavigationButtons();
+        }
+        
+        // Thiết lập sự kiện cho các nút điều hướng
+        document.getElementById('prevPage').addEventListener('click', function() {
+          if (currentPage > 1) {
+            goToPage(currentPage - 1);
+          }
+        });
+        
+        document.getElementById('nextPage').addEventListener('click', function() {
+          if (currentPage < totalPages) {
+            goToPage(currentPage + 1);
+          }
+        });
+        
+        // Khởi tạo phân trang
+        createPageNumbers();
+        displayRows();
+        updatePaginationInfo();
+        updateNavigationButtons();
+      }
+      
+      document.addEventListener('DOMContentLoaded', function() {
+        initPagination();
       });
     </script>
   </body>

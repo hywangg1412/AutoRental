@@ -39,4 +39,6 @@ public interface IUserService extends Service<User> {
     List<User> getUsersByStatus(String status) throws SQLException;
     
     List<User> searchUsers(String searchTerm) throws SQLException;
+    
+    User findByPhoneNumber(String phoneNumber);
 }
