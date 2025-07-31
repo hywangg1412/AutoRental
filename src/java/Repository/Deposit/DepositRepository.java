@@ -379,14 +379,22 @@ public class DepositRepository implements IDepositRepository {
     
     @Override
     public double[] calculateTotalAndDeposit(UUID bookingId) throws SQLException {
-        // Simple calculation: lấy booking total amount và tính deposit 30%
+        // Tính toán theo logic mới: deposit cố định 300K hoặc 10% tùy theo total amount
         Booking booking = getBookingForDeposit(bookingId);
         if (booking == null) {
             return new double[]{0, 0};
         }
         
         double totalAmount = booking.getTotalAmount();
-        double depositAmount = totalAmount * 0.30; // 30% deposit
+        double depositAmount;
+        
+        if (totalAmount >= 3000.0) {
+            // Nếu total >= 3 triệu: đặt cọc = 10% của total
+            depositAmount = totalAmount * 0.10;
+        } else {
+            // Nếu total < 3 triệu: đặt cọc cố định 300K
+            depositAmount = 300.0;
+        }
         
         LOGGER.info("Calculate total and deposit - Total: " + totalAmount + ", Deposit: " + depositAmount);
         return new double[]{totalAmount, depositAmount};

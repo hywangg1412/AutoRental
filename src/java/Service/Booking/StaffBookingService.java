@@ -305,6 +305,18 @@ public class StaffBookingService {
         // - Creating an audit log entry with the reason for the change.
     }
 
+    /**
+     * Lấy danh sách status booking thực tế từ DB (distinct).
+     */
+    public List<String> getAllStatuses() {
+        try {
+            return bookingRepository.getAllStatuses();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error getting booking statuses", e);
+            return new ArrayList<>();
+        }
+    }
+
     // Lấy danh sách BookingInfoDTO theo phân trang (page, pageSize)
     public List<BookingInfoDTO> getBookingInfoPaged(int page, int pageSize) {
         List<BookingInfoDTO> dtos = new ArrayList<>();
@@ -410,6 +422,58 @@ public class StaffBookingService {
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "SQL error while fetching paged booking info", e);
             return new ArrayList<>();
+        }
+        return dtos;
+    }
+
+    /**
+     * Search bookings for staff by status and keyword (customer name or booking code), with pagination.
+     */
+    public List<BookingInfoDTO> searchBookings(String status, String keyword, int page, int pageSize) {
+        List<BookingInfoDTO> dtos = new ArrayList<>();
+        int offset = (page - 1) * pageSize;
+        try {
+            List<Booking> bookings = bookingRepository.searchBookings(status, keyword, offset, pageSize);
+            for (Booking booking : bookings) {
+                BookingInfoDTO dto = new BookingInfoDTO();
+                dto.setBookingId(booking.getBookingId());
+                dto.setBookingCode(booking.getBookingCode());
+                dto.setPickupDateTime(booking.getPickupDateTime());
+                dto.setReturnDateTime(booking.getReturnDateTime());
+                dto.setTotalAmount(booking.getTotalAmount());
+                dto.setStatus(booking.getStatus());
+                dto.setCreatedDate(booking.getCreatedDate());
+                dto.setRentalType(booking.getRentalType());
+                dto.setCustomerName(booking.getCustomerName());
+                dto.setCustomerPhone(booking.getCustomerPhone());
+                dto.setCustomerEmail(booking.getCustomerEmail());
+                dto.setDriverLicenseImageUrl(booking.getDriverLicenseImageUrl());
+                // Populate car info
+                Car car = carRepository.findById(booking.getCarId());
+                if (car != null) {
+                    dto.setCarModel(car.getCarModel());
+                    dto.setCarLicensePlate(car.getLicensePlate());
+                    dto.setCarStatus(car.getStatus().getValue());
+                } else {
+                    dto.setCarModel("--- VEHICLE NOT FOUND ---");
+                    dto.setCarLicensePlate("--- N/A ---");
+                    dto.setCarStatus("Unknown");
+                }
+                // Duration
+                if (booking.getPickupDateTime() != null && booking.getReturnDateTime() != null) {
+                    setFormattedDuration(dto, booking.getPickupDateTime(), booking.getReturnDateTime(), booking.getRentalType());
+                } else {
+                    dto.setDuration(1.0);
+                }
+                // Deposit/Contract status
+                String depositStatus = determineDepositStatus(booking);
+                String contractStatus = determineContractStatus(booking);
+                dto.setDepositStatus(depositStatus);
+                dto.setContractStatus(contractStatus);
+                dtos.add(dto);
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error searching bookings for staff", e);
         }
         return dtos;
     }

@@ -115,19 +115,15 @@ public class PaymentServlet extends HttpServlet {
             return;
         }
 
-        // Kiểm tra tham số fixedDeposit
-        boolean useFixedDeposit = "true".equals(request.getParameter("fixedDeposit"));
-        System.out.println("Use fixed deposit: " + useFixedDeposit);
-
         System.out.println("BookingId final: '" + bookingId + "'");
-        System.out.println("Gọi PaymentService.createDepositPayment...");
+        System.out.println("Gọi PaymentService.createDepositPayment với logic mới...");
         
         try {
             // Gọi service để tạo payment và lấy VNPay URL
+            // Sử dụng logic mới từ DepositService (300K hoặc 10%)
             PaymentDTO paymentDTO = paymentService.createDepositPayment(
                 UUID.fromString(bookingId), 
-                userId,
-                useFixedDeposit
+                userId
             );
             
             if (paymentDTO == null || paymentDTO.getQrCode() == null) {

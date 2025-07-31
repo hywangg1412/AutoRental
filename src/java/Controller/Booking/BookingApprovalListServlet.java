@@ -48,7 +48,7 @@ public class BookingApprovalListServlet extends HttpServlet {
             }
 
             // TODO: Kiểm tra user có phải staff không (có thể kiểm tra role)
-            
+
             // ====== PHÂN TRANG ======
             int page = 1;
             int pageSize = 10; // Số booking mỗi trang
@@ -56,34 +56,59 @@ public class BookingApprovalListServlet extends HttpServlet {
                 String pageParam = request.getParameter("page");
                 if (pageParam != null) page = Integer.parseInt(pageParam);
             } catch (NumberFormatException ignored) {}
-            // Lấy danh sách booking phân trang
-            List<BookingInfoDTO> bookings = staffBookingService.getBookingInfoPaged(page, pageSize);
-            // Đếm tổng số booking để tính tổng số trang
-            int totalBookings = staffBookingService.getAllBookingInfo().size();
+
+            // ====== LẤY FILTER VÀ SEARCH ======
+            String status = request.getParameter("status");
+            String keyword = request.getParameter("keyword");
+            if (status == null) status = "all";
+            if (keyword != null && keyword.trim().isEmpty()) keyword = null;
+
+            System.out.println("[DEBUG] Filter status: " + status + ", keyword: " + keyword);
+            List<BookingInfoDTO> bookings;
+            int totalBookings;
+            if ((status != null && !status.equalsIgnoreCase("all")) || (keyword != null && !keyword.trim().isEmpty())) {
+                bookings = staffBookingService.searchBookings(status, keyword, page, pageSize);
+                System.out.println("[DEBUG] Filtered bookings size: " + bookings.size());
+                List<BookingInfoDTO> allFiltered = staffBookingService.searchBookings(status, keyword, 1, Integer.MAX_VALUE);
+                totalBookings = allFiltered.size();
+                System.out.println("[DEBUG] Total filtered bookings: " + totalBookings);
+            } else {
+                bookings = staffBookingService.getBookingInfoPaged(page, pageSize);
+                System.out.println("[DEBUG] All bookings paged size: " + bookings.size());
+                totalBookings = staffBookingService.getAllBookingInfo().size();
+                System.out.println("[DEBUG] All bookings total: " + totalBookings);
+            }
             int totalPages = (int) Math.ceil((double) totalBookings / pageSize);
 
             request.setAttribute("bookingRequests", bookings);
             request.setAttribute("currentPage", page);
             request.setAttribute("totalPages", totalPages);
+            request.setAttribute("selectedStatus", status);
+            request.setAttribute("searchKeyword", keyword);
             // ====== END PHÂN TRANG ======
-            
+
+            // Lấy danh sách status booking thực tế từ DB để render filter
+            List<String> bookingStatuses = staffBookingService.getAllStatuses();
+            request.setAttribute("bookingStatuses", bookingStatuses);
+
             // 6. Hiển thị thông báo thành công/lỗi nếu có
             String successMessage = request.getParameter("success");
             String errorMessage = request.getParameter("error");
-            
+
             if (successMessage != null && !successMessage.trim().isEmpty()) {
                 request.setAttribute("successMessage", successMessage);
             }
-            
+
             if (errorMessage != null && !errorMessage.trim().isEmpty()) {
                 request.setAttribute("errorMessage", errorMessage);
             }
-            
+
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Lỗi trong BookingApprovalListServlet", e);
+            e.printStackTrace();
             request.setAttribute("errorMessage", "Không thể tải danh sách booking: " + e.getMessage());
         }
-        
+
         // 7. Forward đến trang JSP
         request.getRequestDispatcher("/pages/staff/staff-booking.jsp").forward(request, response);
     }
