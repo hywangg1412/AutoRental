@@ -533,7 +533,7 @@ prefix="c" uri="jakarta.tags.core" %>
                       <span id="discountAmount">-0K</span>
                     </div>
                     <div class="price-row deposit">
-                      <span>Deposit Required (30%):</span>
+                      <span>Deposit Required:</span>
                       <span id="depositAmount">0K</span>
                     </div>
                     <div class="price-row total">

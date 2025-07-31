@@ -80,7 +80,7 @@
                   <div class="info-item">
                     <span class="label">Vehicle:</span>
                                         <span class="value">
-                                            ${depositPageData.carBrand} ${depositPageData.carModel} - ${depositPageData.licensePlate}
+                                            ${depositPageData.carModel} - ${depositPageData.licensePlate}
                                         </span>
                   </div>
                   <div class="info-item">
@@ -90,7 +90,7 @@
                                         </span>
                   </div>
                   <div class="info-item">
-                                        <span class="label">Rental ${depositPageData.formattedRentalType}:</span>
+                                        <span class="label">Rental Day:</span>
                                         <span class="value">${depositPageData.formattedDuration}</span>
                   </div>
                   <div class="info-item">
@@ -165,9 +165,57 @@
 
                   <div class="deposit-line">
                     <div class="price-item deposit">
-                                            <span><strong>Deposit Required (Fixed)</strong></span>
-                                            <span class="amount deposit-amount" id="finalDeposit"><strong><c:out value="${depositPageData.formattedDepositAmount}" /></strong></span>
+                      <span>
+                        <strong>
+                          <c:choose>
+                            <c:when test="${depositPageData.subtotal >= 3000}">
+                              Deposit Required (10% of total)
+                            </c:when>
+                            <c:otherwise>
+                              Deposit Required (Fixed 300K)
+                            </c:otherwise>
+                          </c:choose>
+                        </strong>
+                      </span>
+                      <span class="amount deposit-amount" id="finalDeposit">
+                        <strong><c:out value="${depositPageData.formattedDepositAmount}" /></strong>
+                      </span>
                     </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Deposit Policy Explanation -->
+              <div class="deposit-policy">
+                <h4><i class="fas fa-info-circle"></i> Deposit Policy</h4>
+                <div class="policy-info">
+                  <div class="policy-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>
+                      <strong>Total Amount < 3,000,000 VND:</strong> Fixed deposit of 300,000 VND
+                    </span>
+                  </div>
+                  <div class="policy-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>
+                      <strong>Total Amount ≥ 3,000,000 VND:</strong> 10% of total amount
+                    </span>
+                  </div>
+                  <div class="policy-note">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>
+                      <strong>Note:</strong> Your current total is 
+                      <c:out value="${depositPageData.formattedSubtotal}" />, 
+                      so your deposit is calculated as 
+                      <c:choose>
+                        <c:when test="${depositPageData.subtotal >= 3000}">
+                          10% of the total amount
+                        </c:when>
+                        <c:otherwise>
+                          the fixed rate of 300,000 VND
+                        </c:otherwise>
+                      </c:choose>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -176,12 +224,12 @@
               <div class="insurance-benefits">
                 <h4><i class="fas fa-shield-check"></i> Insurance Coverage</h4>
                 <div class="benefits-list">
-                  <div class="benefit-item">
+<!--                  <div class="benefit-item">
                     <i class="fas fa-check-circle"></i>
                     <span
                       >Civil Liability: Up to 150 million VND per person</span
                     >
-                  </div>
+                  </div>-->
                   <div class="benefit-item">
                     <i class="fas fa-check-circle"></i>
                     <span>Vehicle Damage: Up to 500 million VND coverage</span>
@@ -287,9 +335,9 @@
               <div class="booking-summary">
                 <h4>Order Summary</h4>
                 <div class="summary-item">
-                                    <span>${depositPageData.carBrand} ${depositPageData.carModel} (${depositPageData.formattedDuration})</span>
+                                    <span>Subtotal (${depositPageData.carModel})</span>
                                     <span class="total-amount" id="summaryTotal">
-                                        <c:out value="${depositPageData.formattedBaseRentalPrice}" />
+                                        <c:out value="${depositPageData.formattedSubtotal}" />
                                     </span>
                 </div>
                                 <c:if test="${depositPageData.discountAmount > 0}">
@@ -307,10 +355,19 @@
                                     </span>
                 </div>
                 <div class="summary-item deposit">
-                  <span>Deposit Required</span>
-                                    <span class="deposit-amount" id="summaryDeposit">
-                                        <c:out value="${depositPageData.formattedDepositAmount}" />
-                                    </span>
+                  <span>
+                    <c:choose>
+                      <c:when test="${depositPageData.subtotal >= 3000}">
+                        Deposit Required (10%)
+                      </c:when>
+                      <c:otherwise>
+                        Deposit Required (Fixed)
+                      </c:otherwise>
+                    </c:choose>
+                  </span>
+                  <span class="deposit-amount" id="summaryDeposit">
+                    <c:out value="${depositPageData.formattedDepositAmount}" />
+                  </span>
                 </div>
               </div>
 
@@ -320,11 +377,6 @@
                 <div class="payment-method active" data-method="bank">
                   <i class="fas fa-university"></i>
                   <span>Bank Transfer</span>
-                  <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="payment-method" data-method="momo">
-                  <i class="fas fa-mobile-alt"></i>
-                  <span>MoMo Wallet</span>
                   <i class="fas fa-check-circle"></i>
                 </div>
               </div>
@@ -930,10 +982,10 @@
                 try {
                     showToast("Đang tạo mã thanh toán...", "info");
 
-                    // Tạo form để POST đến PaymentServlet (giống mẫu PayOS)
+                    // Tạo form để POST đến PaymentServlet với logic mới
                     const form = document.createElement('form');
                     form.method = 'POST';
-                    form.action = '<%=request.getContextPath()%>/api/payment/create?bookingId=' + encodeURIComponent(bookingId) + '&fixedDeposit=true';
+                    form.action = '<%=request.getContextPath()%>/api/payment/create?bookingId=' + encodeURIComponent(bookingId);
                     
                     document.body.appendChild(form);
                     console.log("Submitting form to:", form.action);
