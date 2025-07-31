@@ -75,8 +75,6 @@ public class UserManagementServlet extends HttpServlet {
                 User user = new User();
                 user.setUserId(UUID.randomUUID());
                 user.setUsername(request.getParameter("username"));
-                user.setFirstName(request.getParameter("firstName"));
-                user.setLastName(request.getParameter("lastName"));
                 user.setEmail(request.getParameter("email"));
                 user.setPhoneNumber(request.getParameter("phoneNumber"));
                 user.setGender(request.getParameter("gender"));
@@ -95,8 +93,6 @@ public class UserManagementServlet extends HttpServlet {
                 User user = userService.findById(UUID.fromString(userId));
                 if (user != null) {
                     user.setUsername(request.getParameter("username"));
-                    user.setFirstName(request.getParameter("firstName"));
-                    user.setLastName(request.getParameter("lastName"));
                     user.setEmail(request.getParameter("email"));
                     user.setPhoneNumber(request.getParameter("phoneNumber"));
                     user.setGender(request.getParameter("gender"));
@@ -109,10 +105,6 @@ public class UserManagementServlet extends HttpServlet {
                     userService.update(user);
                     request.setAttribute("success", "Cập nhật user thành công!");
                 }
-            } else if ("delete".equals(action)) {
-                String userId = request.getParameter("userId");
-                userService.delete(UUID.fromString(userId));
-                request.setAttribute("success", "Xoá user thành công!");
             } else if ("ban".equals(action)) {
                 String userId = request.getParameter("userId");
                 User user = userService.findById(UUID.fromString(userId));
