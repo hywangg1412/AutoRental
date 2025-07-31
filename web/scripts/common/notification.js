@@ -31,9 +31,10 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Xử lý chuyển hướng dựa vào nội dung thông báo
             if (messageText.includes('booking') || 
-                messageText.includes('đặt xe') || 
-                messageText.includes('trả xe') || 
-                messageText.includes('xác nhận')) {
+                messageText.includes('approved') || 
+                messageText.includes('rejected') || 
+                messageText.includes('return') || 
+                messageText.includes('confirmed')) {
                 
                 // Chuyển hướng đến trang my-trip
                 console.log("Redirecting to my-trip page based on notification content");
@@ -44,14 +45,35 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Đánh dấu một thông báo đã đọc khi click vào (chỉ áp dụng cho staff)
-    document.querySelectorAll('.notification-item.unread:not(.user-notification)').forEach(function(item) {
+    // Xử lý click cho staff notification
+    document.querySelectorAll('.notification-item:not(.user-notification)').forEach(function(item) {
         // Đảm bảo không ghi đè sự kiện đã thêm ở trên
         if (!item.classList.contains('notification-handled')) {
             item.addEventListener('click', function(e) {
+                e.preventDefault();
                 const notificationId = this.getAttribute('data-notification-id');
-                console.log("Marking notification as read:", notificationId);
+                const message = this.getAttribute('data-notification-message') || '';
+                console.log("Staff notification clicked:", notificationId, message);
+                
+                // Đánh dấu đã đọc
                 markAsRead(notificationId);
+                
+                // Xử lý chuyển hướng dựa vào nội dung thông báo
+                const messageText = message.toLowerCase();
+                let redirectUrl = contextPath + '/staff/booking-approval-list'; // default
+                
+                if (messageText.includes('car return') || messageText.includes('return')) {
+                    redirectUrl = contextPath + '/staff/car-condition';
+                    console.log("Redirecting to car-condition page for return car notification");
+                } else if (messageText.includes('booking request') || messageText.includes('new booking')) {
+                    redirectUrl = contextPath + '/staff/booking-approval-list';
+                    console.log("Redirecting to booking-approval-list page for booking request notification");
+                }
+                
+                // Chuyển hướng sau khi đánh dấu đã đọc
+                setTimeout(function() {
+                    window.location.href = redirectUrl;
+                }, 200);
             });
             item.classList.add('notification-handled');
         }
@@ -226,9 +248,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
                 e.stopPropagation();
                 const notificationId = item.getAttribute('data-notification-id');
-                if (confirm('Bạn có chắc chắn muốn xóa thông báo này?')) {
-                    deleteNotification(notificationId, item);
-                }
+                showDeleteConfirmationModal(notificationId, item);
             });
             
             // Thêm nút xóa vào container
@@ -295,6 +315,57 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error("Error deleting notification:", error);
             alert("Có lỗi xảy ra khi xóa thông báo. Vui lòng thử lại sau.");
         });
+    }
+    
+    // Hàm hiển thị modal xác nhận xóa
+    function showDeleteConfirmationModal(notificationId, notificationElement) {
+        // Tạo modal HTML
+        const modalHTML = `
+            <div class="modal fade" id="deleteNotificationModal" tabindex="-1" aria-labelledby="deleteNotificationModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteNotificationModalLabel">
+                                <i class="fas fa-trash-alt text-danger me-2"></i>
+                                Xóa thông báo
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="mb-0">
+                                <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                Bạn có chắc chắn muốn xóa thông báo này?
+                            </p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="fas fa-times me-1"></i>
+                                Hủy
+                            </button>
+                            <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                                <i class="fas fa-trash-alt me-1"></i>
+                                Xóa
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Thêm modal vào body nếu chưa có
+        if (!document.getElementById('deleteNotificationModal')) {
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+        
+        // Hiển thị modal
+        const modal = new bootstrap.Modal(document.getElementById('deleteNotificationModal'));
+        modal.show();
+        
+        // Xử lý sự kiện xác nhận xóa
+        document.getElementById('confirmDeleteBtn').onclick = function() {
+            modal.hide();
+            deleteNotification(notificationId, notificationElement);
+        };
     }
     
     // Gọi API lấy số lượng notification khi trang load
