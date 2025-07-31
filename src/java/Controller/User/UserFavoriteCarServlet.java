@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import jakarta.servlet.annotation.MultipartConfig;
 import java.util.Set;
 import java.util.stream.Collectors;
+import Utils.SessionUtil;
 
 @WebServlet(name = "UserFavoriteCarServlet", urlPatterns = {"/user/favorite-car"})
 @MultipartConfig
@@ -45,8 +46,7 @@ public class UserFavoriteCarServlet extends HttpServlet {
             throws ServletException, IOException {
         
         try {
-            HttpSession session = request.getSession();
-            User user = (User) session.getAttribute("user");
+            User user = (User) SessionUtil.getSessionAttribute(request, "user");
             
             if (user == null) {
                 response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp");

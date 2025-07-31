@@ -6,6 +6,7 @@ import Model.Entity.OAuth.UserLogins;
 import Service.User.UserService;
 import Service.Auth.UserLoginsService;
 import Utils.SessionUtil;
+import Mapper.UserProfileMapper;
 import java.io.IOException;
 import java.util.List;
 import java.util.HashSet;
@@ -29,32 +30,6 @@ public class StaffProfileServlet extends HttpServlet {
         userLoginsService = new UserLoginsService();
     }
 
-    private UserProfileDTO mapUserToProfileDTO(User user, List<UserLogins> userLogins) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        UserProfileDTO profile = new UserProfileDTO();
-        profile.setUsername(user.getUsername());
-        profile.setUserDOB(user.getUserDOB());
-        profile.setGender(user.getGender());
-        profile.setPhoneNumber(user.getPhoneNumber());
-        profile.setEmail(user.getEmail());
-        profile.setEmailVerified(user.isEmailVerifed());
-        profile.setAvatarUrl(user.getAvatarUrl());
-        profile.setCreatedAt(user.getCreatedDate().format(formatter));
-        Set<String> providers = new HashSet<>();
-        for (UserLogins login : userLogins) {
-            String provider = login.getLoginProvider().toLowerCase();
-            providers.add(provider);
-            if ("facebook".equals(provider)) {
-                profile.setHasFacebookLogin(true);
-                profile.setFacebookAccountName(login.getProviderDisplayName());
-            } else if ("google".equals(provider)) {
-                profile.setHasGoogleLogin(true);
-                profile.setGoogleAccountName(login.getProviderDisplayName());
-            }
-        }
-        return profile;
-    }
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -66,7 +41,7 @@ public class StaffProfileServlet extends HttpServlet {
         }
         try {
             List<UserLogins> userLogins = userLoginsService.findByUserId(user.getUserId());
-            UserProfileDTO profile = mapUserToProfileDTO(user, userLogins);
+            UserProfileDTO profile = UserProfileMapper.mapUserToProfileDTO(user, userLogins);
             request.setAttribute("profile", profile);
             String successMessage = (String) SessionUtil.getSessionAttribute(request, "success");
             String errorMessage = (String) SessionUtil.getSessionAttribute(request, "error");

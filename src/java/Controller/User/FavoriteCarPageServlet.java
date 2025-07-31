@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import Model.Entity.User.User;
 import Model.DTO.User.FavoriteCarDTO;
 import Service.User.UserFavoriteCarService;
+import Utils.SessionUtil;
 
 @WebServlet(name = "FavoriteCarPageServlet", urlPatterns = {"/user/favorite-car-page"})
 public class FavoriteCarPageServlet extends HttpServlet {
@@ -25,8 +26,7 @@ public class FavoriteCarPageServlet extends HttpServlet {
             throws ServletException, IOException {
         
         try {
-            HttpSession session = request.getSession();
-            User user = (User) session.getAttribute("user");
+            User user = (User) SessionUtil.getSessionAttribute(request, "user");
             
             if (user == null) {
                 LOGGER.warning("User not logged in, redirecting to login page");

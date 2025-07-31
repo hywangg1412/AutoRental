@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import Service.Role.RoleService;
 import Model.Entity.Role.Role;
+import Utils.SessionUtil;
 
 @WebServlet(name = "UpdatePhoneServlet", urlPatterns = {"/user/update-phone"})
 public class UpdatePhoneServlet extends HttpServlet {
@@ -38,8 +39,7 @@ public class UpdatePhoneServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
+        User user = (User) SessionUtil.getSessionAttribute(request, "user");
         
         if (user == null) {
             LOGGER.log(Level.INFO, "User not logged in, redirecting to login page");
@@ -52,7 +52,7 @@ public class UpdatePhoneServlet extends HttpServlet {
             
             // Validate phone number
             if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
-                session.setAttribute("error", "Phone number cannot be empty!");
+                SessionUtil.setSessionAttribute(request, "error", "Phone number cannot be empty!");
                 response.sendRedirect(request.getContextPath() + "/user/profile");
                 return;
             }
@@ -62,14 +62,14 @@ public class UpdatePhoneServlet extends HttpServlet {
             
             // Check if contains only digits
             if (!cleanPhone.matches("^\\d+$")) {
-                session.setAttribute("error", "Phone number can only contain digits!");
+                SessionUtil.setSessionAttribute(request, "error", "Phone number can only contain digits!");
                 response.sendRedirect(request.getContextPath() + "/user/profile");
                 return;
             }
             
             // Vietnamese phone number validation (10-11 digits starting with 0)
             if (!cleanPhone.matches("^0[0-9]{9,10}$")) {
-                session.setAttribute("error", "Please enter a valid Vietnamese phone number (10-11 digits starting with 0)!");
+                SessionUtil.setSessionAttribute(request, "error", "Please enter a valid Vietnamese phone number (10-11 digits starting with 0)!");
                 response.sendRedirect(request.getContextPath() + "/user/profile");
                 return;
             }
@@ -77,8 +77,8 @@ public class UpdatePhoneServlet extends HttpServlet {
             boolean updateSuccess = userService.updatePhoneNumber(user.getUserId(), cleanPhone);
             if (updateSuccess) {
                 User updatedUser = userService.findById(user.getUserId());
-                session.setAttribute("user", updatedUser);
-                session.setAttribute("success", "Phone number updated successfully!");
+                SessionUtil.setSessionAttribute(request, "user", updatedUser);
+                SessionUtil.setSessionAttribute(request, "success", "Phone number updated successfully!");
                 String profileRedirect = "/user/profile";
                 try {
                     Role userRole = roleService.findById(updatedUser.getRoleId());
@@ -91,15 +91,15 @@ public class UpdatePhoneServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + profileRedirect);
                 return;
             } else {
-                session.setAttribute("error", "Failed to update phone number!");
+                SessionUtil.setSessionAttribute(request, "error", "Failed to update phone number!");
             }
 
         } catch (NotFoundException ex) {
             LOGGER.log(Level.SEVERE, "User not found while updating phone number", ex);
-            session.setAttribute("error", "User not found!");
+            SessionUtil.setSessionAttribute(request, "error", "User not found!");
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Error updating phone number", ex);
-            session.setAttribute("error", "An error occurred while updating phone number!");
+            SessionUtil.setSessionAttribute(request, "error", "An error occurred while updating phone number!");
         }
         
         response.sendRedirect(request.getContextPath() + "/user/profile");
