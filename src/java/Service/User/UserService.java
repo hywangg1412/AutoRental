@@ -233,4 +233,15 @@ public class UserService implements IUserService {
     public List<User> searchUsers(String searchTerm) throws SQLException {
         return userRepsitory.searchUsers(searchTerm);
     }
+     public User findByPhoneNumber(String phoneNumber) {
+        try {
+            if (phoneNumber == null || phoneNumber.isEmpty()) {
+                return null;
+            }
+            return userRepsitory.findByPhoneNumber(phoneNumber);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error finding user by phone number: " + phoneNumber, e);
+            return null;
+        }
+    }
 }
