@@ -461,6 +461,53 @@ try (ResultSet rs = stmt.executeQuery()) {
             throw e;
         }
     }
+
+    /**
+     * Search bookings by status and keyword (customer name or booking code), with pagination.
+     */
+    public List<Booking> searchBookings(String status, String keyword, int offset, int limit) throws SQLException {
+        List<Booking> bookings = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM Booking WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+        if (status != null && !status.equalsIgnoreCase("all") && !status.trim().isEmpty()) {
+            sql.append(" AND LOWER(Status) = LOWER(?)");
+            params.add(status);
+        }
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" AND (LOWER(CustomerName) LIKE ? OR LOWER(BookingCode) LIKE ?)");
+            String kw = "%" + keyword.toLowerCase() + "%";
+            params.add(kw);
+            params.add(kw);
+        }
+        sql.append(" ORDER BY CreatedDate DESC LIMIT ? OFFSET ?");
+        params.add(limit);
+        params.add(offset);
+        try (Connection conn = dbContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    bookings.add(mapResultSetToBooking(rs));
+                }
+            }
+        }
+        return bookings;
+    }
+
+    /**
+     * Lấy danh sách status booking thực tế từ DB (distinct).
+     */
+    public List<String> getAllStatuses() throws SQLException {
+        List<String> statuses = new ArrayList<>();
+        String sql = "SELECT DISTINCT Status FROM Booking ORDER BY Status";
+        try (Connection conn = dbContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                statuses.add(rs.getString("Status"));
+            }
+        }
+        return statuses;
+    }
 }
 
 

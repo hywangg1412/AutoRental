@@ -399,10 +399,10 @@
                                                 <span class="insurance-price">
                                                     <c:choose>
                                                         <c:when test="${not empty bookingInfo.additionalInsuranceFee}">
-                                                            +${bookingInfo.formattedAdditionalInsuranceFee}/day
+                                                            +${bookingInfo.formattedAdditionalInsuranceFeeWithoutConversion}/day
                                                         </c:when>
                                                         <c:otherwise>
-                                                            +50,000 VND/day
+                                                            +30,000 VND/day
                                                         </c:otherwise>
                                                     </c:choose>
                                                 </span>
@@ -573,7 +573,7 @@
                                                             <li><strong>Hourly:</strong> Less than 24 hours = hourly rate</li>
                                                             <li><strong>Daily:</strong> 24 hours or more = daily rate</li>
                                                             <li><strong>Daily:</strong> Partial days (e.g., 3 days 5 hours) = converted to decimal days</li>
-                                                            <li><strong>Monthly:</strong> Less than 20 days = daily rate, 30 days or more = monthly rate</li>
+                                                            <li><strong>Monthly:</strong> Less than 30 days = daily rate, 30 days or more = monthly rate</li>
                                                         </ul>
 
                                                         <h4>Recommendations:</h4>
@@ -668,10 +668,10 @@
                                                             <!-- Lấy giá bảo hiểm tai nạn từ bookingInfo -->
                                                             <c:choose>
                                                                 <c:when test="${not empty bookingInfo.additionalInsuranceFee}">
-                                                                    +${bookingInfo.formattedAdditionalInsuranceFee}/day
+                                                                    +${bookingInfo.formattedAdditionalInsuranceFeeWithoutConversion}/day
                                                                 </c:when>
                                                                 <c:otherwise>
-                                                                    +50,000 VND/day
+                                                                    +30,000 VND/day
                                                                 </c:otherwise>
                                                             </c:choose>
                                                         </span>

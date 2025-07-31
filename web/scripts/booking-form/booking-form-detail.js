@@ -707,26 +707,7 @@ function validateDateRange() {
 // Expose validateDateRange globally
 window.validateDateRange = validateDateRange;
 
-// Không cần hàm setupTimeValidation và validateAndCorrectTime nữa vì Flatpickr đã xử lý
-// Nhưng giữ lại để tương thích ngược trong trường hợp Flatpickr không hoạt động
-function setupTimeValidation() {
-  // Giữ lại code nhưng không thực sự cần thiết khi đã dùng Flatpickr
-  const startDateInput = document.getElementById("startDate")
-  const endDateInput = document.getElementById("endDate")
-  ;[startDateInput, endDateInput].forEach((input) => {
-    if (input) {
-      input.addEventListener("change", function () {
-        // Không cần validate thủ công nữa vì Flatpickr đã xử lý
-      })
-    }
-  })
-}
 
-// Giữ lại hàm này nhưng chỉ để tương thích ngược
-function validateAndCorrectTime(input) {
-  // Flatpickr đã xử lý validation, nên chỉ trả về true
-  return true;
-}
 
 // Setup insurance handlers
 function setupInsuranceHandlers() {
@@ -1675,6 +1656,16 @@ function validateForm() {
     }
   }
 
+  // Validate phone number
+  const phoneInput = document.getElementById("customerPhone")
+  if (phoneInput && phoneInput.value.trim()) {
+    if (!validatePhone(phoneInput.value)) {
+      showAlert("Please enter a valid phone number (10-11 digits)", "error")
+      phoneInput.style.borderColor = "#ef4444"
+      isValid = false
+    }
+  }
+
   if (!isValid) {
     showAlert("Please fill in all required fields correctly.", "error")
   }
@@ -1765,16 +1756,7 @@ function goToDeposit() {
   }
 }
 
-// Utility function to format date
-function formatDate(date) {
-  return date.toISOString().slice(0, 16)
-}
 
-// Utility function to validate email
-function validateEmail(email) {
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  return emailPattern.test(email)
-}
 
 // Utility function to validate phone number
 function validatePhone(phone) {
