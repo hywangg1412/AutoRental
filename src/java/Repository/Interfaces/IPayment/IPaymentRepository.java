@@ -20,4 +20,5 @@ public interface IPaymentRepository {
     // Debug method để tìm transaction ID tương tự
     String findTransactionIdInRange(long minTimestamp, long maxTimestamp) throws SQLException;
     List<Payment> getAllPayments() throws SQLException;
+    Payment findByTxnRef(String txnRef) throws SQLException;
 } 
