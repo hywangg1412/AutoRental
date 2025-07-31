@@ -74,7 +74,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
         line-height: 1.6;
       }
       .btn-primary {
-        background: linear-gradient(45deg, #00C896, #00A67E);
+        background: linear-gradient(45deg, #00c896, #00a67e);
         border: none;
         padding: 12px 30px;
         border-radius: 25px;
@@ -86,11 +86,11 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
       .btn-primary:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 15px rgba(0, 200, 150, 0.3);
-        background: linear-gradient(45deg, #00A67E, #008B6B);
+        background: linear-gradient(45deg, #00a67e, #008b6b);
       }
       .btn-outline-secondary {
-        border: 2px solid #00C896;
-        color: #00C896;
+        border: 2px solid #00c896;
+        color: #00c896;
         padding: 10px 25px;
         border-radius: 25px;
         font-weight: 600;
@@ -100,12 +100,12 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
         transition: all 0.3s ease;
       }
       .btn-outline-secondary:hover {
-        background: #00C896;
+        background: #00c896;
         color: white;
         text-decoration: none;
       }
       .btn-danger {
-        background: linear-gradient(45deg, #00C896, #00A67E);
+        background: linear-gradient(45deg, #00c896, #00a67e);
         border: none;
         padding: 12px 30px;
         border-radius: 25px;
@@ -118,7 +118,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
       .btn-danger:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 15px rgba(0, 200, 150, 0.3);
-        background: linear-gradient(45deg, #00A67E, #008B6B);
+        background: linear-gradient(45deg, #00a67e, #008b6b);
       }
       .payment-info {
         background: #fff8e1;
@@ -147,13 +147,13 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
       }
       .next-steps {
         background: #f0fdf9;
-        border-left: 4px solid #00C896;
+        border-left: 4px solid #00c896;
         padding: 1.5rem;
         margin: 2rem 0;
         text-align: left;
       }
       .next-steps h6 {
-        color: #00C896;
+        color: #00c896;
         margin-bottom: 1rem;
       }
       .next-steps ul {
@@ -181,31 +181,27 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
           <i class="fas fa-times"></i>
         </div>
 
-        <h2 class="cancel-title">Thanh Toán Bị Hủy</h2>
+        <h2 class="cancel-title">Payment Cancelled</h2>
 
         <p class="cancel-message">
-          Giao dịch thanh toán đặt cọc xe thuê của bạn đã bị hủy bỏ. Đơn đặt xe
-          của bạn vẫn được giữ và bạn có thể thử thanh toán lại bất cứ lúc nào.
+          Your deposit transaction has been cancelled. Your booking is still
+          reserved and you can try to pay again at any time.
         </p>
 
         <div class="payment-info">
-          <h5 class="mb-3" style="color: #ffa726;">
-            <i class="fas fa-info-circle"></i> Thông Tin Giao Dịch
+          <h5 class="mb-3" style="color: #ffa726">
+            <i class="fas fa-info-circle"></i> Payment Details
           </h5>
           <div class="info-row">
-            <span>Loại thanh toán:</span>
-            <span><strong>Đặt cọc (30%)</strong></span>
+            <span>Payment Type:</span>
+            <span><strong>Deposit</strong></span>
           </div>
           <div class="info-row">
-            <span>Phương thức:</span>
-            <span><strong>PayOS</strong></span>
+            <span>Method:</span>
+            <span><strong>VNPAY</strong></span>
           </div>
           <div class="info-row">
-            <span>Trạng thái:</span>
-            <span class="status-badge">Đã hủy</span>
-          </div>
-          <div class="info-row">
-            <span>Thời gian hủy:</span>
+            <span>Time:</span>
             <span
               ><strong
                 ><fmt:formatDate
@@ -216,39 +212,40 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
         </div>
 
         <div class="next-steps">
-          <h6><i class="fas fa-lightbulb"></i> Bước tiếp theo:</h6>
+          <h6><i class="fas fa-lightbulb"></i> Next Steps:</h6>
           <ul>
-            <li>Kiểm tra lại thông tin đặt xe trong "Quản Lý Đặt Xe"</li>
-            <li>Thử thanh toán lại nếu muốn tiếp tục đặt cọc</li>
-            <li>Liên hệ hỗ trợ nếu gặp vấn đề kỹ thuật</li>
-            <li>Đặt xe khác nếu thay đổi ý định</li>
+            <li>Check your booking information in "Manage Bookings"</li>
+            <li>Try to pay again if you want to continue your booking</li>
+            <li>Contact support if you encounter technical issues</li>
+            <li>Book another car if you change your mind</li>
           </ul>
         </div>
 
         <div class="alert alert-warning mb-4">
           <i class="fas fa-exclamation-triangle"></i>
-          <strong>Lưu ý:</strong> Đơn đặt xe của bạn sẽ được giữ trong 24 giờ.
-          Sau thời gian này, xe có thể được đặt bởi khách hàng khác.
+          <strong>Important Note:</strong> Please sign the contract to complete
+          your booking procedure. After using the service, please pay the
+          remaining amount and any violation fees if applicable.
         </div>
 
         <div class="action-buttons">
           <a
-            href="${pageContext.request.contextPath}/customer/mytrip"
+            href="${pageContext.request.contextPath}/user/my-trip"
             class="btn btn-primary"
           >
-            <i class="fas fa-car"></i> Quản Lý Đặt Xe
+            <i class="fas fa-car"></i> Manage Bookings
           </a>
           <a
             href="${pageContext.request.contextPath}/pages/index.jsp"
             class="btn-outline-secondary"
           >
-            <i class="fas fa-home"></i> Về Trang Chủ
+            <i class="fas fa-home"></i> Home
           </a>
           <a
             href="${pageContext.request.contextPath}/pages/contact.jsp"
             class="btn btn-danger"
           >
-            <i class="fas fa-headset"></i> Hỗ Trợ
+            <i class="fas fa-headset"></i> Support
           </a>
         </div>
       </div>
@@ -259,7 +256,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
       // Auto redirect sau 45 giây
       setTimeout(function () {
         window.location.href =
-          "${pageContext.request.contextPath}/customer/mytrip";
+          "${pageContext.request.contextPath}/user/my-trip";
       }, 45000);
 
       // Hiển thị thời gian hiện tại

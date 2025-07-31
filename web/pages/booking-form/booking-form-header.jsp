@@ -17,7 +17,7 @@ user.getUsername() : "Account"; %>
                     class="nav-link"
                     >Home</a
                 >
-                <a href="#" class="nav-link">My Booking</a>
+                <a href="<%= request.getContextPath() %>/user/my-trip" class="nav-link">My Booking</a>
                 <div class="user-menu">
                     <i class="fas fa-bell"></i>
                     <i class="fas fa-comment"></i>

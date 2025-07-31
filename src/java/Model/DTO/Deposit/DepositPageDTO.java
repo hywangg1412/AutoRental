@@ -19,6 +19,7 @@ public class DepositPageDTO {
     private LocalDateTime returnDateTime;
     private String rentalType;              // hourly, daily, monthly
     private double duration;                // Thời gian thuê
+    private String formattedDuration;       // Chuỗi hiển thị duration đã format (ví dụ: "12 days 9 hours 30 minutes")
     private String status;                  // Trạng thái booking
 
     // Thông tin xe
@@ -107,6 +108,65 @@ public class DepositPageDTO {
 
     public void setDuration(double duration) {
         this.duration = duration;
+    }
+
+    public String getFormattedDuration() {
+        // Nếu đã có formattedDuration được đặt trực tiếp, ưu tiên sử dụng nó
+        if (formattedDuration != null && !formattedDuration.isEmpty()) {
+            return formattedDuration;
+        }
+        
+        // Nếu không, sử dụng logic cũ để tính toán
+        if (rentalType != null) {
+            switch (rentalType.toLowerCase()) {
+                case "hourly":
+                    if (duration < 1) {
+                        int minutes = (int) Math.round(duration * 60);
+                        return String.format("%d minutes", minutes);
+                    } else {
+                        int hours = (int) Math.floor(duration);
+                        int minutes = (int) Math.round((duration - hours) * 60);
+                        if (minutes > 0) {
+                            return String.format("%d hours %d minutes", hours, minutes);
+                        } else {
+                            return String.format("%d hours", hours);
+                        }
+                    }
+                case "daily":
+                    if (duration < 1) {
+                        int hours = (int) Math.round(duration * 24);
+                        return String.format("%d hours", hours);
+                    } else {
+                        int days = (int) Math.floor(duration);
+                        int hours = (int) Math.round((duration - days) * 24);
+                        if (hours > 0) {
+                            return String.format("%d days %d hours", days, hours);
+                        } else {
+                            return String.format("%d days", days);
+                        }
+                    }
+                case "monthly":
+                    if (duration < 1) {
+                        int days = (int) Math.round(duration * 30);
+                        return String.format("%d days", days);
+                    } else {
+                        int months = (int) Math.floor(duration);
+                        int days = (int) Math.round((duration - months) * 30);
+                        if (days > 0) {
+                            return String.format("%d months %d days", months, days);
+                        } else {
+                            return String.format("%d months", months);
+                        }
+                    }
+                default:
+                    return String.format("%.2f days", duration);
+            }
+        }
+        return String.format("%.2f days", duration);
+    }
+
+    public void setFormattedDuration(String formattedDuration) {
+        this.formattedDuration = formattedDuration;
     }
 
     public String getStatus() {
@@ -340,60 +400,7 @@ public class DepositPageDTO {
         }
     }
 
-    public String getFormattedDuration() {
-        if (rentalType != null) {
-            switch (rentalType.toLowerCase()) {
-                case "hourly":
-                    if (duration < 1) {
-                        // Nếu dưới 1 giờ, hiển thị theo phút
-                        int minutes = (int) Math.round(duration * 60);
-                        return String.format("%d minutes", minutes);
-                    } else {
-                        // Tính giờ và phút
-                        int hours = (int) Math.floor(duration);
-                        int minutes = (int) Math.round((duration - hours) * 60);
-                        if (minutes > 0) {
-                            return String.format("%d hours %d minutes", hours, minutes);
-                        } else {
-                            return String.format("%d hours", hours);
-                        }
-                    }
-                case "daily":
-                    if (duration < 1) {
-                        // Nếu dưới 1 ngày, hiển thị theo giờ
-                        int hours = (int) Math.round(duration * 24);
-                        return String.format("%d hours", hours);
-                    } else {
-                        // Tính ngày và giờ
-                        int days = (int) Math.floor(duration);
-                        int hours = (int) Math.round((duration - days) * 24);
-                        if (hours > 0) {
-                            return String.format("%d days %d hours", days, hours);
-                        } else {
-                            return String.format("%d days", days);
-                        }
-                    }
-                case "monthly":
-                    if (duration < 1) {
-                        // Nếu dưới 1 tháng, hiển thị theo ngày
-                        int days = (int) Math.round(duration * 30);
-                        return String.format("%d days", days);
-                    } else {
-                        // Tính tháng và ngày
-                        int months = (int) Math.floor(duration);
-                        int days = (int) Math.round((duration - months) * 30);
-                        if (days > 0) {
-                            return String.format("%d months %d days", months, days);
-                        } else {
-                            return String.format("%d months", months);
-                        }
-                    }
-                default:
-                    return String.format("%.2f days", duration);
-            }
-        }
-        return String.format("%.2f days", duration);
-    }
+
 
     /**
      * Format số tiền - trả về định dạng VND đúng cho JSP sử dụng PriceUtils
