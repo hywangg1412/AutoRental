@@ -109,16 +109,19 @@
                         </c:if>
                         
                         <div class="d-flex flex-column flex-sm-row gap-3 mb-4">
-                            <div class="input-group flex-grow-1">
-                                <span class="input-group-text"><i class="fas fa-search"></i></span>
-                                <input type="text" class="form-control" placeholder="Search by customer name or booking ID...">
-                            </div>
-                            <select class="form-select w-auto">
-                                <option value="all">All Status</option>
-                                <option value="pending">Pending</option>
-                                <option value="accepted">Accepted</option>
-                                <option value="rejected">Rejected</option>
-                            </select>
+                            <form class="d-flex flex-column flex-sm-row gap-3 w-100" method="get" action="">
+                                <div class="input-group flex-grow-1">
+                                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                    <input type="text" class="form-control" name="keyword" placeholder="Search by customer name or booking ID..." value="${searchKeyword != null ? searchKeyword : ''}">
+                                </div>
+                                <select class="form-select w-auto" name="status">
+                                    <option value="all" ${selectedStatus == null || selectedStatus == 'all' ? 'selected' : ''}>All Status</option>
+                                    <c:forEach var="status" items="${bookingStatuses}">
+                                        <option value="${status}" ${selectedStatus == status ? 'selected' : ''}>${status}</option>
+                                    </c:forEach>
+                                </select>
+                                <button type="submit" class="btn btn-primary">Search</button>
+                            </form>
                         </div>
                         <div class="table-responsive">
                             <table class="table">
@@ -496,7 +499,7 @@
             <ul class="pagination justify-content-center">
                 <c:forEach begin="1" end="${totalPages}" var="i">
                     <li class="page-item ${i == currentPage ? 'active' : ''}">
-                        <a class="page-link" href="?page=${i}">${i}</a>
+                        <a class="page-link" href="?page=${i}&keyword=${searchKeyword}&status=${selectedStatus}">${i}</a>
                     </li>
                 </c:forEach>
             </ul>

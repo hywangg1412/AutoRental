@@ -51,9 +51,10 @@
 
 /* Notification Dropdown Menu */
 #notificationDropdownMenu {
-    width: 350px !important;
+    width: 380px !important;
     max-height: 450px !important;
     overflow-y: auto !important;
+    overflow-x: hidden !important;
     padding: 0 !important;
     border-radius: 12px !important;
     box-shadow: 0 8px 32px rgba(60,60,60,0.18) !important;
@@ -75,13 +76,24 @@
 
 /* Notification Items */
 .notification-item {
-    padding: 10px 15px !important;
+    padding: 12px 15px !important;
     border-bottom: 1px solid #eee !important;
     transition: all 0.2s ease !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: space-between !important;
+    cursor: pointer !important;
+    border: none !important;
+    background: none !important;
+    text-decoration: none !important;
+    color: inherit !important;
+    min-height: 60px !important;
 }
 
 .notification-item:hover {
     background-color: #f5f5f5 !important;
+    text-decoration: none !important;
+    color: inherit !important;
 }
 
 .notification-item:last-child {
@@ -98,7 +110,14 @@
 
 /* Notification Content */
 .notification-content {
+    flex: 1 !important;
+    min-width: 0 !important;
+    overflow: visible !important;
+    display: flex !important;
+    flex-direction: column !important;
     width: 100% !important;
+    word-break: break-word !important;
+    max-width: 100% !important;
 }
 
 .notification-row {
@@ -106,6 +125,8 @@
     justify-content: space-between !important;
     align-items: flex-start !important;
     margin-bottom: 5px !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
 }
 
 .notification-title {
@@ -113,6 +134,14 @@
     color: #333 !important;
     flex: 1 !important;
     font-weight: 500 !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    line-height: 1.4 !important;
+    max-width: 280px !important;
+    margin-right: 8px !important;
+    hyphens: auto !important;
+    text-align: left !important;
 }
 
 .dot-unread {
@@ -122,30 +151,42 @@
     background-color: #01d28e !important;
     border-radius: 50% !important;
     margin-left: 5px !important;
+    flex-shrink: 0 !important;
 }
 
 .notification-time {
     color: #6c757d !important;
     font-size: 0.8rem !important;
     display: block !important;
+    margin-top: 3px !important;
+    white-space: nowrap !important;
 }
 
 /* Mark All Read Button */
 .mark-all-read-btn {
     color: #01d28e !important;
     font-weight: 500 !important;
+    text-decoration: none !important;
+    background: none !important;
+    border: none !important;
+    padding: 8px 15px !important;
+    width: 100% !important;
+    text-align: center !important;
 }
 
 .mark-all-read-btn:hover {
     background-color: #f0f8ff !important;
     color: #008c5e !important;
+    text-decoration: none !important;
 }
 
 /* Delete Button */
 .notification-actions {
     display: flex !important;
-    align-items: center !important;
+    align-items: flex-start !important;
     margin-left: 8px !important;
+    flex-shrink: 0 !important;
+    gap: 5px !important;
 }
 
 .btn-delete-notification {
@@ -157,6 +198,12 @@
     cursor: pointer !important;
     opacity: 0.6 !important;
     transition: opacity 0.2s !important;
+    flex-shrink: 0 !important;
+    min-width: 20px !important;
+    height: 20px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
 .btn-delete-notification:hover {
@@ -165,4 +212,108 @@
 
 .notification-item:hover .btn-delete-notification {
     opacity: 0.8 !important;
+}
+
+/* Responsive Design */
+@media (max-width: 767.98px) {
+    #notificationDropdownMenu {
+        width: 320px !important;
+        max-width: calc(100vw - 20px) !important;
+    }
+    
+    .notification-title {
+        max-width: 240px !important;
+        font-size: 0.85rem !important;
+    }
+    
+    .notification-actions {
+        margin-left: 5px !important;
+    }
+    
+    .notification-item {
+        padding: 10px 12px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    #notificationDropdownMenu {
+        width: 280px !important;
+    }
+    
+    .notification-title {
+        max-width: 200px !important;
+        font-size: 0.8rem !important;
+    }
+}
+
+/* Ensure dropdown doesn't get clipped */
+.dropdown-menu {
+    z-index: 1050 !important;
+}
+
+/* Fix for button overflow */
+.notification-wrapper .btn {
+    overflow: visible !important;
+}
+
+/* Ensure parent containers don't clip */
+.d-flex.align-items-center.gap-3 {
+    overflow: visible !important;
+}
+
+.navbar .d-flex {
+    overflow: visible !important;
+}
+
+/* Override any conflicting styles */
+.notification-item.dropdown-item {
+    border: none !important;
+    background: none !important;
+    padding: 12px 15px !important;
+}
+
+.notification-item.dropdown-item:hover,
+.notification-item.dropdown-item:focus,
+.notification-item.dropdown-item:active {
+    background-color: #f5f5f5 !important;
+    color: inherit !important;
+    text-decoration: none !important;
+}
+
+/* Text muted for empty state */
+.dropdown-item.text-muted {
+    color: #6c757d !important;
+    text-align: center !important;
+    padding: 15px !important;
+}
+
+/* Force text wrapping for long messages */
+.notification-title {
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    hyphens: auto !important;
+    max-width: 100% !important;
+}
+
+/* Ensure proper spacing */
+.notification-content {
+    padding-right: 0 !important;
+}
+
+/* Fix for very long text */
+.notification-row {
+    align-items: flex-start !important;
+}
+
+.notification-title {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin-right: 0 !important;
+    margin-bottom: 5px !important;
+}
+
+.notification-actions {
+    align-self: flex-start !important;
+    margin-top: 0 !important;
 } 

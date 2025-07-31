@@ -28,7 +28,8 @@
                             <li>
                                 <a class="dropdown-item notification-item ${noti.isRead() ? 'read' : 'unread'}" 
                                    href="${pageContext.request.contextPath}/staff/booking-approval-list"
-                                   data-notification-id="${noti.notificationId}">
+                                   data-notification-id="${noti.notificationId}"
+                                   data-notification-message="${noti.message}">
                                     <div class="notification-content">
                                         <div class="notification-row">
                                             <span class="notification-title">${noti.message}</span>

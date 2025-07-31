@@ -439,7 +439,7 @@ body {
 .btn-sm {
   padding: 0.375rem 0.75rem;
   font-size: 0.8rem;
-  min-width: 80px; /* Ensure consistent button width */
+  min-width: 40px;
   text-align: center;
 }
 

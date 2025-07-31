@@ -209,7 +209,7 @@ public class BookingCreateServlet extends HttpServlet {
             
             // Gửi notification cho tất cả staff khi có booking mới
             Service.NotificationService notificationService = new Service.NotificationService();
-            String message = "Bạn có một booking request mới.";
+            String message = "You have a new booking request.";
             notificationService.sendNotificationToAllStaff(message);
 
             // Step 8: Lấy lại booking từ DB và chuyển đến trang success
@@ -251,11 +251,11 @@ public class BookingCreateServlet extends HttpServlet {
         int pickupHour = pickupDateTime.getHour();
         int returnHour = returnDateTime.getHour();
         
-        if (pickupHour < EARLIEST_HOUR || pickupHour >= LATEST_HOUR) {
+        if (pickupHour < EARLIEST_HOUR || pickupHour > LATEST_HOUR) {
             throw new IllegalArgumentException("Pickup time must be between 7:00 AM and 10:00 PM.");
         }
         
-        if (returnHour < EARLIEST_HOUR || returnHour >= LATEST_HOUR) {
+        if (returnHour < EARLIEST_HOUR || returnHour > LATEST_HOUR) {
             throw new IllegalArgumentException("Return time must be between 7:00 AM and 10:00 PM.");
         }
     }

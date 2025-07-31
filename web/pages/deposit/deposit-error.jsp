@@ -76,7 +76,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
         line-height: 1.6;
       }
       .btn-primary {
-        background: linear-gradient(45deg, #00C896, #00A67E);
+        background: linear-gradient(45deg, #00c896, #00a67e);
         border: none;
         padding: 12px 30px;
         border-radius: 25px;
@@ -88,11 +88,11 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
       .btn-primary:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 15px rgba(0, 200, 150, 0.3);
-        background: linear-gradient(45deg, #00A67E, #008B6B);
+        background: linear-gradient(45deg, #00a67e, #008b6b);
       }
       .btn-outline-secondary {
-        border: 2px solid #00C896;
-        color: #00C896;
+        border: 2px solid #00c896;
+        color: #00c896;
         padding: 10px 25px;
         border-radius: 25px;
         font-weight: 600;
@@ -102,12 +102,12 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
         transition: all 0.3s ease;
       }
       .btn-outline-secondary:hover {
-        background: #00C896;
+        background: #00c896;
         color: white;
         text-decoration: none;
       }
       .btn-warning {
-        background: linear-gradient(45deg, #00C896, #00A67E);
+        background: linear-gradient(45deg, #00c896, #00a67e);
         border: none;
         padding: 12px 30px;
         border-radius: 25px;
@@ -120,7 +120,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
       .btn-warning:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 15px rgba(0, 200, 150, 0.3);
-        background: linear-gradient(45deg, #00A67E, #008B6B);
+        background: linear-gradient(45deg, #00a67e, #008b6b);
       }
       .error-details {
         background: #fef2f2;
@@ -151,13 +151,13 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
       }
       .troubleshooting {
         background: #f0fdf9;
-        border-left: 4px solid #00C896;
+        border-left: 4px solid #00c896;
         padding: 1.5rem;
         margin: 2rem 0;
         text-align: left;
       }
       .troubleshooting h6 {
-        color: #00C896;
+        color: #00c896;
         margin-bottom: 1rem;
       }
       .troubleshooting ul {
@@ -206,11 +206,11 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
       }
       .alert-info {
         background-color: #f0fdf9;
-        border-color: #00C896;
+        border-color: #00c896;
         color: #065f46;
       }
       .alert-info .fas {
-        color: #00C896;
+        color: #00c896;
       }
     </style>
   </head>
@@ -221,41 +221,39 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
           <i class="fas fa-exclamation-triangle"></i>
         </div>
 
-        <h2 class="error-title">Lỗi Thanh Toán</h2>
+        <h2 class="error-title">Payment Error</h2>
 
         <p class="error-message">
-          Đã xảy ra lỗi trong quá trình xử lý thanh toán đặt cọc của bạn. Vui
-          lòng thử lại hoặc liên hệ bộ phận hỗ trợ để được giúp đỡ.
+          An error occurred while processing your deposit payment. Please try
+          again or contact support for assistance.
         </p>
 
-        <!-- Hiển thị thông báo lỗi chi tiết từ server -->
+        <!-- Show error message from server if available -->
         <c:if test="${not empty param.errorMessage}">
           <div class="error-message-detail">
             <i class="fas fa-exclamation-circle"></i>
-            <strong>Chi tiết lỗi:</strong> ${param.errorMessage}
+            <strong>Error Details:</strong> ${param.errorMessage}
           </div>
         </c:if>
 
         <div class="error-details">
-          <h5 class="mb-3" style="color: #ff6b6b;"><i class="fas fa-bug"></i> Thông Tin Giao Dịch</h5>
+          <h5 class="mb-3" style="color: #ff6b6b">
+            <i class="fas fa-bug"></i> Payment Details
+          </h5>
           <div class="detail-row">
-            <span>Loại giao dịch:</span>
-            <span><strong>Đặt cọc (30%)</strong></span>
+            <span>Transaction Type:</span>
+            <span><strong>Deposit</strong></span>
           </div>
           <div class="detail-row">
-            <span>Phương thức:</span>
+            <span>Method:</span>
             <span><strong>VNPay</strong></span>
           </div>
           <div class="detail-row">
-            <span>Trạng thái:</span>
-            <span class="status-badge">Lỗi</span>
-          </div>
-          <div class="detail-row">
-            <span>Thời gian:</span>
+            <span>Time:</span>
             <span><strong id="current-time"></strong></span>
           </div>
           <div class="detail-row">
-            <span>Mã lỗi:</span>
+            <span>Error Code:</span>
             <span
               ><strong>
                 <c:choose>
@@ -269,13 +267,13 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
           </div>
           <c:if test="${not empty param.txnRef}">
             <div class="detail-row">
-              <span>Mã giao dịch:</span>
+              <span>Transaction Ref:</span>
               <span><strong>${param.txnRef}</strong></span>
             </div>
           </c:if>
           <c:if test="${not empty param.responseCode}">
             <div class="detail-row">
-              <span>Mã phản hồi VNPay:</span>
+              <span>VNPay Response Code:</span>
               <span><strong>${param.responseCode}</strong></span>
             </div>
           </c:if>
@@ -301,68 +299,70 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
         </c:if>
 
         <div class="troubleshooting">
-          <h6><i class="fas fa-tools"></i> Hướng dẫn khắc phục:</h6>
+          <h6><i class="fas fa-tools"></i> Troubleshooting:</h6>
           <ul>
             <c:choose>
               <c:when test="${param.responseCode == '51'}">
                 <li>
-                  <strong>Tài khoản không đủ số dư:</strong> Vui lòng kiểm tra
-                  số dư tài khoản
+                  <strong>Insufficient funds:</strong> Please check your account
+                  balance
                 </li>
-                <li>Liên hệ ngân hàng để xác nhận trạng thái tài khoản</li>
+                <li>Contact your bank to confirm account status</li>
               </c:when>
               <c:when test="${param.responseCode == '12'}">
                 <li>
-                  <strong>Thẻ/Tài khoản bị khóa:</strong> Liên hệ ngân hàng để
-                  mở khóa
+                  <strong>Card/Account locked:</strong> Contact your bank to
+                  unlock
                 </li>
-                <li>Sử dụng phương thức thanh toán khác</li>
+                <li>Use another payment method</li>
               </c:when>
               <c:when test="${param.responseCode == '24'}">
-                <li><strong>Giao dịch bị hủy:</strong> Bạn đã hủy giao dịch</li>
-                <li>Thử lại nếu muốn tiếp tục thanh toán</li>
+                <li>
+                  <strong>Transaction cancelled:</strong> You cancelled the
+                  transaction
+                </li>
+                <li>Try again if you want to continue payment</li>
               </c:when>
               <c:otherwise>
-                <li>Kiểm tra kết nối internet của bạn</li>
-                <li>Đảm bảo thông tin thẻ thanh toán chính xác</li>
-                <li>
-                  Thử sử dụng trình duyệt khác hoặc tắt trình chặn quảng cáo
-                </li>
-                <li>Kiểm tra số dư tài khoản ngân hàng</li>
-                <li>Thử lại sau 5-10 phút</li>
+                <li>Check your internet connection</li>
+                <li>Ensure your card information is correct</li>
+                <li>Try another browser or disable ad blockers</li>
+                <li>Check your bank account balance</li>
+                <li>Try again after 5-10 minutes</li>
               </c:otherwise>
             </c:choose>
           </ul>
         </div>
 
         <div class="contact-support">
-          <i class="fas fa-headset" style="color: #00C896;"></i>
-          <strong>Cần hỗ trợ?</strong> Liên hệ hotline:
-          <strong>1900-xxxx</strong> hoặc email:
+          <i class="fas fa-headset" style="color: #00c896"></i>
+          <strong>Need help?</strong> Contact hotline:
+          <strong>1900-xxxx</strong> or email:
           <strong>support@autorental.com</strong>
         </div>
 
         <div class="alert alert-info mb-4">
           <i class="fas fa-info-circle"></i>
-          <strong>Đừng lo lắng!</strong> Đơn đặt xe của bạn vẫn được bảo lưu.
-          Bạn có thể thử thanh toán lại hoặc chọn phương thức thanh toán khác.
+          <strong>Important Note:</strong> Please sign the contract to complete
+          your booking procedure. After using the service, please pay the
+          remaining amount and any violation fees if applicable.
         </div>
 
         <div class="action-buttons">
           <a href="javascript:history.back()" class="btn btn-warning">
-            <i class="fas fa-redo"></i> Thử Lại
+            <i class="fas fa-redo"></i> Try Again
           </a>
           <a
-            href="${pageContext.request.contextPath}/customer/mytrip"
+            href="${pageContext.request.contextPath}/user/my-trip"
             class="btn btn-primary"
           >
-            <i class="fas fa-car"></i> Quản Lý Đặt Xe
+            <i class="fas fa-car"></i> Manage Bookings
           </a>
           <a
             href="${pageContext.request.contextPath}/pages/contact.jsp"
             class="btn-outline-secondary"
           >
-            <i class="fas fa-phone"></i> Liên Hệ Hỗ Trợ
+            <i class="fas fa-phone"></i> Contact Support
           </a>
         </div>
       </div>

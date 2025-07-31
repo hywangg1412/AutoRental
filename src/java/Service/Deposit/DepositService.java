@@ -19,6 +19,7 @@ import Model.Entity.Deposit.Terms;
 import Repository.Interfaces.IDeposit.IDepositRepository;
 import Repository.Interfaces.IDeposit.ITermsRepository;
 import Service.Interfaces.IDeposit.IDepositService;
+import Service.Booking.BookingService;
 
 /**
  * Service xử lý logic đặt cọc - STYLE ĐỂ SINH VIÊN DỄ HIỂU
@@ -30,7 +31,9 @@ public class DepositService implements IDepositService {
     private static final Logger LOGGER = Logger.getLogger(DepositService.class.getName());
     
     // ========== CÁC HẰNG SỐ TÍNH TOÁN - DỄ HIỂU ==========
-    private static final double DEPOSIT_PERCENTAGE = 0.30;    // 30% đặt cọc
+    private static final double DEPOSIT_PERCENTAGE = 0.10;    // 10% đặt cọc (cho base amount >= 3 triệu)
+    private static final double FIXED_DEPOSIT_AMOUNT = 300.0; // 300.000 VND cố định (cho base amount < 3 triệu)
+    private static final double DEPOSIT_THRESHOLD = 3000.0;   // 3 triệu VND (đơn vị DB)
     private static final double VAT_PERCENTAGE = 0.10;        // 10% VAT
     private static final double VEHICLE_INSURANCE_RATE = 0.02; // 2% bảo hiểm vật chất/năm
     
@@ -48,10 +51,12 @@ public class DepositService implements IDepositService {
 
     private final IDepositRepository depositRepository;
     private final ITermsRepository termsRepository;
+    private final BookingService bookingService; // Tái sử dụng logic từ BookingService
 
     public DepositService(IDepositRepository depositRepository, ITermsRepository termsRepository) {
         this.depositRepository = depositRepository;
         this.termsRepository = termsRepository;
+        this.bookingService = new BookingService(); // Tạo instance để tái sử dụng
     }
 
     // ========== PHƯƠNG THỨC CHÍNH - LẤY DỮ LIỆU DEPOSIT ==========
@@ -208,8 +213,8 @@ public class DepositService implements IDepositService {
             LOGGER.info("Pickup: " + booking.getPickupDateTime());
             LOGGER.info("Return: " + booking.getReturnDateTime());
             
-            // Sử dụng logic từ BookingService
-            DurationResult durationResult = calculateDuration(
+            // TÁI SỬ DỤNG TRỰC TIẾP TỪ BOOKINGSERVICE - ĐẢM BẢO TÍNH NHẤT QUÁN
+            DurationResult durationResult = bookingService.calculateDuration(
                 booking.getPickupDateTime(), 
                 booking.getReturnDateTime(), 
                 rentalType
@@ -218,11 +223,17 @@ public class DepositService implements IDepositService {
             // Set duration từ DurationResult
             dto.setDuration(durationResult.getBillingUnitsAsDouble());
             
+            // Set formattedDuration từ DurationResult (giống như staff-booking)
+            if (durationResult.getFormattedDuration() != null) {
+                dto.setFormattedDuration(durationResult.getFormattedDuration());
+            }
+            
             LOGGER.info(String.format("Duration calculation result: %s %s %s", 
                 durationResult.getBillingUnits(), 
                 durationResult.getUnitType(),
                 durationResult.getNote() != null ? "(" + durationResult.getNote() + ")" : ""
             ));
+            LOGGER.info("Formatted duration: " + dto.getFormattedDuration());
             LOGGER.info("=== END DURATION CALCULATION ===");
         } else {
             dto.setDuration(1.0); // Default 1 ngày
@@ -230,105 +241,9 @@ public class DepositService implements IDepositService {
         }
     }
 
-    /**
-     * TÁI SỬ DỤNG LOGIC DURATION TỪ BOOKINGSERVICE
-     * Tính thời gian thuê theo loại thuê với quy tắc tối thiểu
-     */
-    public DurationResult calculateDuration(java.time.LocalDateTime start, java.time.LocalDateTime end, String rentalType) {
-        if (start == null || end == null) {
-            throw new IllegalArgumentException("Thời gian bắt đầu và kết thúc không được null");
-        }
 
-        if (end.isBefore(start)) {
-            throw new IllegalArgumentException("Thời gian kết thúc phải sau thời gian bắt đầu");
-        }
 
-        Duration duration = Duration.between(start, end);
 
-        switch (rentalType.toLowerCase()) {
-            case "hourly":
-                return calculateHourlyDuration(duration);
-            case "daily":
-                return calculateDailyDuration(duration);
-            case "monthly":
-                return calculateMonthlyDuration(duration);
-            default:
-                return calculateDailyDuration(duration); // Default là daily
-        }
-    }
-
-    /**
-     * Tính duration theo giờ - ĐỒNG BỘ VỚI BOOKINGSERVICE
-     * Cập nhật: Nếu thời gian thuê vượt quá 24 giờ, khuyến nghị chuyển sang thuê theo ngày
-     */
-    private DurationResult calculateHourlyDuration(Duration duration) {
-        double actualHours = duration.toMinutes() / 60.0;
-        double ceilHours = Math.ceil(actualHours);
-        double billingHours = Math.max(ceilHours, MIN_HOURLY_DURATION);
-        
-        String note = null;
-        if (actualHours < MIN_HOURLY_DURATION) {
-            note = "Tối thiểu 4 giờ được áp dụng";
-        } else if (actualHours > 24.0) {
-            note = "Thời gian thuê vượt quá 24 giờ, khuyến nghị chuyển sang thuê theo ngày";
-        }
-
-        return new DurationResult(
-                BigDecimal.valueOf(billingHours).setScale(2, RoundingMode.HALF_UP),
-                "hour",
-                note
-        );
-    }
-
-    /**
-     * Tính duration theo ngày - ĐỒNG BỘ VỚI BOOKINGSERVICE
-     * Cập nhật: Nếu thời gian thuê dưới 24 giờ, tự động chuyển sang tính theo giờ
-     * Nếu thời gian thuê từ 24 giờ trở lên, tính theo ngày
-     */
-    private DurationResult calculateDailyDuration(Duration duration) {
-        double totalHours = duration.toMinutes() / 60.0;
-        
-        // Nếu thời gian thuê dưới 24 giờ, tự động chuyển sang tính theo giờ
-        if (totalHours < 24.0) {
-            // Áp dụng quy tắc tính theo giờ (tối thiểu 4 giờ)
-            double ceilHours = Math.ceil(totalHours);
-            double billingHours = Math.max(ceilHours, MIN_HOURLY_DURATION);
-            
-            return new DurationResult(
-                BigDecimal.valueOf(billingHours).setScale(2, RoundingMode.HALF_UP),
-                "hour", // Đơn vị là giờ
-                "Thời gian thuê dưới 24 giờ, tự động tính theo giờ"
-            );
-        } 
-        // Nếu thời gian thuê từ 24 giờ trở lên, tính theo ngày
-        else {
-            // Tính số ngày và làm tròn lên
-            double days = totalHours / 24.0;
-            double billingDays = Math.ceil(days);
-
-        return new DurationResult(
-                BigDecimal.valueOf(billingDays).setScale(2, RoundingMode.HALF_UP),
-                "day",
-                null
-        );
-        }
-    }
-
-    /**
-     * Tính duration theo tháng - ĐỒNG BỘ VỚI BOOKINGSERVICE
-     */
-    private DurationResult calculateMonthlyDuration(Duration duration) {
-        double totalDays = duration.toHours() / 24.0;
-        double actualMonths = totalDays / DAYS_PER_MONTH;
-        double billingMonths = Math.max(actualMonths, MIN_MONTHLY_DURATION);
-        billingMonths = Math.round(billingMonths * 100.0) / 100.0;
-
-        return new DurationResult(
-                BigDecimal.valueOf(billingMonths).setScale(2, RoundingMode.HALF_UP),
-                "month",
-                actualMonths < MIN_MONTHLY_DURATION ? "Tối thiểu 0.5 tháng được áp dụng" : null
-        );
-    }
 
     /**
      * TÍNH BẢO HIỂM VẬT CHẤT PER DAY THEO CÔNG THỨC SINH VIÊN CUNG CẤP
@@ -525,10 +440,17 @@ public class DepositService implements IDepositService {
             double totalAmount = subtotal + vatAmount;
             LOGGER.info("Total: " + subtotal + " + " + vatAmount + " = " + totalAmount);
             
-            // Bước 7: Đặt cọc = 300.000 VND (hardcode)
-            // Chuyển từ VND sang đơn vị DB (chia 1000)
-            double depositAmount = 300.0; // 300.000 VND = 300 đơn vị DB
-            LOGGER.info("Deposit (hardcode): 300.000 VND = " + depositAmount + " (DB value)");
+            // Bước 7: Tính tiền đặt cọc theo logic mới
+            double depositAmount;
+            if (subtotal >= DEPOSIT_THRESHOLD) {
+                // Nếu subtotal >= 3 triệu: đặt cọc = 10% của subtotal
+                depositAmount = subtotal * DEPOSIT_PERCENTAGE;
+                LOGGER.info("Deposit calculation (10%): " + subtotal + " × " + DEPOSIT_PERCENTAGE + " = " + depositAmount + " (DB value)");
+            } else {
+                // Nếu subtotal < 3 triệu: đặt cọc cố định 300.000 VND
+                depositAmount = FIXED_DEPOSIT_AMOUNT;
+                LOGGER.info("Deposit (fixed): " + FIXED_DEPOSIT_AMOUNT + " (DB value) = 300.000 VND");
+            }
 
             // Gán vào DTO (giá trị DB, format methods sẽ xử lý hiển thị)
             dto.setBaseRentalPrice(baseAmount);
@@ -553,7 +475,15 @@ public class DepositService implements IDepositService {
             dto.setSubtotal(baseAmount);
             dto.setVatAmount(baseAmount * VAT_PERCENTAGE);
             dto.setTotalAmount(baseAmount * (1 + VAT_PERCENTAGE));
-            dto.setDepositAmount(300.0); // 300.000 VND = 300 đơn vị DB
+            
+            // Tính tiền đặt cọc theo logic mới
+            double depositAmount;
+            if (baseAmount >= DEPOSIT_THRESHOLD) {
+                depositAmount = baseAmount * DEPOSIT_PERCENTAGE;
+            } else {
+                depositAmount = FIXED_DEPOSIT_AMOUNT;
+            }
+            dto.setDepositAmount(depositAmount);
         }
     }
 
@@ -566,7 +496,7 @@ public class DepositService implements IDepositService {
         LOGGER.info("--- Estimating daily rate ---");
         
         // Tính số ngày thuê bằng DurationResult để chính xác
-        DurationResult durationResult = calculateDuration(
+        DurationResult durationResult = bookingService.calculateDuration(
             booking.getPickupDateTime(), 
             booking.getReturnDateTime(), 
             booking.getRentalType() != null ? booking.getRentalType() : "daily"
@@ -604,7 +534,7 @@ public class DepositService implements IDepositService {
         LOGGER.info("--- Estimating daily rate with actual VND value ---");
         
         // Tính số ngày thuê bằng DurationResult để chính xác
-        DurationResult durationResult = calculateDuration(
+        DurationResult durationResult = bookingService.calculateDuration(
             booking.getPickupDateTime(), 
             booking.getReturnDateTime(), 
             booking.getRentalType() != null ? booking.getRentalType() : "daily"
