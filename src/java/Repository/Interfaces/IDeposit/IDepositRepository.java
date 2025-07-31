@@ -114,4 +114,37 @@ public interface IDepositRepository {
      * @return Tổng phí theo category
      */
     double getTotalSurchargesByCategory(UUID bookingId, String category) throws SQLException;
+    
+    // ========== VOUCHER VALIDATION METHODS ==========
+    
+    /**
+     * Kiểm tra user đã sử dụng voucher này chưa
+     * @param userId ID của user
+     * @param discountId ID của discount
+     * @return true nếu đã sử dụng
+     */
+    boolean hasUserUsedVoucher(UUID userId, UUID discountId) throws SQLException;
+    
+    /**
+     * Ghi lại việc user sử dụng voucher
+     * @param userId ID của user
+     * @param discountId ID của discount
+     * @return true nếu thành công
+     */
+    boolean recordVoucherUsage(UUID userId, UUID discountId) throws SQLException;
+    
+    /**
+     * Kiểm tra voucher có hợp lệ không (thời gian, trạng thái, giới hạn sử dụng)
+     * @param voucherCode Mã voucher
+     * @return Discount entity nếu hợp lệ, null nếu không hợp lệ
+     */
+    Discount validateVoucher(String voucherCode) throws SQLException;
+    
+    /**
+     * Kiểm tra booking có đủ điều kiện để áp dụng voucher không
+     * @param bookingId ID của booking
+     * @param minOrderAmount Số tiền tối thiểu của voucher
+     * @return true nếu đủ điều kiện
+     */
+    boolean isBookingEligibleForVoucher(UUID bookingId, double minOrderAmount) throws SQLException;
 }
