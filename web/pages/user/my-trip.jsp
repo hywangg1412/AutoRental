@@ -176,6 +176,9 @@
                                                                                         <c:when test="${trip.status eq 'PendingInspection'}">
                                                                                             <i class="bi bi-search"></i> Pending Inspection
                                                                                         </c:when>
+                                                                                        <c:when test="${trip.status eq 'InspectionCompleted'}">
+                                                                                            <i class="bi bi-check-circle"></i> Inspection Completed
+                                                                                        </c:when>
                                                                                         <c:otherwise>${trip.status}</c:otherwise>
                                                                                     </c:choose>
                                                                                 </span>
@@ -246,6 +249,12 @@
                                                                                     data-license-plate="${trip.carLicensePlate}">
                                                                                 Return Car
                                                                             </button>
+                                                                        </c:if>
+                                                                        <c:if test="${trip.status eq 'InspectionCompleted'}">
+                                                                            <a class="btn-mytrip-action btn-mytrip-green btn-sm"
+                                                                               href="${pageContext.request.contextPath}/payment/final-payment?bookingId=${trip.bookingId}">
+                                                                               Pay Remaining Amount
+                                                                            </a>
                                                                         </c:if>
                                                                     </div>
                                                                 </div>

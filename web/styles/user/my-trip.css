@@ -562,6 +562,15 @@ nav.ftco-navbar-light .nav-link {
     color: #fff;
 }
 
+.status-badge.status-PendingInspection {
+    background: #2563eb;
+    color: #fff;
+}
+
+.status-badge.status-InspectionCompleted {
+    background: #0000FF;
+    color: #fff;
+}
 .modal-content {
     border-radius: 18px !important;
     box-shadow: 0 8px 32px rgba(0,0,0,0.12) !important;

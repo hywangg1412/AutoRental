@@ -351,4 +351,24 @@ public class PaymentRepository implements IPaymentRepository {
         
         return payment;
     }
+    
+    @Override
+    public Payment findByTxnRef(String txnRef) throws SQLException {
+        String sql = "SELECT * FROM Payment WHERE TransactionId = ? ORDER BY CreatedDate DESC";
+        
+        try (Connection conn = db.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setString(1, txnRef);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToPayment(rs);
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error finding payment by transaction reference", e);
+            throw e;
+        }
+        return null;
+    }
 } 
