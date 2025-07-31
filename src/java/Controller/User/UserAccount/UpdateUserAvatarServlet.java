@@ -16,6 +16,7 @@ import java.util.UUID;
 import jakarta.servlet.annotation.MultipartConfig;
 import Service.Role.RoleService;
 import Model.Entity.Role.Role;
+import Utils.SessionUtil;
 
 @WebServlet(name = "UpdateUserAvatarServlet", urlPatterns = {"/user/update-avatar"})
 @MultipartConfig
@@ -39,7 +40,7 @@ public class UpdateUserAvatarServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        User user = (User) request.getSession().getAttribute("user");
+        User user = (User) SessionUtil.getSessionAttribute(request, "user");
         if (user == null) {
             response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp");
             return;
@@ -48,7 +49,7 @@ public class UpdateUserAvatarServlet extends HttpServlet {
 
         Part filePart = request.getPart("avatar");
         if (filePart == null || filePart.getSize() == 0) {
-            request.getSession().setAttribute("error", "No file selected!");
+            SessionUtil.setSessionAttribute(request, "error", "No file selected!");
             response.sendRedirect(request.getContextPath() + "/user/profile");
             return;
         }
@@ -60,8 +61,8 @@ public class UpdateUserAvatarServlet extends HttpServlet {
 
             if (updateSuccess) {
                 User updatedUser = userService.findById(userId);
-                request.getSession().setAttribute("user", updatedUser);
-                request.getSession().setAttribute("success", "Avatar updated successfully!");
+                SessionUtil.setSessionAttribute(request, "user", updatedUser);
+                SessionUtil.setSessionAttribute(request, "success", "Avatar updated successfully!");
                 String profileRedirect = "/user/profile";
                 try {
                     Role userRole = roleService.findById(updatedUser.getRoleId());
@@ -74,11 +75,11 @@ public class UpdateUserAvatarServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + profileRedirect);
                 return;
             } else {
-                request.getSession().setAttribute("error", "Failed to update avatar in database.");
+                SessionUtil.setSessionAttribute(request, "error", "Failed to update avatar in database.");
             }
         } catch (Exception e) {
             e.printStackTrace(); 
-            request.getSession().setAttribute("error", "Upload failed: " + e.getMessage());
+            SessionUtil.setSessionAttribute(request, "error", "Upload failed: " + e.getMessage());
         }
 
         response.sendRedirect(request.getContextPath() + "/user/profile");

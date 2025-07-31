@@ -23,6 +23,31 @@ import java.sql.SQLException;
 @WebServlet("/normalRegister")
 public class NormalRegisterServlet extends HttpServlet {
 
+    // Constants
+    private static final String SIGNUP_PAGE = "pages/authen/SignUp.jsp";
+    private static final String VERIFY_OTP_URL = "/verify-otp";
+    private static final String USER_ROLE = "USER";
+    private static final String ACTIVE_STATUS = "Active";
+    
+    // Validation patterns
+    private static final String EMAIL_PATTERN = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$";
+    private static final String PASSWORD_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,100}$";
+    
+    // Messages
+    private static final String MSG_ALL_FIELDS_REQUIRED = "All fields are required!";
+    private static final String MSG_USERNAME_TOO_SHORT = "Username must be at least 3 characters long!";
+    private static final String MSG_INVALID_EMAIL = "Invalid email format!";
+    private static final String MSG_INVALID_PASSWORD = "Password must be between 8 and 100 characters long and contain uppercase, lowercase, and numbers!";
+    private static final String MSG_PASSWORDS_NOT_MATCH = "Passwords do not match!";
+    private static final String MSG_USERNAME_DELETED = "This username is associated with a deleted account and cannot be reused.";
+    private static final String MSG_USERNAME_BANNED = "This username is associated with a banned account. Please contact support.";
+    private static final String MSG_USERNAME_TAKEN = "Username is already taken!";
+    private static final String MSG_EMAIL_DELETED = "This email is associated with a deleted account and cannot be reused.";
+    private static final String MSG_EMAIL_BANNED = "This email is associated with a banned account. Please contact support.";
+    private static final String MSG_EMAIL_EXISTS = "An account with this email already exists.";
+    private static final String MSG_ROLE_NOT_FOUND = "Default user role not found!";
+    private static final String MSG_UNEXPECTED_ERROR = "An unexpected error occurred. Please try again later.";
+
     private UserService userService;
     private RoleService roleService;
     private EmailOTPVerificationService emailOTPService;
@@ -39,7 +64,7 @@ public class NormalRegisterServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.sendRedirect("pages/authen/SignUp.jsp");
+        response.sendRedirect(SIGNUP_PAGE);
     }
 
     @Override
@@ -51,124 +76,123 @@ public class NormalRegisterServlet extends HttpServlet {
         String repassword = request.getParameter("repassword");
 
         // Validate input
-        if (username == null || username.trim().isEmpty() ||
-            email == null || email.trim().isEmpty() ||
-            password == null || password.trim().isEmpty()) {
-            forwardWithError(request, response, "All fields are required!");
-            return;
-        }
-        if (username.trim().length() < 3) {
-            forwardWithError(request, response, "Username must be at least 3 characters long!");
-            return;
-        }
-        if (!email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")) {
-            forwardWithError(request, response, "Invalid email format!");
-            return;
-        }
-        if (!password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,100}$")) {
-            forwardWithError(request, response, "Password must be between 8 and 100 characters long and contain uppercase, lowercase, and numbers!");
-            return;
-        }
-        if (!password.equals(repassword)) {
-            forwardWithError(request, response, "Passwords do not match!");
+        String validationError = validateInput(username, email, password, repassword);
+        if (validationError != null) {
+            forwardWithError(request, response, validationError);
             return;
         }
 
         try {
-            // Kiểm tra tài khoản đã tồn tại (để hiển thị thông báo phù hợp)
-            User existingUserByUsername = userService.findByUsername(username);
-            if (existingUserByUsername != null) {
-                String errorMsg = existingUserByUsername.isDeleted() ? "This username is associated with a deleted account and cannot be reused."
-                        : existingUserByUsername.isBanned() ? "This username is associated with a banned account. Please contact support."
-                        : "Username is already taken!";
-                forwardWithError(request, response, errorMsg);
-                return;
-            }
-            
-            User existingUserByEmail = userService.findByEmail(email);
-            if (existingUserByEmail != null) {
-                String errorMsg = existingUserByEmail.isDeleted() ? "This email is associated with a deleted account and cannot be reused."
-                        : existingUserByEmail.isBanned() ? "This email is associated with a banned account. Please contact support."
-                        : "An account with this email already exists.";
-                forwardWithError(request, response, errorMsg);
+            // Check existing users
+            String existingUserError = checkExistingUsers(username, email);
+            if (existingUserError != null) {
+                forwardWithError(request, response, existingUserError);
                 return;
             }
 
-            User user = new User();
-            user.setUsername(username);
-            user.setEmail(email);
-            user.setPasswordHash(ObjectUtils.hashPassword(password));
-            user.setCreatedDate(LocalDateTime.now());
-            user.setStatus("Active");
-            user.setUserId(UUID.randomUUID());
-            user.setNormalizedUserName(username.toUpperCase());
-            user.setNormalizedEmail(email.toUpperCase());
-            user.setEmailVerifed(false);
-            user.setSecurityStamp(UUID.randomUUID().toString());
-            user.setConcurrencyStamp(UUID.randomUUID().toString());
-            user.setTwoFactorEnabled(false);
-            user.setLockoutEnabled(true);
-            user.setAccessFailedCount(0);
-
-            Role userRole = roleService.findByRoleName(RoleConstants.USER);
-            if (userRole == null) {
-                forwardWithError(request, response, "Default user role not found!");
-                return;
-            }
-            user.setRoleId(userRole.getRoleId());
-            
+            // Create and save user
+            User user = createUser(username, email, password);
             userService.add(user);
 
             // Generate and send OTP
-            String otp = emailOTPService.generateOtp();
-            EmailOTPVerification otpEntity = new EmailOTPVerification();
-            otpEntity.setId(UUID.randomUUID());
-            otpEntity.setOtp(otp);
-            otpEntity.setUserId(user.getUserId());
-            otpEntity.setCreatedAt(LocalDateTime.now());
-            otpEntity.setExpiryTime(LocalDateTime.now().plusMinutes(10));
-            otpEntity.setIsUsed(false);
-            otpEntity.setResendCount(0);
-            otpEntity.setLastResendTime(null);
-            otpEntity.setResendBlockUntil(null);
-            emailOTPService.add(otpEntity);
-            
-            mailService.sendOtpEmail(user.getEmail(), otp, user.getUsername());
+            createAndSendOTP(user);
 
-            SessionUtil.setSessionAttribute(request, "userId", user.getUserId().toString());
-            SessionUtil.setSessionAttribute(request, "email", user.getEmail());
-            SessionUtil.setSessionAttribute(request, "username", user.getUsername());
-            
-            response.sendRedirect(request.getContextPath() + "/verify-otp");
+            // Set session attributes and redirect
+            setSessionAttributes(request, user);
+            response.sendRedirect(request.getContextPath() + VERIFY_OTP_URL);
             
         } catch (Exception e) {
-            forwardWithError(request, response, "An unexpected error occurred. Please try again later.");
+            forwardWithError(request, response, MSG_UNEXPECTED_ERROR);
         }
     }
 
-    private void handleUniqueConstraintViolation(SQLException e, HttpServletRequest request, HttpServletResponse response) 
-            throws ServletException, IOException {
-        String errorMessage = e.getMessage();
+    private String validateInput(String username, String email, String password, String repassword) {
+        if (username == null || username.trim().isEmpty() || email == null || email.trim().isEmpty() || 
+            password == null || password.trim().isEmpty()) {
+            return MSG_ALL_FIELDS_REQUIRED;
+        }
+        if (username.trim().length() < 3) {
+            return MSG_USERNAME_TOO_SHORT;
+        }
+        if (!email.matches(EMAIL_PATTERN)) {
+            return MSG_INVALID_EMAIL;
+        }
+        if (!password.matches(PASSWORD_PATTERN)) {
+            return MSG_INVALID_PASSWORD;
+        }
+        if (!password.equals(repassword)) {
+            return MSG_PASSWORDS_NOT_MATCH;
+        }
+        return null;
+    }
+
+    private String checkExistingUsers(String username, String email) {
+        User existingUserByUsername = userService.findByUsername(username);
+        if (existingUserByUsername != null) {
+            return existingUserByUsername.isDeleted() ? MSG_USERNAME_DELETED :
+                   existingUserByUsername.isBanned() ? MSG_USERNAME_BANNED : MSG_USERNAME_TAKEN;
+        }
         
-        if (errorMessage != null) {
-            if (errorMessage.contains("UQ_Users_Username") || errorMessage.contains("Username")) {
-                forwardWithError(request, response, "Username is already taken!");
-            } else if (errorMessage.contains("UQ_Users_Email") || errorMessage.contains("Email")) {
-                forwardWithError(request, response, "An account with this email already exists.");
-            } else if (errorMessage.contains("UQ_Users_NormalizedUserName")) {
-                forwardWithError(request, response, "Username is already taken!");
-            } else if (errorMessage.contains("UQ_Users_NormalizedEmail")) {
-                forwardWithError(request, response, "An account with this email already exists.");
-            } else {
-                forwardWithError(request, response, "Username or email is already taken!");
-            }
-        } else {
-            forwardWithError(request, response, "Username or email is already taken!");
+        User existingUserByEmail = userService.findByEmail(email);
+        if (existingUserByEmail != null) {
+            return existingUserByEmail.isDeleted() ? MSG_EMAIL_DELETED :
+                   existingUserByEmail.isBanned() ? MSG_EMAIL_BANNED : MSG_EMAIL_EXISTS;
         }
+        return null;
     }
 
-    private void forwardWithError(HttpServletRequest request, HttpServletResponse response, String errorMsg) throws ServletException, IOException {
+    private User createUser(String username, String email, String password) throws Exception {
+        Role userRole = roleService.findByRoleName(RoleConstants.USER);
+        if (userRole == null) {
+            throw new Exception(MSG_ROLE_NOT_FOUND);
+        }
+
+        User user = new User();
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setPasswordHash(ObjectUtils.hashPassword(password));
+        user.setCreatedDate(LocalDateTime.now());
+        user.setStatus(ACTIVE_STATUS);
+        user.setUserId(UUID.randomUUID());
+        user.setNormalizedUserName(username.toUpperCase());
+        user.setNormalizedEmail(email.toUpperCase());
+        user.setEmailVerifed(false);
+        user.setSecurityStamp(UUID.randomUUID().toString());
+        user.setConcurrencyStamp(UUID.randomUUID().toString());
+        user.setTwoFactorEnabled(false);
+        user.setLockoutEnabled(true);
+        user.setAccessFailedCount(0);
+        user.setRoleId(userRole.getRoleId());
+        
+        return user;
+    }
+
+    private void createAndSendOTP(User user) throws Exception {
+        String otp = emailOTPService.generateOtp();
+        EmailOTPVerification otpEntity = new EmailOTPVerification();
+        otpEntity.setId(UUID.randomUUID());
+        otpEntity.setOtp(otp);
+        otpEntity.setUserId(user.getUserId());
+        otpEntity.setCreatedAt(LocalDateTime.now());
+        otpEntity.setExpiryTime(LocalDateTime.now().plusMinutes(10));
+        otpEntity.setIsUsed(false);
+        otpEntity.setResendCount(0);
+        otpEntity.setLastResendTime(null);
+        otpEntity.setResendBlockUntil(null);
+        emailOTPService.add(otpEntity);
+        
+        mailService.sendOtpEmail(user.getEmail(), otp, user.getUsername());
+    }
+
+    private void setSessionAttributes(HttpServletRequest request, User user) {
+        SessionUtil.setSessionAttribute(request, "userId", user.getUserId().toString());
+        SessionUtil.setSessionAttribute(request, "email", user.getEmail());
+        SessionUtil.setSessionAttribute(request, "username", user.getUsername());
+    }
+
+    private void forwardWithError(HttpServletRequest request, HttpServletResponse response, String errorMsg) 
+            throws ServletException, IOException {
         request.setAttribute("error", errorMsg);
-        request.getRequestDispatcher("pages/authen/SignUp.jsp").forward(request, response);
+        request.getRequestDispatcher(SIGNUP_PAGE).forward(request, response);
     }
 }

@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import Utils.SessionUtil;
 
 // /requestPassword
 public class RequestPasswordServlet extends HttpServlet {
@@ -50,17 +51,17 @@ public class RequestPasswordServlet extends HttpServlet {
         try {
             User user = userService.findByEmail(email);
             if (user == null) {
-                request.setAttribute("error", "Email not found!");
+                SessionUtil.setSessionAttribute(request, "error", "Email not found!");
                 request.getRequestDispatcher("pages/authen/RequestPassword.jsp").forward(request, response);
                 return;
             }
             if (user.isDeleted()) {
-                request.setAttribute("error", "This account has been deleted and password cannot be reset.");
+                SessionUtil.setSessionAttribute(request, "error", "This account has been deleted and password cannot be reset.");
                 request.getRequestDispatcher("pages/authen/RequestPassword.jsp").forward(request, response);
                 return;
             }
             if (user.isBanned()) {
-                request.setAttribute("error", "This account has been banned. Please contact support.");
+                SessionUtil.setSessionAttribute(request, "error", "This account has been banned. Please contact support.");
                 request.getRequestDispatcher("pages/authen/RequestPassword.jsp").forward(request, response);
                 return;
             }
@@ -72,20 +73,20 @@ public class RequestPasswordServlet extends HttpServlet {
 
             boolean sent = resetPasswordService.sendResetEmail(user.getEmail(), resetLink, user.getUsername());
             if (sent) {
-                request.setAttribute("message", "A password reset link has been sent to your email address. Please check your inbox (and spam folder).");
+                SessionUtil.setSessionAttribute(request, "message", "A password reset link has been sent to your email address. Please check your inbox (and spam folder).");
                 PRTService.add(newToken);
             } else {
-                request.setAttribute("error", "Failed to send reset email. Please try again later.");
+                SessionUtil.setSessionAttribute(request, "error", "Failed to send reset email. Please try again later.");
             }
         } catch (Exception e) {
-            request.setAttribute("error", "An error occurred while processing your request. Please try again later.");
+            SessionUtil.setSessionAttribute(request, "error", "An error occurred while processing your request. Please try again later.");
         }
         request.getRequestDispatcher("/pages/authen/RequestPassword.jsp").forward(request, response);
     }
 
     private void forwardWithError(HttpServletRequest request, HttpServletResponse response, String errorMsg)
             throws ServletException, IOException {
-        request.setAttribute("error", errorMsg);
+        SessionUtil.setSessionAttribute(request, "error", errorMsg);
         request.getRequestDispatcher("/pages/authen/RequestPassword.jsp").forward(request, response);
     }
 

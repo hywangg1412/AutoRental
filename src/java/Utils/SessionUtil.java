@@ -7,12 +7,8 @@ import jakarta.servlet.http.HttpSession;
 
 public class SessionUtil {
 
-    public static HttpSession getSession(HttpServletRequest request) {
-        return request.getSession(true);
-    }
-
     public static void setSessionAttribute(HttpServletRequest request, String key, Object value) {
-        HttpSession session = getSession(request);
+        HttpSession session = request.getSession(true);
         session.setAttribute(key, value);
     }
 
@@ -61,9 +57,5 @@ public class SessionUtil {
         cookie.setMaxAge(0);
         cookie.setPath(path != null ? path : "/");
         response.addCookie(cookie);
-    }
-
-    public static boolean hasSession(HttpServletRequest request) {
-        return request.getSession(false) != null;
     }
 }

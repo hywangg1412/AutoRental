@@ -65,7 +65,7 @@ public class GoogleRegisterServlet extends HttpServlet {
                 } else {
                     errorMsg = "An account with this email already exists.";
                 }
-                request.setAttribute("error", errorMsg);
+                SessionUtil.setSessionAttribute(request, "error", errorMsg);
                 request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
                 return;
             }
@@ -74,21 +74,21 @@ public class GoogleRegisterServlet extends HttpServlet {
             newUser.setEmailVerifed(true);
             Role userRole = roleService.findByRoleName(RoleConstants.USER);
             if (userRole == null) {
-                request.setAttribute("error", "Default user role not found!");
+                SessionUtil.setSessionAttribute(request, "error", "Default user role not found!");
                 request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
                 return;
             }
             newUser.setRoleId(userRole.getRoleId());
             userService.add(newUser);
             
-            request.getSession().setAttribute("userId", newUser.getUserId().toString());
+            SessionUtil.setSessionAttribute(request, "userId", newUser.getUserId().toString());
             UserLogins userLogins = userMapper.mapGoogleUserToUserLogins(googleUser, newUser);
             userLoginsService.add(userLogins);
 
             response.sendRedirect(request.getContextPath() + "/setPassword");
             return;
         } catch (Exception e) {
-            request.setAttribute("error", "Google register failed - " + e.getMessage());
+            SessionUtil.setSessionAttribute(request, "error", "Google register failed - " + e.getMessage());
             request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
         }
     }

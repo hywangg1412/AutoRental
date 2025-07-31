@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.UUID;
 import Service.Role.RoleService;
 import Model.Entity.Role.Role;
+import Utils.SessionUtil;
 
 @WebServlet(name = "ChangePasswordServlet", urlPatterns = {"/user/change-password"})
 public class ChangePasswordServlet extends HttpServlet {
@@ -36,7 +37,7 @@ public class ChangePasswordServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        User user = (User) request.getSession().getAttribute("user");
+        User user = (User) SessionUtil.getSessionAttribute(request, "user");
         if (user == null) {
             response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp");
             return;
@@ -91,11 +92,11 @@ public class ChangePasswordServlet extends HttpServlet {
         try {
             user.setPasswordHash(ObjectUtils.hashPassword(newPassword));
             userService.update(user);
-            request.getSession().invalidate();
-            request.setAttribute("success", "Password changed successfully. Please login again.");
+            SessionUtil.invalidateSession(request);
+            SessionUtil.setSessionAttribute(request, "success", "Password changed successfully. Please login again.");
             request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
         } catch (Exception ex) {
-            request.setAttribute("error", "An error occurred: " + ex.getMessage());
+            SessionUtil.setSessionAttribute(request, "error", "An error occurred: " + ex.getMessage());
             String forwardPage = "/pages/user/change-password.jsp";
             try {
                 Role userRole = roleService.findById(user.getRoleId());
