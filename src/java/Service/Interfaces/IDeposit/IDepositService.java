@@ -30,6 +30,15 @@ public interface IDepositService {
     boolean applyVoucher(UUID bookingId, String voucherCode, UUID userId) throws Exception;
     
     /**
+     * Xóa voucher khỏi booking
+     * @param bookingId ID của booking
+     * @param userId ID của user
+     * @return true nếu thành công
+     * @throws Exception khi có lỗi
+     */
+    boolean removeVoucher(UUID bookingId, UUID userId) throws Exception;
+    
+    /**
      * Đồng ý với điều khoản
      * @param bookingId ID của booking
      * @param userId ID của user
