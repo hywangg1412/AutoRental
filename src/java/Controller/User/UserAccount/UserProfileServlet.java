@@ -27,6 +27,7 @@ import Service.Role.RoleService;
 import Model.Entity.Role.Role;
 import Service.User.CitizenIdCardService;
 import Model.Entity.User.CitizenIdCard;
+import Mapper.UserProfileMapper;
 
 @WebServlet("/user/profile")
 public class UserProfileServlet extends HttpServlet {
@@ -49,45 +50,6 @@ public class UserProfileServlet extends HttpServlet {
         citizenIdCardService = new CitizenIdCardService();
     }
 
-    private UserProfileDTO mapUserToProfileDTO(User user, List<UserLogins> userLogins) {
-        if (user == null) {
-            throw new IllegalArgumentException("User cannot be null");
-        }
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-        UserProfileDTO profile = new UserProfileDTO();
-        profile.setUsername(user.getUsername());
-        profile.setUserDOB(user.getUserDOB());
-        // Format userDOB to dd/MM/yyyy string for display
-        if (user.getUserDOB() != null) {
-            profile.setUserDOBFormatted(user.getUserDOB().format(formatter));
-        }
-        profile.setGender(user.getGender());
-        profile.setPhoneNumber(user.getPhoneNumber());
-        profile.setEmail(user.getEmail());
-        profile.setEmailVerified(user.isEmailVerifed());
-        profile.setAvatarUrl(user.getAvatarUrl());
-        profile.setCreatedAt(user.getCreatedDate().format(formatter));
-
-        Set<String> providers = new HashSet<>();
-        for (UserLogins login : userLogins) {
-            String provider = login.getLoginProvider().toLowerCase();
-            providers.add(provider);
-            
-            // Set provider account names
-            if ("facebook".equals(provider)) {
-                profile.setHasFacebookLogin(true);
-                profile.setFacebookAccountName(login.getProviderDisplayName());
-            } else if ("google".equals(provider)) {
-                profile.setHasGoogleLogin(true);
-                profile.setGoogleAccountName(login.getProviderDisplayName());
-            }
-        }
-
-        return profile;
-    }
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -102,7 +64,7 @@ public class UserProfileServlet extends HttpServlet {
             }
 
             List<UserLogins> userLogins = userLoginsService.findByUserId(user.getUserId());
-            UserProfileDTO profile = mapUserToProfileDTO(user, userLogins);
+            UserProfileDTO profile = UserProfileMapper.mapUserToProfileDTO(user, userLogins);
             request.setAttribute("profile", profile);
 
             DriverLicense driverLicense = null;

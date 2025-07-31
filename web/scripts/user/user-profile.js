@@ -706,42 +706,35 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
 
-        // Save functionality - DISABLED AJAX, using form submit instead
+        // Save functionality - Simplified with single action
         driverLicenseElements.saveBtn.addEventListener('click', function(e) {
             e.preventDefault();
             if (!validateDriverLicenseFields()) return;
 
-            // Set action based on what changed
-            let action = 'updateInfo';
+            // Check if there are any changes
             const hasNewImage = licenseImageInput && licenseImageInput.files && licenseImageInput.files.length > 0;
             let infoChanged = false;
             
-            // So sánh giá trị hiện tại với giá trị gốc
+            // Compare current values with original values
             driverLicenseElements.inputs.forEach(input => {
                 if (input.element.value !== originalValues[input.element.id]) {
                     infoChanged = true;
                 }
             });
 
-            if (hasNewImage && infoChanged) {
-                action = 'updateBoth';
-            } else if (hasNewImage) {
-                action = 'uploadImage';
-            } else if (infoChanged) {
-                action = 'updateInfo';
-            } else {
-                // Không có gì thay đổi, không gửi request
+            if (!hasNewImage && !infoChanged) {
+                // No changes detected
                 showBootstrapToast({message: 'No changes to update', title: 'Notice'});
                 return;
             }
 
-            // Set action in form and submit
+            // Set action to 'update' for all cases
             const actionInput = driverLicenseElements.form.querySelector('input[name="action"]');
             if (actionInput) {
-                actionInput.value = action;
+                actionInput.value = 'update';
             }
             
-            console.log('Submitting form with action:', action);
+            console.log('Submitting form with action: update');
             driverLicenseElements.form.submit();
         });
 
