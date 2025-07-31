@@ -45,7 +45,7 @@ public class ReturnCarRequestServlet extends HttpServlet {
             // Cập nhật trạng thái thành PendingInspection để đưa vào danh sách chờ kiểm tra
             bookingService.updateBookingStatus(bookingId, BookingStatusConstants.PENDING_INSPECTION);
             // Gửi thông báo cho staff
-            notificationService.sendNotificationToAllStaff("Khách hàng đã yêu cầu trả xe, đang chờ kiểm tra. Mã booking: " + booking.getBookingCode());
+            notificationService.sendNotificationToAllStaff("Customer has requested car return, waiting for inspection. Booking code: " + booking.getBookingCode());
             out.print("{\"success\":true,\"message\":\"Yêu cầu trả xe đã được gửi, vui lòng chờ nhân viên kiểm tra xe\"}");
         } catch (Exception e) {
             out.print("{\"success\":false,\"message\":\"Lỗi: " + e.getMessage() + "\"}");
