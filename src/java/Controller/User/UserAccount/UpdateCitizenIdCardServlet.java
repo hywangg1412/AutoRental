@@ -109,8 +109,8 @@ public class UpdateCitizenIdCardServlet extends HttpServlet {
             card.setCitizenIdNumber(citizenIdNumber);
             card.setFullName(fullName);
             card.setDob(FormatUtils.parseDateSafely(dob));
-            card.setIssueDate(FormatUtils.parseDateSafely(issueDate));
-            card.setPlaceOfIssue(placeOfIssue);
+            card.setCitizenIdIssuedDate(FormatUtils.parseDateSafely(issueDate));
+            card.setCitizenIdIssuedPlace(placeOfIssue);
             card.setCitizenIdImageUrl(frontUrl);
             card.setCitizenIdBackImageUrl(backUrl);
 
