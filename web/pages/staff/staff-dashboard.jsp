@@ -48,11 +48,14 @@
             <i class="fas fa-car"></i> Car Condition
           </a>
         </li>
+        <!-- Car Availability navigation item hidden -->
+        <!--
         <li class="nav-item">
           <a class="nav-link" href="${pageContext.request.contextPath}/pages/staff/staff-car-availability.jsp">
             <i class="fas fa-clipboard-list"></i> Car Availability
           </a>
         </li>
+        -->
         <!-- <li class="nav-item">
           <a class="nav-link" href="#">
             <i class="fas fa-shield-alt"></i> Damage Reports
