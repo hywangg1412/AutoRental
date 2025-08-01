@@ -139,7 +139,7 @@
                                                         <div class="text-center mb-2"
                                                             style="font-size:0.95rem;color:#111;">Joined:
                                                             ${profile.createdAt}</div>
-                                                        <div class="d-flex justify-content-center">
+                                                        <!-- <div class="d-flex justify-content-center">
                                                             <span
                                                                 class="badge bg-white rounded-3 px-3 py-2 d-flex align-items-center gap-1"
                                                                 style="color:#111;font-weight:600;font-size:1rem;border:1.5px solid #e0e0e0;">
@@ -147,7 +147,7 @@
                                                                     style="color:#fbbf24;font-size:1.1em;"></i>
                                                                 0 Point
                                                             </span>
-                                                        </div>
+                                                        </div> -->
                                                     </div>
                                                     <!-- Right: Account Details -->
                                                     <div class="col-md-8" style="margin-top:2.4rem;">

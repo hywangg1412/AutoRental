@@ -26,6 +26,7 @@
             <div class="signup-title">Create an account</div>
             <%
                 String errMsg = (String) request.getAttribute("error");
+                String emailFromError = (String) request.getAttribute("email");
                 if (errMsg == null) {
                     errMsg = (String) session.getAttribute("error");
                     if (errMsg != null) session.removeAttribute("error");
@@ -64,7 +65,8 @@
                 </div>
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required>
+                    <input type="email" id="email" name="email" required 
+                           value="<%= emailFromError != null ? emailFromError : "" %>">
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
