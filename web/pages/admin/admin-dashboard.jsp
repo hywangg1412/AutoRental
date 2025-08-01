@@ -167,28 +167,7 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
             </svg>
             Staff
           </a>
-          <a
-            href="${pageContext.request.contextPath}/pages/admin/manage-reports.jsp"
-            class="nav-item"
-          >
-            <svg class="nav-item-icon" fill="currentColor" viewBox="0 0 24 24">
-              <path
-                d="M3 17h3v-7H3v7zm5 0h3v-12H8v12zm5 0h3v-4h-3v4zm5 0h3v-9h-3v9z"
-              />
-            </svg>
-            Reports
-          </a>
-          <a
-            href="${pageContext.request.contextPath}/pages/admin/contract-details.jsp"
-            class="nav-item "
-          >
-            <svg class="nav-item-icon" fill="currentColor" viewBox="0 0 24 24">
-              <path
-                d="M16.5 3a2.5 2.5 0 0 1 3.54 3.54l-12.5 12.5-4.24 1.06 1.06-4.24L16.5 3zm2.04 2.12a.5.5 0 0 0-.71 0l-1.34 1.34 1.71 1.71 1.34-1.34a.5.5 0 0 0 0-.71l-1-1zm-2.75 2.75L5 16.66V19h2.34l10.79-10.79-1.34-1.34z"
-              />
-            </svg>
-            Contract Details
-          </a>
+
           <a
             href="${pageContext.request.contextPath}/discount"
             class="nav-item"
@@ -335,9 +314,13 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
       </div>
 
       <div class="chart-container">
+        <div class="chart-box">
+          <h5>Payment Status Distribution</h5>
+          <canvas id="paymentPieChart" width="300" height="300"></canvas>
+        </div>
         <div class="chart-box" style="flex: 2; min-width: 600px">
-          <h5>Monthly Revenue Chart</h5>
-          <canvas id="revenueLineChart" width="600" height="350"></canvas>
+          <h5>Monthly Payment Status Comparison</h5>
+          <canvas id="paymentBarChart" width="600" height="350"></canvas>
         </div>
       </div>
     </div>
@@ -353,9 +336,19 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
     <script type="application/json" id="voucherByMonthJson">
       ${voucherByMonthJson}
     </script>
-    <script type="application/json" id="revenueByMonthJson">
-      ${revenueByMonthJson}
+    <script type="application/json" id="completedPaymentsByMonthJson">
+      ${completedPaymentsByMonthJson}
     </script>
+    <script type="application/json" id="pendingPaymentsByMonthJson">
+      ${pendingPaymentsByMonthJson}
+    </script>
+    <script type="application/json" id="failedPaymentsByMonthJson">
+      ${failedPaymentsByMonthJson}
+    </script>
+    <script type="application/json" id="cancelledPaymentsByMonthJson">
+      ${cancelledPaymentsByMonthJson}
+    </script>
+
     <script>
       // Bar chart: Tổng số User, Staff, Car, Voucher
       new Chart(document.getElementById('barChart'), {
@@ -488,22 +481,63 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
           }
         }
       });
-      const revenueByMonth = JSON.parse(document.getElementById('revenueByMonthJson').innerHTML.trim());
-      // Vẽ biểu đồ doanh thu các tháng
-      new Chart(document.getElementById('revenueLineChart'), {
-        type: 'line',
+      // Pie chart: Payment Status
+      new Chart(document.getElementById('paymentPieChart'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Completed', 'Pending', 'Failed', 'Cancelled'],
+          datasets: [{
+            data: [${completedPayments}, ${pendingPayments}, ${failedPayments}, ${cancelledPayments}],
+            backgroundColor: [
+              'rgba(75, 192, 192, 0.8)',
+              'rgba(255, 206, 86, 0.8)',
+              'rgba(255, 99, 132, 0.8)',
+              'rgba(201, 203, 207, 0.8)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'bottom' },
+            tooltip: { enabled: true }
+          }
+        }
+      });
+      
+      // Bar chart: Payment Status by Month
+      const completedPaymentsByMonth = JSON.parse(document.getElementById('completedPaymentsByMonthJson').innerHTML.trim());
+      const pendingPaymentsByMonth = JSON.parse(document.getElementById('pendingPaymentsByMonthJson').innerHTML.trim());
+      const failedPaymentsByMonth = JSON.parse(document.getElementById('failedPaymentsByMonthJson').innerHTML.trim());
+      const cancelledPaymentsByMonth = JSON.parse(document.getElementById('cancelledPaymentsByMonthJson').innerHTML.trim());
+      
+      new Chart(document.getElementById('paymentBarChart'), {
+        type: 'bar',
         data: {
           labels: monthLabels,
-          datasets: [{
-            label: 'Revenue (VND)',
-            data: revenueByMonth,
-            borderColor: 'rgba(255, 99, 132, 1)',
-            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-            tension: 0.3,
-            fill: true,
-            pointRadius: 4,
-            pointBackgroundColor: 'rgba(255, 99, 132, 1)'
-          }]
+          datasets: [
+            {
+              label: 'Completed',
+              data: completedPaymentsByMonth,
+              backgroundColor: 'rgba(75, 192, 192, 0.8)'
+            },
+            {
+              label: 'Pending',
+              data: pendingPaymentsByMonth,
+              backgroundColor: 'rgba(255, 206, 86, 0.8)'
+            },
+            {
+              label: 'Failed',
+              data: failedPaymentsByMonth,
+              backgroundColor: 'rgba(255, 99, 132, 0.8)'
+            },
+            {
+              label: 'Cancelled',
+              data: cancelledPaymentsByMonth,
+              backgroundColor: 'rgba(201, 203, 207, 0.8)'
+            }
+          ]
         },
         options: {
           responsive: true,
@@ -512,14 +546,7 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
             tooltip: { enabled: true }
           },
           scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                callback: function(value) {
-                  return value.toLocaleString('en-US') + ' VND';
-                }
-              }
-            }
+            y: { beginAtZero: true }
           }
         }
       });
