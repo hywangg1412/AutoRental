@@ -57,6 +57,45 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
         justify-content: center;
         align-items: center;
       }
+      
+      /* Phone number validation styles */
+      input[name="phoneNumber"].is-valid {
+        border-color: #28a745 !important;
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
+      }
+      
+      input[name="phoneNumber"].is-invalid {
+        border-color: #dc3545 !important;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+      }
+      
+      input[name="phoneNumber"].validating {
+        border-color: #ffc107 !important;
+        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25) !important;
+      }
+      
+      .input-success {
+        color: #28a745;
+        font-size: 13px;
+        margin-top: 2px;
+      }
+      
+      .input-error {
+        color: #e74c3c;
+        font-size: 13px;
+        margin-top: 2px;
+      }
+      
+      /* Loading indicator for phone validation */
+      input[name="phoneNumber"].validating::after {
+        content: "Đang kiểm tra...";
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 12px;
+        color: #ffc107;
+      }
     </style>
   </head>
 
@@ -576,17 +615,162 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
         if (!valid && firstError) firstError.focus();
         return valid;
       }
+
+      // Function to check phone number uniqueness via AJAX
+      function checkPhoneNumberUniqueness(phoneNumber, userId = null) {
+        return new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open('POST', '${pageContext.request.contextPath}/admin/check-phone-unique', true);
+          xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+          
+          let data = 'phoneNumber=' + encodeURIComponent(phoneNumber);
+          if (userId) {
+            data += '&userId=' + encodeURIComponent(userId);
+          }
+          
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+              if (xhr.status === 200) {
+                try {
+                  const response = JSON.parse(xhr.responseText);
+                  resolve(response.isUnique);
+                } catch (e) {
+                  reject('Invalid response format');
+                }
+              } else {
+                reject('Request failed');
+              }
+            }
+          };
+          
+          xhr.send(data);
+        });
+      }
+
+      // Add real-time phone number validation
+      function addPhoneNumberValidation() {
+        const phoneInputs = document.querySelectorAll('input[name="phoneNumber"]');
+        phoneInputs.forEach(input => {
+          let timeoutId;
+          
+          input.addEventListener('input', function() {
+            clearTimeout(timeoutId);
+            const phoneNumber = this.value.trim();
+            
+            // Remove existing error messages
+            const existingError = this.parentNode.querySelector('.input-error');
+            if (existingError) {
+              existingError.remove();
+            }
+            
+            // Clear existing validation classes
+            this.classList.remove('is-valid', 'is-invalid');
+            
+            if (phoneNumber && /^0\d{9,10}$/.test(phoneNumber)) {
+              // Add loading state
+              this.classList.add('validating');
+              
+              timeoutId = setTimeout(() => {
+                const userId = this.closest('form').querySelector('input[name="userId"]')?.value;
+                
+                checkPhoneNumberUniqueness(phoneNumber, userId)
+                  .then(isUnique => {
+                    this.classList.remove('validating');
+                    if (isUnique) {
+                      this.classList.add('is-valid');
+                      showSuccess(this, 'Số điện thoại có thể sử dụng');
+                    } else {
+                      this.classList.add('is-invalid');
+                      showError(this, 'Số điện thoại đã tồn tại trong hệ thống');
+                    }
+                  })
+                  .catch(error => {
+                    this.classList.remove('validating');
+                    console.error('Phone validation error:', error);
+                  });
+              }, 500); // Delay to avoid too many requests
+            }
+          });
+        });
+      }
+
+      function showSuccess(input, msg) {
+        const existingMsg = input.parentNode.querySelector('.input-success');
+        if (existingMsg) existingMsg.remove();
+        
+        const success = document.createElement('div');
+        success.className = 'input-success';
+        success.style.color = '#28a745';
+        success.style.fontSize = '13px';
+        success.style.marginTop = '2px';
+        success.textContent = msg;
+        input.parentNode.appendChild(success);
+      }
+
+      function showError(input, msg) {
+        const existingMsg = input.parentNode.querySelector('.input-error');
+        if (existingMsg) existingMsg.remove();
+        
+        const err = document.createElement('div');
+        err.className = 'input-error';
+        err.style.color = '#e74c3c';
+        err.style.fontSize = '13px';
+        err.style.marginTop = '2px';
+        err.textContent = msg;
+        input.parentNode.appendChild(err);
+      }
       // Gắn validate cho form thêm/sửa user
       window.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('form[action$="/admin/user-management"]').forEach(form => {
           if (form.querySelector('[name=action][value=add]')) {
-            form.onsubmit = function() { return validateUserForm(form); };
+            form.onsubmit = function(e) { 
+              e.preventDefault();
+              return validateUserFormWithPhoneCheck(form, 'add'); 
+            };
           }
           if (form.querySelector('[name=action][value=update]')) {
-            form.onsubmit = function() { return validateUserForm(form); };
+            form.onsubmit = function(e) { 
+              e.preventDefault();
+              return validateUserFormWithPhoneCheck(form, 'update'); 
+            };
           }
         });
+        
+        // Initialize phone number validation
+        addPhoneNumberValidation();
       });
+
+      // Enhanced form validation with phone number uniqueness check
+      async function validateUserFormWithPhoneCheck(form, action) {
+        // First do basic validation
+        if (!validateUserForm(form)) {
+          return false;
+        }
+        
+        // Check phone number uniqueness
+        const phoneInput = form.querySelector('input[name="phoneNumber"]');
+        const phoneNumber = phoneInput.value.trim();
+        const userId = form.querySelector('input[name="userId"]')?.value;
+        
+        if (phoneNumber && /^0\d{9,10}$/.test(phoneNumber)) {
+          try {
+            const isUnique = await checkPhoneNumberUniqueness(phoneNumber, userId);
+            if (!isUnique) {
+              showError(phoneInput, 'Số điện thoại đã tồn tại trong hệ thống');
+              phoneInput.focus();
+              return false;
+            }
+          } catch (error) {
+            console.error('Phone validation error:', error);
+            showError(phoneInput, 'Lỗi kiểm tra số điện thoại');
+            return false;
+          }
+        }
+        
+        // If all validations pass, submit the form
+        form.submit();
+        return true;
+      }
 
       document.getElementById('userStatusFilter').addEventListener('change', function() {
         var status = this.value;
