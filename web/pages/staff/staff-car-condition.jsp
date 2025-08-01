@@ -398,6 +398,90 @@
                   rows="2"
                 ></textarea>
               </div>
+              
+              <!-- Surcharges Section -->
+              <div class="card mt-4">
+                <div class="card-header">
+                  <h6 class="mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Surcharges (if applicable)</h6>
+                </div>
+                <div class="card-body">
+                  <!-- Late Return -->
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="lateReturn" name="lateReturn" value="true">
+                        <label class="form-check-label" for="lateReturn">
+                          Late return
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="lateReturnHours" class="form-label">Hours late</label>
+                      <input type="number" class="form-control" id="lateReturnHours" name="lateReturnHours" min="0" step="0.5" disabled>
+                    </div>
+                  </div>
+                  
+                  <!-- Fuel Shortage -->
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="fuelShortage" name="fuelShortage" value="true">
+                        <label class="form-check-label" for="fuelShortage">
+                          Fuel shortage
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="fuelPrice" class="form-label">Fuel price (VND)</label>
+                      <input type="number" class="form-control" id="fuelPrice" name="fuelPrice" min="0" disabled>
+                    </div>
+                  </div>
+                  
+                  <!-- Traffic Violations -->
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="trafficViolations" name="trafficViolations" value="true">
+                        <label class="form-check-label" for="trafficViolations">
+                          Traffic violations
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="violationFine" class="form-label">Fine amount (VND)</label>
+                      <input type="number" class="form-control" id="violationFine" name="violationFine" min="0" disabled>
+                    </div>
+                  </div>
+                  
+                  <!-- Excessive Cleaning -->
+                  <div class="row mb-3">
+                    <div class="col-md-12">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="excessiveCleaning" name="excessiveCleaning" value="true">
+                        <label class="form-check-label" for="excessiveCleaning">
+                          Car cleaning (200,000 VND)
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Minor Damage -->
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="minorDamage" name="minorDamage" value="true">
+                        <label class="form-check-label" for="minorDamage">
+                          Minor damage
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="damageAmount" class="form-label">Repair cost (VND)</label>
+                      <input type="number" class="form-control" id="damageAmount" name="damageAmount" min="100000" max="500000" disabled>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </form>
           </div>
           <div class="modal-footer">
@@ -479,10 +563,6 @@
               <p id="viewConditionDescription" class="form-control-static"></p>
             </div>
             <div class="mb-3">
-              <label class="form-label">Damage Images</label>
-              <div id="viewDamageImages" class="row"></div>
-            </div>
-            <div class="mb-3">
               <label class="form-label">Note</label>
               <p id="viewNote" class="form-control-static"></p>
             </div>
@@ -526,16 +606,16 @@
     
     <script>
       $(document).ready(function () {
-        // Xử lý sự kiện khi nhấp vào nút "Inspect Vehicle"
+        // Handle event when clicking "Inspect Vehicle" button
         $(".inspect-btn").click(function () {
           const bookingId = $(this).data("booking-id");
           const carId = $(this).data("car-id");
           
-          // Set booking ID và car ID vào form
+          // Set booking ID and car ID into form
           $("#bookingId").val(bookingId);
           $("#carId").val(carId);
           
-          // Lấy thông tin chi tiết về booking
+          // Get detailed booking information
           $.ajax({
             url: "${pageContext.request.contextPath}/staff/car-condition",
             type: "GET",
@@ -561,17 +641,17 @@
           });
         });
         
-        // Xử lý sự kiện khi nhấp vào nút "Accept Return Car"
+        // Handle event when clicking "Accept Return Car" button
         $("#acceptReturnBtn").click(function () {
           const form = $("#inspectionForm")[0];
           const formData = new FormData(form);
           
-          // Kiểm tra các trường bắt buộc
+          // Check required fields
           if (!validateForm()) {
             return;
           }
           
-          // Gửi form
+          // Submit form
           $.ajax({
             url: "${pageContext.request.contextPath}/staff/car-condition",
             type: "POST",
@@ -580,11 +660,11 @@
             contentType: false,
             success: function (response) {
               if (response.success) {
-                // Hiển thị thông báo thành công
+                // Show success message
                 $("#successMessage").text("Accept Car Return Successfully");
                 $("#successModal").modal("show");
                 
-                // Đóng modal và làm mới trang khi nhấn OK
+                // Close modal and refresh page when clicking OK
                 $("#successModalCloseBtn").click(function() {
                   $("#inspectionModal").modal("hide");
                   location.reload();
@@ -599,14 +679,13 @@
           });
         });
         
-        // Xử lý sự kiện khi nhấp vào nút "View Details"
+        // Handle event when clicking "View Details" button
         $(".view-details-btn").click(function () {
           const logId = $(this).data("log-id");
           const bookingId = $(this).data("booking-id");
           const checkType = $(this).data("check-type");
           const conditionStatus = $(this).data("condition-status");
           const conditionDescription = $(this).data("condition-description");
-          const damageImages = $(this).data("damage-images");
           const note = $(this).data("note");
           const odometer = $(this).data("odometer");
           const fuelLevel = $(this).data("fuel-level");
@@ -617,32 +696,6 @@
           $("#viewConditionDescription").text(conditionDescription || "N/A");
           $("#viewNote").text(note || "N/A");
           $("#viewFuelLevel").text(fuelLevel || "N/A");
-          
-          // Hiển thị hình ảnh
-          $("#viewDamageImages").empty();
-          let images = [];
-          if (damageImages && damageImages.trim().startsWith("[") && damageImages.trim().length > 2) {
-            // Là JSON array và không rỗng
-            images = JSON.parse(damageImages);
-          } else if (damageImages && damageImages.trim() !== "" && damageImages.trim() !== "[]") {
-            // Là 1 URL đơn lẻ
-            images = [damageImages];
-          }
-          // Nếu rỗng thì images sẽ là []
-          console.log("images after parse:", images);
-          if (images.length === 0) {
-            $("#viewDamageImages").append("<p>No damage images</p>");
-          } else {
-            images.forEach(function (imageUrl) {
-              if (imageUrl && imageUrl.trim() !== "" && imageUrl !== "null") { // chỉ render nếu có URL hợp lệ
-                $("#viewDamageImages").append(`
-                  <div class="col-md-4 mb-2">
-                    <img src="${imageUrl}" class="img-fluid rounded" alt="Damage Image">
-                  </div>
-                `);
-              }
-            });
-          }
 
           // Hiển thị thêm các trường mới
           $("#viewCarModel").text($(this).data("car-model") || "N/A");
@@ -651,7 +704,36 @@
           $("#viewReturnDate").text($(this).data("return-date") ? formatDateTime($(this).data("return-date")) : "N/A");
         });
         
-        // Xử lý sự kiện khi chọn file ảnh
+        // Handle events for surcharge checkboxes
+        $("#lateReturn").change(function() {
+          $("#lateReturnHours").prop("disabled", !this.checked);
+          if (!this.checked) {
+            $("#lateReturnHours").val("");
+          }
+        });
+        
+        $("#fuelShortage").change(function() {
+          $("#fuelPrice").prop("disabled", !this.checked);
+          if (!this.checked) {
+            $("#fuelPrice").val("");
+          }
+        });
+        
+        $("#trafficViolations").change(function() {
+          $("#violationFine").prop("disabled", !this.checked);
+          if (!this.checked) {
+            $("#violationFine").val("");
+          }
+        });
+        
+        $("#minorDamage").change(function() {
+          $("#damageAmount").prop("disabled", !this.checked);
+          if (!this.checked) {
+            $("#damageAmount").val("");
+          }
+        });
+        
+        // Handle event when selecting image files
         $("#damageImages").change(function () {
           const files = this.files;
           const previewContainer = $("#imagePreviewContainer");
@@ -672,8 +754,8 @@
                     .html("&times;")
                     .click(function() {
                       $(this).parent().remove();
-                      // Không thể trực tiếp xóa file từ input file, nên chúng ta sẽ cần tạo một FileList mới
-                      // Tuy nhiên, FileList là read-only, nên chúng ta sẽ cần xử lý khi submit form
+                      // Cannot directly delete file from input file, so we need to create a new FileList
+                      // However, FileList is read-only, so we need to handle when submitting form
                     });
                   
                   previewItem.append(img).append(removeBtn);
@@ -685,7 +767,7 @@
           }
         });
         
-        // Hàm kiểm tra form
+        // Form validation function
         function validateForm() {
           const fuelLevel = $("#fuelLevel").val();
           const conditionStatus = $("#conditionStatus").val();
@@ -703,10 +785,10 @@
           return true;
         }
         
-        // Hàm định dạng ngày giờ
+        // Date time formatting function
         function formatDateTime(dateTimeStr) {
           if (!dateTimeStr) return "";
-          // Dùng dayjs để parse và format
+          // Use dayjs to parse and format
           var d = dayjs(dateTimeStr);
           if (!d.isValid()) return dateTimeStr;
           return d.format("DD/MM/YYYY HH:mm");

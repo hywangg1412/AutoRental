@@ -116,7 +116,9 @@ public class UserBookingListServlet extends HttpServlet {
                     BookingStatusConstants.IN_PROGRESS.equals(booking.getStatus()) ||
                     BookingStatusConstants.DEPOSIT_PAID.equals(booking.getStatus()) ||
                     BookingStatusConstants.CONTRACT_SIGNED.equals(booking.getStatus()) ||
-                    BookingStatusConstants.WAITING_RETURN_CONFIRM.equals(booking.getStatus())) 
+                    BookingStatusConstants.WAITING_RETURN_CONFIRM.equals(booking.getStatus()) ||
+                    BookingStatusConstants.PENDING_INSPECTION.equals(booking.getStatus()) ||
+                    BookingStatusConstants.INSPECTION_COMPLETED.equals(booking.getStatus())) 
                     {
                     currentTrips.add(dto);
                 } else {

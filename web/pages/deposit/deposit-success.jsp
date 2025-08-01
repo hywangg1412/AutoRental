@@ -189,7 +189,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
             <i class="fas fa-car"></i> Manage Bookings
           </a>
           <a
-            href="${pageContext.request.contextPath}/pages/index.jsp"
+            href="${pageContext.request.contextPath}/pages/home"
             class="btn-outline-secondary"
           >
             <i class="fas fa-home"></i> Home
