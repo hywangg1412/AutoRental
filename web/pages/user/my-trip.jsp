@@ -253,7 +253,7 @@
                                                                         <c:if test="${trip.status eq 'InspectionCompleted'}">
                                                                             <a class="btn-mytrip-action btn-mytrip-green btn-sm"
                                                                                href="${pageContext.request.contextPath}/payment/final-payment?bookingId=${trip.bookingId}">
-                                                                               Pay Remaining Amount
+                                                                               Pay Balance
                                                                             </a>
                                                                         </c:if>
                                                                     </div>

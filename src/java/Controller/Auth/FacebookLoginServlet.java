@@ -1,5 +1,7 @@
     package Controller.Auth;
 
+import Exception.EventException;
+import Exception.NotFoundException;
     import Mapper.UserMapper;
     import Model.Constants.UserStatusConstants;
     import Model.Entity.OAuth.FacebookUser;
@@ -56,85 +58,136 @@
             try {
                 FacebookUser facebookUser = facebookAuthService.getUserInfo(code);
                 String email = facebookUser.getEmail();
+                
+                if (email == null || email.trim().isEmpty()) {
+                    request.setAttribute("error", "Cannot retrieve email from Facebook account. Please try again or contact support.");
+                    request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
+                    return;
+                }
+                
+                // Step 1: Check if this Facebook account is already linked to any user
                 UserLogins userLogin = userLoginsService.findByProviderAndKey("facebook", facebookUser.getFacebookId());
                 User user = null;
-                if (userLogin == null) {
-                    user = userService.findByEmail(email);
-                    if (user != null) {
-                        request.setAttribute("error", "This email is already registered. Please log in with your email and link your Facebook account from your profile.");
-                        request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
-                        return;
-                    } else {
-                        request.setAttribute("error", "This Facebook account has not been registered.");
+                
+                if (userLogin != null) {
+                    // Facebook account is already linked - proceed with login
+                    user = userService.findById(userLogin.getUserId());
+                    if (user == null) {
+                        request.setAttribute("error", "Linked account not found. Please contact support.");
                         request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
                         return;
                     }
                 } else {
-                    user = userService.findById(userLogin.getUserId());
-                }
-                if (user == null) {
-                    request.setAttribute("error", "This account does not exist.");
-                    request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
-                    return;
-                }
-                if (user.isDeleted()) {
-                    request.setAttribute("error", "This account has been deleted.");
-                    request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
-                    return;
-                }
-                if (user.isBanned()) {
-                    request.setAttribute("error", "This account has been banned. Please contact support.");
-                    request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
-                    return;
-                }
-                if (user.getAccessFailedCount() > 0) {
-                    user.setAccessFailedCount(0);
-                    userService.update(user);
-                }
-                if (!user.isActive()) {
-                    user.setStatus(UserStatusConstants.ACTIVE);
-                    userService.update(user);
-                }
-                if (!user.isEmailVerifed()) {
-                    EmailOTPVerification otp = emailOTPService.findByUserId(user.getUserId());
-                    if (otp != null) {
-                        mailService.sendOtpEmail(user.getEmail(), otp.getOtp(), user.getUsername());
-                    }
-                    request.setAttribute("error", "Your email has not been verified. A new verification code has been sent to your email.");
-                    request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
-                    return;
-                }
-
-                SessionUtil.removeSessionAttribute(request, "user");
-                SessionUtil.setSessionAttribute(request, "user", user);
-                SessionUtil.setSessionAttribute(request, "userId", user.getUserId().toString());
-                SessionUtil.setSessionAttribute(request, "isLoggedIn", true);
-                SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
-
-                String redirectUrl = "/pages/home";
-                try {
-                    Role userRole = roleService.findById(user.getRoleId());
-                    if (userRole != null) {
-                        String roleName = userRole.getRoleName();
-                        if ("Staff".equalsIgnoreCase(roleName)) {
-                            redirectUrl = "/staff/dashboard";
-                        } else if ("Admin".equalsIgnoreCase(roleName)) {
-                            redirectUrl = "/admin/dashboard";
+                    // Facebook account is not linked - check if email exists
+                    User existingUser = userService.findByEmail(email);
+                    
+                    if (existingUser != null) {
+                        // Email exists - allow login and optionally link the account
+                        user = existingUser;
+                        
+                        // Optionally auto-link the Facebook account to the existing user
+                        try {
+                            UserLogins newUserLogin = new UserLogins();
+                            newUserLogin.setUserId(user.getUserId());
+                            newUserLogin.setLoginProvider("facebook");
+                            newUserLogin.setProviderKey(facebookUser.getFacebookId());
+                            newUserLogin.setProviderDisplayName(facebookUser.getFullName());
+                            userLoginsService.add(newUserLogin);
+                        } catch (Exception e) {
+                            // If linking fails, still allow login but log the error
+                            System.err.println("Failed to auto-link Facebook account: " + e.getMessage());
                         }
+                    } else {
+                        // Email doesn't exist - redirect to registration
+                        request.setAttribute("error", "No account found with email " + email + ". Please register first.");
+                        request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
+                        return;
                     }
-                } catch (Exception ex) {
-                    // Nếu lỗi khi lấy role, giữ nguyên redirectUrl mặc định
                 }
-                response.sendRedirect(request.getContextPath() + redirectUrl);
+                
+                // Process user login
+                if (processUserLogin(request, response, user)) {
+                    return; // Login successful, redirect handled in processUserLogin
+                }
+                
             } catch (Exception e) {
-                request.setAttribute("error", "Facebook login failed - " + e.getMessage());
+                request.setAttribute("error", "Facebook login failed: " + e.getMessage());
                 request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
             }
+        }
+
+        /**
+         * Process user login after authentication
+         * Returns true if login was successful and redirect was handled
+         */
+        private boolean processUserLogin(HttpServletRequest request, HttpServletResponse response, User user) 
+                throws ServletException, IOException, EventException, NotFoundException {
+            
+            // Check if account is deleted
+            if (user.isDeleted()) {
+                request.setAttribute("error", "This account has been deleted. Please contact support if this is an error.");
+                request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
+                return true;
+            }
+            
+            // Check if account is banned
+            if (user.isBanned()) {
+                request.setAttribute("error", "This account has been banned. Please contact support for more information.");
+                request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
+                return true;
+            }
+            
+            // Reset failed login attempts
+            if (user.getAccessFailedCount() > 0) {
+                user.setAccessFailedCount(0);
+                userService.update(user);
+            }
+            
+            // Activate account if inactive
+            if (!user.isActive()) {
+                user.setStatus(UserStatusConstants.ACTIVE);
+                userService.update(user);
+            }
+            
+            // Check email verification
+            if (!user.isEmailVerifed()) {
+                EmailOTPVerification otp = emailOTPService.findByUserId(user.getUserId());
+                if (otp != null) {
+                    mailService.sendOtpEmail(user.getEmail(), otp.getOtp(), user.getUsername());
+                }
+                request.setAttribute("error", "Your email has not been verified. A new verification code has been sent to your email.");
+                request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
+                return true;
+            }
+            
+            // Login successful - set session and redirect
+            SessionUtil.removeSessionAttribute(request, "user");
+            SessionUtil.setSessionAttribute(request, "user", user);
+            SessionUtil.setSessionAttribute(request, "userId", user.getUserId().toString());
+            SessionUtil.setSessionAttribute(request, "isLoggedIn", true);
+            SessionUtil.setCookie(response, "userId", user.getUserId().toString(), 30 * 24 * 60 * 60, true, false, "/");
+            
+            String redirectUrl = "/pages/home";
+            try {
+                Role userRole = roleService.findById(user.getRoleId());
+                if (userRole != null) {
+                    String roleName = userRole.getRoleName();
+                    if ("Staff".equalsIgnoreCase(roleName)) {
+                        redirectUrl = "/staff/dashboard";
+                    } else if ("Admin".equalsIgnoreCase(roleName)) {
+                        redirectUrl = "/admin/dashboard";
+                    }
+                }
+            } catch (Exception ex) {
+                // If error getting role, keep default redirectUrl
+            }
+            
+            response.sendRedirect(request.getContextPath() + redirectUrl);
+            return true;
         }
 
         @Override
         protected void doPost(HttpServletRequest request, HttpServletResponse response)
                 throws ServletException, IOException {
         }
-
     }
