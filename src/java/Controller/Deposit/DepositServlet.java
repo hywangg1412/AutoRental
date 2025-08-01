@@ -1,5 +1,5 @@
 package Controller.Deposit;
-
+//quanquan
 import java.io.IOException;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import Model.DTO.Deposit.DepositPageDTO;
 import Model.Entity.User.User;
 import Service.Deposit.DepositService;
+import Service.Interfaces.IDeposit.IDepositService;
 import Utils.SessionUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -24,7 +25,7 @@ public class DepositServlet extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(DepositServlet.class.getName());
 
-    private final DepositService depositService;
+    private final IDepositService depositService;
 
     public DepositServlet() {
         // Tạo dependencies theo đúng pattern
@@ -151,6 +152,9 @@ public class DepositServlet extends HttpServlet {
                     String voucherCode = request.getParameter("voucherCode");
                     handleApplyVoucher(bookingId, voucherCode, userId, response);
                     break;
+                case "removeVoucher":
+                    handleRemoveVoucher(bookingId, userId, response);
+                    break;
                 case "recalculate":
                     handleRecalculate(bookingId, userId, response);
                     break;
@@ -206,34 +210,63 @@ public class DepositServlet extends HttpServlet {
      */
     private void handleApplyVoucher(UUID bookingId, String voucherCode, UUID userId, HttpServletResponse response) throws IOException {
         try {
+            LOGGER.info("=== APPLYING VOUCHER VIA SERVLET ===");
+            LOGGER.info("Booking ID: " + bookingId);
+            LOGGER.info("Voucher Code: " + voucherCode);
+            LOGGER.info("User ID: " + userId);
+            
             // GỌI SERVICE XỬ LÝ VOUCHER LOGIC
             boolean voucherApplied = depositService.applyVoucher(bookingId, voucherCode, userId);
             
             if (voucherApplied) {
-                // Lấy lại dữ liệu đã update
-                DepositPageDTO updatedData = depositService.getDepositPageData(bookingId, userId);
-                
-                // Trả về JSON success
-                String jsonResponse = String.format(
-                    "{\"success\": true, \"message\": \"Voucher applied successfully\", " +
-                    "\"baseAmount\": %.0f, \"insuranceAmount\": %.0f, \"vatAmount\": %.0f, \"totalAmount\": %.0f, \"depositAmount\": %.0f}",
-                    updatedData.getBaseRentalPrice(), updatedData.getTotalInsuranceAmount(),
-                    updatedData.getVatAmount(), updatedData.getTotalAmount(),
-                    updatedData.getDepositAmount()
-                );
-                
+                // Sử dụng method mới từ DepositService để tạo JSON response
+                String jsonResponse = depositService.createVoucherResponse(true, "Voucher applied successfully", bookingId, userId);
                 response.setContentType("application/json");
                 response.getWriter().write(jsonResponse);
+                LOGGER.info("Voucher applied successfully");
             } else {
                 // Voucher không hợp lệ
                 response.setContentType("application/json");
                 response.getWriter().write("{\"success\": false, \"message\": \"Invalid voucher code\"}");
+                LOGGER.warning("Voucher application failed - invalid code");
             }
             
         } catch (Exception e) {
             LOGGER.severe("❌ Error applying voucher: " + e.getMessage());
             response.setContentType("application/json");
-            response.getWriter().write("{\"success\": false, \"message\": \"Error applying voucher\"}");
+            response.getWriter().write("{\"success\": false, \"message\": \"Có lỗi xảy ra khi áp dụng voucher\"}");
+        }
+    }
+
+    /**
+     * Xử lý xóa voucher - ỦY QUYỀN CHO SERVICE
+     */
+    private void handleRemoveVoucher(UUID bookingId, UUID userId, HttpServletResponse response) throws IOException {
+        try {
+            LOGGER.info("=== REMOVING VOUCHER VIA SERVLET ===");
+            LOGGER.info("Booking ID: " + bookingId);
+            LOGGER.info("User ID: " + userId);
+            
+            // GỌI SERVICE XỬ LÝ REMOVE VOUCHER LOGIC
+            boolean voucherRemoved = depositService.removeVoucher(bookingId, userId);
+            
+            if (voucherRemoved) {
+                // Sử dụng method mới từ DepositService để tạo JSON response
+                String jsonResponse = depositService.createVoucherResponse(true, "Voucher removed successfully", bookingId, userId);
+                response.setContentType("application/json");
+                response.getWriter().write(jsonResponse);
+                LOGGER.info("Voucher removed successfully");
+            } else {
+                // Không thể xóa voucher
+                response.setContentType("application/json");
+                response.getWriter().write("{\"success\": false, \"message\": \"Failed to remove voucher\"}");
+                LOGGER.warning("Voucher removal failed");
+            }
+            
+        } catch (Exception e) {
+            LOGGER.severe("❌ Error removing voucher: " + e.getMessage());
+            response.setContentType("application/json");
+            response.getWriter().write("{\"success\": false, \"message\": \"Có lỗi xảy ra khi xóa voucher\"}");
         }
     }
 

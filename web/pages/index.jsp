@@ -917,10 +917,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
       ></script>
     </c:if>
         </section>--><c:if test="${sessionScope.isLoggedIn}">
-      <script
-        src="https://messenger.svc.chative.io/static/v1.0/channels/sdb66d1a7-bfed-449d-96c8-b8ff21fed2dc/messenger.js?mode=livechat"
-        defer="defer"
-      ></script>
+      <script src="https://messenger.svc.chative.io/static/v1.0/channels/s9bdc024e-8500-44b2-a7d1-ebf04f1100fc/messenger.js?mode=livechat" defer="defer"></script>
     </c:if>
 
     <!-- Self-drive Car Rental Section (Image Left, Large, Balanced Text) -->

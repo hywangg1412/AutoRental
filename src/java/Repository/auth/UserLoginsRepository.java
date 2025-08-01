@@ -133,10 +133,17 @@ public class UserLoginsRepository implements IUserLoginsRepository {
     @Override
     public boolean deleteByProviderAndKey(String provider, String key) throws SQLException {
         String sql = "DELETE FROM UserLogins WHERE LoginProvider = ? AND ProviderKey = ?";
+        System.out.println("=== DELETE DEBUG ===");
+        System.out.println("SQL: " + sql);
+        System.out.println("Provider: " + provider);
+        System.out.println("Key: " + key);
+        
         try (Connection conn = dbContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
             st.setString(1, provider);
             st.setString(2, key);
             int affectedRows = st.executeUpdate();
+            System.out.println("Affected rows: " + affectedRows);
+            System.out.println("Delete result: " + (affectedRows > 0));
             return affectedRows > 0;
         }
     }

@@ -55,7 +55,26 @@ public class GoogleRegisterServlet extends HttpServlet {
         }
         try {
             GoogleUser googleUser = googleAuthService.getUserInfoRegister(code);
-            User existingUser = userService.findByEmail(googleUser.getEmail());
+            String email = googleUser.getEmail();
+            
+            if (email == null || email.trim().isEmpty()) {
+                request.setAttribute("error", "Cannot retrieve email from Google account. Please try again or contact support.");
+                request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
+                return;
+            }
+            
+            // Step 1: Check if this Google account is already linked to any user
+            UserLogins existingUserLogin = userLoginsService.findByProviderAndKey("google", googleUser.getGoogleId());
+            
+            if (existingUserLogin != null) {
+                // Google account is already linked to another user
+                request.setAttribute("error", "This Google account is already linked to another user. Please use a different Google account or log in with the existing account.");
+                request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
+                return;
+            }
+            
+            // Step 2: Check if email already exists in our system
+            User existingUser = userService.findByEmail(email);
             if (existingUser != null) {
                 String errorMsg;
                 if (existingUser.isDeleted()) {
@@ -63,14 +82,15 @@ public class GoogleRegisterServlet extends HttpServlet {
                 } else if (existingUser.isBanned()) {
                     errorMsg = "This email is associated with a banned account. Please contact support.";
                 } else {
-                    errorMsg = "An account with this email already exists.";
+                    errorMsg = "An account with email " + email + " already exists. Please log in with your existing account or use a different Google account.";
                 }
                 request.setAttribute("error", errorMsg);
                 request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
                 return;
             }
 
-            User newUser = userMapper.mapGoogleUserToUser(googleUser,userService);
+            // Step 3: Proceed with registration
+            User newUser = userMapper.mapGoogleUserToUser(googleUser, userService);
             newUser.setEmailVerifed(true);
             Role userRole = roleService.findByRoleName(RoleConstants.USER);
             if (userRole == null) {
@@ -88,7 +108,7 @@ public class GoogleRegisterServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/setPassword");
             return;
         } catch (Exception e) {
-            request.setAttribute("error", "Google register failed - " + e.getMessage());
+            request.setAttribute("error", "Google registration failed: " + e.getMessage());
             request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
         }
     }
@@ -97,5 +117,4 @@ public class GoogleRegisterServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
     }
-
 }
