@@ -300,9 +300,16 @@ public class PaymentService implements IPaymentService {
             
             System.out.println("Payment status updated to: " + newStatus);
 
-            // If payment successful, update booking
+            // If payment successful, update booking based on payment type
             if ("Completed".equals(newStatus)) {
+                String paymentType = payment.getPaymentType();
+                if ("FinalPayment".equals(paymentType)) {
+                    // Thanh toán số tiền còn lại
+                    return updateBookingAfterSuccessfulFinalPayment(payment.getBookingId());
+                } else {
+                    // Thanh toán tiền cọc
                 return updateBookingAfterSuccessfulDeposit(payment.getBookingId());
+                }
             }
 
             return true;
@@ -478,6 +485,115 @@ public class PaymentService implements IPaymentService {
             System.err.println("❌ Error updating booking after successful deposit: " + e.getMessage());
             e.printStackTrace();
             throw new SQLException("Could not update booking after successful deposit: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Tạo URL thanh toán VNPay cho số tiền còn lại
+     */
+    public String createFinalPaymentUrl(UUID bookingId, UUID userId, double finalAmount) throws SQLException {
+        System.out.println("=== createFinalPaymentUrl START ===");
+        System.out.println("BookingId: " + bookingId);
+        System.out.println("UserId: " + userId);
+        System.out.println("Final Amount (DB unit): " + finalAmount);
+        
+        try {
+            // Chuyển từ DB unit sang VND
+            double finalAmountVnd = finalAmount * 1000;
+            System.out.println("Final Amount (VND): " + finalAmountVnd);
+            
+            // Validate final amount
+            if (finalAmountVnd < 1000) {
+                throw new SQLException("Payment amount must be at least 1,000 VND. Current amount: " + finalAmountVnd);
+            }
+
+            // Create payment record
+            Payment payment = new Payment();
+            payment.setPaymentId(UUID.randomUUID());
+            payment.setBookingId(bookingId);
+            payment.setUserId(userId);
+            payment.setAmount(finalAmountVnd); // Lưu giá trị VND
+            payment.setPaymentMethod("VNPay");
+            payment.setPaymentStatus("Pending");
+            payment.setPaymentType("FinalPayment");
+            payment.setCreatedDate(LocalDateTime.now());
+
+            // Save payment to database
+            paymentRepository.createPayment(payment);
+            System.out.println("Final payment created in database with ID: " + payment.getPaymentId());
+
+            // Generate transaction reference
+            String vnpTxnRef = String.valueOf(System.currentTimeMillis());
+            System.out.println("VNP TxnRef: " + vnpTxnRef);
+
+            // Convert to VNPay amount format (VND * 100)
+            long vnpAmount = Math.round(finalAmountVnd * 100);
+            if (vnpAmount <= 0) {
+                throw new SQLException("Invalid amount: " + finalAmountVnd);
+            }
+
+            System.out.println("VNPay Request Details:");
+            System.out.println("- TxnRef: " + vnpTxnRef);
+            System.out.println("- Final Amount (VND): " + finalAmountVnd);
+            System.out.println("- VNPay Amount (VND * 100): " + vnpAmount);
+
+            // Create VNPay payment URL
+            String paymentUrl = createVNPayLink(vnpTxnRef, vnpAmount, bookingId);
+            
+            if (paymentUrl != null && !paymentUrl.isEmpty()) {
+                // Update payment record with transaction ID
+                payment.setTransactionId(vnpTxnRef);
+                paymentRepository.updatePayment(payment);
+                
+                System.out.println("✅ Final payment URL created successfully");
+                System.out.println("Payment URL: " + paymentUrl);
+                return paymentUrl;
+            } else {
+                throw new SQLException("Cannot create VNPay payment URL");
+            }
+            
+        } catch (Exception e) {
+            System.err.println("❌ Error creating final payment URL: " + e.getMessage());
+            e.printStackTrace();
+            throw new SQLException("Error creating final payment URL: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Cập nhật booking sau khi thanh toán số tiền còn lại thành công
+     */
+    public boolean updateBookingAfterSuccessfulFinalPayment(UUID bookingId) throws SQLException {
+        System.out.println("=== UPDATING BOOKING AFTER SUCCESSFUL FINAL PAYMENT ===");
+        System.out.println("BookingId: " + bookingId);
+        
+        try {
+            // Cập nhật trạng thái booking thành Completed
+            bookingRepository.updateBookingStatus(bookingId, "Completed");
+            System.out.println("✅ Booking status updated to 'Completed' successfully");
+            
+            return true;
+            
+        } catch (Exception e) {
+            System.err.println("❌ Error updating booking after final payment: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    /**
+     * Lấy loại thanh toán dựa trên transaction reference
+     */
+    public String getPaymentTypeByTxnRef(String txnRef) throws SQLException {
+        try {
+            // Tìm payment record dựa trên txnRef
+            Payment payment = paymentRepository.findByTxnRef(txnRef);
+            if (payment != null) {
+                return payment.getPaymentType();
+            }
+            return "Deposit"; // Default
+        } catch (Exception e) {
+            System.err.println("❌ Error getting payment type: " + e.getMessage());
+            return "Deposit"; // Default
         }
     }
 }
