@@ -60,12 +60,32 @@ public class AdminDashboardServlet extends HttpServlet {
             PaymentRepository paymentRepo = new PaymentRepository();
             List<Payment> payments = paymentRepo.getAllPayments();
             
+            // Thống kê payment theo loại (cho biểu đồ tròn)
+            long completedPayments = payments.stream()
+                .filter(p -> p.getPaymentStatus() != null && p.getPaymentStatus().equalsIgnoreCase("Completed"))
+                .count();
+            long pendingPayments = payments.stream()
+                .filter(p -> p.getPaymentStatus() != null && p.getPaymentStatus().equalsIgnoreCase("Pending"))
+                .count();
+            long failedPayments = payments.stream()
+                .filter(p -> p.getPaymentStatus() != null && p.getPaymentStatus().equalsIgnoreCase("Failed"))
+                .count();
+            long cancelledPayments = payments.stream()
+                .filter(p -> p.getPaymentStatus() != null && p.getPaymentStatus().equalsIgnoreCase("Cancelled"))
+                .count();
+            
             // Thống kê theo tháng (12 tháng gần nhất)
             int months = 12;
             LocalDate now = LocalDate.now();
             
             // Thống kê doanh thu theo tháng (12 tháng gần nhất)
             double[] revenueByMonth = new double[months];
+            // Thống kê payment theo tháng (12 tháng gần nhất)
+            int[] completedPaymentsByMonth = new int[months];
+            int[] pendingPaymentsByMonth = new int[months];
+            int[] failedPaymentsByMonth = new int[months];
+            int[] cancelledPaymentsByMonth = new int[months];
+            
             for (int i = 0; i < months; i++) {
                 LocalDateTime monthForRevenue = now.minusMonths(months - 1 - i).atStartOfDay();
                 revenueByMonth[i] = payments.stream()
@@ -75,6 +95,35 @@ public class AdminDashboardServlet extends HttpServlet {
                         && p.getCreatedDate().getMonthValue() == monthForRevenue.getMonthValue())
                     .mapToDouble(Payment::getAmount)
                     .sum();
+                    
+                // Thống kê payment theo trạng thái theo tháng
+                completedPaymentsByMonth[i] = (int) payments.stream()
+                    .filter(p -> p.getPaymentStatus() != null && p.getPaymentStatus().equalsIgnoreCase("Completed"))
+                    .filter(p -> p.getCreatedDate() != null
+                        && p.getCreatedDate().getYear() == monthForRevenue.getYear()
+                        && p.getCreatedDate().getMonthValue() == monthForRevenue.getMonthValue())
+                    .count();
+                    
+                pendingPaymentsByMonth[i] = (int) payments.stream()
+                    .filter(p -> p.getPaymentStatus() != null && p.getPaymentStatus().equalsIgnoreCase("Pending"))
+                    .filter(p -> p.getCreatedDate() != null
+                        && p.getCreatedDate().getYear() == monthForRevenue.getYear()
+                        && p.getCreatedDate().getMonthValue() == monthForRevenue.getMonthValue())
+                    .count();
+                    
+                failedPaymentsByMonth[i] = (int) payments.stream()
+                    .filter(p -> p.getPaymentStatus() != null && p.getPaymentStatus().equalsIgnoreCase("Failed"))
+                    .filter(p -> p.getCreatedDate() != null
+                        && p.getCreatedDate().getYear() == monthForRevenue.getYear()
+                        && p.getCreatedDate().getMonthValue() == monthForRevenue.getMonthValue())
+                    .count();
+                    
+                cancelledPaymentsByMonth[i] = (int) payments.stream()
+                    .filter(p -> p.getPaymentStatus() != null && p.getPaymentStatus().equalsIgnoreCase("Cancelled"))
+                    .filter(p -> p.getCreatedDate() != null
+                        && p.getCreatedDate().getYear() == monthForRevenue.getYear()
+                        && p.getCreatedDate().getMonthValue() == monthForRevenue.getMonthValue())
+                    .count();
             }
 
             // Thống kê theo tháng (12 tháng gần nhất)
@@ -109,6 +158,12 @@ public class AdminDashboardServlet extends HttpServlet {
             request.setAttribute("carByMonthJson", gson.toJson(carByMonth));
             request.setAttribute("voucherByMonthJson", gson.toJson(voucherByMonth));
             request.setAttribute("revenueByMonthJson", gson.toJson(revenueByMonth));
+            
+            // Thêm JSON cho payment theo tháng
+            request.setAttribute("completedPaymentsByMonthJson", gson.toJson(completedPaymentsByMonth));
+            request.setAttribute("pendingPaymentsByMonthJson", gson.toJson(pendingPaymentsByMonth));
+            request.setAttribute("failedPaymentsByMonthJson", gson.toJson(failedPaymentsByMonth));
+            request.setAttribute("cancelledPaymentsByMonthJson", gson.toJson(cancelledPaymentsByMonth));
 
             request.setAttribute("userCount", users.size());
             request.setAttribute("userActive", userActive);
@@ -125,6 +180,12 @@ public class AdminDashboardServlet extends HttpServlet {
             request.setAttribute("voucherCount", vouchers.size());
             request.setAttribute("voucherActive", voucherActive);
             request.setAttribute("voucherInactive", voucherInactive);
+
+            // Thêm thống kê payment cho biểu đồ tròn
+            request.setAttribute("completedPayments", completedPayments);
+            request.setAttribute("pendingPayments", pendingPayments);
+            request.setAttribute("failedPayments", failedPayments);
+            request.setAttribute("cancelledPayments", cancelledPayments);
 
             request.getRequestDispatcher("/pages/admin/admin-dashboard.jsp").forward(request, response);
         } catch (Exception e) {

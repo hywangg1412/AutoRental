@@ -341,9 +341,13 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
       </div>
 
       <div class="chart-container">
+        <div class="chart-box">
+          <h5>Payment Status Distribution</h5>
+          <canvas id="paymentPieChart" width="300" height="300"></canvas>
+        </div>
         <div class="chart-box" style="flex: 2; min-width: 600px">
-          <h5>Monthly Revenue Chart</h5>
-          <canvas id="revenueLineChart" width="600" height="350"></canvas>
+          <h5>Monthly Payment Status Comparison</h5>
+          <canvas id="paymentBarChart" width="600" height="350"></canvas>
         </div>
       </div>
     </div>
@@ -359,9 +363,19 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
     <script type="application/json" id="voucherByMonthJson">
       ${voucherByMonthJson}
     </script>
-    <script type="application/json" id="revenueByMonthJson">
-      ${revenueByMonthJson}
+    <script type="application/json" id="completedPaymentsByMonthJson">
+      ${completedPaymentsByMonthJson}
     </script>
+    <script type="application/json" id="pendingPaymentsByMonthJson">
+      ${pendingPaymentsByMonthJson}
+    </script>
+    <script type="application/json" id="failedPaymentsByMonthJson">
+      ${failedPaymentsByMonthJson}
+    </script>
+    <script type="application/json" id="cancelledPaymentsByMonthJson">
+      ${cancelledPaymentsByMonthJson}
+    </script>
+
     <script>
       // Bar chart: Tổng số User, Staff, Car, Voucher
       new Chart(document.getElementById('barChart'), {
@@ -494,22 +508,63 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
           }
         }
       });
-      const revenueByMonth = JSON.parse(document.getElementById('revenueByMonthJson').innerHTML.trim());
-      // Vẽ biểu đồ doanh thu các tháng
-      new Chart(document.getElementById('revenueLineChart'), {
-        type: 'line',
+      // Pie chart: Payment Status
+      new Chart(document.getElementById('paymentPieChart'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Completed', 'Pending', 'Failed', 'Cancelled'],
+          datasets: [{
+            data: [${completedPayments}, ${pendingPayments}, ${failedPayments}, ${cancelledPayments}],
+            backgroundColor: [
+              'rgba(75, 192, 192, 0.8)',
+              'rgba(255, 206, 86, 0.8)',
+              'rgba(255, 99, 132, 0.8)',
+              'rgba(201, 203, 207, 0.8)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'bottom' },
+            tooltip: { enabled: true }
+          }
+        }
+      });
+      
+      // Bar chart: Payment Status by Month
+      const completedPaymentsByMonth = JSON.parse(document.getElementById('completedPaymentsByMonthJson').innerHTML.trim());
+      const pendingPaymentsByMonth = JSON.parse(document.getElementById('pendingPaymentsByMonthJson').innerHTML.trim());
+      const failedPaymentsByMonth = JSON.parse(document.getElementById('failedPaymentsByMonthJson').innerHTML.trim());
+      const cancelledPaymentsByMonth = JSON.parse(document.getElementById('cancelledPaymentsByMonthJson').innerHTML.trim());
+      
+      new Chart(document.getElementById('paymentBarChart'), {
+        type: 'bar',
         data: {
           labels: monthLabels,
-          datasets: [{
-            label: 'Revenue (VND)',
-            data: revenueByMonth,
-            borderColor: 'rgba(255, 99, 132, 1)',
-            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-            tension: 0.3,
-            fill: true,
-            pointRadius: 4,
-            pointBackgroundColor: 'rgba(255, 99, 132, 1)'
-          }]
+          datasets: [
+            {
+              label: 'Completed',
+              data: completedPaymentsByMonth,
+              backgroundColor: 'rgba(75, 192, 192, 0.8)'
+            },
+            {
+              label: 'Pending',
+              data: pendingPaymentsByMonth,
+              backgroundColor: 'rgba(255, 206, 86, 0.8)'
+            },
+            {
+              label: 'Failed',
+              data: failedPaymentsByMonth,
+              backgroundColor: 'rgba(255, 99, 132, 0.8)'
+            },
+            {
+              label: 'Cancelled',
+              data: cancelledPaymentsByMonth,
+              backgroundColor: 'rgba(201, 203, 207, 0.8)'
+            }
+          ]
         },
         options: {
           responsive: true,
@@ -518,14 +573,7 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
             tooltip: { enabled: true }
           },
           scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                callback: function(value) {
-                  return value.toLocaleString('en-US') + ' VND';
-                }
-              }
-            }
+            y: { beginAtZero: true }
           }
         }
       });

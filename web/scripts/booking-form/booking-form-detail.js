@@ -10,6 +10,8 @@
 // Global variables
 let carPriceData = {}
 let days // Declare the days variable here
+let carId = null // Thêm biến để lưu carId
+let unavailableDates = [] // Thêm biến để lưu các ngày không available
 
 // Initialize when DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
@@ -17,12 +19,37 @@ document.addEventListener("DOMContentLoaded", () => {
   if (window.localStorage) {
     window.localStorage.clear()
   }
+  
+  // Lấy carId từ hidden input
+  const carIdInput = document.querySelector('input[name="carId"]');
+  console.log("=== DEBUG: CarId Input ===");
+  console.log("carIdInput found:", carIdInput);
+  if (carIdInput) {
+    carId = carIdInput.value;
+    console.log("carId value:", carId);
+    console.log("carId type:", typeof carId);
+  } else {
+    console.error("carId input not found!");
+  }
+  
   initializeForm()
   loadCarPriceData()
   setupLicenseUpload()
   setupFormValidation()
-  setupFlatpickrDateTimePickers() // Thêm cấu hình Flatpickr
+  // Load unavailable dates trước, sau đó setup Flatpickr
+  loadUnavailableDates().then(() => {
+    console.log("Unavailable dates loaded, setting up Flatpickr...");
+    setupFlatpickrDateTimePickers()
+    // Test function để kiểm tra
+    testAvailabilityLogic();
+  }).catch(error => {
+    console.error("Error loading unavailable dates:", error);
+    setupFlatpickrDateTimePickers()
+    // Test function để kiểm tra ngay cả khi load thất bại
+    testAvailabilityLogic();
+  })
   setupInsuranceHandlers()
+  setupCarAvailabilityValidation() // Thêm validation car availability
 })
 
 // Initialize form
@@ -169,6 +196,35 @@ function setupFlatpickrDateTimePickers() {
     locale: {
       firstDayOfWeek: 1,
       time_24hr: true
+    },
+    // Disable các ngày không available
+    disable: [
+      function(date) {
+        const isAvailable = isDateAvailable(date);
+        console.log(`Flatpickr disable check for ${date.toLocaleDateString()}: ${isAvailable ? 'available' : 'NOT available'}`);
+        return !isAvailable;
+      }
+    ],
+    // Custom tooltip cho các ngày bị disable
+    onDayCreate: function(dObj, dStr, fp, dayElem) {
+      const date = new Date(dayElem.dateObj);
+      const isAvailable = isDateAvailable(date);
+      
+      if (!isAvailable) {
+        console.log(`Adding unavailable-date class to ${date.toLocaleDateString()}`);
+        dayElem.classList.add('unavailable-date');
+        
+        // Thêm tooltip
+        const bookingInfo = getBookingInfoForDate(date);
+        if (bookingInfo) {
+          const startDate = new Date(bookingInfo.pickupDateTime);
+          const endDate = new Date(bookingInfo.returnDateTime);
+          const tooltipText = `This car is already booked from ${startDate.toLocaleDateString()} ${startDate.toLocaleTimeString()} to ${endDate.toLocaleDateString()} ${endDate.toLocaleTimeString()}`;
+          
+          dayElem.setAttribute('title', tooltipText);
+          dayElem.style.cursor = 'not-allowed';
+        }
+      }
     },
     // Kiểm tra thời gian hợp lệ khi đóng picker
     onClose: function(selectedDates, dateStr, instance) {
@@ -441,6 +497,17 @@ function setupFlatpickrDateTimePickers() {
   // Lưu reference để sử dụng sau này nếu cần
   window.startDatePicker = startDatePicker;
   window.endDatePicker = endDatePicker;
+  
+  // Force refresh để áp dụng disable
+  setTimeout(() => {
+    console.log("Force refreshing Flatpickr instances...");
+    if (startDatePicker) {
+      startDatePicker.redraw();
+    }
+    if (endDatePicker) {
+      endDatePicker.redraw();
+    }
+  }, 1000);
   
   // Tự động mở startDatePicker khi trang được tải
   setTimeout(() => {
@@ -1832,5 +1899,375 @@ function calculateAdditionalInsuranceFee() {
   } else {
     return 50000; // 50k/ngày cho xe 12+ chỗ
   }
+}
+
+// Thêm function mới để setup car availability validation
+function setupCarAvailabilityValidation() {
+  const startDateInput = document.getElementById("startDate");
+  const endDateInput = document.getElementById("endDate");
+  
+  if (startDateInput && endDateInput) {
+    // Thêm event listener cho start date
+    startDateInput.addEventListener("change", function() {
+      const startDate = parseLocalDateTime("startDate");
+      const endDate = parseLocalDateTime("endDate");
+      
+      if (startDate && endDate) {
+        checkCarAvailability(startDate, endDate);
+      }
+    });
+    
+    // Thêm event listener cho end date
+    endDateInput.addEventListener("change", function() {
+      const startDate = parseLocalDateTime("startDate");
+      const endDate = parseLocalDateTime("endDate");
+      
+      if (startDate && endDate) {
+        checkCarAvailability(startDate, endDate);
+      }
+    });
+  }
+}
+
+/**
+ * Kiểm tra xe có sẵn trong khoảng thời gian đã chọn không
+ */
+async function checkCarAvailability(startDate, endDate) {
+  if (!carId) {
+    console.error("Car ID not found");
+    return;
+  }
+  
+  try {
+    // Format dates cho API
+    const startDateStr = startDate.toISOString().slice(0, 16);
+    const endDateStr = endDate.toISOString().slice(0, 16);
+    
+    // Gọi API để kiểm tra availability
+    const response = await fetch(`${window.location.origin}${window.location.pathname.replace('/pages/booking-form/booking-form-details.jsp', '')}/api/car-availability?carId=${carId}&startDate=${startDateStr}&endDate=${endDateStr}`);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    if (data.hasConflicts) {
+      // Có xung đột - hiển thị thông báo và disable form
+      showCarAvailabilityWarning(data.conflictingBookings);
+      disableBookingForm();
+    } else {
+      // Không có xung đột - ẩn thông báo và enable form
+      hideCarAvailabilityWarning();
+      enableBookingForm();
+    }
+    
+  } catch (error) {
+    console.error("Error checking car availability:", error);
+    // Trong trường hợp lỗi, vẫn cho phép đặt xe để tránh block user
+    hideCarAvailabilityWarning();
+    enableBookingForm();
+  }
+}
+
+/**
+ * Hiển thị cảnh báo xe đã được đặt
+ */
+function showCarAvailabilityWarning(conflictingBookings) {
+  // Tạo message từ conflicting bookings
+  let message = "This car is not available for the selected time period. ";
+  
+  if (conflictingBookings && conflictingBookings.length > 0) {
+    const booking = conflictingBookings[0]; // Lấy booking đầu tiên
+    const startDate = new Date(booking.pickupDateTime);
+    const endDate = new Date(booking.returnDateTime);
+    
+    message += `The car is already booked from ${startDate.toLocaleDateString()} ${startDate.toLocaleTimeString()} to ${endDate.toLocaleDateString()} ${endDate.toLocaleTimeString()}. Please select a different time period.`;
+  } else {
+    message += "Please select a different time period.";
+  }
+  
+  // Hiển thị alert
+  showFixedAlert(message, "warning", false);
+  
+  // Thêm class để highlight các input date
+  const startDateInput = document.getElementById("startDate");
+  const endDateInput = document.getElementById("endDate");
+  
+  if (startDateInput) startDateInput.classList.add("date-conflict");
+  if (endDateInput) endDateInput.classList.add("date-conflict");
+  
+  // Hiển thị tooltip
+  showTooltip("startDateTooltip", "This car is already booked for this time period");
+  showTooltip("endDateTooltip", "This car is already booked for this time period");
+}
+
+/**
+ * Hiển thị tooltip cho date input
+ */
+function showTooltip(tooltipId, message) {
+  const tooltip = document.getElementById(tooltipId);
+  if (tooltip) {
+    tooltip.textContent = message;
+    tooltip.style.opacity = "1";
+    tooltip.style.visibility = "visible";
+  }
+}
+
+/**
+ * Ẩn tooltip cho date input
+ */
+function hideTooltip(tooltipId) {
+  const tooltip = document.getElementById(tooltipId);
+  if (tooltip) {
+    tooltip.style.opacity = "0";
+    tooltip.style.visibility = "hidden";
+  }
+}
+
+/**
+ * Ẩn cảnh báo xe đã được đặt
+ */
+function hideCarAvailabilityWarning() {
+  // Xóa class highlight
+  const startDateInput = document.getElementById("startDate");
+  const endDateInput = document.getElementById("endDate");
+  
+  if (startDateInput) startDateInput.classList.remove("date-conflict");
+  if (endDateInput) endDateInput.classList.remove("date-conflict");
+  
+  // Ẩn tooltip
+  hideTooltip("startDateTooltip");
+  hideTooltip("endDateTooltip");
+}
+
+/**
+ * Disable form khi có xung đột
+ */
+function disableBookingForm() {
+  const submitButton = document.querySelector('button[type="submit"]');
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.classList.add("disabled");
+  }
+}
+
+/**
+ * Enable form khi không có xung đột
+ */
+function enableBookingForm() {
+  const submitButton = document.querySelector('button[type="submit"]');
+  if (submitButton) {
+    submitButton.disabled = false;
+    submitButton.classList.remove("disabled");
+  }
+}
+
+// Thêm function để load unavailable dates
+async function loadUnavailableDates() {
+  console.log("=== DEBUG: loadUnavailableDates ===");
+  console.log("carId:", carId);
+  console.log("carId type:", typeof carId);
+  
+  if (!carId) {
+    console.error("Car ID not found");
+    return;
+  }
+  
+  try {
+    console.log("Loading unavailable dates for carId:", carId);
+    
+    // Gọi API để lấy tất cả booking của xe này (không có startDate/endDate)
+    const apiUrl = `${window.location.origin}/AutoRental_Maven_Booking/api/car-availability?carId=${carId}`;
+    console.log("Calling API:", apiUrl);
+    
+    const response = await fetch(apiUrl);
+    console.log("Response status:", response.status);
+    console.log("Response ok:", response.ok);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Response error text:", errorText);
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log("API response:", data);
+    
+    if (data.conflictingBookings && data.conflictingBookings.length > 0) {
+      // Tạo danh sách các ngày không available
+      unavailableDates = data.conflictingBookings.map(booking => {
+        const startDate = new Date(booking.pickupDateTime);
+        const endDate = new Date(booking.returnDateTime);
+        
+        console.log(`Processing booking ${booking.id}: ${startDate.toLocaleDateString()} to ${endDate.toLocaleDateString()}`);
+        
+        // Tạo array các ngày từ start đến end
+        const dates = [];
+        const currentDate = new Date(startDate);
+        
+        while (currentDate <= endDate) {
+          dates.push(new Date(currentDate));
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+        
+        return {
+          dates: dates,
+          booking: booking
+        };
+      });
+      
+      console.log("Loaded unavailable dates:", unavailableDates);
+    } else {
+      console.log("No conflicting bookings found");
+      unavailableDates = [];
+    }
+    
+  } catch (error) {
+    console.error("Error loading unavailable dates:", error);
+    unavailableDates = [];
+  }
+}
+
+// Function để kiểm tra một ngày có available không
+function isDateAvailable(date) {
+  console.log("=== DEBUG: isDateAvailable ===");
+  console.log("Input date:", date);
+  console.log("unavailableDates:", unavailableDates);
+  console.log("unavailableDates length:", unavailableDates ? unavailableDates.length : 0);
+  
+  if (!unavailableDates || unavailableDates.length === 0) {
+    console.log("No unavailable dates, returning true");
+    return true;
+  }
+  
+  const dateToCheck = new Date(date);
+  dateToCheck.setHours(0, 0, 0, 0); // Chỉ so sánh ngày, không so sánh giờ
+  
+  console.log(`Checking availability for date: ${dateToCheck.toLocaleDateString()}`);
+  
+  for (const unavailableBlock of unavailableDates) {
+    console.log("Processing unavailableBlock:", unavailableBlock);
+    for (const unavailableDate of unavailableBlock.dates) {
+      const unavailableDateOnly = new Date(unavailableDate);
+      unavailableDateOnly.setHours(0, 0, 0, 0);
+      
+      console.log(`Comparing: ${dateToCheck.toLocaleDateString()} vs ${unavailableDateOnly.toLocaleDateString()}`);
+      
+      if (dateToCheck.getTime() === unavailableDateOnly.getTime()) {
+        console.log(`Date ${dateToCheck.toLocaleDateString()} is NOT available`);
+        return false;
+      }
+    }
+  }
+  
+  console.log(`Date ${dateToCheck.toLocaleDateString()} is available`);
+  return true;
+}
+
+// Function để lấy thông tin booking cho một ngày cụ thể
+function getBookingInfoForDate(date) {
+  if (!unavailableDates || unavailableDates.length === 0) {
+    return null;
+  }
+  
+  const dateToCheck = new Date(date);
+  dateToCheck.setHours(0, 0, 0, 0);
+  
+  console.log(`Getting booking info for date: ${dateToCheck.toLocaleDateString()}`);
+  
+  for (const unavailableBlock of unavailableDates) {
+    for (const unavailableDate of unavailableBlock.dates) {
+      const unavailableDateOnly = new Date(unavailableDate);
+      unavailableDateOnly.setHours(0, 0, 0, 0);
+      
+      if (dateToCheck.getTime() === unavailableDateOnly.getTime()) {
+        console.log(`Found booking info for ${dateToCheck.toLocaleDateString()}:`, unavailableBlock.booking);
+        return unavailableBlock.booking;
+      }
+    }
+  }
+  
+  console.log(`No booking info found for ${dateToCheck.toLocaleDateString()}`);
+  return null;
+}
+
+// Test function để kiểm tra logic availability
+function testAvailabilityLogic() {
+  console.log("=== Testing Availability Logic ===");
+  console.log("Car ID:", carId);
+  console.log("Unavailable dates array:", unavailableDates);
+  
+  // Tạo test data nếu không có data thật
+  if (!unavailableDates || unavailableDates.length === 0) {
+    console.log("No real data found, creating test data...");
+    
+    // Tạo test booking cho ngày 10-15/8/2025
+    const testStartDate = new Date('2025-08-10T09:00:00');
+    const testEndDate = new Date('2025-08-15T18:00:00');
+    
+    const testDates = [];
+    const currentDate = new Date(testStartDate);
+    while (currentDate <= testEndDate) {
+      testDates.push(new Date(currentDate));
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    
+    unavailableDates = [{
+      dates: testDates,
+      booking: {
+        id: 'test-booking',
+        status: 'DepositPaid',
+        pickupDateTime: testStartDate.toISOString(),
+        returnDateTime: testEndDate.toISOString()
+      }
+    }];
+    
+    console.log("Created test data for dates 10-15/8/2025");
+  }
+  
+  if (unavailableDates && unavailableDates.length > 0) {
+    console.log("Testing some dates...");
+    
+    // Test today
+    const today = new Date();
+    console.log("Today availability:", isDateAvailable(today));
+    
+    // Test tomorrow
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    console.log("Tomorrow availability:", isDateAvailable(tomorrow));
+    
+    // Test specific dates
+    const testDate1 = new Date('2025-08-10');
+    const testDate2 = new Date('2025-08-12');
+    const testDate3 = new Date('2025-08-20');
+    
+    console.log("Test date 10/8/2025 availability:", isDateAvailable(testDate1));
+    console.log("Test date 12/8/2025 availability:", isDateAvailable(testDate2));
+    console.log("Test date 20/8/2025 availability:", isDateAvailable(testDate3));
+    
+    // Test each unavailable date
+    unavailableDates.forEach((block, index) => {
+      console.log(`Block ${index + 1}:`, block.booking.id, block.booking.status);
+      block.dates.forEach(date => {
+        console.log(`  Date ${date.toLocaleDateString()} availability:`, isDateAvailable(date));
+      });
+    });
+  }
+  
+  console.log("=== End Test ===");
+  
+  // Refresh Flatpickr để áp dụng disable
+  setTimeout(() => {
+    if (window.startDatePicker) {
+      console.log("Refreshing startDatePicker...");
+      window.startDatePicker.redraw();
+    }
+    if (window.endDatePicker) {
+      console.log("Refreshing endDatePicker...");
+      window.endDatePicker.redraw();
+    }
+  }, 100);
 }
 
