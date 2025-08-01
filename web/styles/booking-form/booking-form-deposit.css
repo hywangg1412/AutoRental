@@ -1,1037 +1,1115 @@
 /* Reset và Base Styles */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f8f9fa;
-    color: #333;
-    line-height: 1.6;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f9fa;
+  color: #333;
+  line-height: 1.6;
 }
 
 .container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
 /* Header */
 .header {
-    background: white;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+  background: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
 }
 
 .logo h1 {
-    font-size: 1.5rem;
-    font-weight: bold;
+  font-size: 1.5rem;
+  font-weight: bold;
 }
 
 .logo span {
-    color: #10b981;
+  color: #10b981;
 }
 
 .nav {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
 }
 
 .nav-link {
-    text-decoration: none;
-    color: #666;
-    font-weight: 500;
-    transition: color 0.3s;
+  text-decoration: none;
+  color: #666;
+  font-weight: 500;
+  transition: color 0.3s;
 }
 
 .nav-link:hover {
-    color: #10b981;
+  color: #10b981;
 }
 
 /* Progress Steps */
 .progress-container {
-    background: white;
-    border-bottom: 1px solid #e5e7eb;
-    padding: 1.5rem 0;
-    margin-bottom: 2rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1.5rem 0;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .progress-steps {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 3rem;
-    max-width: 800px;
-    margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .step {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    color: #9ca3af;
-    position: relative;
-    font-weight: 500;
-    white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #9ca3af;
+  position: relative;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
 .step.completed,
 .step.active {
-    color: #10b981;
+  color: #10b981;
 }
 
 .step-number {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #e5e7eb;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 1rem;
-    border: 2px solid #e5e7eb;
-    transition: all 0.3s ease;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1rem;
+  border: 2px solid #e5e7eb;
+  transition: all 0.3s ease;
 }
 
 .step.completed .step-number,
 .step.active .step-number {
-    background: #10b981;
-    color: white;
-    border-color: #10b981;
+  background: #10b981;
+  color: white;
+  border-color: #10b981;
 }
 
 .step:not(:last-child)::after {
-    content: "";
-    position: absolute;
-    left: calc(100% + 0.75rem);
-    top: 50%;
-    transform: translateY(-50%);
-    width: 3rem;
-    height: 2px;
-    background: #e5e7eb;
-    z-index: 1;
+  content: "";
+  position: absolute;
+  left: calc(100% + 0.75rem);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3rem;
+  height: 2px;
+  background: #e5e7eb;
+  z-index: 1;
 }
 
 .step.completed:not(:last-child)::after {
-    background: #10b981;
+  background: #10b981;
 }
 
 /* Main Content */
 .main-content {
-    padding: 2rem 0;
+  padding: 2rem 0;
 }
 
 .deposit-container {
-    display: grid;
-    grid-template-columns: 1fr 400px;
-    gap: 2rem;
-    margin-bottom: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 2rem;
+  margin-bottom: 2rem;
 }
 
 /* Cost Details Section */
 .cost-details-section {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
 .cost-container {
-    padding: 2rem;
+  padding: 2rem;
 }
 
 .cost-container h3 {
-    color: #333;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .cost-container h3 i {
-    color: #10b981;
+  color: #10b981;
 }
 
 /* Booking Info */
 .booking-info {
-    background: #f8f9fa;
-    padding: 1.5rem;
-    border-radius: 8px;
-    margin-bottom: 2rem;
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
 }
 
 .booking-info h4 {
-    margin-bottom: 1rem;
-    color: #333;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .info-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
 }
 
 .info-item {
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 }
 
 .info-item .label {
-    font-weight: 500;
-    color: #666;
+  font-weight: 500;
+  color: #666;
 }
 
 .info-item .value {
-    font-weight: 600;
-    color: #333;
+  font-weight: 600;
+  color: #333;
 }
 
 /* Price Breakdown */
 .price-breakdown {
-    margin-bottom: 2rem;
+  margin-bottom: 2rem;
 }
 
 .price-breakdown h4 {
-    margin-bottom: 1rem;
-    color: #333;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .price-list {
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    overflow: hidden;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .price-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid #f3f4f6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f3f4f6;
 }
 
 .price-item:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 
 .price-item.sub-item {
-    padding-left: 2rem;
-    background: #f8f9fa;
-    font-size: 0.9rem;
+  padding-left: 2rem;
+  background: #f8f9fa;
+  font-size: 0.9rem;
 }
 
 .insurance-section .section-title {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 600;
-    color: #333;
-    padding: 0.75rem 1rem;
-    background: #f0fdf4;
-    border-bottom: 1px solid #f3f4f6;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #333;
+  padding: 0.75rem 1rem;
+  background: #f0fdf4;
+  border-bottom: 1px solid #f3f4f6;
 }
 
 .subtotal-line,
 .total-line,
 .deposit-line {
-    background: #f8f9fa;
+  background: #f8f9fa;
 }
 
 .total-line {
-    background: #f0fdf4;
+  background: #f0fdf4;
 }
 
 .deposit-line {
-    background: #fef3c7;
+  background: #fef3c7;
 }
 
 .amount {
-    font-weight: 600;
-    color: #333;
+  font-weight: 600;
+  color: #333;
 }
 
 .total-amount,
 .deposit-amount {
-    color: #10b981;
-    font-size: 1.1rem;
+  color: #10b981;
+  font-size: 1.1rem;
 }
 
 /* Discount Row */
 .discount-row {
-    color: #10b981 !important;
+  color: #10b981 !important;
 }
 
 .discount-row .amount.discount {
-    color: #10b981;
-    font-weight: 600;
+  color: #10b981;
+  font-weight: 600;
+}
+
+.voucher-info-row {
+  background-color: #f0f9ff;
+  border-left: 4px solid #3b82f6;
+  border-radius: 8px;
+  padding: 8px 16px;
+  margin: 4px 0;
+  font-size: 0.9rem;
+  color: #1e40af;
+}
+
+.voucher-info-row .amount.info {
+  color: #3b82f6;
+  font-weight: 500;
 }
 
 /* Insurance Benefits */
 .insurance-benefits {
-    margin-bottom: 2rem;
+  margin-bottom: 2rem;
 }
 
 .insurance-benefits h4 {
-    margin-bottom: 1rem;
-    color: #333;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .benefits-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .benefit-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.5rem;
-    background: #f0fdf4;
-    border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  background: #f0fdf4;
+  border-radius: 6px;
 }
 
 .benefit-item i {
-    color: #10b981;
+  color: #10b981;
 }
 
 /* Deposit Policy Section */
 .deposit-policy {
-    background: #fef3c7;
-    border: 1px solid #f59e0b;
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin: 1.5rem 0;
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
 }
 
 .deposit-policy h4 {
-    color: #92400e;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 1.1rem;
+  color: #92400e;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
 }
 
 .policy-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .policy-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.5rem;
-    color: #92400e;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  color: #92400e;
 }
 
 .policy-item i {
-    color: #10b981;
-    margin-top: 0.25rem;
-    flex-shrink: 0;
+  color: #10b981;
+  margin-top: 0.25rem;
+  flex-shrink: 0;
 }
 
 .policy-note {
-    background: #fef2f2;
-    border: 1px solid #fecaca;
-    border-radius: 8px;
-    padding: 1rem;
-    margin-top: 0.5rem;
-    color: #991b1b;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 0.5rem;
+  color: #991b1b;
 }
 
 .policy-note i {
-    color: #dc2626;
-    margin-right: 0.5rem;
+  color: #dc2626;
+  margin-right: 0.5rem;
 }
 
 /* Potential Fees */
 .potential-fees h4 {
-    margin-bottom: 1rem;
-    color: #333;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .fees-list {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .fee-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem;
-    background: #fef3c7;
-    border-radius: 6px;
-    font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: #fef3c7;
+  border-radius: 6px;
+  font-size: 0.9rem;
 }
 
 .fee-item i {
-    color: #f59e0b;
-    width: 16px;
+  color: #f59e0b;
+  width: 16px;
 }
 
 .fees-note {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem;
-    background: #eff6ff;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    color: #1e40af;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: #eff6ff;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: #1e40af;
 }
 
 .fees-note i {
-    color: #3b82f6;
+  color: #3b82f6;
 }
 
 /* Terms Agreement - ĐÃ SỬA LỖI CHECKBOX */
 .agreement-section {
-    padding: 1.5rem 2rem;
-    background: #f8f9fa;
-    border-top: 1px solid #e5e7eb;
+  padding: 1.5rem 2rem;
+  background: #f8f9fa;
+  border-top: 1px solid #e5e7eb;
 }
 
 .checkbox-container {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    cursor: pointer;
-    font-weight: 500;
-    color: #333;
-    position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  cursor: pointer;
+  font-weight: 500;
+  color: #333;
+  position: relative;
 }
 
 .checkbox-container input[type="checkbox"] {
-    position: absolute;
-    opacity: 0;
-    width: 20px;
-    height: 20px;
-    top: 2px;
-    left: 0;
-    z-index: 2;
-    cursor: pointer;
+  position: absolute;
+  opacity: 0;
+  width: 20px;
+  height: 20px;
+  top: 2px;
+  left: 0;
+  z-index: 2;
+  cursor: pointer;
 }
 
 .checkmark {
-    width: 20px;
-    height: 20px;
-    border: 2px solid #d1d5db;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s;
-    flex-shrink: 0;
-    margin-top: 2px;
-    background: white;
-    position: relative;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #d1d5db;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  flex-shrink: 0;
+  margin-top: 2px;
+  background: white;
+  position: relative;
 }
 
 .checkbox-container input[type="checkbox"]:checked + .checkmark {
-    background: #10b981;
-    border-color: #10b981;
+  background: #10b981;
+  border-color: #10b981;
 }
 
 .checkbox-container input[type="checkbox"]:checked + .checkmark::after {
-    content: "✓";
-    color: white;
-    font-size: 14px;
-    font-weight: bold;
+  content: "✓";
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
 }
 
 .checkbox-container label {
-    cursor: pointer;
-    line-height: 1.5;
+  cursor: pointer;
+  line-height: 1.5;
 }
 
 .terms-link {
-    color: #10b981;
-    text-decoration: underline;
-    font-weight: 600;
+  color: #10b981;
+  text-decoration: underline;
+  font-weight: 600;
 }
 
 .terms-link:hover {
-    color: #059669;
+  color: #059669;
 }
 
 /* Payment Section */
 .payment-section {
-    position: sticky;
-    top: 100px;
-    height: fit-content;
+  position: sticky;
+  top: 100px;
+  height: fit-content;
 }
 
 .payment-container {
-    background: white;
-    border-radius: 12px;
-    padding: 2rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .payment-container h3 {
-    margin-bottom: 1.5rem;
-    color: #333;
-    text-align: center;
+  margin-bottom: 1.5rem;
+  color: #333;
+  text-align: center;
 }
 
 /* Voucher Section */
 .voucher-section {
-    margin-bottom: 2rem;
-    padding: 1rem;
-    background: #f8f9fa;
-    border-radius: 8px;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
 }
 
 .voucher-header {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-    color: #333;
-    font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+  font-weight: 500;
 }
 
 .voucher-header i {
-    color: #10b981;
+  color: #10b981;
 }
 
 .voucher-input {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .voucher-input input {
-    flex: 1;
-    padding: 0.5rem;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    font-size: 0.9rem;
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.9rem;
 }
 
 .btn-apply-voucher {
-    padding: 0.5rem 1rem;
-    background: #10b981;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: background 0.3s;
+  padding: 0.5rem 1rem;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.3s;
 }
 
 .btn-apply-voucher:hover {
-    background: #059669;
+  background: #059669;
 }
 
 .btn-select-voucher {
-    width: 100%;
-    padding: 0.75rem;
-    background: white;
-    border: 1px solid #10b981;
-    color: #10b981;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
+  width: 100%;
+  padding: 0.75rem;
+  background: white;
+  border: 1px solid #10b981;
+  color: #10b981;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .btn-select-voucher:hover {
-    background: #10b981;
-    color: white;
+  background: #10b981;
+  color: white;
 }
 
 /* Order Summary */
 .booking-summary {
-    background: #f8f9fa;
-    padding: 1.5rem;
-    border-radius: 8px;
-    margin-bottom: 2rem;
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
 }
 
 .booking-summary h4 {
-    margin-bottom: 1rem;
-    color: #333;
+  margin-bottom: 1rem;
+  color: #333;
 }
 
 .summary-item {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.5rem;
-    color: #666;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  color: #666;
 }
 
 .summary-item.deposit {
-    border-top: 1px solid #d1d5db;
-    padding-top: 0.5rem;
-    margin-top: 0.5rem;
-    font-weight: bold;
-    color: #333;
+  border-top: 1px solid #d1d5db;
+  padding-top: 0.5rem;
+  margin-top: 0.5rem;
+  font-weight: bold;
+  color: #333;
 }
 
 .summary-item.discount {
-    color: #10b981;
+  color: #10b981;
 }
 
 .discount-amount {
-    color: #10b981 !important;
-    font-weight: bold;
+  color: #10b981 !important;
+  font-weight: bold;
 }
 
 /* Payment Methods */
 .payment-methods {
-    margin-bottom: 2rem;
+  margin-bottom: 2rem;
 }
 
 .payment-methods h4 {
-    margin-bottom: 1rem;
-    color: #333;
+  margin-bottom: 1rem;
+  color: #333;
 }
 
 .payment-method {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    border: 2px solid #e5e7eb;
-    border-radius: 8px;
-    margin-bottom: 0.5rem;
-    cursor: pointer;
-    transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s;
 }
 
 .payment-method:hover {
-    border-color: #10b981;
+  border-color: #10b981;
 }
 
 .payment-method.active {
-    border-color: #10b981;
-    background: #f0fdf4;
+  border-color: #10b981;
+  background: #f0fdf4;
 }
 
 .payment-method i:first-child {
-    color: #10b981;
-    font-size: 1.2rem;
+  color: #10b981;
+  font-size: 1.2rem;
 }
 
 .payment-method span {
-    flex: 1;
-    font-weight: 500;
+  flex: 1;
+  font-weight: 500;
 }
 
 .payment-method i:last-child {
-    color: #10b981;
-    opacity: 0;
-    transition: opacity 0.3s;
+  color: #10b981;
+  opacity: 0;
+  transition: opacity 0.3s;
 }
 
 .payment-method.active i:last-child {
-    opacity: 1;
+  opacity: 1;
 }
 
 /* Payment Details */
 .payment-details {
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .qr-section {
-    text-align: center;
-    margin-bottom: 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
 }
 
 .qr-code {
-    display: inline-block;
-    padding: 1rem;
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    margin-bottom: 1rem;
+  display: inline-block;
+  padding: 1rem;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  margin-bottom: 1rem;
 }
 
 .qr-code img {
-    width: 200px;
-    height: 200px;
+  width: 200px;
+  height: 200px;
 }
 
 .qr-instruction {
-    color: #666;
-    font-size: 0.9rem;
+  color: #666;
+  font-size: 0.9rem;
 }
 
 .bank-info,
 .momo-info {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .info-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem;
-    background: #f8f9fa;
-    border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border-radius: 6px;
 }
 
 .info-item label {
-    font-weight: 500;
-    color: #666;
+  font-weight: 500;
+  color: #666;
 }
 
 .copyable {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-    color: #10b981;
-    font-weight: 500;
-    transition: color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  color: #10b981;
+  font-weight: 500;
+  transition: color 0.3s;
 }
 
 .copyable:hover {
-    color: #059669;
+  color: #059669;
 }
 
 .copyable i {
-    font-size: 0.8rem;
+  font-size: 0.8rem;
 }
 
 /* Payment Status */
 .payment-status {
-    text-align: center;
-    padding: 1.5rem;
-    background: #fef3c7;
-    border-radius: 8px;
-    border: 1px solid #f59e0b;
+  text-align: center;
+  padding: 1.5rem;
+  background: #fef3c7;
+  border-radius: 8px;
+  border: 1px solid #f59e0b;
 }
 
 .status-indicator {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-    color: #d97706;
-    font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  color: #d97706;
+  font-weight: 500;
 }
 
 .status-text {
-    color: #92400e;
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
+  color: #92400e;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
 }
 
 .countdown {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #dc2626;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #dc2626;
 }
 
 /* Action Buttons */
 .action-buttons {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-top: 2rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2rem;
 }
 
 .btn {
-    padding: 0.75rem 2rem;
-    border: none;
-    border-radius: 6px;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    text-decoration: none;
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
 }
 
 .btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .btn-primary {
-    background: #10b981;
-    color: white;
+  background: #10b981;
+  color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
-    background: #059669;
-    transform: translateY(-2px);
+  background: #059669;
+  transform: translateY(-2px);
 }
 
 .btn-secondary {
-    background: #6b7280;
-    color: white;
+  background: #6b7280;
+  color: white;
 }
 
 .btn-secondary:hover {
-    background: #4b5563;
-    transform: translateY(-2px);
+  background: #4b5563;
+  transform: translateY(-2px);
 }
 
 /* Modal Styles */
 .modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
 }
 
 .modal.show {
-    display: flex !important;
+  display: flex !important;
 }
 
 .modal-content {
-    background: white;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 600px;
-    max-height: 80vh;
-    overflow: hidden;
-    position: relative;
-    margin: auto;
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow: hidden;
+  position: relative;
+  margin: auto;
 }
 
 .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
-    background: #f8f9fa;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f8f9fa;
 }
 
 .modal-header h3 {
-    color: #333;
-    margin: 0;
+  color: #333;
+  margin: 0;
 }
 
 .btn-close,
 .close {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: #666;
-    padding: 0.5rem;
-    border-radius: 50%;
-    transition: all 0.3s;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.3s;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-close:hover,
 .close:hover {
-    background: #f3f4f6;
-    color: #333;
+  background: #f3f4f6;
+  color: #333;
 }
 
 .modal-body {
-    padding: 1.5rem;
-    max-height: 60vh;
-    overflow-y: auto;
+  padding: 1.5rem;
+  max-height: 60vh;
+  overflow-y: auto;
 }
 
 /* Voucher Modal */
 .voucher-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-    cursor: pointer;
-    transition: all 0.3s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
 }
 
 .voucher-item:hover {
-    border-color: #10b981;
-    background: #f0fdf4;
+  border-color: #10b981;
+  background: #f0fdf4;
 }
 
 .voucher-code {
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 0.25rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 0.25rem;
 }
 
 .voucher-desc {
-    font-size: 0.9rem;
-    color: #666;
+  font-size: 0.9rem;
+  color: #666;
 }
 
 .voucher-discount {
-    font-weight: bold;
-    color: #10b981;
-    font-size: 1.1rem;
+  font-weight: bold;
+  color: #10b981;
+  font-size: 1.1rem;
 }
 
 /* Terms Modal */
 .terms-full-content h4 {
-    color: #333;
-    margin-top: 1.5rem;
-    margin-bottom: 0.75rem;
+  color: #333;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .terms-full-content h4:first-child {
-    margin-top: 0;
+  margin-top: 0;
 }
 
 .terms-full-content ul {
-    margin-left: 1.5rem;
-    margin-bottom: 1rem;
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .terms-full-content li {
-    margin-bottom: 0.25rem;
+  margin-bottom: 0.25rem;
 }
 
 /* Toast Animations */
 @keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 @keyframes slideOut {
-    from {
-        transform: translateX(0);
-        opacity: 1;
-    }
-    to {
-        transform: translateX(100%);
-        opacity: 0;
-    }
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
 }
 
 /* Responsive */
 @media (max-width: 1024px) {
-    .deposit-container {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
+  .deposit-container {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
 
-    .payment-section {
-        position: static;
-    }
+  .payment-section {
+    position: static;
+  }
 }
 
 @media (max-width: 768px) {
-    .container {
-        padding: 0 15px;
-    }
+  .container {
+    padding: 0 15px;
+  }
 
-    .header-content {
-        flex-direction: column;
-        gap: 1rem;
-    }
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+  }
 
-    .nav {
-        gap: 1rem;
-    }
+  .nav {
+    gap: 1rem;
+  }
 
-    .progress-steps {
-        gap: 1.5rem;
-    }
+  .progress-steps {
+    gap: 1.5rem;
+  }
 
-    .step span {
-        display: none;
-    }
+  .step span {
+    display: none;
+  }
 
-    .step-number {
-        width: 32px;
-        height: 32px;
-        font-size: 0.9rem;
-    }
+  .step-number {
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
+  }
 
-    .step:not(:last-child)::after {
-        width: 1.5rem;
-        left: calc(100% + 0.375rem);
-    }
+  .step:not(:last-child)::after {
+    width: 1.5rem;
+    left: calc(100% + 0.375rem);
+  }
 
-    .action-buttons {
-        flex-direction: column;
-    }
+  .action-buttons {
+    flex-direction: column;
+  }
 
-    .cost-container,
-    .payment-container {
-        padding: 1rem;
-    }
+  .cost-container,
+  .payment-container {
+    padding: 1rem;
+  }
 
-    .qr-code img {
-        width: 150px;
-        height: 150px;
-    }
+  .qr-code img {
+    width: 150px;
+    height: 150px;
+  }
 
-    .info-grid,
-    .fees-list {
-        grid-template-columns: 1fr;
-    }
+  .info-grid,
+  .fees-list {
+    grid-template-columns: 1fr;
+  }
 
-    .modal-content {
-        width: 95%;
-        max-width: none;
-    }
+  .modal-content {
+    width: 95%;
+    max-width: none;
+  }
 
-    .modal-body {
-        padding: 1rem;
-    }
+  .modal-body {
+    padding: 1rem;
+  }
+}
+
+/* Applied Voucher Info Styles */
+.applied-voucher-info {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-radius: 8px;
+  color: white;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.applied-voucher-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.applied-voucher-header i {
+  color: #34d399;
+  font-size: 1rem;
+}
+
+.applied-voucher-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.voucher-code-applied {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.voucher-name-applied {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.voucher-description-applied {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  font-style: italic;
+}
+
+/* Animation for applied voucher */
+.applied-voucher-info {
+  animation: slideInVoucher 0.3s ease-out;
+}
+
+@keyframes slideInVoucher {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

@@ -76,6 +76,13 @@ public interface IDepositRepository {
     Discount getValidVoucher(String voucherCode) throws SQLException;
     
     /**
+     * Kiểm tra voucher có hợp lệ không (thời gian, trạng thái, giới hạn sử dụng)
+     * @param voucherCode Mã voucher
+     * @return Discount entity nếu hợp lệ, null nếu không hợp lệ
+     */
+    Discount validateVoucher(String voucherCode) throws SQLException;
+    
+    /**
      * Lấy discount theo ID
      * @param discountId ID của discount
      * @return Discount entity hoặc null
@@ -114,4 +121,46 @@ public interface IDepositRepository {
      * @return Tổng phí theo category
      */
     double getTotalSurchargesByCategory(UUID bookingId, String category) throws SQLException;
+
+    // ====== BỔ SUNG HELPER CHO VOUCHER (KHÔNG ẢNH HƯỞNG CODE CŨ) ======
+
+    /**
+     * Helper: In ra toàn bộ voucher đang active trong DB (debug)
+     */
+    default void logAllActiveVouchers() {}
+
+    /**
+     * Helper: Kiểm tra chi tiết trạng thái voucher (debug)
+     */
+    default void debugVoucherStatus(String voucherCode) {}
+
+    /**
+     * Helper: Kiểm tra user đã dùng voucher này bao nhiêu lần
+     */
+    default int countUserVoucherUsage(UUID userId, UUID discountId) { return 0; }
+
+    /**
+     * Helper: Kiểm tra tổng số lượt sử dụng voucher này trên toàn hệ thống
+     */
+    default int countTotalVoucherUsage(UUID discountId) { return 0; }
+
+    /**
+     * Helper: Validate voucher nâng cao (có thể dùng cho unit test hoặc debug)
+     */
+    default boolean isVoucherCurrentlyValid(String voucherCode) { return false; }
+    
+    /**
+     * Tăng số lần sử dụng voucher
+     * @param discountId ID của discount
+     * @return true nếu thành công
+     */
+    boolean incrementVoucherUsage(UUID discountId) throws SQLException;
+    
+    /**
+     * Ghi log sử dụng voucher của user
+     * @param userId ID của user
+     * @param discountId ID của discount
+     * @return true nếu thành công
+     */
+    boolean recordUserVoucherUsage(UUID userId, UUID discountId) throws SQLException;
 }

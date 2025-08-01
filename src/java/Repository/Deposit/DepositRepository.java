@@ -90,12 +90,60 @@ public class DepositRepository implements IDepositRepository {
 
     @Override
     public Discount getValidVoucher(String voucherCode) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String sql = "SELECT * FROM Discount WHERE VoucherCode = ? AND IsActive = 1";
+        
+        try (Connection conn = dbContext.getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, voucherCode);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToDiscount(rs);
+                }
+                return null;
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error getting valid voucher: " + voucherCode, e);
+            throw e;
+        }
     }
 
     @Override
     public Discount getDiscountById(UUID discountId) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String sql = "SELECT * FROM Discount WHERE DiscountId = ?";
+        
+        try (Connection conn = dbContext.getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setObject(1, discountId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToDiscount(rs);
+                }
+                return null;
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error getting discount by ID: " + discountId, e);
+            throw e;
+        }
+    }
+
+    @Override
+    public Discount validateVoucher(String voucherCode) throws SQLException {
+        String sql = "SELECT * FROM Discount WHERE VoucherCode = ? AND IsActive = 1";
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, voucherCode);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    // Có thể kiểm tra thêm ngày bắt đầu, ngày kết thúc, usage limit ở đây nếu muốn
+                    return mapResultSetToDiscount(rs);
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -328,32 +376,31 @@ public class DepositRepository implements IDepositRepository {
     }
 
     /**
-     * Map ResultSet sang Discount entity
+     * Map ResultSet sang Discount entity (bổ sung, không xóa code cũ)
      */
-//    private Discount mapResultSetToDiscount(ResultSet rs) throws SQLException {
-//        Discount discount = new Discount();
-//
-//        discount.setDiscountId(UUID.fromString(rs.getString("DiscountId")));
-//        discount.setDiscountName(rs.getString("DiscountName"));
-//        discount.setDescription(rs.getString("Description"));
-//        discount.setDiscountType(rs.getString("DiscountType"));
-//        discount.setDiscountValue(java.math.BigDecimal.valueOf(rs.getDouble("DiscountValue")));
-//        
-//        // Handle date fields safely
-//        if (rs.getTimestamp("StartDate") != null) {
-//            discount.setStartDate(rs.getTimestamp("StartDate").toLocalDateTime());
-//        }
-//        if (rs.getTimestamp("EndDate") != null) {
-//            discount.setEndDate(rs.getTimestamp("EndDate").toLocalDateTime());
-//        }
-//        
-//        discount.setActive(rs.getBoolean("IsActive"));
-//        if (rs.getTimestamp("CreatedDate") != null) {
-//        discount.setCreatedDate(rs.getTimestamp("CreatedDate").toLocalDateTime());
-//        }
-//
-//        return discount;
-//    }
+    private Discount mapResultSetToDiscount(ResultSet rs) throws SQLException {
+        Discount discount = new Discount();
+        discount.setDiscountId(UUID.fromString(rs.getString("DiscountId")));
+        discount.setDiscountName(rs.getString("DiscountName"));
+        discount.setDescription(rs.getString("Description"));
+        discount.setDiscountType(rs.getString("DiscountType"));
+        discount.setDiscountValue(rs.getBigDecimal("DiscountValue"));
+        // Mapping ngày tháng an toàn, không ép kiểu LocalDateTime
+        java.sql.Timestamp startTs = rs.getTimestamp("StartDate");
+        if (startTs != null) discount.setStartDate(startTs);
+        java.sql.Timestamp endTs = rs.getTimestamp("EndDate");
+        if (endTs != null) discount.setEndDate(endTs);
+        discount.setIsActive(rs.getBoolean("IsActive"));
+        java.sql.Timestamp createdTs = rs.getTimestamp("CreatedDate");
+        if (createdTs != null) discount.setCreatedDate(createdTs);
+        discount.setVoucherCode(rs.getString("VoucherCode"));
+        discount.setMinOrderAmount(rs.getBigDecimal("MinOrderAmount"));
+        discount.setMaxDiscountAmount(rs.getBigDecimal("MaxDiscountAmount"));
+        discount.setUsageLimit(rs.getObject("UsageLimit") != null ? rs.getInt("UsageLimit") : null);
+        discount.setUsedCount(rs.getInt("UsedCount"));
+        discount.setDiscountCategory(rs.getString("DiscountCategory"));
+        return discount;
+    }
     
     /**
      * Map ResultSet sang Insurance entity
@@ -443,6 +490,151 @@ public class DepositRepository implements IDepositRepository {
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Error getting total surcharges by category: " + bookingId + ", " + category, e);
+            throw e;
+        }
+    }
+
+    // ====== BỔ SUNG HELPER VOUCHER (CHỈ THÊM MỚI) ======
+
+    /**
+     * Helper: In ra toàn bộ voucher đang active trong DB (debug)
+     */
+    public void logAllActiveVouchers() {
+        String sql = "SELECT VoucherCode, DiscountName, StartDate, EndDate, IsActive FROM Discount WHERE IsActive = 1";
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            LOGGER.info("=== DANH SÁCH VOUCHER ĐANG ACTIVE ===");
+            while (rs.next()) {
+                LOGGER.info(String.format("Voucher: %s | Name: %s | Start: %s | End: %s | Active: %s",
+                        rs.getString("VoucherCode"),
+                        rs.getString("DiscountName"),
+                        rs.getDate("StartDate"),
+                        rs.getDate("EndDate"),
+                        rs.getBoolean("IsActive")));
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.WARNING, "Không thể lấy danh sách voucher active", e);
+        }
+    }
+
+    /**
+     * Helper: Kiểm tra chi tiết trạng thái voucher (debug)
+     */
+    public void debugVoucherStatus(String voucherCode) {
+        String sql = "SELECT * FROM Discount WHERE VoucherCode = ?";
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, voucherCode);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    LOGGER.info("=== DEBUG VOUCHER STATUS ===");
+                    LOGGER.info("VoucherCode: " + rs.getString("VoucherCode"));
+                    LOGGER.info("DiscountName: " + rs.getString("DiscountName"));
+                    LOGGER.info("IsActive: " + rs.getBoolean("IsActive"));
+                    LOGGER.info("StartDate: " + rs.getDate("StartDate"));
+                    LOGGER.info("EndDate: " + rs.getDate("EndDate"));
+                    LOGGER.info("UsageLimit: " + rs.getObject("UsageLimit"));
+                    LOGGER.info("UsedCount: " + rs.getInt("UsedCount"));
+                } else {
+                    LOGGER.warning("Voucher không tồn tại: " + voucherCode);
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.WARNING, "Không thể debug voucher: " + voucherCode, e);
+        }
+    }
+
+    /**
+     * Helper: Kiểm tra user đã dùng voucher này bao nhiêu lần
+     */
+    public int countUserVoucherUsage(UUID userId, UUID discountId) {
+        String sql = "SELECT COUNT(*) FROM UserVoucherUsage WHERE UserId = ? AND DiscountId = ?";
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setObject(1, userId);
+            ps.setObject(2, discountId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.WARNING, "Không thể đếm số lần user dùng voucher", e);
+        }
+        return 0;
+    }
+
+    /**
+     * Helper: Kiểm tra tổng số lượt sử dụng voucher này trên toàn hệ thống
+     */
+    public int countTotalVoucherUsage(UUID discountId) {
+        String sql = "SELECT COUNT(*) FROM UserVoucherUsage WHERE DiscountId = ?";
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setObject(1, discountId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.WARNING, "Không thể đếm tổng số lượt sử dụng voucher", e);
+        }
+        return 0;
+    }
+
+    /**
+     * Helper: Validate voucher nâng cao (có thể dùng cho unit test hoặc debug)
+     */
+    public boolean isVoucherCurrentlyValid(String voucherCode) {
+        try {
+            Discount discount = validateVoucher(voucherCode);
+            if (discount == null) return false;
+            // Kiểm tra số lượt sử dụng thực tế
+            int used = countTotalVoucherUsage(discount.getDiscountId());
+            if (discount.getUsageLimit() != null && used >= discount.getUsageLimit()) {
+                LOGGER.warning("Voucher đã hết lượt sử dụng thực tế: " + used + "/" + discount.getUsageLimit());
+                return false;
+            }
+            return true;
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Lỗi khi kiểm tra voucher hiện tại", e);
+            return false;
+        }
+    }
+    
+    @Override
+    public boolean incrementVoucherUsage(UUID discountId) throws SQLException {
+        String sql = "UPDATE Discount SET UsedCount = UsedCount + 1 WHERE DiscountId = ?";
+        
+        try (Connection conn = dbContext.getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setObject(1, discountId);
+            int rowsAffected = ps.executeUpdate();
+            
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error incrementing voucher usage: " + discountId, e);
+            throw e;
+        }
+    }
+    
+    @Override
+    public boolean recordUserVoucherUsage(UUID userId, UUID discountId) throws SQLException {
+        String sql = "INSERT INTO UserVoucherUsage (UserId, DiscountId, UsedAt) VALUES (?, ?, GETDATE())";
+        
+        try (Connection conn = dbContext.getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setObject(1, userId);
+            ps.setObject(2, discountId);
+            int rowsAffected = ps.executeUpdate();
+            
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error recording user voucher usage: " + userId + ", " + discountId, e);
             throw e;
         }
     }
