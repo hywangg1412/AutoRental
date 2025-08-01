@@ -457,6 +457,7 @@
                         </label>
                       </div>
                     </div>
+
                                          <div class="col-md-6">
                        <label for="fuelPrice" class="form-label">Fuel price (VND)</label>
                        <input type="number" class="form-control" id="fuelPrice" name="fuelPrice" min="0" disabled oninput="validateNumber(this, 0, 999999999)">
@@ -474,6 +475,7 @@
                         </label>
                       </div>
                     </div>
+
                                          <div class="col-md-6">
                        <label for="violationFine" class="form-label">Fine amount (VND)</label>
                        <input type="number" class="form-control" id="violationFine" name="violationFine" min="0" disabled oninput="validateNumber(this, 0, 999999999)">
@@ -505,6 +507,7 @@
                     </div>
                     <div class="col-md-6">
                       <label for="damageAmount" class="form-label">Repair cost (VND)</label>
+
                       <input type="number" class="form-control" id="damageAmount" name="damageAmount" min="100000" max="500000" disabled oninput="validateDamageAmount(this)">
                                              <div class="invalid-feedback">Please enter an amount between 100,000 - 500,000 VND</div>
                     </div>
@@ -669,6 +672,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
     
+
          <script>
        $(document).ready(function () {
          // Function to show validation error modal
@@ -682,6 +686,7 @@
            $("#errorMessage").text(message);
            $("#errorModal").modal("show");
          }
+
         // Handle event when clicking "Inspect Vehicle" button
         $(".inspect-btn").click(function () {
           const bookingId = $(this).data("booking-id");
@@ -734,6 +739,7 @@
             data: formData,
             processData: false,
             contentType: false,
+
                          success: function (response) {
                if (response.success) {
                  // Show success message
@@ -752,6 +758,7 @@
              error: function (xhr, status, error) {
                showError("Error: " + error);
              }
+
           });
         });
         
@@ -784,7 +791,9 @@
         $("#lateReturn").change(function() {
           $("#lateReturnHours").prop("disabled", !this.checked);
           if (!this.checked) {
+
             $("#lateReturnHours").val("").removeClass("is-valid is-invalid");
+
           }
         });
         
@@ -792,20 +801,25 @@
           $("#fuelPrice").prop("disabled", !this.checked);
           if (!this.checked) {
             $("#fuelPrice").val("").removeClass("is-valid is-invalid");
+
           }
         });
         
         $("#trafficViolations").change(function() {
           $("#violationFine").prop("disabled", !this.checked);
           if (!this.checked) {
+
             $("#violationFine").val("").removeClass("is-valid is-invalid");
+
           }
         });
         
         $("#minorDamage").change(function() {
           $("#damageAmount").prop("disabled", !this.checked);
           if (!this.checked) {
+
             $("#damageAmount").val("").removeClass("is-valid is-invalid");
+
           }
         });
         
@@ -898,6 +912,7 @@
         function validateNumber(input, min, max) {
           const value = parseFloat(input.value);
           const isValid = !isNaN(value) && value >= min && value <= max;
+
           
           if (isValid) {
             input.classList.remove('is-invalid');

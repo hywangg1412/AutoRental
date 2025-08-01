@@ -20,7 +20,7 @@ import Model.Entity.OAuth.UserLogins;
 import Service.Auth.EmailOTPVerificationService;
 import Service.Auth.UserLoginsService;
 
-//facebookLogin
+//facebookRegister
 public class FacebookRegisterServlet extends HttpServlet {
 
     private FacebookAuthService facebookAuthService;
@@ -50,7 +50,26 @@ public class FacebookRegisterServlet extends HttpServlet {
         }
         try {
             FacebookUser facebookUser = facebookAuthService.getRegisterUserInfo(code);
-            User existingUser = userService.findByEmail(facebookUser.getEmail());
+            String email = facebookUser.getEmail();
+            
+            if (email == null || email.trim().isEmpty()) {
+                request.setAttribute("error", "Cannot retrieve email from Facebook account. Please try again or contact support.");
+                request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
+                return;
+            }
+            
+            // Step 1: Check if this Facebook account is already linked to any user
+            UserLogins existingUserLogin = userLoginsService.findByProviderAndKey("facebook", facebookUser.getFacebookId());
+            
+            if (existingUserLogin != null) {
+                // Facebook account is already linked to another user
+                request.setAttribute("error", "This Facebook account is already linked to another user. Please use a different Facebook account or log in with the existing account.");
+                request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
+                return;
+            }
+            
+            // Step 2: Check if email already exists in our system
+            User existingUser = userService.findByEmail(email);
             if (existingUser != null) {
                 String errorMsg;
                 if (existingUser.isDeleted()) {
@@ -58,12 +77,14 @@ public class FacebookRegisterServlet extends HttpServlet {
                 } else if (existingUser.isBanned()) {
                     errorMsg = "This email is associated with a banned account. Please contact support.";
                 } else {
-                    errorMsg = "An account with this email already exists.";
+                    errorMsg = "An account with email " + email + " already exists. Please log in with your existing account or use a different Facebook account.";
                 }
                 request.setAttribute("error", errorMsg);
-                request.getRequestDispatcher("/pages/authen/SignIn.jsp").forward(request, response);
+                request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
                 return;
             }
+            
+            // Step 3: Proceed with registration
             User newUser = userMapper.mapFacebookUserToUser(facebookUser, userService);
             newUser.setEmailVerifed(true);
             Role userRole = roleService.findByRoleName(RoleConstants.USER);
@@ -75,16 +96,14 @@ public class FacebookRegisterServlet extends HttpServlet {
             newUser.setRoleId(userRole.getRoleId());
             userService.add(newUser);
             
-
             UserLogins userLogins = userMapper.mapFacebookUserToUserLogins(facebookUser, newUser);
             userLoginsService.add(userLogins);
 
             response.sendRedirect(request.getContextPath() + "/setPassword");
             return;
         } catch (Exception e) {
-            request.setAttribute("error", "Facebook register failed - " + e.getMessage());
+            request.setAttribute("error", "Facebook registration failed: " + e.getMessage());
             request.getRequestDispatcher("/pages/authen/SignUp.jsp").forward(request, response);
         }
     }
-
 }

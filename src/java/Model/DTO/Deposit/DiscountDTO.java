@@ -7,11 +7,13 @@ import Utils.PriceUtils; // Thêm import PriceUtils
  */
 public class DiscountDTO {
 
+    private java.util.UUID discountId;   // ID của discount
     private String voucherCode;          // Mã voucher
     private String name;                 // Tên discount
     private String discountType;         // "Percent" hoặc "Fixed"
     private double discountValue;        // Giá trị giảm - DÙNG DOUBLE
     private double minOrderAmount;       // Đơn hàng tối thiểu - DÙNG DOUBLE
+    private double maxDiscountAmount;    // Giá trị giảm tối đa - DÙNG DOUBLE
     private String description;          // Mô tả
 
     // Constructors
@@ -29,6 +31,14 @@ public class DiscountDTO {
     }
 
     // ========== GETTERS VÀ SETTERS - CHỈ LƯU TRỮ ==========
+    public java.util.UUID getDiscountId() {
+        return discountId;
+    }
+
+    public void setDiscountId(java.util.UUID discountId) {
+        this.discountId = discountId;
+    }
+
     public String getVoucherCode() {
         return voucherCode;
     }
@@ -73,6 +83,14 @@ public class DiscountDTO {
 
     public void setMinOrderAmount(double minOrderAmount) {
         this.minOrderAmount = minOrderAmount;
+    }
+
+    public double getMaxDiscountAmount() {
+        return maxDiscountAmount;
+    }
+
+    public void setMaxDiscountAmount(double maxDiscountAmount) {
+        this.maxDiscountAmount = maxDiscountAmount;
     }
 
     public String getDescription() {

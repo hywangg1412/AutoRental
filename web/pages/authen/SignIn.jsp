@@ -26,6 +26,7 @@
                     <h2>Login to your account</h2>
                     <%
                         String errMsg = (String) request.getAttribute("error");
+                        String emailFromError = (String) request.getAttribute("email");
                         if (errMsg != null) {
                     %>
                         <div class="social-login-error">
@@ -51,7 +52,8 @@
                     <form action="${pageContext.request.contextPath}/normalLogin" method="post" class="login-form">
                         <div class="form-group">
                             <label for="email">Email</label>
-                            <input type="email" id="email" name="email" required placeholder="Enter your email" >
+                            <input type="email" id="email" name="email" required placeholder="Enter your email" 
+                                   value="<%= emailFromError != null ? emailFromError : "" %>">
                         </div>
                         <div class="form-group">
                             <div class="form-options">

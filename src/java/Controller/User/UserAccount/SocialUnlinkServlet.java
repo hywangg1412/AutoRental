@@ -31,56 +31,85 @@ public class SocialUnlinkServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
+        // Check if user is logged in
         User currentUser = (User) SessionUtil.getSessionAttribute(request, "user");
         if (currentUser == null) {
             response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp");
             return;
         }
+        
+        // Validate provider parameter
         String provider = request.getParameter("provider");
-        if (provider == null || (!provider.equals("facebook") && !provider.equals("google"))) {
-            SessionUtil.setSessionAttribute(request, "error", "Invalid provider.");
-            response.sendRedirect(request.getContextPath() + "/user/profile");
+        if (provider == null || provider.trim().isEmpty()) {
+            SessionUtil.setSessionAttribute(request, "error", "Provider parameter is required.");
+            redirectToProfile(request, response, currentUser);
             return;
         }
+        
+        // Normalize and validate provider
+        provider = provider.toLowerCase().trim();
+        if (!provider.equals("facebook") && !provider.equals("google")) {
+            SessionUtil.setSessionAttribute(request, "error", "Invalid provider. Only 'facebook' and 'google' are supported.");
+            redirectToProfile(request, response, currentUser);
+            return;
+        }
+        
+        try {
+            // Find and delete UserLogins record
+            UserLogins userLogin = userLoginsService.findByUserIdAndProvider(currentUser.getUserId(), provider);
+            
+            if (userLogin == null) {
+                SessionUtil.setSessionAttribute(request, "error", "No " + provider + " account is currently linked to your profile.");
+                redirectToProfile(request, response, currentUser);
+                return;
+            }
+            
+            // Delete the record
+            boolean deleted = userLoginsService.deleteByProviderAndKey(userLogin.getLoginProvider(), userLogin.getProviderKey());
+            
+            if (deleted) {
+                String providerName = provider.substring(0, 1).toUpperCase() + provider.substring(1);
+                SessionUtil.setSessionAttribute(request, "success", providerName + " account has been successfully unlinked from your profile.");
+                LOGGER.info("User " + currentUser.getUserId() + " unlinked " + provider + " account successfully");
+            } else {
+                SessionUtil.setSessionAttribute(request, "error", "Failed to unlink " + provider + " account. Please try again.");
+            }
+            
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error unlinking " + provider + " account for user " + currentUser.getUserId(), e);
+            SessionUtil.setSessionAttribute(request, "error", "An error occurred while unlinking your " + provider + " account. Please try again later.");
+        }
+        
+        redirectToProfile(request, response, currentUser);
+    }
+
+    private void redirectToProfile(HttpServletRequest request, HttpServletResponse response, User currentUser) 
+            throws IOException {
         String profileRedirect = "/user/profile";
+        
         try {
             Role userRole = roleService.findById(currentUser.getRoleId());
             if (userRole != null && "Staff".equalsIgnoreCase(userRole.getRoleName())) {
                 profileRedirect = "/staff/profile";
+            } else if (userRole != null && "Admin".equalsIgnoreCase(userRole.getRoleName())) {
+                profileRedirect = "/admin/profile";
             }
         } catch (Exception ex) {
-            // Nếu lỗi khi lấy role, giữ nguyên profileRedirect là /user/profile
+            LOGGER.log(Level.WARNING, "Error determining user role for profile redirect", ex);
         }
-        try {
-            UserLogins login = userLoginsService.findByUserIdAndProvider(currentUser.getUserId(), provider);
-            if (login != null) {
-                userLoginsService.deleteByProviderAndKey(login.getLoginProvider(), login.getProviderKey());
-                SessionUtil.setSessionAttribute(request, "success", provider.substring(0, 1).toUpperCase() + provider.substring(1) + " account unlinked successfully!");
-            } else {
-                SessionUtil.setSessionAttribute(request, "error", "No " + provider + " account found to unlink.");
-            }
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error unlinking " + provider + " account", e);
-            SessionUtil.setSessionAttribute(request, "error", "Failed to unlink " + provider + " account. Please try again.");
-        }
+        
         response.sendRedirect(request.getContextPath() + profileRedirect);
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Redirect GET requests to profile page
-        String profileRedirect = "/user/profile";
         User currentUser = (User) SessionUtil.getSessionAttribute(request, "user");
-        if (currentUser != null) {
-            try {
-                Role userRole = roleService.findById(currentUser.getRoleId());
-                if (userRole != null && "Staff".equalsIgnoreCase(userRole.getRoleName())) {
-                    profileRedirect = "/staff/profile";
-                }
-            } catch (Exception ex) {
-            }
+        if (currentUser == null) {
+            response.sendRedirect(request.getContextPath() + "/pages/authen/SignIn.jsp");
+            return;
         }
-        response.sendRedirect(request.getContextPath() + profileRedirect);
+        redirectToProfile(request, response, currentUser);
     }
 }

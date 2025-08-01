@@ -329,42 +329,54 @@
                   <i class="fas fa-tags"></i>
                   Select Available Voucher
                 </button>
+                
+                <!-- Applied Voucher Info -->
+                <c:if test="${depositPageData.appliedDiscount != null}">
+                  <div class="applied-voucher-info" id="appliedVoucherInfo">
+                    <div class="applied-voucher-header">
+                      <i class="fas fa-check-circle"></i>
+                      <span>Applied Voucher</span>
+                    </div>
+                    <div class="applied-voucher-details">
+                      <div class="voucher-code-applied">
+                        <strong>${depositPageData.appliedDiscount.voucherCode}</strong>
+                      </div>
+                      <div class="voucher-name-applied">
+                        ${depositPageData.appliedDiscount.name}
+                      </div>
+                      <div class="voucher-description-applied">
+                        ${depositPageData.appliedDiscount.description}
+                      </div>
+                    </div>
+                  </div>
+                </c:if>
               </div>
 
                             <!-- Order Summary động, format giống hardcode -->
               <div class="booking-summary">
                 <h4>Order Summary</h4>
                 <div class="summary-item">
-                                    <span>Subtotal (${depositPageData.carModel})</span>
-                                    <span class="total-amount" id="summaryTotal">
-                                        <c:out value="${depositPageData.formattedSubtotal}" />
-                                    </span>
+                  <span>Subtotal</span>
+                  <span class="total-amount" id="summaryTotal">
+                    <c:out value="${depositPageData.formattedSubtotal}" />
+                  </span>
                 </div>
-                                <c:if test="${depositPageData.discountAmount > 0}">
-                                    <div class="summary-item discount" id="summaryDiscountRow">
-                  <span>Voucher Discount</span>
-                                        <span class="discount-amount" id="summaryDiscount">
-                                            -<c:out value="${depositPageData.formattedDiscountAmount}" />
-                                        </span>
-                                    </div>
-                                </c:if>
-                                <div class="summary-item">
-                                    <span>Total Amount</span>
-                                    <span>
-                                        <c:out value="${depositPageData.formattedTotalAmount}" />
-                                    </span>
+                <c:if test="${depositPageData.discountAmount > 0}">
+                  <div class="summary-item discount" id="summaryDiscountRow">
+                    <span><i class="fas fa-ticket-alt"></i> Voucher Discount</span>
+                    <span class="discount-amount" id="summaryDiscount">
+                      -<c:out value="${depositPageData.formattedDiscountAmount}" />
+                    </span>
+                  </div>
+                </c:if>
+                <div class="summary-item">
+                  <span>Total Amount</span>
+                  <span>
+                    <c:out value="${depositPageData.formattedTotalAmount}" />
+                  </span>
                 </div>
                 <div class="summary-item deposit">
-                  <span>
-                    <c:choose>
-                      <c:when test="${depositPageData.subtotal >= 3000}">
-                        Deposit Required (10%)
-                      </c:when>
-                      <c:otherwise>
-                        Deposit Required (Fixed)
-                      </c:otherwise>
-                    </c:choose>
-                  </span>
+                  <span>Deposit Required</span>
                   <span class="deposit-amount" id="summaryDeposit">
                     <c:out value="${depositPageData.formattedDepositAmount}" />
                   </span>
@@ -499,38 +511,84 @@
           </button>
         </div>
         <div class="modal-body">
-          <div class="voucher-item" onclick="selectVoucher('SAVE10', 10)">
+          <div class="voucher-item" onclick="selectVoucher('SAVE20K', 20000)">
             <div class="voucher-info">
-              <div class="voucher-code">SAVE10</div>
-              <div class="voucher-desc">Save 10% on orders over 2,000K</div>
+              <div class="voucher-code">SAVE20K</div>
+              <div class="voucher-desc">Save 20,000 VND on all orders</div>
+            </div>
+            <div class="voucher-discount">-20K</div>
+          </div>
+
+          <div class="voucher-item" onclick="selectVoucher('SAVE5PERCENT', 5)">
+            <div class="voucher-info">
+              <div class="voucher-code">SAVE5PERCENT</div>
+              <div class="voucher-desc">5% discount on all orders (max 100K)</div>
+            </div>
+            <div class="voucher-discount">-5%</div>
+          </div>
+
+          <div class="voucher-item" onclick="selectVoucher('SAVE30K', 30000)">
+            <div class="voucher-info">
+              <div class="voucher-code">SAVE30K</div>
+              <div class="voucher-desc">Save 30,000 VND on all orders</div>
+            </div>
+            <div class="voucher-discount">-30K</div>
+          </div>
+
+          <div class="voucher-item" onclick="selectVoucher('SAVE8PERCENT', 8)">
+            <div class="voucher-info">
+              <div class="voucher-code">SAVE8PERCENT</div>
+              <div class="voucher-desc">8% discount on all orders (max 150K)</div>
+            </div>
+            <div class="voucher-discount">-8%</div>
+          </div>
+
+          <div class="voucher-item" onclick="selectVoucher('SAVE15K', 15000)">
+            <div class="voucher-info">
+              <div class="voucher-code">SAVE15K</div>
+              <div class="voucher-desc">Save 15,000 VND on all orders</div>
+            </div>
+            <div class="voucher-discount">-15K</div>
+          </div>
+
+          <div class="voucher-item" onclick="selectVoucher('SAVE3PERCENT', 3)">
+            <div class="voucher-info">
+              <div class="voucher-code">SAVE3PERCENT</div>
+              <div class="voucher-desc">3% discount on all orders (max 50K)</div>
+            </div>
+            <div class="voucher-discount">-3%</div>
+          </div>
+
+          <div class="voucher-item" onclick="selectVoucher('SAVE25K', 25000)">
+            <div class="voucher-info">
+              <div class="voucher-code">SAVE25K</div>
+              <div class="voucher-desc">Save 25,000 VND on all orders</div>
+            </div>
+            <div class="voucher-discount">-25K</div>
+          </div>
+
+          <div class="voucher-item" onclick="selectVoucher('SAVE10PERCENT', 10)">
+            <div class="voucher-info">
+              <div class="voucher-code">SAVE10PERCENT</div>
+              <div class="voucher-desc">10% discount on all orders (max 200K)</div>
             </div>
             <div class="voucher-discount">-10%</div>
           </div>
 
-          <div class="voucher-item" onclick="selectVoucher('FIRST50', 50)">
+          <div class="voucher-item" onclick="selectVoucher('SAVE40K', 40000)">
             <div class="voucher-info">
-              <div class="voucher-code">FIRST50</div>
-              <div class="voucher-desc">50K off for first-time customers</div>
+              <div class="voucher-code">SAVE40K</div>
+              <div class="voucher-desc">Save 40,000 VND on all orders</div>
             </div>
-            <div class="voucher-discount">-50K</div>
+            <div class="voucher-discount">-40K</div>
           </div>
 
-          <div class="voucher-item" onclick="selectVoucher('WEEKEND20', 20)">
+          <div class="voucher-item" onclick="selectVoucher('SAVE12PERCENT', 12)">
             <div class="voucher-info">
-              <div class="voucher-code">WEEKEND20</div>
-              <div class="voucher-desc">
-                20% off weekend bookings (min 1,000K)
-              </div>
+              <div class="voucher-code">SAVE12PERCENT</div>
+              <div class="voucher-desc">12% discount on all orders (max 250K)</div>
             </div>
-            <div class="voucher-discount">-20%</div>
-          </div>
-
-          <div class="voucher-item" onclick="selectVoucher('STUDENT15', 15)">
-            <div class="voucher-info">
-              <div class="voucher-code">STUDENT15</div>
-              <div class="voucher-desc">15% student discount</div>
-            </div>
-            <div class="voucher-discount">-15%</div>
+            <div class="voucher-discount">-12%</div>
           </div>
         </div>
       </div>
@@ -784,96 +842,291 @@
         // Lấy giá trị subtotal từ hidden input
         originalSubtotal = parseFloat(document.getElementById("subtotalHidden").value || 0);
         console.log("Loaded subtotal from backend:", originalSubtotal);
+        
+        // Kiểm tra xem có voucher đã được áp dụng chưa
+        checkAppliedVoucher();
       });
-
-      function applyVoucher() {
-        const voucherCode = document
-          .getElementById("voucherCode")
-          .value.trim()
-          .toUpperCase();
-        const vouchers = {
-                    SAVE10: {type: "percentage", value: 10, minOrder: 2000000},
-                    FIRST50: {type: "fixed", value: 50000, minOrder: 0},
-                    WEEKEND20: {type: "percentage", value: 20, minOrder: 1000000},
-                    STUDENT15: {type: "percentage", value: 15, minOrder: 500000},
-        };
-
-        if (vouchers[voucherCode]) {
-          const voucher = vouchers[voucherCode];
-          if (originalSubtotal >= voucher.minOrder) {
-                        appliedVoucher = {...voucher, code: voucherCode};
-            updatePriceWithVoucher();
-            showToast(
-              `Voucher ${voucherCode} applied successfully!`,
-              "success"
-            );
-          } else {
-            showToast(`Minimum order required for this voucher`, "error");
+      
+      function checkAppliedVoucher() {
+        // Kiểm tra xem có discount amount > 0 không (có voucher đã áp dụng)
+        const discountRow = document.getElementById("discountRow");
+        const discountAmount = document.getElementById("discountAmount");
+        
+        if (discountRow && discountRow.style.display !== "none" && discountAmount) {
+          // Có voucher đã áp dụng
+          const voucherCode = "${depositPageData.appliedDiscount.voucherCode}";
+          const voucherName = "${depositPageData.appliedDiscount.name}";
+          
+          if (voucherCode && voucherCode.trim() !== "") {
+            appliedVoucher = {
+              code: voucherCode,
+              name: voucherName
+            };
+            
+            // Cập nhật UI để hiển thị voucher đã áp dụng
+            const voucherInput = document.getElementById("voucherCode");
+            const applyBtn = document.querySelector('.btn-apply-voucher');
+            
+            voucherInput.value = voucherCode;
+            voucherInput.disabled = true;
+            applyBtn.textContent = 'Remove';
+            applyBtn.onclick = removeVoucher;
+            
+            console.log("Voucher already applied:", voucherCode);
           }
-        } else {
-          showToast("Invalid voucher code", "error");
         }
       }
 
-      function updatePriceWithVoucher() {
-        let discountAmount = 0;
+      function applyVoucher() {
+        const voucherCode = document.getElementById("voucherCode").value.trim();
+        const bookingId = document.getElementById("bookingIdHidden").value;
+        
+        if (!voucherCode) {
+          showToast("Vui lòng nhập mã voucher", "error");
+          return;
+        }
+        
+        if (!bookingId || bookingId === "TEMP_BOOKING_ID" || bookingId.trim() === "") {
+          showToast("Không tìm thấy bookingId. Vui lòng tải lại trang.", "error");
+          return;
+        }
 
-        if (appliedVoucher) {
-          if (appliedVoucher.type === "percentage") {
-            discountAmount = Math.round(
-              (originalSubtotal * appliedVoucher.value) / 100
-            );
+        // Show loading state
+        const applyBtn = document.querySelector('.btn-apply-voucher');
+        const originalText = applyBtn.textContent;
+        applyBtn.textContent = 'Applying...';
+        applyBtn.disabled = true;
+
+        // Send AJAX request to backend
+        fetch('<%=request.getContextPath()%>/customer/deposit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams({
+            'action': 'applyVoucher',
+            'bookingId': bookingId,
+            'voucherCode': voucherCode
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Update UI with new pricing data
+            updatePriceWithBackendData(data);
+            showToast(data.message || "Voucher applied successfully!", "success");
+            
+            // Store applied voucher info
+            appliedVoucher = {
+              code: data.discountCode,
+              name: data.discountName
+            };
+            
+            // Update voucher input to show applied voucher
+            document.getElementById("voucherCode").value = data.discountCode;
+            document.getElementById("voucherCode").disabled = true;
+            
+            // Change apply button to remove button
+            applyBtn.textContent = 'Remove';
+            applyBtn.onclick = removeVoucher;
+            
           } else {
-            discountAmount = appliedVoucher.value;
+            showToast(data.message || "Failed to apply voucher", "error");
           }
+        })
+        .catch(error => {
+          console.error('Error applying voucher:', error);
+          showToast("Có lỗi xảy ra khi áp dụng voucher", "error");
+        })
+        .finally(() => {
+          // Reset button state if not successful
+          if (!appliedVoucher) {
+            applyBtn.textContent = originalText;
+            applyBtn.disabled = false;
+          }
+        });
+      }
+
+      function removeVoucher() {
+        const bookingId = document.getElementById("bookingIdHidden").value;
+        
+        // Send request to remove voucher (you may need to implement this endpoint)
+        fetch('<%=request.getContextPath()%>/customer/deposit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams({
+            'action': 'removeVoucher',
+            'bookingId': bookingId
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Reset UI to original state
+            resetVoucherUI();
+            updatePriceWithBackendData(data);
+            showToast("Voucher removed successfully!", "success");
+          } else {
+            showToast(data.message || "Failed to remove voucher", "error");
+          }
+        })
+        .catch(error => {
+          console.error('Error removing voucher:', error);
+          showToast("Có lỗi xảy ra khi xóa voucher", "error");
+        });
+      }
+
+      function resetVoucherUI() {
+        appliedVoucher = null;
+        const voucherInput = document.getElementById("voucherCode");
+        const applyBtn = document.querySelector('.btn-apply-voucher');
+        
+        voucherInput.value = '';
+        voucherInput.disabled = false;
+        applyBtn.textContent = 'Apply';
+        applyBtn.onclick = applyVoucher;
+        applyBtn.disabled = false;
+        
+        // Hide applied voucher info
+        const appliedVoucherInfo = document.getElementById("appliedVoucherInfo");
+        if (appliedVoucherInfo) {
+          appliedVoucherInfo.remove();
         }
+        
+        // Hide voucher info row
+        const voucherInfoRow = document.getElementById("voucherInfoRow");
+        if (voucherInfoRow) {
+          voucherInfoRow.remove();
+        }
+      }
 
-        const newSubtotal = originalSubtotal - discountAmount;
-        const vatAmount = Math.round(newSubtotal * 0.1);
-        const totalAmount = newSubtotal + vatAmount;
-        // Tiền cọc cố định 300.000 VND
-        const depositAmount = 300000;
-
-        // Update price breakdown
+      function updatePriceWithBackendData(data) {
+        // Update price breakdown with backend data
+        const discountAmount = data.discountAmount || 0;
+        
+        // Update voucher discount row
+        const discountRow = document.getElementById("discountRow");
+        const discountAmountElement = document.getElementById("discountAmount");
+        
         if (discountAmount > 0) {
-          document.getElementById("discountRow").style.display = "flex";
-          document.getElementById(
-            "discountAmount"
-          ).textContent = `-${discountAmount.toLocaleString()}VND`;
+          discountRow.style.display = "flex";
+          discountAmountElement.textContent = `-${discountAmount.toLocaleString()}VND`;
+          console.log("Voucher discount applied: -" + discountAmount.toLocaleString() + "VND");
         } else {
-          document.getElementById("discountRow").style.display = "none";
+          discountRow.style.display = "none";
+          discountAmountElement.textContent = "-0VND";
+          console.log("No voucher discount");
         }
 
-        document.getElementById(
-          "vatAmount"
-        ).textContent = `${vatAmount.toLocaleString()}VND`;
-        document.getElementById(
-          "finalTotal"
-        ).innerHTML = `<strong>${totalAmount.toLocaleString()}VND</strong>`;
-        document.getElementById(
-          "finalDeposit"
-        ).innerHTML = `<strong>${depositAmount.toLocaleString()}VND</strong>`;
+        // Update all price elements with backend data
+        document.getElementById("vatAmount").textContent = `${data.vatAmount.toLocaleString()}VND`;
+        document.getElementById("finalTotal").innerHTML = `<strong>${data.totalAmount.toLocaleString()}VND</strong>`;
+        document.getElementById("finalDeposit").innerHTML = `<strong>${data.depositAmount.toLocaleString()}VND</strong>`;
 
         // Update order summary
-        document.getElementById(
-          "summaryTotal"
-        ).textContent = `${totalAmount.toLocaleString()}VND`;
+        document.getElementById("summaryTotal").textContent = `${data.baseAmount.toLocaleString()}VND`;
+        
         if (discountAmount > 0) {
           document.getElementById("summaryDiscountRow").style.display = "flex";
-          document.getElementById(
-            "summaryDiscount"
-          ).textContent = `-${discountAmount.toLocaleString()}VND`;
+          document.getElementById("summaryDiscount").textContent = `-${discountAmount.toLocaleString()}VND`;
+          console.log("Voucher discount in summary: -" + discountAmount.toLocaleString() + "VND");
         } else {
           document.getElementById("summaryDiscountRow").style.display = "none";
+          console.log("No voucher discount in summary");
         }
-        document.getElementById(
-          "summaryDeposit"
-        ).textContent = `${depositAmount.toLocaleString()}VND`;
+        
+        document.getElementById("summaryDeposit").textContent = `${data.depositAmount.toLocaleString()}VND`;
 
         // Update payment amounts
-        document.getElementById(
-          "bankAmount"
-        ).innerHTML = `${depositAmount.toLocaleString()}VND <i class="fas fa-copy"></i>`;
+        document.getElementById("bankAmount").innerHTML = `${data.depositAmount.toLocaleString()}VND <i class="fas fa-copy"></i>`;
+        
+        // Update applied voucher info display
+        updateAppliedVoucherDisplay(data.discountCode, data.discountName);
+        
+        // Update voucher info row in detailed pricing
+        updateVoucherInfoRow(data.discountCode, data.discountName);
+      }
+      
+      function updateAppliedVoucherDisplay(discountCode, discountName) {
+        const appliedVoucherInfo = document.getElementById("appliedVoucherInfo");
+        
+        if (discountCode && discountCode.trim() !== "") {
+          // Show applied voucher info
+          if (!appliedVoucherInfo) {
+            // Create applied voucher info element if it doesn't exist
+            const voucherSection = document.querySelector('.voucher-section');
+            const newAppliedVoucherInfo = document.createElement('div');
+            newAppliedVoucherInfo.className = 'applied-voucher-info';
+            newAppliedVoucherInfo.id = 'appliedVoucherInfo';
+            newAppliedVoucherInfo.innerHTML = `
+              <div class="applied-voucher-header">
+                <i class="fas fa-check-circle"></i>
+                <span>Applied Voucher</span>
+              </div>
+              <div class="applied-voucher-details">
+                <div class="voucher-code-applied">
+                  <strong>${discountCode}</strong>
+                </div>
+                <div class="voucher-name-applied">
+                  ${discountName || ''}
+                </div>
+              </div>
+            `;
+            voucherSection.appendChild(newAppliedVoucherInfo);
+          } else {
+            // Update existing applied voucher info
+            const voucherCodeElement = appliedVoucherInfo.querySelector('.voucher-code-applied strong');
+            const voucherNameElement = appliedVoucherInfo.querySelector('.voucher-name-applied');
+            
+            if (voucherCodeElement) voucherCodeElement.textContent = discountCode;
+            if (voucherNameElement) voucherNameElement.textContent = discountName || '';
+          }
+        } else {
+          // Hide applied voucher info if no voucher
+          if (appliedVoucherInfo) {
+            appliedVoucherInfo.remove();
+          }
+        }
+      }
+      
+      function updateVoucherInfoRow(discountCode, discountName) {
+        const voucherInfoRow = document.getElementById("voucherInfoRow");
+        
+        if (discountCode && discountCode.trim() !== "") {
+          // Show voucher info row
+          if (!voucherInfoRow) {
+            // Create voucher info row if it doesn't exist
+            const discountRow = document.getElementById("discountRow");
+            const newVoucherInfoRow = document.createElement('div');
+            newVoucherInfoRow.className = 'price-item voucher-info-row';
+            newVoucherInfoRow.id = 'voucherInfoRow';
+            newVoucherInfoRow.innerHTML = `
+              <span><i class="fas fa-info-circle"></i> Applied: ${discountCode} - ${discountName || ''}</span>
+              <span class="amount info">Applied</span>
+            `;
+            discountRow.parentNode.insertBefore(newVoucherInfoRow, discountRow.nextSibling);
+          } else {
+            // Update existing voucher info row
+            const voucherInfoSpan = voucherInfoRow.querySelector('span:first-child');
+            if (voucherInfoSpan) {
+              voucherInfoSpan.innerHTML = `<i class="fas fa-info-circle"></i> Applied: ${discountCode} - ${discountName || ''}`;
+            }
+          }
+        } else {
+          // Hide voucher info row if no voucher
+          if (voucherInfoRow) {
+            voucherInfoRow.remove();
+          }
+        }
+      }
+
+      // Legacy function for backward compatibility (if needed)
+      function updatePriceWithVoucher() {
+        // This function is now replaced by updatePriceWithBackendData
+        // Keeping for any legacy references
+        console.log("updatePriceWithVoucher called - use updatePriceWithBackendData instead");
       }
 
       function showVoucherModal() {
@@ -1026,7 +1279,7 @@
           }
 
           timeLeft--;
-        }, 1000);
+        }, 1000);s
       }
 
       // Close modals when clicking outside
