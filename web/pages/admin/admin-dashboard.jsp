@@ -167,6 +167,8 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
             </svg>
             Staff
           </a>
+          <!-- Reports navigation item hidden -->
+          <!--
           <a
             href="${pageContext.request.contextPath}/pages/admin/manage-reports.jsp"
             class="nav-item"
@@ -178,6 +180,9 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
             </svg>
             Reports
           </a>
+          -->
+          <!-- Contract Details navigation item hidden -->
+          <!--
           <a
             href="${pageContext.request.contextPath}/pages/admin/contract-details.jsp"
             class="nav-item "
@@ -189,6 +194,7 @@ uri="http://java.sun.com/jsp/jstl/functions" %>
             </svg>
             Contract Details
           </a>
+          -->
           <a
             href="${pageContext.request.contextPath}/discount"
             class="nav-item"

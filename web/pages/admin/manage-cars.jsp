@@ -104,18 +104,24 @@
             </svg>
             Staff
           </a>
+          <!-- Reports navigation item hidden -->
+          <!--
           <a href="${pageContext.request.contextPath}/pages/admin/manage-reports.jsp" class="nav-item">
             <svg class="nav-item-icon" fill="currentColor" viewBox="0 0 24 24">
               <path d="M3 17h3v-7H3v7zm5 0h3v-12H8v12zm5 0h3v-4h-3v4zm5 0h3v-9h-3v9z"/>
             </svg>
             Reports
           </a>
+          -->
+          <!-- Contract Details navigation item hidden -->
+          <!--
           <a href="${pageContext.request.contextPath}/pages/admin/contract-details.jsp" class="nav-item">
             <svg class="nav-item-icon" fill="currentColor" viewBox="0 0 24 24">
               <path d="M16.5 3a2.5 2.5 0 0 1 3.54 3.54l-12.5 12.5-4.24 1.06 1.06-4.24L16.5 3zm2.04 2.12a.5.5 0 0 0-.71 0l-1.34 1.34 1.71 1.71 1.34-1.34a.5.5 0 0 0 0-.71l-1-1zm-2.75 2.75L5 16.66V19h2.34l10.79-10.79-1.34-1.34z"/>
             </svg>
             Contract Details
           </a>
+          -->
           <a href="${pageContext.request.contextPath}/discount" class="nav-item">
             <svg class="nav-item-icon" fill="currentColor" viewBox="0 0 24 24">
               <path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/>
