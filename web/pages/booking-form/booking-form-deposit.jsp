@@ -511,38 +511,84 @@
           </button>
         </div>
         <div class="modal-body">
-          <div class="voucher-item" onclick="selectVoucher('SAVE10', 10)">
+          <div class="voucher-item" onclick="selectVoucher('SAVE20K', 20000)">
             <div class="voucher-info">
-              <div class="voucher-code">SAVE10</div>
-              <div class="voucher-desc">Save 10% on orders over 2,000K</div>
+              <div class="voucher-code">SAVE20K</div>
+              <div class="voucher-desc">Save 20,000 VND on all orders</div>
+            </div>
+            <div class="voucher-discount">-20K</div>
+          </div>
+
+          <div class="voucher-item" onclick="selectVoucher('SAVE5PERCENT', 5)">
+            <div class="voucher-info">
+              <div class="voucher-code">SAVE5PERCENT</div>
+              <div class="voucher-desc">5% discount on all orders (max 100K)</div>
+            </div>
+            <div class="voucher-discount">-5%</div>
+          </div>
+
+          <div class="voucher-item" onclick="selectVoucher('SAVE30K', 30000)">
+            <div class="voucher-info">
+              <div class="voucher-code">SAVE30K</div>
+              <div class="voucher-desc">Save 30,000 VND on all orders</div>
+            </div>
+            <div class="voucher-discount">-30K</div>
+          </div>
+
+          <div class="voucher-item" onclick="selectVoucher('SAVE8PERCENT', 8)">
+            <div class="voucher-info">
+              <div class="voucher-code">SAVE8PERCENT</div>
+              <div class="voucher-desc">8% discount on all orders (max 150K)</div>
+            </div>
+            <div class="voucher-discount">-8%</div>
+          </div>
+
+          <div class="voucher-item" onclick="selectVoucher('SAVE15K', 15000)">
+            <div class="voucher-info">
+              <div class="voucher-code">SAVE15K</div>
+              <div class="voucher-desc">Save 15,000 VND on all orders</div>
+            </div>
+            <div class="voucher-discount">-15K</div>
+          </div>
+
+          <div class="voucher-item" onclick="selectVoucher('SAVE3PERCENT', 3)">
+            <div class="voucher-info">
+              <div class="voucher-code">SAVE3PERCENT</div>
+              <div class="voucher-desc">3% discount on all orders (max 50K)</div>
+            </div>
+            <div class="voucher-discount">-3%</div>
+          </div>
+
+          <div class="voucher-item" onclick="selectVoucher('SAVE25K', 25000)">
+            <div class="voucher-info">
+              <div class="voucher-code">SAVE25K</div>
+              <div class="voucher-desc">Save 25,000 VND on all orders</div>
+            </div>
+            <div class="voucher-discount">-25K</div>
+          </div>
+
+          <div class="voucher-item" onclick="selectVoucher('SAVE10PERCENT', 10)">
+            <div class="voucher-info">
+              <div class="voucher-code">SAVE10PERCENT</div>
+              <div class="voucher-desc">10% discount on all orders (max 200K)</div>
             </div>
             <div class="voucher-discount">-10%</div>
           </div>
 
-          <div class="voucher-item" onclick="selectVoucher('FIRST50', 50)">
+          <div class="voucher-item" onclick="selectVoucher('SAVE40K', 40000)">
             <div class="voucher-info">
-              <div class="voucher-code">FIRST50</div>
-              <div class="voucher-desc">50K off for first-time customers</div>
+              <div class="voucher-code">SAVE40K</div>
+              <div class="voucher-desc">Save 40,000 VND on all orders</div>
             </div>
-            <div class="voucher-discount">-50K</div>
+            <div class="voucher-discount">-40K</div>
           </div>
 
-          <div class="voucher-item" onclick="selectVoucher('WEEKEND20', 20)">
+          <div class="voucher-item" onclick="selectVoucher('SAVE12PERCENT', 12)">
             <div class="voucher-info">
-              <div class="voucher-code">WEEKEND20</div>
-              <div class="voucher-desc">
-                20% off weekend bookings (min 1,000K)
-              </div>
+              <div class="voucher-code">SAVE12PERCENT</div>
+              <div class="voucher-desc">12% discount on all orders (max 250K)</div>
             </div>
-            <div class="voucher-discount">-20%</div>
-          </div>
-
-          <div class="voucher-item" onclick="selectVoucher('STUDENT15', 15)">
-            <div class="voucher-info">
-              <div class="voucher-code">STUDENT15</div>
-              <div class="voucher-desc">15% student discount</div>
-            </div>
-            <div class="voucher-discount">-15%</div>
+            <div class="voucher-discount">-12%</div>
           </div>
         </div>
       </div>
