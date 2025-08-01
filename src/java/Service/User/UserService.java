@@ -244,4 +244,33 @@ public class UserService implements IUserService {
             return null;
         }
     }
+    
+    /**
+     * Check if phone number is unique (for new users) or unique for a specific user (for updates)
+     * @param phoneNumber the phone number to check
+     * @param excludeUserId the user ID to exclude from the check (for updates)
+     * @return true if phone number is unique, false otherwise
+     */
+    public boolean isPhoneNumberUnique(String phoneNumber, UUID excludeUserId) {
+        try {
+            if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
+                return true; // Empty phone numbers are considered unique
+            }
+            
+            User existingUser = findByPhoneNumber(phoneNumber.trim());
+            if (existingUser == null) {
+                return true; // No user found with this phone number
+            }
+            
+            // If excludeUserId is provided, check if the existing user is the same user
+            if (excludeUserId != null) {
+                return existingUser.getUserId().equals(excludeUserId);
+            }
+            
+            return false; // Phone number exists and belongs to a different user
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error checking phone number uniqueness: " + phoneNumber, e);
+            return false; // In case of error, assume not unique for safety
+        }
+    }
 }

@@ -72,6 +72,16 @@ public class UserManagementServlet extends HttpServlet {
         String action = request.getParameter("action");
         try {
             if ("add".equals(action)) {
+                // Validate phone number uniqueness for new user
+                String phoneNumber = request.getParameter("phoneNumber");
+                if (phoneNumber != null && !phoneNumber.trim().isEmpty()) {
+                    if (!userService.isPhoneNumberUnique(phoneNumber.trim(), null)) {
+                        request.setAttribute("error", "Số điện thoại đã tồn tại trong hệ thống!");
+                        response.sendRedirect(request.getContextPath() + "/admin/user-management");
+                        return;
+                    }
+                }
+                
                 User user = new User();
                 user.setUserId(UUID.randomUUID());
                 user.setUsername(request.getParameter("username"));
@@ -90,6 +100,18 @@ public class UserManagementServlet extends HttpServlet {
                 request.setAttribute("success", "Thêm user thành công!");
             } else if ("update".equals(action)) {
                 String userId = request.getParameter("userId");
+                String phoneNumber = request.getParameter("phoneNumber");
+                
+                // Validate phone number uniqueness for update (exclude current user)
+                if (phoneNumber != null && !phoneNumber.trim().isEmpty()) {
+                    UUID userIdUUID = UUID.fromString(userId);
+                    if (!userService.isPhoneNumberUnique(phoneNumber.trim(), userIdUUID)) {
+                        request.setAttribute("error", "Số điện thoại đã tồn tại trong hệ thống!");
+                        response.sendRedirect(request.getContextPath() + "/admin/user-management");
+                        return;
+                    }
+                }
+                
                 User user = userService.findById(UUID.fromString(userId));
                 if (user != null) {
                     user.setUsername(request.getParameter("username"));
