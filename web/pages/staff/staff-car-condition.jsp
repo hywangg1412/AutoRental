@@ -55,6 +55,31 @@
         line-height: 20px;
         cursor: pointer;
       }
+      
+      /* Validation styles */
+      .form-control.is-valid {
+        border-color: #198754;
+        box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+      }
+      
+      .form-control.is-invalid {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+      }
+      
+      .invalid-feedback {
+        display: block;
+        color: #dc3545;
+        font-size: 0.875em;
+        margin-top: 0.25rem;
+      }
+      
+      .valid-feedback {
+        display: block;
+        color: #198754;
+        font-size: 0.875em;
+        margin-top: 0.25rem;
+      }
     </style>
   </head>
   <body>
@@ -417,7 +442,8 @@
                     </div>
                     <div class="col-md-6">
                       <label for="lateReturnHours" class="form-label">Hours late</label>
-                      <input type="number" class="form-control" id="lateReturnHours" name="lateReturnHours" min="0" step="0.5" disabled>
+                      <input type="number" class="form-control" id="lateReturnHours" name="lateReturnHours" min="0" step="0.5" disabled oninput="validateNumber(this, 0, 999)">
+                                             <div class="invalid-feedback">Please enter a valid number of hours (0-999)</div>
                     </div>
                   </div>
                   
@@ -431,10 +457,12 @@
                         </label>
                       </div>
                     </div>
-                    <div class="col-md-6">
-                      <label for="fuelPrice" class="form-label">Fuel price (VND)</label>
-                      <input type="number" class="form-control" id="fuelPrice" name="fuelPrice" min="0" disabled>
-                    </div>
+
+                                         <div class="col-md-6">
+                       <label for="fuelPrice" class="form-label">Fuel price (VND)</label>
+                       <input type="number" class="form-control" id="fuelPrice" name="fuelPrice" min="0" disabled oninput="validateNumber(this, 0, 999999999)">
+                       <div class="invalid-feedback">Please enter a valid amount</div>
+                     </div>
                   </div>
                   
                   <!-- Traffic Violations -->
@@ -447,10 +475,12 @@
                         </label>
                       </div>
                     </div>
-                    <div class="col-md-6">
-                      <label for="violationFine" class="form-label">Fine amount (VND)</label>
-                      <input type="number" class="form-control" id="violationFine" name="violationFine" min="0" disabled>
-                    </div>
+
+                                         <div class="col-md-6">
+                       <label for="violationFine" class="form-label">Fine amount (VND)</label>
+                       <input type="number" class="form-control" id="violationFine" name="violationFine" min="0" disabled oninput="validateNumber(this, 0, 999999999)">
+                       <div class="invalid-feedback">Please enter a valid amount</div>
+                     </div>
                   </div>
                   
                   <!-- Excessive Cleaning -->
@@ -477,7 +507,9 @@
                     </div>
                     <div class="col-md-6">
                       <label for="damageAmount" class="form-label">Repair cost (VND)</label>
-                      <input type="number" class="form-control" id="damageAmount" name="damageAmount" min="100000" max="500000" disabled>
+
+                      <input type="number" class="form-control" id="damageAmount" name="damageAmount" min="100000" max="500000" disabled oninput="validateDamageAmount(this)">
+                                             <div class="invalid-feedback">Please enter an amount between 100,000 - 500,000 VND</div>
                     </div>
                   </div>
                 </div>
@@ -598,14 +630,63 @@
       </div>
     </div>
 
+    <!-- Error Modal -->
+    <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-danger text-white">
+            <h5 class="modal-title">Error</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p id="errorMessage">An error occurred.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Validation Error Modal -->
+    <div class="modal fade" id="validationModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-warning text-dark">
+            <h5 class="modal-title">Validation Error</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p id="validationMessage">Please check your input.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-warning" data-bs-dismiss="modal">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Bootstrap 5 JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
     
-    <script>
-      $(document).ready(function () {
+
+         <script>
+       $(document).ready(function () {
+         // Function to show validation error modal
+         function showValidationError(message) {
+           $("#validationMessage").text(message);
+           $("#validationModal").modal("show");
+         }
+         
+         // Function to show error modal
+         function showError(message) {
+           $("#errorMessage").text(message);
+           $("#errorModal").modal("show");
+         }
+
         // Handle event when clicking "Inspect Vehicle" button
         $(".inspect-btn").click(function () {
           const bookingId = $(this).data("booking-id");
@@ -624,20 +705,20 @@
               type: "getBookingDetails",
               bookingId: bookingId
             },
-            success: function (response) {
-              if (response.success) {
-                const data = response.data;
-                $("#carModel").val(data.carModel);
-                $("#licensePlate").val(data.licensePlate);
-                $("#customerName").val(data.customerName);
-                $("#returnDate").val(formatDateTime(data.returnDateTime));
-              } else {
-                alert("Error: " + response.message);
-              }
-            },
-            error: function (xhr, status, error) {
-              alert("Error: " + error);
-            }
+                         success: function (response) {
+               if (response.success) {
+                 const data = response.data;
+                 $("#carModel").val(data.carModel);
+                 $("#licensePlate").val(data.licensePlate);
+                 $("#customerName").val(data.customerName);
+                 $("#returnDate").val(formatDateTime(data.returnDateTime));
+               } else {
+                 showError("Error: " + response.message);
+               }
+             },
+             error: function (xhr, status, error) {
+               showError("Error: " + error);
+             }
           });
         });
         
@@ -658,24 +739,26 @@
             data: formData,
             processData: false,
             contentType: false,
-            success: function (response) {
-              if (response.success) {
-                // Show success message
-                $("#successMessage").text("Accept Car Return Successfully");
-                $("#successModal").modal("show");
-                
-                // Close modal and refresh page when clicking OK
-                $("#successModalCloseBtn").click(function() {
-                  $("#inspectionModal").modal("hide");
-                  location.reload();
-                });
-              } else {
-                alert("Error: " + response.message);
-              }
-            },
-            error: function (xhr, status, error) {
-              alert("Error: " + error);
-            }
+
+                         success: function (response) {
+               if (response.success) {
+                 // Show success message
+                 $("#successMessage").text("Accept Car Return Successfully");
+                 $("#successModal").modal("show");
+                 
+                 // Close modal and refresh page when clicking OK
+                 $("#successModalCloseBtn").click(function() {
+                   $("#inspectionModal").modal("hide");
+                   location.reload();
+                 });
+               } else {
+                 showError("Error: " + response.message);
+               }
+             },
+             error: function (xhr, status, error) {
+               showError("Error: " + error);
+             }
+
           });
         });
         
@@ -708,28 +791,35 @@
         $("#lateReturn").change(function() {
           $("#lateReturnHours").prop("disabled", !this.checked);
           if (!this.checked) {
-            $("#lateReturnHours").val("");
+
+            $("#lateReturnHours").val("").removeClass("is-valid is-invalid");
+
           }
         });
         
         $("#fuelShortage").change(function() {
           $("#fuelPrice").prop("disabled", !this.checked);
           if (!this.checked) {
-            $("#fuelPrice").val("");
+            $("#fuelPrice").val("").removeClass("is-valid is-invalid");
+
           }
         });
         
         $("#trafficViolations").change(function() {
           $("#violationFine").prop("disabled", !this.checked);
           if (!this.checked) {
-            $("#violationFine").val("");
+
+            $("#violationFine").val("").removeClass("is-valid is-invalid");
+
           }
         });
         
         $("#minorDamage").change(function() {
           $("#damageAmount").prop("disabled", !this.checked);
           if (!this.checked) {
-            $("#damageAmount").val("");
+
+            $("#damageAmount").val("").removeClass("is-valid is-invalid");
+
           }
         });
         
@@ -767,22 +857,88 @@
           }
         });
         
-        // Form validation function
-        function validateForm() {
-          const fuelLevel = $("#fuelLevel").val();
-          const conditionStatus = $("#conditionStatus").val();
+                 // Form validation function
+         function validateForm() {
+           const fuelLevel = $("#fuelLevel").val();
+           const conditionStatus = $("#conditionStatus").val();
+           
+           if (!fuelLevel) {
+             showValidationError("Please select fuel level");
+             return false;
+           }
+           
+           if (!conditionStatus) {
+             showValidationError("Please select vehicle condition status");
+             return false;
+           }
+           
+           // Validate surcharge fields if they are enabled
+           if ($("#lateReturn").is(":checked")) {
+             const lateReturnHours = $("#lateReturnHours").val();
+             if (!lateReturnHours || lateReturnHours < 0 || lateReturnHours > 999) {
+               showValidationError("Please enter a valid number of late hours (0-999)");
+               return false;
+             }
+           }
+           
+           if ($("#fuelShortage").is(":checked")) {
+             const fuelPrice = $("#fuelPrice").val();
+             if (!fuelPrice || fuelPrice < 0) {
+               showValidationError("Please enter a valid fuel price");
+               return false;
+             }
+           }
+           
+           if ($("#trafficViolations").is(":checked")) {
+             const violationFine = $("#violationFine").val();
+             if (!violationFine || violationFine < 0) {
+               showValidationError("Please enter a valid fine amount");
+               return false;
+             }
+           }
+           
+           if ($("#minorDamage").is(":checked")) {
+             const damageAmount = $("#damageAmount").val();
+             if (!damageAmount || damageAmount < 100000 || damageAmount > 500000) {
+               showValidationError("Please enter repair cost between 100,000 - 500,000 VND");
+               return false;
+             }
+           }
+           
+           return true;
+         }
+        
+        // Validate number input function
+        function validateNumber(input, min, max) {
+          const value = parseFloat(input.value);
+          const isValid = !isNaN(value) && value >= min && value <= max;
+
           
-          if (!fuelLevel) {
-            alert("Please select fuel level");
-            return false;
+          if (isValid) {
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
+          } else {
+            input.classList.remove('is-valid');
+            input.classList.add('is-invalid');
           }
           
-          if (!conditionStatus) {
-            alert("Please select condition status");
-            return false;
+          return isValid;
+        }
+        
+        // Validate damage amount specifically
+        function validateDamageAmount(input) {
+          const value = parseInt(input.value);
+          const isValid = !isNaN(value) && value >= 100000 && value <= 500000;
+          
+          if (isValid) {
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
+          } else {
+            input.classList.remove('is-valid');
+            input.classList.add('is-invalid');
           }
           
-          return true;
+          return isValid;
         }
         
         // Date time formatting function
