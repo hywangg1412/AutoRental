@@ -74,7 +74,7 @@ Steps:
 
 ## ✨ Planned features
 
-- Payment gateway integration (VNPay, PayPal or Momo)
+- Payment gateway integration (VNPay)
 - Email notifications
 - User reviews & ratings for cars
 - Advanced booking calendar
